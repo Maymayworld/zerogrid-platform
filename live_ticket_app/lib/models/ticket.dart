@@ -7,6 +7,7 @@ class Ticket {
   final String seatType;
   final String ticketNumber;
   final bool isUsed;
+  final bool isPurchased; // 購入済みかどうか
 
   Ticket({
     required this.id,
@@ -17,6 +18,7 @@ class Ticket {
     required this.seatType,
     required this.ticketNumber,
     this.isUsed = false,
+    this.isPurchased = false, // デフォルトは未購入
   });
 
   Ticket copyWith({
@@ -28,6 +30,7 @@ class Ticket {
     String? seatType,
     String? ticketNumber,
     bool? isUsed,
+    bool? isPurchased,
   }) {
     return Ticket(
       id: id ?? this.id,
@@ -38,6 +41,7 @@ class Ticket {
       seatType: seatType ?? this.seatType,
       ticketNumber: ticketNumber ?? this.ticketNumber,
       isUsed: isUsed ?? this.isUsed,
+      isPurchased: isPurchased ?? this.isPurchased,
     );
   }
 

@@ -51,7 +51,7 @@ class EventDetailScreen extends HookConsumerWidget {
               ),
               const SizedBox(height: 24),
               ElevatedButton(
-                onPressed: () => context.pop(),
+                onPressed: () => context.go('/admin/events'),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.accentCyan,
                 ),
@@ -80,7 +80,7 @@ class EventDetailScreen extends HookConsumerWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => context.pop(),
+                    onPressed: () => context.go('/admin/events'),
                   ),
                   const Expanded(
                     child: Text(

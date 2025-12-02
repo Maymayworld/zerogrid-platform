@@ -1,5 +1,4 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter/foundation.dart';
 import '../models/ticket.dart';
 
 // チケットリストプロバイダー
@@ -10,65 +9,52 @@ final ticketListProvider = StateNotifierProvider<TicketListNotifier, List<Ticket
 class TicketListNotifier extends StateNotifier<List<Ticket>> {
   TicketListNotifier() : super([]) {
     // 初期データ（デモ用）
-    debugPrint('🎫 TicketListNotifier初期化開始');
     _loadDemoTickets();
   }
 
   void _loadDemoTickets() {
-    debugPrint('🎫 デモチケット読み込み開始');
-    
-    try {
-      final tickets = [
-        Ticket(
-          id: 'TICKET-001',
-          eventName: 'SUMMER SONIC 2025',
-          eventImage: '',
-          eventDate: DateTime(2025, 8, 16, 18, 0),
-          venue: '幕張メッセ',
-          seatType: 'VIP',
-          ticketNumber: 'VIP-A-12',
-        ),
-        Ticket(
-          id: 'TICKET-002',
-          eventName: 'FUJI ROCK FESTIVAL',
-          eventImage: '',
-          eventDate: DateTime(2025, 7, 25, 19, 30),
-          venue: '苗場スキー場',
-          seatType: '一般',
-          ticketNumber: 'GEN-FREE',
-        ),
-        Ticket(
-          id: 'TICKET-003',
-          eventName: 'ROCK IN JAPAN 2025',
-          eventImage: '',
-          eventDate: DateTime(2025, 8, 9, 17, 0),
-          venue: '国営ひたち海浜公園',
-          seatType: 'VIP',
-          ticketNumber: 'VIP-B-08',
-        ),
-      ];
-      
-      state = tickets;
-      debugPrint('🎫 チケット読み込み完了: ${tickets.length}件');
-      debugPrint('🎫 チケット詳細:');
-      for (var ticket in tickets) {
-        debugPrint('  - ${ticket.eventName} (${ticket.id})');
-      }
-    } catch (e) {
-      debugPrint('❌ チケット読み込みエラー: $e');
-    }
+    state = [
+      Ticket(
+        id: 'TICKET-001',
+        eventName: 'SUMMER SONIC 2025',
+        eventImage: 'https://source.unsplash.com/300x200/?summer,festival,music',
+        eventDate: DateTime(2025, 8, 16, 18, 0),
+        venue: '幕張メッセ',
+        seatType: 'VIP',
+        ticketNumber: 'A-12',
+        isPurchased: true, // 購入済み
+      ),
+      Ticket(
+        id: 'TICKET-002',
+        eventName: 'FUJI ROCK FESTIVAL',
+        eventImage: 'https://source.unsplash.com/300x200/?rock,festival,outdoor',
+        eventDate: DateTime(2025, 7, 25, 19, 30),
+        venue: '苗場スキー場',
+        seatType: '一般',
+        ticketNumber: 'FREE',
+        isPurchased: false, // 未購入
+      ),
+      Ticket(
+        id: 'TICKET-003',
+        eventName: 'ROCK IN JAPAN 2025',
+        eventImage: 'https://source.unsplash.com/300x200/?japan,rock,concert',
+        eventDate: DateTime(2025, 8, 10, 17, 0),
+        venue: '国営ひたち海浜公園',
+        seatType: 'VIP',
+        ticketNumber: 'B-08',
+        isPurchased: false, // 未購入
+      ),
+    ];
   }
 
   // チケット追加
   void addTicket(Ticket ticket) {
     state = [...state, ticket];
-    debugPrint('🎫 チケット追加: ${ticket.eventName}');
   }
 
   // チケット削除
   void removeTicket(String ticketId) {
     state = state.where((ticket) => ticket.id != ticketId).toList();
-    debugPrint('🎫 チケット削除: $ticketId');
   }
 
   // チケット更新
@@ -77,7 +63,17 @@ class TicketListNotifier extends StateNotifier<List<Ticket>> {
       for (final ticket in state)
         if (ticket.id == updatedTicket.id) updatedTicket else ticket,
     ];
-    debugPrint('🎫 チケット更新: ${updatedTicket.eventName}');
+  }
+
+  // 購入済みにする
+  void purchaseTicket(String ticketId) {
+    state = [
+      for (final ticket in state)
+        if (ticket.id == ticketId) 
+          ticket.copyWith(isPurchased: true) 
+        else 
+          ticket,
+    ];
   }
 
   // 使用済みにする
@@ -89,16 +85,19 @@ class TicketListNotifier extends StateNotifier<List<Ticket>> {
         else 
           ticket,
     ];
-    debugPrint('🎫 チケット使用済み: $ticketId');
   }
 }
 
-// マイチケット（未使用チケット）プロバイダー
+// 購入済みチケット（マイチケット）プロバイダー
 final myTicketsProvider = Provider<List<Ticket>>((ref) {
   final allTickets = ref.watch(ticketListProvider);
-  final myTickets = allTickets.where((ticket) => !ticket.isUsed).toList();
-  debugPrint('🎫 myTicketsProvider: ${myTickets.length}件の未使用チケット');
-  return myTickets;
+  return allTickets.where((ticket) => ticket.isPurchased && !ticket.isUsed).toList();
+});
+
+// 未購入チケット（購入可能）プロバイダー
+final availableTicketsProvider = Provider<List<Ticket>>((ref) {
+  final allTickets = ref.watch(ticketListProvider);
+  return allTickets.where((ticket) => !ticket.isPurchased).toList();
 });
 
 // 全チケット数プロバイダー

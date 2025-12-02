@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../theme/app_theme.dart';
 
 class SettingsScreen extends HookConsumerWidget {
@@ -161,7 +162,8 @@ class SettingsScreen extends HookConsumerWidget {
                                 TextButton(
                                   onPressed: () {
                                     Navigator.pop(context);
-                                    // TODO: ログアウト処理
+                                    // ロール選択画面に戻る
+                                    context.go('/role-selection');
                                   },
                                   child: const Text(
                                     'ログアウト',

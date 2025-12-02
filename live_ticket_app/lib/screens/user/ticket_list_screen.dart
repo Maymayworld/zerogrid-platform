@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/ticket_provider.dart';
 import '../../theme/app_theme.dart';
@@ -16,6 +17,18 @@ class TicketListScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final allTickets = ref.watch(ticketListProvider);
+    final purchasedTickets = allTickets.where((t) => t.isPurchased).toList();
+    final availableTickets = allTickets.where((t) => !t.isPurchased).toList();
+    
+    // フィルター状態（0: 全て, 1: 購入済み, 2: 未購入）
+    final filterIndex = useState(0);
+    
+    // 表示するチケットリスト
+    final displayTickets = filterIndex.value == 0
+        ? allTickets
+        : filterIndex.value == 1
+            ? purchasedTickets
+            : availableTickets;
 
     return Scaffold(
       backgroundColor: AppTheme.darkBackground,
@@ -55,33 +68,39 @@ class TicketListScreen extends HookConsumerWidget {
               padding: const EdgeInsets.symmetric(
                 horizontal: AppTheme.paddingDefault,
               ),
-              child: Row(
-                children: [
-                  _buildFilterChip(
-                    label: '全て',
-                    count: allTickets.length,
-                    isSelected: true,
-                  ),
-                  const SizedBox(width: AppTheme.paddingSmall),
-                  _buildFilterChip(
-                    label: '未使用',
-                    count: allTickets.where((t) => !t.isUsed).length,
-                    isSelected: false,
-                  ),
-                  const SizedBox(width: AppTheme.paddingSmall),
-                  _buildFilterChip(
-                    label: '使用済み',
-                    count: allTickets.where((t) => t.isUsed).length,
-                    isSelected: false,
-                  ),
-                ],
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    _buildFilterChip(
+                      label: '全て',
+                      count: allTickets.length,
+                      isSelected: filterIndex.value == 0,
+                      onTap: () => filterIndex.value = 0,
+                    ),
+                    const SizedBox(width: AppTheme.paddingSmall),
+                    _buildFilterChip(
+                      label: '購入済み',
+                      count: purchasedTickets.length,
+                      isSelected: filterIndex.value == 1,
+                      onTap: () => filterIndex.value = 1,
+                    ),
+                    const SizedBox(width: AppTheme.paddingSmall),
+                    _buildFilterChip(
+                      label: '未購入',
+                      count: availableTickets.length,
+                      isSelected: filterIndex.value == 2,
+                      onTap: () => filterIndex.value = 2,
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: AppTheme.paddingDefault),
 
             // チケットリスト
             Expanded(
-              child: allTickets.isEmpty
+              child: displayTickets.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,14 +125,57 @@ class TicketListScreen extends HookConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                         horizontal: AppTheme.paddingDefault,
                       ),
-                      itemCount: allTickets.length,
+                      itemCount: displayTickets.length,
                       itemBuilder: (context, index) {
-                        final ticket = allTickets[index];
-                        return TicketCard(
-                          ticket: ticket,
-                          onShowQrCode: () {
-                            context.push('/qr-code/${ticket.id}');
-                          },
+                        final ticket = displayTickets[index];
+                        return Column(
+                          children: [
+                            TicketCard(
+                              ticket: ticket,
+                              onShowQrCode: ticket.isPurchased
+                                  ? () {
+                                      context.push('/user/qr-code/${ticket.id}');
+                                    }
+                                  : null,
+                            ),
+                            // 未購入チケットの場合は購入ボタンを表示
+                            if (!ticket.isPurchased)
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: AppTheme.paddingDefault,
+                                ),
+                                child: SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      ref.read(ticketListProvider.notifier).purchaseTicket(ticket.id);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('${ticket.eventName} を購入しました'),
+                                          backgroundColor: Colors.green,
+                                          duration: const Duration(seconds: 2),
+                                        ),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppTheme.accentCyan,
+                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                    child: const Text(
+                                      '購入',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                          ],
                         );
                       },
                     ),
@@ -128,22 +190,26 @@ class TicketListScreen extends HookConsumerWidget {
     required String label,
     required int count,
     required bool isSelected,
+    VoidCallback? onTap,
   }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: 16,
-        vertical: 8,
-      ),
-      decoration: BoxDecoration(
-        color: isSelected ? AppTheme.accentCyan : AppTheme.cardBackground,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(
-        '$label ($count)',
-        style: TextStyle(
-          fontSize: 13,
-          color: isSelected ? AppTheme.darkBackground : Colors.white,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.accentCyan : AppTheme.cardBackground,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          '$label ($count)',
+          style: TextStyle(
+            fontSize: 13,
+            color: isSelected ? AppTheme.darkBackground : Colors.white,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
       ),
     );

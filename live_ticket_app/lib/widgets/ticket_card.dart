@@ -5,12 +5,12 @@ import '../theme/app_theme.dart';
 
 class TicketCard extends StatelessWidget {
   final Ticket ticket;
-  final VoidCallback onShowQrCode;
+  final VoidCallback? onShowQrCode; // nullableに変更
 
   const TicketCard({
     super.key,
     required this.ticket,
-    required this.onShowQrCode,
+    this.onShowQrCode, // requiredを削除
   });
 
   @override
@@ -154,36 +154,37 @@ class TicketCard extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // QR表示ボタン（★修正：Expandedで囲まずに固定サイズ）
-                    ElevatedButton(
-                      onPressed: onShowQrCode,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.accentCyan,
-                        foregroundColor: AppTheme.darkBackground,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 24,
-                          vertical: 12,
-                        ),
-                        minimumSize: const Size(100, 44), // 最小サイズを指定
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Row(
-                        mainAxisSize: MainAxisSize.min, // ★重要：最小サイズにする
-                        children: [
-                          Text(
-                            'QR表示',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
+                    // QR表示ボタン（購入済みの場合のみ表示）
+                    if (onShowQrCode != null)
+                      ElevatedButton(
+                        onPressed: onShowQrCode,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.accentCyan,
+                          foregroundColor: AppTheme.darkBackground,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 12,
                           ),
-                          SizedBox(width: 4),
-                          Icon(Icons.arrow_forward, size: 16),
-                        ],
+                          minimumSize: const Size(100, 44), // 最小サイズを指定
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: const Row(
+                          mainAxisSize: MainAxisSize.min, // ★重要：最小サイズにする
+                          children: [
+                            Text(
+                              'QR表示',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(width: 4),
+                            Icon(Icons.arrow_forward, size: 16),
+                          ],
+                        ),
                       ),
-                    ),
                   ],
                 ),
               ],

@@ -113,11 +113,13 @@ final _router = GoRouter(
         final eventName = state.uri.queryParameters['eventName'];
         final seatType = state.uri.queryParameters['seatType'];
         final seat = state.uri.queryParameters['seat'];
+        final eventId = state.uri.queryParameters['eventId'] ?? '';
         return ScanResultScreen(
           success: success,
           eventName: eventName,
           seatType: seatType,
           seat: seat,
+          eventId: eventId,
         );
       },
     ),

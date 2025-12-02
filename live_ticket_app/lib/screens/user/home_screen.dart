@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../providers/ticket_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/ticket_card.dart';
+import '../../providers/ticket_provider.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/ticket_card.dart';
 
 class HomeScreen extends HookConsumerWidget {
   const HomeScreen({super.key});
