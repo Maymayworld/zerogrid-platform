@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../theme/app_theme.dart';
-import '../screens/home_screen.dart';
-import '../screens/ticket_list_screen.dart';
-import '../screens/settings_screen.dart';
+import '../screens/user/home_screen.dart';
+import '../screens/user/ticket_list_screen.dart';
+import '../screens/user/settings_screen.dart';
 
 // 現在のタブインデックスを管理するプロバイダー
 final currentTabIndexProvider = StateProvider<int>((ref) => 0);
@@ -24,15 +24,17 @@ class MainLayout extends HookConsumerWidget {
     ];
 
     return Scaffold(
+      backgroundColor: AppTheme.darkBackground,
       body: IndexedStack(
         index: currentIndex,
         children: screens,
       ),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
+          color: AppTheme.cardBackground,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
+              color: Colors.black.withOpacity(0.3),
               blurRadius: 8,
               offset: const Offset(0, -2),
             ),
@@ -44,9 +46,9 @@ class MainLayout extends HookConsumerWidget {
             ref.read(currentTabIndexProvider.notifier).state = index;
           },
           type: BottomNavigationBarType.fixed,
-          backgroundColor: Colors.white,
-          selectedItemColor: AppTheme.primaryBlue,
-          unselectedItemColor: Colors.grey[600],
+          backgroundColor: AppTheme.cardBackground,
+          selectedItemColor: AppTheme.accentCyan,
+          unselectedItemColor: Colors.white.withOpacity(0.5),
           selectedFontSize: 12,
           unselectedFontSize: 12,
           items: const [

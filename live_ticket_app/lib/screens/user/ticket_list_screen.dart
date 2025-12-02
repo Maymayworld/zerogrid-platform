@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../providers/ticket_provider.dart';
-import '../theme/app_theme.dart';
-import '../widgets/ticket_card.dart';
+import '../../providers/ticket_provider.dart';
+import '../../theme/app_theme.dart';
+import '../../widgets/ticket_card.dart';
 
 class TicketListScreen extends HookConsumerWidget {
   final bool isFromBottomNav;
@@ -18,6 +18,7 @@ class TicketListScreen extends HookConsumerWidget {
     final allTickets = ref.watch(ticketListProvider);
 
     return Scaffold(
+      backgroundColor: AppTheme.darkBackground,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,9 +31,8 @@ class TicketListScreen extends HookConsumerWidget {
                   // ボトムナビゲーションから来た場合は戻るボタンを非表示
                   if (!isFromBottomNav) ...[
                     IconButton(
-                      icon: const Icon(Icons.arrow_back),
+                      icon: const Icon(Icons.arrow_back, color: Colors.white),
                       onPressed: () => context.pop(),
-                      color: AppTheme.textColor,
                     ),
                     const SizedBox(width: AppTheme.paddingSmall),
                   ],
@@ -40,9 +40,9 @@ class TicketListScreen extends HookConsumerWidget {
                     child: Text(
                       'チケット一覧',
                       style: TextStyle(
-                        fontSize: AppTheme.textSizeLarge,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.textColor,
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -89,14 +89,14 @@ class TicketListScreen extends HookConsumerWidget {
                           Icon(
                             Icons.confirmation_number_outlined,
                             size: 80,
-                            color: Colors.grey[400],
+                            color: Colors.white.withOpacity(0.3),
                           ),
                           const SizedBox(height: AppTheme.paddingDefault),
                           Text(
                             'チケットがありません',
                             style: TextStyle(
                               fontSize: 16,
-                              color: Colors.grey[600],
+                              color: Colors.white.withOpacity(0.5),
                             ),
                           ),
                         ],
@@ -131,19 +131,19 @@ class TicketListScreen extends HookConsumerWidget {
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: 12,
+        horizontal: 16,
         vertical: 8,
       ),
       decoration: BoxDecoration(
-        color: isSelected ? AppTheme.primaryBlue : AppTheme.cardColor,
+        color: isSelected ? AppTheme.accentCyan : AppTheme.cardBackground,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         '$label ($count)',
         style: TextStyle(
           fontSize: 13,
-          color: isSelected ? Colors.white : AppTheme.textColor,
-          fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+          color: isSelected ? AppTheme.darkBackground : Colors.white,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
         ),
       ),
     );

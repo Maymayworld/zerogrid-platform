@@ -27,8 +27,8 @@ class PrimaryButton extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
             ),
-            side: const BorderSide(color: AppTheme.primaryBlue, width: 1.5),
-            foregroundColor: AppTheme.primaryBlue,
+            side: const BorderSide(color: AppTheme.accentCyan, width: 1.5),
+            foregroundColor: AppTheme.accentCyan,
           ),
           child: Text(
             text,
@@ -47,7 +47,7 @@ class PrimaryButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppTheme.primaryBlue,
+          backgroundColor: backgroundColor ?? AppTheme.accentCyan,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
           ),

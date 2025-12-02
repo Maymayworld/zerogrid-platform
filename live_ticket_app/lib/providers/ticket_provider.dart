@@ -1,4 +1,5 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter/foundation.dart';
 import '../models/ticket.dart';
 
 // チケットリストプロバイダー
@@ -9,49 +10,65 @@ final ticketListProvider = StateNotifierProvider<TicketListNotifier, List<Ticket
 class TicketListNotifier extends StateNotifier<List<Ticket>> {
   TicketListNotifier() : super([]) {
     // 初期データ（デモ用）
+    debugPrint('🎫 TicketListNotifier初期化開始');
     _loadDemoTickets();
   }
 
   void _loadDemoTickets() {
-    state = [
-      Ticket(
-        id: 'TICKET-001',
-        eventName: '春のロックフェス 2025',
-        eventImage: 'https://source.unsplash.com/300x200/?rock,concert,music',
-        eventDate: DateTime(2025, 3, 15, 18, 0),
-        venue: '渋谷CLUB QUATTRO',
-        seatType: 'スタンディング',
-        ticketNumber: 'LIVE-2025-001',
-      ),
-      Ticket(
-        id: 'TICKET-002',
-        eventName: 'ジャズナイト Vol.12',
-        eventImage: 'https://source.unsplash.com/300x200/?jazz,saxophone,music',
-        eventDate: DateTime(2025, 4, 20, 19, 30),
-        venue: '六本木ビルボードライブ東京',
-        seatType: 'テーブル席 A-5',
-        ticketNumber: 'JAZZ-2025-042',
-      ),
-      Ticket(
-        id: 'TICKET-003',
-        eventName: 'アコースティックライブ',
-        eventImage: 'https://source.unsplash.com/300x200/?acoustic,guitar,live',
-        eventDate: DateTime(2025, 5, 10, 17, 0),
-        venue: '下北沢SHELTER',
-        seatType: '指定席 B-12',
-        ticketNumber: 'ACOUSTIC-2025-128',
-      ),
-    ];
+    debugPrint('🎫 デモチケット読み込み開始');
+    
+    try {
+      final tickets = [
+        Ticket(
+          id: 'TICKET-001',
+          eventName: 'SUMMER SONIC 2025',
+          eventImage: '',
+          eventDate: DateTime(2025, 8, 16, 18, 0),
+          venue: '幕張メッセ',
+          seatType: 'VIP',
+          ticketNumber: 'VIP-A-12',
+        ),
+        Ticket(
+          id: 'TICKET-002',
+          eventName: 'FUJI ROCK FESTIVAL',
+          eventImage: '',
+          eventDate: DateTime(2025, 7, 25, 19, 30),
+          venue: '苗場スキー場',
+          seatType: '一般',
+          ticketNumber: 'GEN-FREE',
+        ),
+        Ticket(
+          id: 'TICKET-003',
+          eventName: 'ROCK IN JAPAN 2025',
+          eventImage: '',
+          eventDate: DateTime(2025, 8, 9, 17, 0),
+          venue: '国営ひたち海浜公園',
+          seatType: 'VIP',
+          ticketNumber: 'VIP-B-08',
+        ),
+      ];
+      
+      state = tickets;
+      debugPrint('🎫 チケット読み込み完了: ${tickets.length}件');
+      debugPrint('🎫 チケット詳細:');
+      for (var ticket in tickets) {
+        debugPrint('  - ${ticket.eventName} (${ticket.id})');
+      }
+    } catch (e) {
+      debugPrint('❌ チケット読み込みエラー: $e');
+    }
   }
 
   // チケット追加
   void addTicket(Ticket ticket) {
     state = [...state, ticket];
+    debugPrint('🎫 チケット追加: ${ticket.eventName}');
   }
 
   // チケット削除
   void removeTicket(String ticketId) {
     state = state.where((ticket) => ticket.id != ticketId).toList();
+    debugPrint('🎫 チケット削除: $ticketId');
   }
 
   // チケット更新
@@ -60,6 +77,7 @@ class TicketListNotifier extends StateNotifier<List<Ticket>> {
       for (final ticket in state)
         if (ticket.id == updatedTicket.id) updatedTicket else ticket,
     ];
+    debugPrint('🎫 チケット更新: ${updatedTicket.eventName}');
   }
 
   // 使用済みにする
@@ -71,13 +89,16 @@ class TicketListNotifier extends StateNotifier<List<Ticket>> {
         else 
           ticket,
     ];
+    debugPrint('🎫 チケット使用済み: $ticketId');
   }
 }
 
 // マイチケット（未使用チケット）プロバイダー
 final myTicketsProvider = Provider<List<Ticket>>((ref) {
   final allTickets = ref.watch(ticketListProvider);
-  return allTickets.where((ticket) => !ticket.isUsed).toList();
+  final myTickets = allTickets.where((ticket) => !ticket.isUsed).toList();
+  debugPrint('🎫 myTicketsProvider: ${myTickets.length}件の未使用チケット');
+  return myTickets;
 });
 
 // 全チケット数プロバイダー

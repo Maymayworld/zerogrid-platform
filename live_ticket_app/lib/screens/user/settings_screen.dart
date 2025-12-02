@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../theme/app_theme.dart';
+import '../../theme/app_theme.dart';
 
 class SettingsScreen extends HookConsumerWidget {
   const SettingsScreen({super.key});
@@ -8,6 +8,7 @@ class SettingsScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: AppTheme.darkBackground,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppTheme.paddingDefault),
@@ -18,9 +19,9 @@ class SettingsScreen extends HookConsumerWidget {
               const Text(
                 '設定',
                 style: TextStyle(
-                  fontSize: AppTheme.textSizeLarge,
+                  fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: AppTheme.textColor,
+                  color: Colors.white,
                 ),
               ),
               const SizedBox(height: AppTheme.paddingLarge),
@@ -62,6 +63,7 @@ class SettingsScreen extends HookConsumerWidget {
                             onChanged: (value) {
                               // TODO: 通知設定の切り替え
                             },
+                            activeColor: AppTheme.accentCyan,
                           ),
                         ),
                         _buildSettingItem(
@@ -72,6 +74,7 @@ class SettingsScreen extends HookConsumerWidget {
                             onChanged: (value) {
                               // TODO: メール通知設定の切り替え
                             },
+                            activeColor: AppTheme.accentCyan,
                           ),
                         ),
                       ],
@@ -114,8 +117,12 @@ class SettingsScreen extends HookConsumerWidget {
                     // ログアウトボタン
                     Container(
                       decoration: BoxDecoration(
-                        color: AppTheme.cardColor,
+                        color: AppTheme.cardBackground,
                         borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+                        border: Border.all(
+                          color: Colors.white.withOpacity(0.1),
+                          width: 1,
+                        ),
                       ),
                       child: ListTile(
                         leading: const Icon(
@@ -134,12 +141,22 @@ class SettingsScreen extends HookConsumerWidget {
                           showDialog(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('ログアウト'),
-                              content: const Text('ログアウトしますか？'),
+                              backgroundColor: AppTheme.cardBackground,
+                              title: const Text(
+                                'ログアウト',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                              content: const Text(
+                                'ログアウトしますか？',
+                                style: TextStyle(color: Colors.white70),
+                              ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(context),
-                                  child: const Text('キャンセル'),
+                                  child: Text(
+                                    'キャンセル',
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
                                 ),
                                 TextButton(
                                   onPressed: () {
@@ -184,15 +201,19 @@ class SettingsScreen extends HookConsumerWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: Colors.grey[600],
+              color: Colors.white.withOpacity(0.5),
               letterSpacing: 0.5,
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.cardColor,
+            color: AppTheme.cardBackground,
             borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+            border: Border.all(
+              color: Colors.white.withOpacity(0.1),
+              width: 1,
+            ),
           ),
           child: Column(
             children: items,
@@ -210,12 +231,13 @@ class SettingsScreen extends HookConsumerWidget {
     VoidCallback? onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: AppTheme.textColor),
+      leading: Icon(icon, color: Colors.white),
       title: Text(
         title,
         style: const TextStyle(
-          fontSize: AppTheme.textSizeNormal,
+          fontSize: 14,
           fontWeight: FontWeight.w500,
+          color: Colors.white,
         ),
       ),
       subtitle: subtitle != null
@@ -223,13 +245,13 @@ class SettingsScreen extends HookConsumerWidget {
               subtitle,
               style: TextStyle(
                 fontSize: 12,
-                color: Colors.grey[600],
+                color: Colors.white.withOpacity(0.5),
               ),
             )
           : null,
       trailing: trailing ??
           (onTap != null
-              ? const Icon(Icons.chevron_right, color: Colors.grey)
+              ? Icon(Icons.chevron_right, color: Colors.white.withOpacity(0.3))
               : null),
       onTap: onTap,
     );
