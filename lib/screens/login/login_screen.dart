@@ -86,22 +86,14 @@ class LoginScreen extends HookConsumerWidget {
               // タイトル
               Text(
                 'Good to see you again!',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: ColorPalette().neutral800,
-                ),
+                style: TextStylePalette.header
               ),
               SizedBox(height: SpacePalette.xl),
               
               // Email
               Text(
                 'Email',
-                style: TextStyle(
-                  fontSize: FontSizePalette.base,
-                  fontWeight: FontWeight.w600,
-                  color: ColorPalette().neutral800,
-                ),
+                style: TextStylePalette.miniTitle
               ),
               SizedBox(height: SpacePalette.sm),
               SizedBox(
@@ -111,20 +103,20 @@ class LoginScreen extends HookConsumerWidget {
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'mail@gmail.com',
-                    hintStyle: TextStyle(color: ColorPalette().neutral400),
+                    hintStyle: TextStylePalette.hintText,
                     filled: true,
                     fillColor: Colors.transparent,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
-                      borderSide: BorderSide(color: ColorPalette().neutral200),
+                      borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
-                      borderSide: BorderSide(color: ColorPalette().neutral200),
+                      borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
-                      borderSide: BorderSide(color: ColorPalette().neutral800, width: 2),
+                      borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
@@ -138,11 +130,7 @@ class LoginScreen extends HookConsumerWidget {
               // Password
               Text(
                 'Password',
-                style: TextStyle(
-                  fontSize: FontSizePalette.base,
-                  fontWeight: FontWeight.w600,
-                  color: ColorPalette().neutral800,
-                ),
+                style: TextStylePalette.miniTitle
               ),
               SizedBox(height: SpacePalette.sm),
               SizedBox(
@@ -152,7 +140,7 @@ class LoginScreen extends HookConsumerWidget {
                   obscureText: !isPasswordVisible.value,
                   decoration: InputDecoration(
                     hintText: '••••••',
-                    hintStyle: TextStyle(color: ColorPalette().neutral400),
+                    hintStyle: TextStyle(color: ColorPalette.neutral400),
                     filled: true,
                     fillColor: Colors.transparent,
                     suffixIcon: IconButton(
@@ -160,7 +148,7 @@ class LoginScreen extends HookConsumerWidget {
                         isPasswordVisible.value
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: ColorPalette().neutral600,
+                        color: ColorPalette.neutral600,
                         size: 20,
                       ),
                       onPressed: () {
@@ -169,15 +157,15 @@ class LoginScreen extends HookConsumerWidget {
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
-                      borderSide: BorderSide(color: ColorPalette().neutral200),
+                      borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
-                      borderSide: BorderSide(color: ColorPalette().neutral200),
+                      borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
-                      borderSide: BorderSide(color: ColorPalette().neutral800, width: 2),
+                      borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
@@ -200,11 +188,7 @@ class LoginScreen extends HookConsumerWidget {
                   },
                   child: Text(
                     'Forgot Password',
-                    style: TextStyle(
-                      fontSize: FontSizePalette.sm,
-                      fontWeight: FontWeight.w600,
-                      color: ColorPalette().neutral800,
-                    ),
+                    style: TextStylePalette.guide
                   ),
                 ),
               ),
@@ -217,7 +201,7 @@ class LoginScreen extends HookConsumerWidget {
                 child: ElevatedButton(
                   onPressed: isLoading.value ? null : handleLogin,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette().neutral800,
+                    backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
                     ),
@@ -233,11 +217,7 @@ class LoginScreen extends HookConsumerWidget {
                         )
                       : Text(
                           'Sign In',
-                          style: TextStyle(
-                            fontSize: FontSizePalette.md,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                          style: TextStylePalette.buttonTextWhite
                         ),
                 ),
               ),
@@ -246,18 +226,15 @@ class LoginScreen extends HookConsumerWidget {
               // or
               Row(
                 children: [
-                  Expanded(child: Divider(color: ColorPalette().neutral200)),
+                  Expanded(child: Divider(color: ColorPalette.neutral200)),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
                     child: Text(
                       'or',
-                      style: TextStyle(
-                        fontSize: FontSizePalette.base,
-                        color: ColorPalette().neutral500,
-                      ),
+                        style: TextStylePalette.dividerText
                     ),
                   ),
-                  Expanded(child: Divider(color: ColorPalette().neutral200)),
+                  Expanded(child: Divider(color: ColorPalette.neutral200)),
                 ],
               ),
               SizedBox(height: SpacePalette.lg),
@@ -269,7 +246,7 @@ class LoginScreen extends HookConsumerWidget {
                 child: OutlinedButton(
                   onPressed: handleLineLogin,
                   style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: ColorPalette().neutral200),
+                    side: BorderSide(color: ColorPalette.neutral200),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
                     ),
@@ -300,11 +277,7 @@ class LoginScreen extends HookConsumerWidget {
                       SizedBox(width: SpacePalette.sm),
                       Text(
                         'Continue with LINE',
-                        style: TextStyle(
-                          fontSize: FontSizePalette.md,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral800,
-                        ),
+                        style: TextStylePalette.buttonTextBlack,
                       ),
                     ],
                   ),
@@ -319,10 +292,7 @@ class LoginScreen extends HookConsumerWidget {
                   children: [
                     Text(
                       'New here? ',
-                      style: TextStyle(
-                        fontSize: FontSizePalette.sm,
-                        color: ColorPalette().neutral500,
-                      ),
+                      style: TextStylePalette.subGuide
                     ),
                     TextButton(
                       onPressed: () {
@@ -338,11 +308,7 @@ class LoginScreen extends HookConsumerWidget {
                       ),
                       child: Text(
                         'Create an account',
-                        style: TextStyle(
-                          fontSize: FontSizePalette.sm,
-                          color: ColorPalette().neutral800,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: TextStylePalette.guide
                       ),
                     ),
                   ],

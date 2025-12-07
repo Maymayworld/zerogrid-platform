@@ -14,7 +14,7 @@ class DashboardScreen extends HookWidget {
     final selectedDays = useState<String>('7 days');
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(SpacePalette.base),
@@ -24,11 +24,7 @@ class DashboardScreen extends HookWidget {
               // タイトル
               Text(
                 'Analytics',
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.lg,
-                  fontWeight: FontWeight.bold,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.header
               ),
               SizedBox(height: SpacePalette.base),
               
@@ -68,11 +64,7 @@ class DashboardScreen extends HookWidget {
               // Earnings
               Text(
                 'Earnings',
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.md,
-                  fontWeight: FontWeight.w600,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.smallHeader
               ),
               SizedBox(height: SpacePalette.base),
               
@@ -85,28 +77,21 @@ class DashboardScreen extends HookWidget {
                       children: [
                         Text(
                           'Total Views',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.sm,
-                            color: ColorPalette().neutral500,
-                          ),
+                          style: TextStylePalette.smallListSubTitle
                         ),
                         SizedBox(height: SpacePalette.xs),
                         Row(
                           children: [
                             Text(
                               '912,400',
-                              style: GoogleFonts.inter(
-                                fontSize: FontSizePalette.lg,
-                                fontWeight: FontWeight.bold,
-                                color: ColorPalette().neutral900,
-                              ),
+                              style: TextStylePalette.smallListTitle
                             ),
                             SizedBox(width: SpacePalette.sm),
                             Text(
                               '+31.8%',
-                              style: GoogleFonts.inter(
+                              style: TextStyle(
                                 fontSize: FontSizePalette.sm,
-                                color: ColorPalette().systemGreen,
+                                color: ColorPalette.systemGreen,
                               ),
                             ),
                           ],
@@ -120,19 +105,12 @@ class DashboardScreen extends HookWidget {
                       children: [
                         Text(
                           'Total Earnings',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.sm,
-                            color: ColorPalette().neutral500,
-                          ),
+                          style: TextStylePalette.smallListSubTitle
                         ),
                         SizedBox(height: SpacePalette.xs),
                         Text(
                           '¥300,000',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.lg,
-                            fontWeight: FontWeight.bold,
-                            color: ColorPalette().neutral900,
-                          ),
+                          style: TextStylePalette.smallListTitle
                         ),
                       ],
                     ),
@@ -145,16 +123,13 @@ class DashboardScreen extends HookWidget {
               Container(
                 height: 200,
                 decoration: BoxDecoration(
-                  color: ColorPalette().neutral100,
+                  color: ColorPalette.neutral100,
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
                 ),
                 child: Center(
                   child: Text(
                     'Chart (Coming Soon)',
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.base,
-                      color: ColorPalette().neutral500,
-                    ),
+                    style: TextStylePalette.subText
                   ),
                 ),
               ),
@@ -166,18 +141,11 @@ class DashboardScreen extends HookWidget {
                 children: [
                   Text(
                     'Earning History',
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.md,
-                      fontWeight: FontWeight.w600,
-                      color: ColorPalette().neutral900,
-                    ),
+                    style: TextStylePalette.smallHeader
                   ),
                   Text(
                     '45% left to be top 4%',
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.sm,
-                      color: ColorPalette().neutral500,
-                    ),
+                    style: TextStylePalette.subMiniTitle
                   ),
                 ],
               ),
@@ -187,7 +155,7 @@ class DashboardScreen extends HookWidget {
               Container(
                 height: 8,
                 decoration: BoxDecoration(
-                  color: ColorPalette().neutral200,
+                  color: ColorPalette.neutral200,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: FractionallySizedBox(
@@ -195,7 +163,7 @@ class DashboardScreen extends HookWidget {
                   alignment: Alignment.centerLeft,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: ColorPalette().systemGreen,
+                      color: ColorPalette.systemGreen,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),
@@ -212,14 +180,11 @@ class DashboardScreen extends HookWidget {
                       flex: 2,
                       child: Row(
                         children: [
-                          Icon(Icons.play_circle_outline, size: 16, color: ColorPalette().neutral500),
+                          Icon(Icons.play_circle_outline, size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(
                             'Video',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.sm,
-                              color: ColorPalette().neutral500,
-                            ),
+                            style: TextStylePalette.subMiniTitle
                           ),
                         ],
                       ),
@@ -227,14 +192,11 @@ class DashboardScreen extends HookWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.visibility_outlined, size: 16, color: ColorPalette().neutral500),
+                          Icon(Icons.visibility_outlined, size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(
                             'Views',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.sm,
-                              color: ColorPalette().neutral500,
-                            ),
+                            style: TextStylePalette.subMiniTitle
                           ),
                         ],
                       ),
@@ -242,14 +204,11 @@ class DashboardScreen extends HookWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.attach_money, size: 16, color: ColorPalette().neutral500),
+                          Icon(Icons.attach_money, size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(
                             'Earning',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.sm,
-                              color: ColorPalette().neutral500,
-                            ),
+                            style: TextStylePalette.subMiniTitle
                           ),
                         ],
                       ),
@@ -307,7 +266,7 @@ class _DropdownButton extends StatelessWidget {
           vertical: SpacePalette.sm,
         ),
         decoration: BoxDecoration(
-          border: Border.all(color: ColorPalette().neutral300),
+          border: Border.all(color: ColorPalette.neutral200),
           borderRadius: BorderRadius.circular(RadiusPalette.sm),
         ),
         child: Row(
@@ -320,15 +279,12 @@ class _DropdownButton extends StatelessWidget {
             Flexible(
               child: Text(
                 value,
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.sm,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.normalText,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             SizedBox(width: SpacePalette.xs),
-            Icon(Icons.keyboard_arrow_down, size: 16, color: ColorPalette().neutral500),
+            Icon(Icons.keyboard_arrow_down, size: 16, color: ColorPalette.neutral500),
           ],
         ),
       ),
@@ -376,21 +332,14 @@ class _EarningItem extends StatelessWidget {
           Expanded(
             child: Text(
               views,
-              style: GoogleFonts.inter(
-                fontSize: FontSizePalette.sm,
-                color: ColorPalette().neutral900,
-              ),
+              style: TextStylePalette.miniText
             ),
           ),
           // Earning
           Expanded(
             child: Text(
               earning,
-              style: GoogleFonts.inter(
-                fontSize: FontSizePalette.sm,
-                fontWeight: FontWeight.w600,
-                color: ColorPalette().neutral900,
-              ),
+              style: TextStylePalette.miniTitle
             ),
           ),
         ],

@@ -92,7 +92,7 @@ class _OrganizerBottomNavBar extends StatelessWidget {
             color: backgroundColor,
             boxShadow: [
               BoxShadow(
-                color: ColorPalette().neutral800.withOpacity(0.05),
+                color: ColorPalette.neutral800.withOpacity(0.05),
                 blurRadius: 10,
                 offset: Offset(0, -2),
               ),
@@ -109,7 +109,7 @@ class _OrganizerBottomNavBar extends StatelessWidget {
           top: 0,
           child: Container(
             height: 1,
-            color: ColorPalette().neutral200,
+            color: ColorPalette.neutral200,
           ),
         ),
         // 選択インジケーター（移動する線）
@@ -122,7 +122,7 @@ class _OrganizerBottomNavBar extends StatelessWidget {
             width: 40,
             height: 3,
             decoration: BoxDecoration(
-              color: ColorPalette().neutral800,
+              color: ColorPalette.neutral800,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(2),
                 bottomRight: Radius.circular(2),
@@ -198,11 +198,11 @@ class _OrganizerBottomNavBar extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: currentIndex == 2 ? ColorPalette().neutral800 : ColorPalette().neutral0,
+                color: currentIndex == 2 ? ColorPalette.neutral800 : ColorPalette.neutral0,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
-                    color: ColorPalette().neutral800.withOpacity(0.15),
+                    color: ColorPalette.neutral800.withOpacity(0.15),
                     blurRadius: 8,
                     offset: Offset(0, 2),
                   ),
@@ -210,7 +210,7 @@ class _OrganizerBottomNavBar extends StatelessWidget {
               ),
               child: Icon(
                 Icons.add,
-                color: currentIndex == 2 ? ColorPalette().neutral0 : ColorPalette().neutral400,
+                color: currentIndex == 2 ? ColorPalette.neutral0 : ColorPalette.neutral400,
                 size: 28,
               ),
             ),

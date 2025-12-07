@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../theme/app_theme.dart';
 import 'widgets/edit_profile_screen.dart';
+import 'widgets/give_feedback_sheet.dart';
 
 class ProfileScreen extends HookWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -11,7 +12,7 @@ class ProfileScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(SpacePalette.base),
@@ -22,7 +23,7 @@ class ProfileScreen extends HookWidget {
               // プロフィール写真（1つのみ）
               CircleAvatar(
                 radius: 50,
-                backgroundColor: ColorPalette().neutral300,
+                backgroundColor: ColorPalette.neutral400,
                 backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=1'),
               ),
               SizedBox(height: SpacePalette.xl),
@@ -30,31 +31,21 @@ class ProfileScreen extends HookWidget {
               // Creator Name
               Text(
                 'Creator Name',
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.lg,
-                  fontWeight: FontWeight.bold,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.smallHeader
               ),
-              SizedBox(height: SpacePalette.xs),
+              SizedBox(height: SpacePalette.sm),
               
               // Creator Badge
               Text(
                 'Creator',
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.base,
-                  color: ColorPalette().neutral500,
-                ),
+                style: TextStylePalette.subText
               ),
               SizedBox(height: SpacePalette.base),
               
               // Bio
               Text(
                 'man of culture',
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.base,
-                  color: ColorPalette().neutral600,
-                ),
+                style: TextStylePalette.normalText
               ),
               SizedBox(height: SpacePalette.xl),
               
@@ -63,7 +54,7 @@ class ProfileScreen extends HookWidget {
                 width: double.infinity,
                 padding: EdgeInsets.all(SpacePalette.base),
                 decoration: BoxDecoration(
-                  color: ColorPalette().neutral900,
+                  color: ColorPalette.neutral800,
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
                 ),
                 child: Column(
@@ -74,26 +65,19 @@ class ProfileScreen extends HookWidget {
                         Icon(
                           Icons.account_balance,
                           size: 16,
-                          color: ColorPalette().neutral0,
+                          color: ColorPalette.neutral0,
                         ),
                         SizedBox(width: SpacePalette.xs),
                         Text(
                           'Bank Account',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.sm,
-                            color: ColorPalette().neutral0,
-                          ),
+                          style: TextStylePalette.miniText
                         ),
                       ],
                     ),
                     SizedBox(height: SpacePalette.base),
                     Text(
                       'Account Name',
-                      style: GoogleFonts.inter(
-                        fontSize: FontSizePalette.md,
-                        fontWeight: FontWeight.w600,
-                        color: ColorPalette().neutral0,
-                      ),
+                      style: TextStylePalette.smallHeader
                     ),
                     SizedBox(height: SpacePalette.sm),
                     Row(
@@ -101,18 +85,11 @@ class ProfileScreen extends HookWidget {
                       children: [
                         Text(
                           '**** 1084',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.base,
-                            color: ColorPalette().neutral0,
-                          ),
+                          style: TextStylePalette.normalText
                         ),
                         Text(
                           'VISA',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.base,
-                            fontWeight: FontWeight.bold,
-                            color: ColorPalette().neutral0,
-                          ),
+                          style: TextStylePalette.header
                         ),
                       ],
                     ),
@@ -140,8 +117,12 @@ class ProfileScreen extends HookWidget {
                 icon: Icons.feedback_outlined,
                 label: 'Give Feedback',
                 onTap: () {
-                  // フィードバック画面へ遷移（後で実装）
-                  print('Give Feedback tapped');
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (context) => GiveFeedbackSheet(),
+                  );
                 },
               ),
               
@@ -205,7 +186,7 @@ class _ProfileMenuItem extends StatelessWidget {
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-              color: ColorPalette().neutral200,
+              color: ColorPalette.neutral200,
               width: 1,
             ),
           ),
@@ -215,22 +196,19 @@ class _ProfileMenuItem extends StatelessWidget {
             Icon(
               icon,
               size: 20,
-              color: ColorPalette().neutral800,
+              color: ColorPalette.neutral800,
             ),
             SizedBox(width: SpacePalette.base),
             Expanded(
               child: Text(
                 label,
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.md,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.bigText
               ),
             ),
             Icon(
               Icons.chevron_right,
               size: 20,
-              color: ColorPalette().neutral400,
+              color: ColorPalette.neutral400,
             ),
           ],
         ),

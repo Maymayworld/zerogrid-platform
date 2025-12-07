@@ -25,7 +25,7 @@ class FilterBottomSheet extends HookWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: ColorPalette().neutral0,
+        color: ColorPalette.neutral0,
         borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
       ),
       padding: EdgeInsets.all(SpacePalette.lg),
@@ -40,18 +40,14 @@ class FilterBottomSheet extends HookWidget {
               children: [
                 Text(
                   'Filter',
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.lg,
-                    fontWeight: FontWeight.bold,
-                    color: ColorPalette().neutral900,
-                  ),
+                  style: TextStylePalette.smallHeader
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Icon(
                     Icons.close,
                     size: 24,
-                    color: ColorPalette().neutral800,
+                    color: ColorPalette.neutral800,
                   ),
                 ),
               ],
@@ -60,11 +56,7 @@ class FilterBottomSheet extends HookWidget {
             // プラットフォーム選択
             Text(
               'Platform',
-              style: GoogleFonts.inter(
-                fontSize: FontSizePalette.md,
-                fontWeight: FontWeight.w600,
-                color: ColorPalette().neutral900,
-              ),
+              style: TextStylePalette.tagText
             ),
             SizedBox(height: SpacePalette.base),
             Row(
@@ -119,11 +111,7 @@ class FilterBottomSheet extends HookWidget {
             // Pay per View
             Text(
               'Pay per View',
-              style: GoogleFonts.inter(
-                fontSize: FontSizePalette.md,
-                fontWeight: FontWeight.w600,
-                color: ColorPalette().neutral900,
-              ),
+              style: TextStylePalette.title
             ),
             SizedBox(height: SpacePalette.base),
             RangeSlider(
@@ -131,8 +119,8 @@ class FilterBottomSheet extends HookWidget {
               min: 0,
               max: 500000,
               divisions: 100,
-              activeColor: ColorPalette().neutral800,
-              inactiveColor: ColorPalette().neutral300,
+              activeColor: ColorPalette.neutral800,
+              inactiveColor: ColorPalette.neutral400,
               onChanged: (RangeValues values) {
                 payRange.value = values;
               },
@@ -142,17 +130,11 @@ class FilterBottomSheet extends HookWidget {
               children: [
                 Text(
                   '¥${payRange.value.start.toInt()}',
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.base,
-                    color: ColorPalette().neutral600,
-                  ),
+                  style: TextStylePalette.subText
                 ),
                 Text(
                   '¥${payRange.value.end.toInt()}',
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.base,
-                    color: ColorPalette().neutral600,
-                  ),
+                  style: TextStylePalette.subText
                 ),
               ],
             ),
@@ -171,18 +153,14 @@ class FilterBottomSheet extends HookWidget {
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorPalette().neutral900,
+                  backgroundColor: ColorPalette.neutral800,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
                 ),
                 child: Text(
                   'Apply',
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.md,
-                    fontWeight: FontWeight.w600,
-                    color: ColorPalette().neutral0,
-                  ),
+                  style: TextStylePalette.buttonTextWhite
                 ),
               ),
             ),
@@ -217,10 +195,10 @@ class _PlatformChip extends StatelessWidget {
           vertical: SpacePalette.md,
         ),
         decoration: BoxDecoration(
-          color: ColorPalette().neutral0,
+          color: ColorPalette.neutral100,
           border: Border.all(
-            color: isSelected ? ColorPalette().neutral900 : ColorPalette().neutral300,
-            width: 2,
+            color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral200,
+            width: 1.5,
           ),
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
@@ -229,14 +207,14 @@ class _PlatformChip extends StatelessWidget {
             Icon(
               icon,
               size: 24,
-              color: ColorPalette().neutral900,
+              color: ColorPalette.neutral800,
             ),
             SizedBox(height: SpacePalette.xs),
             Text(
               label,
-              style: GoogleFonts.inter(
-                fontSize: FontSizePalette.sm,
-                color: ColorPalette().neutral900,
+              style: TextStyle(
+                fontSize: FontSizePalette.base,
+                color: ColorPalette.neutral800,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),
             ),

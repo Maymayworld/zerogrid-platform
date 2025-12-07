@@ -12,7 +12,7 @@ class NotificationSheet extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
-        color: ColorPalette().neutral0,
+        color: ColorPalette.neutral0,
       ),
       child: SafeArea(
         child: Column(
@@ -32,7 +32,7 @@ class NotificationSheet extends StatelessWidget {
                       child: Icon(
                         Icons.arrow_back,
                         size: 24,
-                        color: ColorPalette().neutral900,
+                        color: ColorPalette.neutral800,
                       ),
                     ),
                   ),
@@ -41,11 +41,7 @@ class NotificationSheet extends StatelessWidget {
                     child: Center(
                       child: Text(
                         'Notification',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.md,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.title
                       ),
                     ),
                   ),
@@ -56,7 +52,7 @@ class NotificationSheet extends StatelessWidget {
             ),
             // 区切り線
             Divider(
-              color: ColorPalette().neutral200,
+              color: ColorPalette.neutral200,
               height: 1,
               thickness: 1,
             ),
@@ -66,7 +62,7 @@ class NotificationSheet extends StatelessWidget {
                 padding: EdgeInsets.zero,
                 itemCount: _mockNotifications.length,
                 separatorBuilder: (context, index) => Divider(
-                  color: ColorPalette().neutral200,
+                  color: ColorPalette.neutral200,
                   height: 1,
                   thickness: 1,
                   indent: 0,

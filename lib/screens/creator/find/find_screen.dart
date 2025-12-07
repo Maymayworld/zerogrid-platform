@@ -30,7 +30,7 @@ class FindScreen extends HookWidget {
 
     // 画面構成
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       body: SafeArea(
         child: Column(
           children: [
@@ -44,7 +44,7 @@ class FindScreen extends HookWidget {
                     width: 48,
                     height: 48,
                     decoration: BoxDecoration(
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Center(
@@ -77,7 +77,7 @@ class FindScreen extends HookWidget {
                     child: Icon(
                       Icons.notifications_outlined,
                       size: 24,
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                     ),
                   ),
                 ],
@@ -89,7 +89,7 @@ class FindScreen extends HookWidget {
               child: Container(
                 height: 144,
                 decoration: BoxDecoration(
-                  color: ColorPalette().neutral100,
+                  color: ColorPalette.neutral100,
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
                 ),
                 child: Stack(
@@ -119,8 +119,8 @@ class FindScreen extends HookWidget {
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               color: bannerIndex.value == index
-                                  ? ColorPalette().neutral800
-                                  : ColorPalette().neutral300,
+                                  ? ColorPalette.neutral800
+                                  : ColorPalette.neutral400,
                             ),
                           ),
                         ),
@@ -273,7 +273,7 @@ class _FilterChip extends StatelessWidget {
           vertical: 0, // 縦方向のpaddingは0に（高さで調整）
         ),
         decoration: BoxDecoration(
-          color: isSelected ? ColorPalette().neutral800 : ColorPalette().neutral100,
+          color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral100,
           borderRadius: BorderRadius.circular(RadiusPalette.sm),
         ),
         child: Row(
@@ -283,7 +283,7 @@ class _FilterChip extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? ColorPalette().neutral100 : ColorPalette().neutral800,
+              color: isSelected ? ColorPalette.neutral100 : ColorPalette.neutral800,
             ),
             if (isSelected) ...[
               SizedBox(width: 6),
@@ -291,7 +291,7 @@ class _FilterChip extends StatelessWidget {
                 label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: ColorPalette().neutral0,
+                  color: ColorPalette.neutral0,
                   fontWeight: FontWeight.w600,
                 ),
               ),

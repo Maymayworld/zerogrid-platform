@@ -21,7 +21,7 @@ class ProjectShareSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: ColorPalette().neutral0,
+        color: ColorPalette.neutral0,
         borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
       ),
       padding: EdgeInsets.all(SpacePalette.lg),
@@ -48,26 +48,19 @@ class ProjectShareSheet extends StatelessWidget {
                     children: [
                       Text(
                         projectName,
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.md,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.bigListTitle
                       ),
                       SizedBox(height: SpacePalette.xs),
                       Text(
                         'You can earn ¥${pricePerView.toInt()} per $viewCount views...',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.sm,
-                          color: ColorPalette().neutral500,
-                        ),
+                        style: TextStylePalette.bigListSubTitle
                       ),
                     ],
                   ),
                 ),
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
-                  child: Icon(Icons.close, size: 24, color: ColorPalette().neutral800),
+                  child: Icon(Icons.close, size: 24, color: ColorPalette.neutral800),
                 ),
               ],
             ),
@@ -86,7 +79,7 @@ class ProjectShareSheet extends StatelessWidget {
                         children: [
                           CircleAvatar(
                             radius: 25,
-                            backgroundColor: ColorPalette().neutral300,
+                            backgroundColor: ColorPalette.neutral400,
                             backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=${index + 10}'),
                           ),
                           // オンラインインジケーター（3人目のみ）
@@ -98,10 +91,10 @@ class ProjectShareSheet extends StatelessWidget {
                                 width: 16,
                                 height: 16,
                                 decoration: BoxDecoration(
-                                  color: ColorPalette().systemGreen,
+                                  color: ColorPalette.systemGreen,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: ColorPalette().neutral0,
+                                    color: ColorPalette.neutral0,
                                     width: 2,
                                   ),
                                 ),
@@ -113,10 +106,7 @@ class ProjectShareSheet extends StatelessWidget {
                       Text(
                         ['Richard\nAntezana', 'Suga\nRangel', 'Marcos and 6\n2 People', 'Jenny\nCount'][index],
                         textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.xs,
-                          color: ColorPalette().neutral600,
-                        ),
+                        style: TextStylePalette.tagText
                       ),
                     ],
                   ),
@@ -177,15 +167,12 @@ class _ShareOption extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.circular(RadiusPalette.base),
           ),
-          child: Icon(icon, color: ColorPalette().neutral0, size: 28),
+          child: Icon(icon, color: ColorPalette.neutral0, size: 28),
         ),
         SizedBox(height: SpacePalette.xs),
         Text(
           label,
-          style: GoogleFonts.inter(
-            fontSize: FontSizePalette.xs,
-            color: ColorPalette().neutral600,
-          ),
+          style: TextStylePalette.tagText
         ),
       ],
     );
@@ -210,19 +197,16 @@ class _ActionButton extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: ColorPalette().neutral100,
+            color: ColorPalette.neutral100,
             shape: BoxShape.circle,
           ),
-          child: Icon(icon, color: ColorPalette().neutral800, size: 24),
+          child: Icon(icon, color: ColorPalette.neutral800, size: 24),
         ),
         if (label.isNotEmpty) ...[
           SizedBox(height: SpacePalette.xs),
           Text(
             label,
-            style: GoogleFonts.inter(
-              fontSize: FontSizePalette.xs,
-              color: ColorPalette().neutral600,
-            ),
+            style: TextStylePalette.tagText
           ),
         ],
       ],

@@ -21,12 +21,12 @@ class ProjectChatScreen extends HookWidget {
     final messageController = useTextEditingController();
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       appBar: AppBar(
-        backgroundColor: ColorPalette().neutral0,
+        backgroundColor: ColorPalette.neutral0,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette().neutral900),
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -41,7 +41,7 @@ class ProjectChatScreen extends HookWidget {
                     left: index * 16.0,
                     child: CircleAvatar(
                       radius: 16,
-                      backgroundColor: ColorPalette().neutral300,
+                      backgroundColor: ColorPalette.neutral400,
                       backgroundImage: NetworkImage(
                         'https://i.pravatar.cc/150?img=${index + 1}',
                       ),
@@ -57,18 +57,11 @@ class ProjectChatScreen extends HookWidget {
                 children: [
                   Text(
                     projectName,
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.base,
-                      fontWeight: FontWeight.w600,
-                      color: ColorPalette().neutral900,
-                    ),
+                    style: TextStylePalette.smallListTitle
                   ),
                   Text(
                     '$memberCount members • $onlineCount online',
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.xs,
-                      color: ColorPalette().neutral500,
-                    ),
+                    style: TextStylePalette.smallListSubTitle
                   ),
                 ],
               ),
@@ -92,15 +85,12 @@ class ProjectChatScreen extends HookWidget {
                     ),
                     margin: EdgeInsets.symmetric(vertical: SpacePalette.base),
                     decoration: BoxDecoration(
-                      color: ColorPalette().neutral100,
+                      color: ColorPalette.neutral100,
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
                     ),
                     child: Text(
                       'Nov 12',
-                      style: GoogleFonts.inter(
-                        fontSize: FontSizePalette.xs,
-                        color: ColorPalette().neutral600,
-                      ),
+                      style: TextStylePalette.tagText
                     ),
                   ),
                 ),
@@ -143,11 +133,11 @@ class ProjectChatScreen extends HookWidget {
           Container(
             padding: EdgeInsets.all(SpacePalette.base),
             decoration: BoxDecoration(
-              color: ColorPalette().neutral0,
+              color: ColorPalette.neutral0,
               border: Border(
                 top: BorderSide(
-                  color: ColorPalette().neutral200,
-                  width: 1,
+                  color: ColorPalette.neutral200,
+                  width: 1.5,
                 ),
               ),
             ),
@@ -157,21 +147,15 @@ class ProjectChatScreen extends HookWidget {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: ColorPalette().neutral100,
+                        color: ColorPalette.neutral100,
                         borderRadius: BorderRadius.circular(RadiusPalette.lg),
                       ),
                       child: TextField(
                         controller: messageController,
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.base,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.normalText,
                         decoration: InputDecoration(
                           hintText: 'Message...',
-                          hintStyle: GoogleFonts.inter(
-                            fontSize: FontSizePalette.base,
-                            color: ColorPalette().neutral400,
-                          ),
+                          hintStyle: TextStylePalette.hintText,
                           border: InputBorder.none,
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: SpacePalette.base,
@@ -179,7 +163,7 @@ class ProjectChatScreen extends HookWidget {
                           ),
                           suffixIcon: Icon(
                             Icons.emoji_emotions_outlined,
-                            color: ColorPalette().neutral400,
+                            color: ColorPalette.neutral400,
                           ),
                         ),
                       ),
@@ -188,7 +172,7 @@ class ProjectChatScreen extends HookWidget {
                   SizedBox(width: SpacePalette.sm),
                   Icon(
                     Icons.mic_outlined,
-                    color: ColorPalette().neutral400,
+                    color: ColorPalette.neutral400,
                     size: 24,
                   ),
                 ],
@@ -229,17 +213,17 @@ class _MessageBubble extends StatelessWidget {
             child: Container(
               padding: EdgeInsets.all(SpacePalette.base),
               decoration: BoxDecoration(
-                color: ColorPalette().neutral900,
-                borderRadius: BorderRadius.circular(RadiusPalette.base),
+                color: ColorPalette.neutral800,
+                borderRadius: BorderRadius.circular(RadiusPalette.sm),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
                     message,
-                    style: GoogleFonts.inter(
+                    style: TextStyle(
                       fontSize: FontSizePalette.base,
-                      color: ColorPalette().neutral0,
+                      color: ColorPalette.neutral0,
                     ),
                   ),
                   SizedBox(height: SpacePalette.xs),
@@ -248,16 +232,13 @@ class _MessageBubble extends StatelessWidget {
                     children: [
                       Text(
                         time,
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.xs,
-                          color: ColorPalette().neutral400,
-                        ),
+                        style: TextStylePalette.subGuide
                       ),
                       SizedBox(width: SpacePalette.xs),
                       Icon(
                         Icons.done_all,
                         size: 12,
-                        color: ColorPalette().neutral400,
+                        color: ColorPalette.neutral500,
                       ),
                     ],
                   ),
@@ -275,7 +256,7 @@ class _MessageBubble extends StatelessWidget {
           if (showAvatar)
             CircleAvatar(
               radius: 16,
-              backgroundColor: ColorPalette().neutral300,
+              backgroundColor: ColorPalette.neutral400,
               backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
             )
           else
@@ -289,34 +270,24 @@ class _MessageBubble extends StatelessWidget {
                 if (showAvatar && senderName != null)
                   Text(
                     senderName!,
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.xs,
-                      fontWeight: FontWeight.w600,
-                      color: ColorPalette().neutral900,
-                    ),
+                    style: TextStylePalette.tagText
                   ),
                 if (showAvatar && senderName != null) SizedBox(height: SpacePalette.xs),
                 Container(
                   padding: EdgeInsets.all(SpacePalette.base),
                   decoration: BoxDecoration(
-                    color: ColorPalette().neutral100,
-                    borderRadius: BorderRadius.circular(RadiusPalette.base),
+                    color: ColorPalette.neutral100,
+                    borderRadius: BorderRadius.circular(RadiusPalette.sm),
                   ),
                   child: Text(
                     message,
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.base,
-                      color: ColorPalette().neutral900,
-                    ),
+                    style: TextStylePalette.normalText
                   ),
                 ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   time,
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.xs,
-                    color: ColorPalette().neutral400,
-                  ),
+                  style: TextStylePalette.subGuide
                 ),
               ],
             ),

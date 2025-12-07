@@ -12,7 +12,7 @@ class SelectRoleScreen extends HookConsumerWidget {
     final width = MediaQuery.of(context).size.width;
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral800,
+      backgroundColor: ColorPalette.neutral800,
       body: SafeArea(
         child: Column(
           children: [
@@ -27,11 +27,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                       children: [
                         Text(
                           'Welcome! ',
-                          style: TextStyle(
-                            fontSize: FontSizePalette.lg,
-                            fontWeight: FontWeight.bold,
-                            color: ColorPalette().neutral0,
-                          ),
+                          style: TextStylePalette.header,
                         ),
                         Text('👋', style: TextStyle(fontSize: FontSizePalette.lg)),
                       ],
@@ -40,7 +36,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                       'How would you like to get\nstarted?',
                       style: TextStyle(
                         fontSize: FontSizePalette.md,
-                        color: ColorPalette().neutral0,
+                        color: ColorPalette.neutral0,
                       ),
                     ),
                     SizedBox(height: SpacePalette.md),
@@ -72,7 +68,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                       style: TextStyle(
                         fontSize: FontSizePalette.md,
                         fontWeight: FontWeight.bold,
-                        color: ColorPalette().neutral800,
+                        color: ColorPalette.neutral800,
                       ),
                     ),
                     SizedBox(height: 20),
@@ -122,7 +118,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                         width: width * 0.3,
                         height: 4,
                         decoration: BoxDecoration(
-                          color: ColorPalette().neutral800,
+                          color: ColorPalette.neutral800,
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                         ),
                       ),

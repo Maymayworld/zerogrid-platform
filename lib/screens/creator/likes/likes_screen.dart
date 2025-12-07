@@ -55,7 +55,7 @@ class LikesScreen extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       body: SafeArea(
         child: Column(
           children: [
@@ -103,7 +103,7 @@ class LikesScreen extends HookWidget {
                     child: Icon(
                       Icons.tune,
                       size: 24,
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                     ),
                   ),
                 ],
@@ -117,11 +117,7 @@ class LikesScreen extends HookWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   'Liked Projects',
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.lg,
-                    fontWeight: FontWeight.bold,
-                    color: ColorPalette().neutral900,
-                  ),
+                  style: TextStylePalette.header
                 ),
               ),
             ),
@@ -219,14 +215,14 @@ class _CategoryChip extends StatelessWidget {
           Icon(
             icon,
             size: 24,
-            color: isSelected ? ColorPalette().neutral900 : ColorPalette().neutral400,
+            color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
           ),
           SizedBox(height: SpacePalette.xs),
           Text(
             label,
             style: GoogleFonts.inter(
               fontSize: FontSizePalette.sm,
-              color: isSelected ? ColorPalette().neutral900 : ColorPalette().neutral400,
+              color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),
           ),
@@ -236,7 +232,7 @@ class _CategoryChip extends StatelessWidget {
             Container(
               height: 2,
               width: 40,
-              color: ColorPalette().neutral900,
+              color: ColorPalette.neutral800,
             ),
         ],
       ),

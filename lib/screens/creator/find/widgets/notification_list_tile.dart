@@ -34,13 +34,13 @@ class NotificationListTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: ColorPalette().neutral100,
+              color: ColorPalette.neutral100,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
               categoryIcon,
               size: 20,
-              color: ColorPalette().neutral600,
+              color: ColorPalette.neutral800,
             ),
           ),
           SizedBox(width: SpacePalette.base),
@@ -54,11 +54,7 @@ class NotificationListTile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.base,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.smallListTitle
                       ),
                     ),
                     // 未読インジケーター
@@ -68,7 +64,7 @@ class NotificationListTile extends StatelessWidget {
                         height: 8,
                         margin: EdgeInsets.only(left: SpacePalette.sm),
                         decoration: BoxDecoration(
-                          color: ColorPalette().systemGreen,
+                          color: ColorPalette.systemGreen,
                           shape: BoxShape.circle,
                         ),
                       ),
@@ -77,10 +73,7 @@ class NotificationListTile extends StatelessWidget {
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   description,
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.sm,
-                    color: ColorPalette().neutral500,
-                  ),
+                  style: TextStylePalette.smallListSubTitle,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),
@@ -91,10 +84,7 @@ class NotificationListTile extends StatelessWidget {
           // 日時
           Text(
             dateTime,
-            style: GoogleFonts.inter(
-              fontSize: FontSizePalette.xs,
-              color: ColorPalette().neutral400,
-            ),
+            style: TextStylePalette.subMiniText
           ),
         ],
       ),

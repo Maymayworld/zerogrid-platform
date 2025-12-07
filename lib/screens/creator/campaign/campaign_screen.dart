@@ -46,7 +46,7 @@ class CampaignScreen extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       body: SafeArea(
         child: Column(
           children: [
@@ -69,7 +69,7 @@ class CampaignScreen extends HookWidget {
                     child: Icon(
                       Icons.tune,
                       size: 24,
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                     ),
                   ),
                   SizedBox(width: SpacePalette.base),
@@ -79,7 +79,7 @@ class CampaignScreen extends HookWidget {
                     child: Icon(
                       Icons.notifications_outlined,
                       size: 24,
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                     ),
                   ),
                 ],

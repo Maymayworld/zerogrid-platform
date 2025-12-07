@@ -45,21 +45,17 @@ class ProjectUploadScreen extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       appBar: AppBar(
-        backgroundColor: ColorPalette().neutral0,
+        backgroundColor: ColorPalette.neutral0,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette().neutral900),
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Upload',
-          style: GoogleFonts.inter(
-            fontSize: FontSizePalette.md,
-            fontWeight: FontWeight.w600,
-            color: ColorPalette().neutral900,
-          ),
+          style: TextStylePalette.title
         ),
         centerTitle: true,
       ),
@@ -90,10 +86,7 @@ class ProjectUploadScreen extends HookWidget {
                           Expanded(
                             child: Text(
                               'After you upload your video, drop the link in the submission field for view tracking',
-                              style: GoogleFonts.inter(
-                                fontSize: FontSizePalette.sm,
-                                color: ColorPalette().neutral800,
-                              ),
+                              style: TextStylePalette.subText
                             ),
                           ),
                         ],
@@ -106,11 +99,7 @@ class ProjectUploadScreen extends HookWidget {
                       children: [
                         Text(
                           'Submission 1',
-                          style: GoogleFonts.inter(
-                            fontSize: FontSizePalette.base,
-                            fontWeight: FontWeight.w600,
-                            color: ColorPalette().neutral900,
-                          ),
+                          style: TextStylePalette.tagText
                         ),
                         SizedBox(width: SpacePalette.sm),
                         GestureDetector(
@@ -122,7 +111,7 @@ class ProjectUploadScreen extends HookWidget {
                           child: Icon(
                             Icons.add_circle_outline,
                             size: 20,
-                            color: ColorPalette().neutral600,
+                            color: ColorPalette.neutral500,
                           ),
                         ),
                       ],
@@ -164,7 +153,7 @@ class ProjectUploadScreen extends HookWidget {
                       Container(
                         padding: EdgeInsets.all(SpacePalette.base),
                         decoration: BoxDecoration(
-                          color: ColorPalette().neutral100,
+                          color: ColorPalette.neutral100,
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                         ),
                         child: Column(
@@ -172,17 +161,14 @@ class ProjectUploadScreen extends HookWidget {
                           children: [
                             Text(
                               'file_name.mp4',
-                              style: GoogleFonts.inter(
-                                fontSize: FontSizePalette.sm,
-                                color: ColorPalette().neutral600,
-                              ),
+                              style: TextStylePalette.subText
                             ),
                             SizedBox(height: SpacePalette.sm),
                             LinearProgressIndicator(
                               value: uploadProgress.value,
-                              backgroundColor: ColorPalette().neutral200,
+                              backgroundColor: ColorPalette.neutral200,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                ColorPalette().systemGreen,
+                                ColorPalette.systemGreen,
                               ),
                             ),
                           ],
@@ -196,11 +182,11 @@ class ProjectUploadScreen extends HookWidget {
             Container(
               padding: EdgeInsets.all(SpacePalette.base),
               decoration: BoxDecoration(
-                color: ColorPalette().neutral0,
+                color: ColorPalette.neutral0,
                 border: Border(
                   top: BorderSide(
-                    color: ColorPalette().neutral200,
-                    width: 1,
+                    color: ColorPalette.neutral200,
+                    width: 1.5,
                   ),
                 ),
               ),
@@ -210,28 +196,24 @@ class ProjectUploadScreen extends HookWidget {
                 child: ElevatedButton(
                   onPressed: isUploading.value ? null : _handleUpload,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette().neutral900,
+                    backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
                     ),
-                    disabledBackgroundColor: ColorPalette().neutral400,
+                    disabledBackgroundColor: ColorPalette.neutral400,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
                         Icons.upload_outlined,
-                        color: ColorPalette().neutral0,
+                        color: ColorPalette.neutral0,
                         size: 20,
                       ),
                       SizedBox(width: SpacePalette.sm),
                       Text(
                         isUploading.value ? 'Uploading...' : 'Upload',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.md,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral0,
-                        ),
+                        style: TextStylePalette.buttonTextWhite,
                       ),
                     ],
                   ),
@@ -266,7 +248,7 @@ class _PlatformLinkField extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette().neutral100,
+        color: ColorPalette.neutral100,
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
       child: Column(
@@ -290,21 +272,17 @@ class _PlatformLinkField extends StatelessWidget {
               SizedBox(width: SpacePalette.sm),
               Text(
                 platformName,
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.base,
-                  fontWeight: FontWeight.w600,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.miniTitle
               ),
             ],
           ),
           SizedBox(height: SpacePalette.sm),
           Container(
             decoration: BoxDecoration(
-              color: ColorPalette().neutral0,
+              color: ColorPalette.neutral0,
               borderRadius: BorderRadius.circular(RadiusPalette.sm),
               border: Border.all(
-                color: ColorPalette().neutral300,
+                color: ColorPalette.neutral200,
                 width: 1,
               ),
             ),
@@ -315,22 +293,16 @@ class _PlatformLinkField extends StatelessWidget {
                   child: Icon(
                     Icons.link,
                     size: 16,
-                    color: ColorPalette().neutral400,
+                    color: ColorPalette.neutral400,
                   ),
                 ),
                 Expanded(
                   child: TextField(
                     controller: controller,
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.sm,
-                      color: ColorPalette().neutral900,
-                    ),
+                    style: TextStylePalette.normalText,
                     decoration: InputDecoration(
                       hintText: hintText,
-                      hintStyle: GoogleFonts.inter(
-                        fontSize: FontSizePalette.sm,
-                        color: ColorPalette().neutral400,
-                      ),
+                      hintStyle: TextStylePalette.hintText,
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(
                         horizontal: SpacePalette.sm,

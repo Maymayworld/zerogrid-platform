@@ -49,26 +49,22 @@ class ProjectDetailScreen extends HookWidget {
     final imageHeight = screenWidth * 9 / 16;
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       appBar: AppBar(
-        backgroundColor: ColorPalette().neutral0,
+        backgroundColor: ColorPalette.neutral0,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette().neutral900),
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Details',
-          style: GoogleFonts.inter(
-            fontSize: FontSizePalette.md,
-            fontWeight: FontWeight.w600,
-            color: ColorPalette().neutral900,
-          ),
+          style: TextStylePalette.title
         ),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.share_outlined, color: ColorPalette().neutral900),
+            icon: Icon(Icons.share_outlined, color: ColorPalette.neutral800),
             onPressed: () {
               _showShareSheet(context);
             },
@@ -91,9 +87,9 @@ class ProjectDetailScreen extends HookWidget {
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
-                        color: ColorPalette().neutral300,
+                        color: ColorPalette.neutral400,
                         child: Center(
-                          child: Icon(Icons.image, size: 50, color: ColorPalette().neutral400),
+                          child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
                         ),
                       );
                     },
@@ -121,22 +117,14 @@ class ProjectDetailScreen extends HookWidget {
                       // Project Name
                       Text(
                         projectName,
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.lg,
-                          fontWeight: FontWeight.bold,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.smallHeader
                       ),
                       SizedBox(height: SpacePalette.sm),
                       
                       // Price per view
                       Text(
                         '¥${pricePerView.toInt()} / ${viewCount.toString()} Views',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.md,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.header
                       ),
                       SizedBox(height: SpacePalette.base),
                       
@@ -146,18 +134,11 @@ class ProjectDetailScreen extends HookWidget {
                         children: [
                           Text(
                             '¥${currentAmount.toInt()} / ¥${totalAmount.toInt()}',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.base,
-                              fontWeight: FontWeight.w600,
-                              color: ColorPalette().neutral900,
-                            ),
+                            style: TextStylePalette.bigText
                           ),
                           Text(
                             '$percentage%',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.base,
-                              color: ColorPalette().neutral500,
-                            ),
+                            style: TextStylePalette.bigSubText
                           ),
                         ],
                       ),
@@ -168,7 +149,7 @@ class ProjectDetailScreen extends HookWidget {
                           Container(
                             height: 8,
                             decoration: BoxDecoration(
-                              color: ColorPalette().neutral200,
+                              color: ColorPalette.neutral200,
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
@@ -177,7 +158,7 @@ class ProjectDetailScreen extends HookWidget {
                             child: Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: ColorPalette().systemGreen,
+                                color: ColorPalette.systemGreen,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -189,10 +170,7 @@ class ProjectDetailScreen extends HookWidget {
                       // Campaign period
                       Text(
                         'Campaign period: $campaignPeriod',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.sm,
-                          color: ColorPalette().neutral500,
-                        ),
+                        style: TextStylePalette.subMiniText
                       ),
                       SizedBox(height: SpacePalette.lg),
                       
@@ -201,27 +179,23 @@ class ProjectDetailScreen extends HookWidget {
                         children: [
                           CircleAvatar(
                             radius: 20,
-                            backgroundColor: ColorPalette().neutral900,
+                            backgroundColor: ColorPalette.neutral800,
                             child: Text(
                               'C',
-                              style: GoogleFonts.inter(
-                                fontSize: FontSizePalette.md,
-                                fontWeight: FontWeight.bold,
-                                color: ColorPalette().neutral0,
-                              ),
+                              style: TextStylePalette.miniTitle
                             ),
                           ),
                           SizedBox(width: SpacePalette.sm),
+                          Divider(
+                            color: ColorPalette.neutral200,
+                            height: 1,
+                          ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
                                 companyName,
-                                style: GoogleFonts.inter(
-                                  fontSize: FontSizePalette.md,
-                                  fontWeight: FontWeight.w600,
-                                  color: ColorPalette().neutral900,
-                                ),
+                                style: TextStylePalette.smallListTitle
                               ),
                               Row(
                                 children: [
@@ -229,10 +203,7 @@ class ProjectDetailScreen extends HookWidget {
                                   SizedBox(width: SpacePalette.xs),
                                   Text(
                                     '$rating ($reviewCount reviews)',
-                                    style: GoogleFonts.inter(
-                                      fontSize: FontSizePalette.sm,
-                                      color: ColorPalette().neutral500,
-                                    ),
+                                    style: TextStylePalette.smallListSubTitle
                                   ),
                                 ],
                               ),
@@ -240,16 +211,16 @@ class ProjectDetailScreen extends HookWidget {
                           ),
                         ],
                       ),
+                      Divider(
+                        color: ColorPalette.neutral200,
+                        height: 1,
+                      ),
                       SizedBox(height: SpacePalette.lg),
                       
                       // Reviews
                       Text(
                         'Reviews (10)',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.md,
-                          fontWeight: FontWeight.w600,
-                          color: ColorPalette().neutral900,
-                        ),
+                        style: TextStylePalette.title
                       ),
                       SizedBox(height: SpacePalette.base),
                       
@@ -286,10 +257,10 @@ class ProjectDetailScreen extends HookWidget {
             child: Container(
               padding: EdgeInsets.all(SpacePalette.base),
               decoration: BoxDecoration(
-                color: ColorPalette().neutral0,
+                color: ColorPalette.neutral0,
                 boxShadow: [
                   BoxShadow(
-                    color: ColorPalette().neutral800.withOpacity(0.1),
+                    color: ColorPalette.neutral800.withOpacity(0.1),
                     blurRadius: 10,
                     offset: Offset(0, -2),
                   ),
@@ -308,18 +279,14 @@ class ProjectDetailScreen extends HookWidget {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorPalette().neutral900,
+                      backgroundColor: ColorPalette.neutral800,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(RadiusPalette.sm),
                       ),
                     ),
                     child: Text(
                       showAddReview ? 'Add Review' : 'Join',
-                      style: GoogleFonts.inter(
-                        fontSize: FontSizePalette.md,
-                        fontWeight: FontWeight.w600,
-                        color: ColorPalette().neutral0,
-                      ),
+                      style: TextStylePalette.buttonTextWhite
                     ),
                   ),
                 ),
@@ -382,20 +349,17 @@ class _PlatformBadge extends StatelessWidget {
         vertical: SpacePalette.xs,
       ),
       decoration: BoxDecoration(
-        border: Border.all(color: ColorPalette().neutral300),
+        border: Border.all(color: ColorPalette.neutral200),
         borderRadius: BorderRadius.circular(RadiusPalette.xs),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: ColorPalette().neutral800),
+          Icon(icon, size: 12, color: ColorPalette.neutral800),
           SizedBox(width: SpacePalette.xs),
           Text(
             label,
-            style: GoogleFonts.inter(
-              fontSize: FontSizePalette.xs,
-              color: ColorPalette().neutral800,
-            ),
+            style: TextStylePalette.tagText
           ),
         ],
       ),
@@ -424,7 +388,7 @@ class _ReviewItem extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 16,
-            backgroundColor: ColorPalette().neutral300,
+            backgroundColor: ColorPalette.neutral400,
             backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=${hashCode % 70}'),
           ),
           SizedBox(width: SpacePalette.sm),
@@ -434,19 +398,12 @@ class _ReviewItem extends StatelessWidget {
               children: [
                 Text(
                   creatorName,
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.sm,
-                    fontWeight: FontWeight.w600,
-                    color: ColorPalette().neutral900,
-                  ),
+                  style: TextStylePalette.guide
                 ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   comment,
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.sm,
-                    color: ColorPalette().neutral600,
-                  ),
+                  style: TextStylePalette.tagText
                 ),
               ],
             ),

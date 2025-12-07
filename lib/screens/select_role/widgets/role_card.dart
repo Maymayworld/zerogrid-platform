@@ -27,7 +27,7 @@ class RoleCard extends StatelessWidget {
           color: Colors.transparent,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
           border: Border.all(
-            color: ColorPalette().neutral300,
+            color: ColorPalette.neutral300,
             width: 2,
           ),
         ),
@@ -38,7 +38,7 @@ class RoleCard extends StatelessWidget {
             Icon(
               icon,
               size: FontSizePalette.lg,
-              color: ColorPalette().neutral800,
+              color: ColorPalette.neutral800,
             ),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,27 +47,20 @@ class RoleCard extends StatelessWidget {
                   children: [
                     Text(
                       title,
-                      style: TextStyle(
-                        fontSize: FontSizePalette.sm,
-                        fontWeight: FontWeight.bold,
-                        color: ColorPalette().neutral800,
-                      ),
+                      style: TextStylePalette.miniTitle
                     ),
                     Spacer(),
                     Icon(
                       Icons.arrow_forward,
                       size: FontSizePalette.sm,
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                     ),
                   ],
                 ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   description,
-                  style: TextStyle(
-                    fontSize: FontSizePalette.xs,
-                    color: ColorPalette().neutral600,
-                  ),
+                  style: TextStylePalette.smallListSubTitle
                 ),
               ],
             ),

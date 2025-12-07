@@ -9,21 +9,17 @@ class ProjectDownloadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       appBar: AppBar(
-        backgroundColor: ColorPalette().neutral0,
+        backgroundColor: ColorPalette.neutral0,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette().neutral900),
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
           'Download',
-          style: GoogleFonts.inter(
-            fontSize: FontSizePalette.md,
-            fontWeight: FontWeight.w600,
-            color: ColorPalette().neutral900,
-          ),
+          style: TextStylePalette.title
         ),
         centerTitle: true,
       ),
@@ -100,7 +96,7 @@ class _FileItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette().neutral100,
+        color: ColorPalette.neutral100,
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
       child: Row(
@@ -108,7 +104,7 @@ class _FileItem extends StatelessWidget {
           Icon(
             icon,
             size: 32,
-            color: ColorPalette().neutral800,
+            color: ColorPalette.neutral800,
           ),
           SizedBox(width: SpacePalette.base),
           Expanded(
@@ -117,19 +113,12 @@ class _FileItem extends StatelessWidget {
               children: [
                 Text(
                   fileName,
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.base,
-                    fontWeight: FontWeight.w600,
-                    color: ColorPalette().neutral900,
-                  ),
+                  style: TextStylePalette.smallListTitle
                 ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   modifiedDate,
-                  style: GoogleFonts.inter(
-                    fontSize: FontSizePalette.xs,
-                    color: ColorPalette().neutral500,
-                  ),
+                  style: TextStylePalette.smallListSubTitle
                 ),
               ],
             ),
@@ -139,7 +128,7 @@ class _FileItem extends StatelessWidget {
             child: Icon(
               Icons.download_outlined,
               size: 24,
-              color: ColorPalette().neutral800,
+              color: ColorPalette.neutral800,
             ),
           ),
         ],

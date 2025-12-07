@@ -26,18 +26,18 @@ class CommonSearchBar extends StatelessWidget {
         onChanged: onChanged,
         style: GoogleFonts.inter(
           fontSize: FontSizePalette.base,
-          color: colorPalette.neutral900,
+          color: ColorPalette.neutral800,
         ),
         decoration: InputDecoration(
           hintText: hintText,
           hintStyle: GoogleFonts.inter(
             fontSize: FontSizePalette.base,
-            color: colorPalette.neutral400,
+            color: ColorPalette.neutral400,
           ),
           // 虫眼鏡アイコン
           prefixIcon: Icon(
             Icons.search,
-            color: colorPalette.neutral400,
+            color: ColorPalette.neutral400,
             size: 24,
           ),
           // ボーダー設定
@@ -49,15 +49,15 @@ class CommonSearchBar extends StatelessWidget {
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(RadiusPalette.sm),
-            borderSide: BorderSide(color: colorPalette.neutral200),
+            borderSide: BorderSide(color: ColorPalette.neutral200),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(RadiusPalette.sm),
-            borderSide: BorderSide(color: colorPalette.neutral200),
+            borderSide: BorderSide(color: ColorPalette.neutral200),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(RadiusPalette.sm),
-            borderSide: BorderSide(color: colorPalette.neutral200),
+            borderSide: BorderSide(color: ColorPalette.neutral200),
           ),
         ),
       ),

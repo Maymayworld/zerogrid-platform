@@ -56,7 +56,7 @@ class ProjectCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(RadiusPalette.base),
         boxShadow: [
           BoxShadow(
-            color: ColorPalette().neutral800.withOpacity(0.08),
+            color: ColorPalette.neutral800.withOpacity(0.08),
             blurRadius: 10,
             offset: Offset(0, 2),
           ),
@@ -73,9 +73,9 @@ class ProjectCard extends StatelessWidget {
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: ColorPalette().neutral300,
+                  color: ColorPalette.neutral300,
                   child: Center(
-                    child: Icon(Icons.image, size: 50, color: ColorPalette().neutral400),
+                    child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
                   ),
                 );
               },
@@ -88,7 +88,7 @@ class ProjectCard extends StatelessWidget {
                   end: Alignment.bottomCenter, // 下部で終了
                   colors: [
                     Colors.transparent, // 中央は透明
-                    ColorPalette().neutral800, // 下部はneutral800
+                    ColorPalette.neutral800, // 下部はneutral800
                   ],
                 ),
               ),
@@ -100,12 +100,12 @@ class ProjectCard extends StatelessWidget {
               child: Container(
                 padding: EdgeInsets.all(SpacePalette.sm),
                 decoration: BoxDecoration(
-                  color: ColorPalette().neutral800.withOpacity(0.6),
+                  color: ColorPalette.neutral800.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Icon(
                   platformIcon,
-                  color: ColorPalette().neutral0,
+                  color: ColorPalette.neutral0,
                   size: 12,
                 ),
               ),
@@ -128,11 +128,7 @@ class ProjectCard extends StatelessWidget {
                         // 金額
                         Text(
                           '\$${currentAmount.toInt()} / \$${totalAmount.toInt()} ($percentage%)',
-                          style: GoogleFonts.inter(
-                            color: ColorPalette().neutral0,
-                            fontSize: FontSizePalette.sm,
-                            fontWeight: FontWeight.bold,
-                          ),
+                          style: TextStylePalette.tagText
                         ),
                         // 参加者アイコン（Stackで重ねる）
                         SizedBox(
@@ -147,17 +143,17 @@ class ProjectCard extends StatelessWidget {
                                   width: 20,
                                   height: 20,
                                   decoration: BoxDecoration(
-                                    color: ColorPalette().neutral400,
+                                    color: ColorPalette.neutral400,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: ColorPalette().neutral0,
+                                      color: ColorPalette.neutral0,
                                       width: 2,
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.person,
                                     size: 10,
-                                    color: ColorPalette().neutral0,
+                                    color: ColorPalette.neutral0,
                                   ),
                                 ),
                               ),
@@ -173,7 +169,7 @@ class ProjectCard extends StatelessWidget {
                         Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color: ColorPalette().neutral0,
+                            color: ColorPalette.neutral0,
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -182,7 +178,7 @@ class ProjectCard extends StatelessWidget {
                           child: Container(
                             height: 4,
                             decoration: BoxDecoration(
-                              color: ColorPalette().systemGreen,
+                              color: ColorPalette.systemGreen,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
@@ -200,17 +196,13 @@ class ProjectCard extends StatelessWidget {
                             child: Container(
                               height: 40,
                               decoration: BoxDecoration(
-                                color: ColorPalette().neutral0,
+                                color: ColorPalette.neutral0,
                                 borderRadius: BorderRadius.circular(RadiusPalette.sm),
                               ),
                               child: Center(
                                 child: Text(
-                                  '\$$pricePerView / $viewCount views',
-                                  style: GoogleFonts.inter(
-                                    color: ColorPalette().neutral800,
-                                    fontSize: FontSizePalette.base,
-                                    fontWeight: FontWeight.w600,
-                                  ),
+                                  '\$$pricePerView / 1000 views',
+                                  style: TextStylePalette.buttonTextBlack
                                 ),
                               ),
                             ),
@@ -225,12 +217,12 @@ class ProjectCard extends StatelessWidget {
                             height: 40,
                             decoration: BoxDecoration(
                               color: Colors.transparent,
-                              border: Border.all(color: ColorPalette().neutral0, width: 2),
+                              border: Border.all(color: ColorPalette.neutral0, width: 2),
                               borderRadius: BorderRadius.circular(RadiusPalette.sm),
                             ),
                             child: Icon(
                               Icons.favorite_border,
-                              color: ColorPalette().neutral0,
+                              color: ColorPalette.neutral0,
                               size: 20,
                             ),
                           ),

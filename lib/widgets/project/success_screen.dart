@@ -22,13 +22,13 @@ class ProjectSuccessScreen extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: ColorPalette().systemGreen,
+                  color: ColorPalette.systemGreen,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.check,
                   size: 60,
-                  color: ColorPalette().neutral0,
+                  color: ColorPalette.neutral0,
                 ),
               ),
               SizedBox(height: SpacePalette.xl),
@@ -36,19 +36,11 @@ class ProjectSuccessScreen extends StatelessWidget {
               // タイトル
               Text(
                 "You're in!",
-                style: GoogleFonts.inter(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.header
               ),
               Text(
                 'Time to start earning.',
-                style: GoogleFonts.inter(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.header
               ),
               SizedBox(height: SpacePalette.base),
               
@@ -56,10 +48,7 @@ class ProjectSuccessScreen extends StatelessWidget {
               Text(
                 'Start now. The sooner you create, the faster your views start climbing.',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.base,
-                  color: ColorPalette().neutral600,
-                ),
+                style: TextStylePalette.subText
               ),
               SizedBox(height: SpacePalette.xl),
               
@@ -81,18 +70,14 @@ class ProjectSuccessScreen extends StatelessWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette().neutral900,
+                    backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.sm),
                     ),
                   ),
                   child: Text(
                     'Jump to List',
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.md,
-                      fontWeight: FontWeight.w600,
-                      color: ColorPalette().neutral0,
-                    ),
+                    style: TextStylePalette.buttonTextWhite
                   ),
                 ),
               ),

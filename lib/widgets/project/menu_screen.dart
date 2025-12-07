@@ -41,7 +41,7 @@ class ProjectMenuScreen extends HookWidget {
     final percentage = (progress * 100).toInt();
 
     return Scaffold(
-      backgroundColor: ColorPalette().neutral0,
+      backgroundColor: ColorPalette.neutral0,
       body: SafeArea(
         child: Column(
           children: [
@@ -54,17 +54,14 @@ class ProjectMenuScreen extends HookWidget {
                     onTap: () => Navigator.pop(context),
                     child: Icon(
                       Icons.arrow_back,
-                      color: ColorPalette().neutral800,
+                      color: ColorPalette.neutral800,
                       size: 24,
                     ),
                   ),
                   SizedBox(width: SpacePalette.base),
                   Text(
                     'Back',
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.base,
-                      color: ColorPalette().neutral800,
-                    ),
+                    style: TextStylePalette.normalText
                   ),
                 ],
               ),
@@ -90,7 +87,7 @@ class ProjectMenuScreen extends HookWidget {
                                   left: index * 20.0,
                                   child: CircleAvatar(
                                     radius: 20,
-                                    backgroundColor: ColorPalette().neutral300,
+                                    backgroundColor: ColorPalette.neutral400,
                                     backgroundImage: NetworkImage(
                                       'https://i.pravatar.cc/150?img=${index + 1}',
                                     ),
@@ -106,32 +103,15 @@ class ProjectMenuScreen extends HookWidget {
                               children: [
                                 Text(
                                   projectName,
-                                  style: GoogleFonts.inter(
-                                    fontSize: FontSizePalette.md,
-                                    fontWeight: FontWeight.w600,
-                                    color: ColorPalette().neutral900,
-                                  ),
+                                  style: TextStylePalette.bigListTitle
                                 ),
                                 Text(
                                   '$creatorCount creators',
-                                  style: GoogleFonts.inter(
-                                    fontSize: FontSizePalette.sm,
-                                    color: ColorPalette().neutral500,
-                                  ),
+                                  style: TextStylePalette.bigListSubTitle
                                 ),
                               ],
                             ),
                           ),
-                        ],
-                      ),
-                      SizedBox(height: SpacePalette.base),
-                      
-                      // プラットフォームバッジ
-                      Row(
-                        children: [
-                          _PlatformBadge(icon: Icons.music_note, label: 'TikTok'),
-                          SizedBox(width: SpacePalette.sm),
-                          _PlatformBadge(icon: Icons.camera_alt, label: 'Instagram'),
                         ],
                       ),
                       SizedBox(height: SpacePalette.base),
@@ -163,12 +143,12 @@ class ProjectMenuScreen extends HookWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: ColorPalette().neutral300,
+                                  color: ColorPalette.neutral100,
                                   child: Center(
                                     child: Icon(
                                       Icons.image,
                                       size: 50,
-                                      color: ColorPalette().neutral400,
+                                      color: ColorPalette.neutral400,
                                     ),
                                   ),
                                 );
@@ -185,18 +165,11 @@ class ProjectMenuScreen extends HookWidget {
                         children: [
                           Text(
                             '\$${currentAmount.toInt()} / \$${totalAmount.toInt()}',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.base,
-                              fontWeight: FontWeight.w600,
-                              color: ColorPalette().neutral900,
-                            ),
+                            style: TextStylePalette.tagText
                           ),
                           Text(
                             '$percentage%',
-                            style: GoogleFonts.inter(
-                              fontSize: FontSizePalette.base,
-                              color: ColorPalette().neutral500,
-                            ),
+                            style: TextStylePalette.normalText
                           ),
                         ],
                       ),
@@ -207,7 +180,7 @@ class ProjectMenuScreen extends HookWidget {
                           Container(
                             height: 8,
                             decoration: BoxDecoration(
-                              color: ColorPalette().neutral200,
+                              color: ColorPalette.neutral200,
                               borderRadius: BorderRadius.circular(4),
                             ),
                           ),
@@ -216,7 +189,7 @@ class ProjectMenuScreen extends HookWidget {
                             child: Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: ColorPalette().systemGreen,
+                                color: ColorPalette.systemGreen,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -312,45 +285,6 @@ class ProjectMenuScreen extends HookWidget {
   }
 }
 
-// プラットフォームバッジ
-class _PlatformBadge extends StatelessWidget {
-  final IconData icon;
-  final String label;
-
-  const _PlatformBadge({
-    required this.icon,
-    required this.label,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: SpacePalette.sm,
-        vertical: SpacePalette.xs,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(color: ColorPalette().neutral300),
-        borderRadius: BorderRadius.circular(RadiusPalette.xs),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 12, color: ColorPalette().neutral800),
-          SizedBox(width: SpacePalette.xs),
-          Text(
-            label,
-            style: GoogleFonts.inter(
-              fontSize: FontSizePalette.xs,
-              color: ColorPalette().neutral800,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 // チャットボックス（正方形）
 class _ChatBox extends StatelessWidget {
   final IconData icon;
@@ -371,7 +305,7 @@ class _ChatBox extends StatelessWidget {
         aspectRatio: 1, // 正方形
         child: Container(
           decoration: BoxDecoration(
-            color: ColorPalette().neutral100,
+            color: ColorPalette.neutral100,
             borderRadius: BorderRadius.circular(RadiusPalette.base),
           ),
           child: Column(
@@ -380,16 +314,12 @@ class _ChatBox extends StatelessWidget {
               Icon(
                 icon,
                 size: 32,
-                color: ColorPalette().neutral800,
+                color: ColorPalette.neutral800,
               ),
               SizedBox(height: SpacePalette.sm),
               Text(
                 label,
-                style: GoogleFonts.inter(
-                  fontSize: FontSizePalette.sm,
-                  fontWeight: FontWeight.w600,
-                  color: ColorPalette().neutral900,
-                ),
+                style: TextStylePalette.smallListTitle
               ),
             ],
           ),
@@ -420,7 +350,7 @@ class _ActionSection extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(SpacePalette.base),
         decoration: BoxDecoration(
-          color: ColorPalette().neutral100,
+          color: ColorPalette.neutral100,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(
@@ -428,7 +358,7 @@ class _ActionSection extends StatelessWidget {
             Icon(
               icon,
               size: 24,
-              color: ColorPalette().neutral800,
+              color: ColorPalette.neutral800,
             ),
             SizedBox(width: SpacePalette.base),
             Expanded(
@@ -437,18 +367,11 @@ class _ActionSection extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.base,
-                      fontWeight: FontWeight.w600,
-                      color: ColorPalette().neutral900,
-                    ),
+                    style: TextStylePalette.smallListTitle
                   ),
                   Text(
                     subtitle,
-                    style: GoogleFonts.inter(
-                      fontSize: FontSizePalette.sm,
-                      color: ColorPalette().neutral500,
-                    ),
+                    style: TextStylePalette.smallListSubTitle
                   ),
                 ],
               ),
@@ -456,7 +379,7 @@ class _ActionSection extends StatelessWidget {
             Icon(
               Icons.chevron_right,
               size: 20,
-              color: ColorPalette().neutral400,
+              color: ColorPalette.neutral400,
             ),
           ],
         ),
