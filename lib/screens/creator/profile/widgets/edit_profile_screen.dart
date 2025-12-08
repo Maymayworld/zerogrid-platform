@@ -89,7 +89,7 @@ class EditProfileScreen extends HookWidget {
         title: Text(
           'Edit Profile',
           style: GoogleFonts.inter(
-            fontSize: FontSizePalette.md,
+            fontSize: FontSizePalette.size16,
             fontWeight: FontWeight.w600,
             color: ColorPalette.neutral800,
           ),
@@ -137,7 +137,7 @@ class EditProfileScreen extends HookWidget {
                         ],
                       ),
                     ),
-                    SizedBox(height: SpacePalette.xl),
+                    SizedBox(height: SpacePalette.lg),
                     
                     // Name
                     Text(
@@ -154,7 +154,7 @@ class EditProfileScreen extends HookWidget {
                         filled: true,
                         fillColor: ColorPalette.neutral100,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                          borderRadius: BorderRadius.circular(RadiusPalette.base),
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: EdgeInsets.all(SpacePalette.base),
@@ -178,7 +178,7 @@ class EditProfileScreen extends HookWidget {
                         filled: true,
                         fillColor: ColorPalette.neutral100,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                          borderRadius: BorderRadius.circular(RadiusPalette.base),
                           borderSide: BorderSide.none,
                         ),
                         contentPadding: EdgeInsets.all(SpacePalette.base),
@@ -198,7 +198,7 @@ class EditProfileScreen extends HookWidget {
                         padding: EdgeInsets.all(SpacePalette.base),
                         decoration: BoxDecoration(
                           color: ColorPalette.neutral100,
-                          borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                          borderRadius: BorderRadius.circular(RadiusPalette.base),
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -208,7 +208,7 @@ class EditProfileScreen extends HookWidget {
                                   ? 'Select date'
                                   : dateOfBirthController.text,
                               style: GoogleFonts.inter(
-                                fontSize: FontSizePalette.base,
+                                fontSize: FontSizePalette.size14,
                                 color: dateOfBirthController.text.isEmpty
                                     ? ColorPalette.neutral400
                                     : ColorPalette.neutral800,
@@ -241,7 +241,7 @@ class EditProfileScreen extends HookWidget {
               ),
               child: SizedBox(
                 width: double.infinity,
-                height: ButtonSizePalette.heightMd,
+                height: ButtonSizePalette.button,
                 child: ElevatedButton(
                   onPressed: () {
                     // 保存処理（後で実装）
@@ -253,7 +253,7 @@ class EditProfileScreen extends HookWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                     ),
                   ),
                   child: Text(
@@ -303,7 +303,7 @@ class _ImagePickerOption extends StatelessWidget {
             Text(
               label,
               style: GoogleFonts.inter(
-                fontSize: FontSizePalette.base,
+                fontSize: FontSizePalette.size14,
                 fontWeight: FontWeight.w600,
                 color: ColorPalette.neutral800,
               ),

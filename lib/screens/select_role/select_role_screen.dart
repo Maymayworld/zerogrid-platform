@@ -29,17 +29,17 @@ class SelectRoleScreen extends HookConsumerWidget {
                           'Welcome! ',
                           style: TextStylePalette.header,
                         ),
-                        Text('👋', style: TextStyle(fontSize: FontSizePalette.lg)),
+                        Text('👋', style: TextStyle(fontSize: FontSizePalette.size24)),
                       ],
                     ),
                     Text(
                       'How would you like to get\nstarted?',
                       style: TextStyle(
-                        fontSize: FontSizePalette.md,
+                        fontSize: FontSizePalette.size16,
                         color: ColorPalette.neutral0,
                       ),
                     ),
-                    SizedBox(height: SpacePalette.md),
+                    SizedBox(height: SpacePalette.inner),
                   ],
                 ),
               ),
@@ -66,7 +66,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                     Text(
                       'Select your role:',
                       style: TextStyle(
-                        fontSize: FontSizePalette.md,
+                        fontSize: FontSizePalette.size16,
                         fontWeight: FontWeight.bold,
                         color: ColorPalette.neutral800,
                       ),
@@ -111,7 +111,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                         ),
                       ],
                     ),
-                    SizedBox(height: SpacePalette.xxl),
+                    SizedBox(height: SpacePalette.lg),
                     Align(
                       alignment: Alignment.center,
                       child: Container(

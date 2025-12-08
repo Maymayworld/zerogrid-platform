@@ -319,7 +319,7 @@ class _ChatBox extends StatelessWidget {
               SizedBox(height: SpacePalette.sm),
               Text(
                 label,
-                style: TextStylePalette.smallListTitle
+                style: TextStylePalette.listTitle
               ),
             ],
           ),
@@ -367,11 +367,11 @@ class _ActionSection extends StatelessWidget {
                 children: [
                   Text(
                     title,
-                    style: TextStylePalette.smallListTitle
+                    style: TextStylePalette.listTitle
                   ),
                   Text(
                     subtitle,
-                    style: TextStylePalette.smallListSubTitle
+                    style: TextStylePalette.listLeading
                   ),
                 ],
               ),

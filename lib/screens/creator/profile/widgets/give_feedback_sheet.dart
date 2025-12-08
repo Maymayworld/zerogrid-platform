@@ -35,7 +35,7 @@ class GiveFeedbackSheet extends HookWidget {
               textAlign: TextAlign.center,
               style: TextStylePalette.subText
             ),
-            SizedBox(height: SpacePalette.xl),
+            SizedBox(height: SpacePalette.lg),
             
             // 絵文字選択
             Row(
@@ -84,7 +84,7 @@ class GiveFeedbackSheet extends HookWidget {
                 filled: true,
                 fillColor: ColorPalette.neutral100,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                  borderRadius: BorderRadius.circular(RadiusPalette.base),
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: EdgeInsets.all(SpacePalette.base),
@@ -95,7 +95,7 @@ class GiveFeedbackSheet extends HookWidget {
             // Share Feedbackボタン
             SizedBox(
               width: double.infinity,
-              height: ButtonSizePalette.heightMd,
+              height: ButtonSizePalette.button,
               child: ElevatedButton(
                 onPressed: () {
                   if (selectedEmoji.value != null || feedbackController.text.isNotEmpty) {
@@ -108,7 +108,7 @@ class GiveFeedbackSheet extends HookWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: ColorPalette.neutral800,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                    borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
                 ),
                 child: Text(

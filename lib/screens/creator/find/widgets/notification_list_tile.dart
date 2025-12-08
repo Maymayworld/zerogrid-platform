@@ -24,7 +24,7 @@ class NotificationListTile extends StatelessWidget {
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: SpacePalette.base,
-        vertical: SpacePalette.md,
+        vertical: SpacePalette.inner,
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -54,7 +54,7 @@ class NotificationListTile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         title,
-                        style: TextStylePalette.smallListTitle
+                        style: TextStylePalette.listTitle
                       ),
                     ),
                     // 未読インジケーター
@@ -73,7 +73,7 @@ class NotificationListTile extends StatelessWidget {
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   description,
-                  style: TextStylePalette.smallListSubTitle,
+                  style: TextStylePalette.listLeading,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                 ),

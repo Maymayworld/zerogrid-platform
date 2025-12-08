@@ -192,13 +192,13 @@ class ProjectUploadScreen extends HookWidget {
               ),
               child: SizedBox(
                 width: double.infinity,
-                height: ButtonSizePalette.heightMd,
+                height: ButtonSizePalette.button,
                 child: ElevatedButton(
                   onPressed: isUploading.value ? null : _handleUpload,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                     ),
                     disabledBackgroundColor: ColorPalette.neutral400,
                   ),
@@ -280,7 +280,7 @@ class _PlatformLinkField extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               color: ColorPalette.neutral0,
-              borderRadius: BorderRadius.circular(RadiusPalette.sm),
+              borderRadius: BorderRadius.circular(RadiusPalette.base),
               border: Border.all(
                 color: ColorPalette.neutral200,
                 width: 1,

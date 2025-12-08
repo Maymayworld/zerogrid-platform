@@ -221,7 +221,7 @@ class _CategoryChip extends StatelessWidget {
           Text(
             label,
             style: GoogleFonts.inter(
-              fontSize: FontSizePalette.sm,
+              fontSize: FontSizePalette.size12,
               color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             ),

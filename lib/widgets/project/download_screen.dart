@@ -113,12 +113,12 @@ class _FileItem extends StatelessWidget {
               children: [
                 Text(
                   fileName,
-                  style: TextStylePalette.smallListTitle
+                  style: TextStylePalette.listTitle
                 ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   modifiedDate,
-                  style: TextStylePalette.smallListSubTitle
+                  style: TextStylePalette.listLeading
                 ),
               ],
             ),

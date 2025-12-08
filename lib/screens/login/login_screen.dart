@@ -81,14 +81,14 @@ class LoginScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(height: SpacePalette.xl),
+              SizedBox(height: SpacePalette.lg),
               
               // タイトル
               Text(
                 'Good to see you again!',
                 style: TextStylePalette.header
               ),
-              SizedBox(height: SpacePalette.xl),
+              SizedBox(height: SpacePalette.lg),
               
               // Email
               Text(
@@ -107,20 +107,20 @@ class LoginScreen extends HookConsumerWidget {
                     filled: true,
                     fillColor: Colors.transparent,
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                       borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                       borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                       borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
-                      vertical: SpacePalette.md,
+                      vertical: SpacePalette.inner,
                     ),
                   ),
                 ),
@@ -148,7 +148,7 @@ class LoginScreen extends HookConsumerWidget {
                         isPasswordVisible.value
                             ? Icons.visibility_outlined
                             : Icons.visibility_off_outlined,
-                        color: ColorPalette.neutral600,
+                        color: ColorPalette.neutral500,
                         size: 20,
                       ),
                       onPressed: () {
@@ -156,20 +156,20 @@ class LoginScreen extends HookConsumerWidget {
                       },
                     ),
                     border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                       borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                       borderSide: BorderSide(color: ColorPalette.neutral200),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                       borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
-                      vertical: SpacePalette.md,
+                      vertical: SpacePalette.inner,
                     ),
                   ),
                 ),
@@ -203,7 +203,7 @@ class LoginScreen extends HookConsumerWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                     ),
                   ),
                   child: isLoading.value
@@ -248,7 +248,7 @@ class LoginScreen extends HookConsumerWidget {
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: ColorPalette.neutral200),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                     ),
                   ),
                   child: Row(

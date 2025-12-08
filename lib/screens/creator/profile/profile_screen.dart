@@ -26,7 +26,7 @@ class ProfileScreen extends HookWidget {
                 backgroundColor: ColorPalette.neutral400,
                 backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=1'),
               ),
-              SizedBox(height: SpacePalette.xl),
+              SizedBox(height: SpacePalette.lg),
               
               // Creator Name
               Text(
@@ -47,7 +47,7 @@ class ProfileScreen extends HookWidget {
                 'man of culture',
                 style: TextStylePalette.normalText
               ),
-              SizedBox(height: SpacePalette.xl),
+              SizedBox(height: SpacePalette.lg),
               
               // Bank Account Card
               Container(
@@ -70,14 +70,18 @@ class ProfileScreen extends HookWidget {
                         SizedBox(width: SpacePalette.xs),
                         Text(
                           'Bank Account',
-                          style: TextStylePalette.miniText
+                          style: TextStylePalette.miniText.copyWith(
+                            color: ColorPalette.neutral0
+                          )
                         ),
                       ],
                     ),
                     SizedBox(height: SpacePalette.base),
                     Text(
                       'Account Name',
-                      style: TextStylePalette.smallHeader
+                      style: TextStylePalette.smallHeader.copyWith(
+                        color: ColorPalette.neutral0
+                      )
                     ),
                     SizedBox(height: SpacePalette.sm),
                     Row(
@@ -85,7 +89,9 @@ class ProfileScreen extends HookWidget {
                       children: [
                         Text(
                           '**** 1084',
-                          style: TextStylePalette.normalText
+                          style: TextStylePalette.normalText.copyWith(
+                            color: ColorPalette.neutral0
+                          )
                         ),
                         Text(
                           'VISA',
@@ -147,7 +153,7 @@ class ProfileScreen extends HookWidget {
                       Text(
                         'Logout',
                         style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.md,
+                          fontSize: FontSizePalette.size16,
                           color: Colors.red,
                         ),
                       ),

@@ -33,7 +33,7 @@ class ProjectShareSheet extends StatelessWidget {
             Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                  borderRadius: BorderRadius.circular(RadiusPalette.base),
                   child: Image.network(
                     imageUrl,
                     width: 60,

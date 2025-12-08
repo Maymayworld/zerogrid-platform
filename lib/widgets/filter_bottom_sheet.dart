@@ -142,7 +142,7 @@ class FilterBottomSheet extends HookWidget {
             // Applyボタン
             SizedBox(
               width: double.infinity,
-              height: ButtonSizePalette.heightMd,
+              height: ButtonSizePalette.button,
               child: ElevatedButton(
                 onPressed: () {
                   onApply(
@@ -192,7 +192,7 @@ class _PlatformChip extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.symmetric(
           horizontal: SpacePalette.base,
-          vertical: SpacePalette.md,
+          vertical: SpacePalette.inner,
         ),
         decoration: BoxDecoration(
           color: ColorPalette.neutral100,
@@ -213,7 +213,7 @@ class _PlatformChip extends StatelessWidget {
             Text(
               label,
               style: TextStyle(
-                fontSize: FontSizePalette.base,
+                fontSize: FontSizePalette.size14,
                 color: ColorPalette.neutral800,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
               ),

@@ -119,7 +119,7 @@ class ProjectDetailScreen extends HookWidget {
                         projectName,
                         style: TextStylePalette.smallHeader
                       ),
-                      SizedBox(height: SpacePalette.sm),
+                      SizedBox(height: SpacePalette.base),
                       
                       // Price per view
                       Text(
@@ -165,14 +165,22 @@ class ProjectDetailScreen extends HookWidget {
                           ),
                         ],
                       ),
-                      SizedBox(height: SpacePalette.base),
+                      SizedBox(height: SpacePalette.sm),
                       
                       // Campaign period
                       Text(
                         'Campaign period: $campaignPeriod',
                         style: TextStylePalette.subMiniText
                       ),
-                      SizedBox(height: SpacePalette.lg),
+                      SizedBox(height: SpacePalette.base),
+
+                      // Divider
+                      Divider(
+                        color: ColorPalette.neutral200,
+                        height: 1,
+                      ),
+
+                      SizedBox(height: SpacePalette.base),
                       
                       // Company
                       Row(
@@ -195,7 +203,7 @@ class ProjectDetailScreen extends HookWidget {
                             children: [
                               Text(
                                 companyName,
-                                style: TextStylePalette.smallListTitle
+                                style: TextStylePalette.listTitle
                               ),
                               Row(
                                 children: [
@@ -203,7 +211,7 @@ class ProjectDetailScreen extends HookWidget {
                                   SizedBox(width: SpacePalette.xs),
                                   Text(
                                     '$rating ($reviewCount reviews)',
-                                    style: TextStylePalette.smallListSubTitle
+                                    style: TextStylePalette.listLeading
                                   ),
                                 ],
                               ),
@@ -211,11 +219,12 @@ class ProjectDetailScreen extends HookWidget {
                           ),
                         ],
                       ),
+                      SizedBox(height: SpacePalette.base),
                       Divider(
                         color: ColorPalette.neutral200,
                         height: 1,
                       ),
-                      SizedBox(height: SpacePalette.lg),
+                      SizedBox(height: SpacePalette.base),
                       
                       // Reviews
                       Text(
@@ -241,7 +250,7 @@ class ProjectDetailScreen extends HookWidget {
                         rating: 5,
                       ),
                       
-                      SizedBox(height: 100), // ボタン分の余白
+                      SizedBox(height: 60), // ボタン分の余白
                     ],
                   ),
                 ),
@@ -256,20 +265,10 @@ class ProjectDetailScreen extends HookWidget {
             bottom: 0,
             child: Container(
               padding: EdgeInsets.all(SpacePalette.base),
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral0,
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorPalette.neutral800.withOpacity(0.1),
-                    blurRadius: 10,
-                    offset: Offset(0, -2),
-                  ),
-                ],
-              ),
               child: SafeArea(
                 child: SizedBox(
                   width: double.infinity,
-                  height: ButtonSizePalette.heightMd,
+                  height: ButtonSizePalette.button,
                   child: ElevatedButton(
                     onPressed: () {
                       if (showAddReview) {
@@ -281,7 +280,7 @@ class ProjectDetailScreen extends HookWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: ColorPalette.neutral800,
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                        borderRadius: BorderRadius.circular(RadiusPalette.base),
                       ),
                     ),
                     child: Text(
@@ -350,7 +349,7 @@ class _PlatformBadge extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         border: Border.all(color: ColorPalette.neutral200),
-        borderRadius: BorderRadius.circular(RadiusPalette.xs),
+        borderRadius: BorderRadius.circular(RadiusPalette.mini),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -359,7 +358,7 @@ class _PlatformBadge extends StatelessWidget {
           SizedBox(width: SpacePalette.xs),
           Text(
             label,
-            style: TextStylePalette.tagText
+            style: TextStylePalette.miniText
           ),
         ],
       ),
@@ -398,12 +397,12 @@ class _ReviewItem extends StatelessWidget {
               children: [
                 Text(
                   creatorName,
-                  style: TextStylePalette.guide
+                  style: TextStylePalette.tagText
                 ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   comment,
-                  style: TextStylePalette.tagText
+                  style: TextStylePalette.miniText
                 ),
               ],
             ),

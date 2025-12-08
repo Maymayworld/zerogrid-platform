@@ -14,7 +14,7 @@ class ChatScreen extends StatelessWidget {
           'Chat',
           style: TextStyle(
             color: Colors.black,
-            fontSize: FontSizePalette.lg,
+            fontSize: FontSizePalette.size24,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -28,7 +28,7 @@ class ChatScreen extends StatelessWidget {
             Text(
               'Chat Page',
               style: TextStyle(
-                fontSize: FontSizePalette.lg,
+                fontSize: FontSizePalette.size24,
                 fontWeight: FontWeight.bold,
                 color: Colors.grey[400],
               ),

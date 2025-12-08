@@ -13,20 +13,9 @@ class FindScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final selectedFilterIndex = useState<int>(0); // デフォルトでAll(0)を選択
-    final bannerIndex = useState(0);
+    final bannerPageController = usePageController();
+    final currentPage = useState(0);
     final scrollController = FixedExtentScrollController();
-
-    // 自動バナースライド
-    useEffect(() {
-      final timer = Future.delayed(Duration(seconds: 3), () {
-        if (bannerIndex.value < 2) {
-          bannerIndex.value++;
-        } else {
-          bannerIndex.value = 0;
-        }
-      });
-      return null;
-    }, [bannerIndex.value]);
 
     // 画面構成
     return Scaffold(
@@ -52,7 +41,7 @@ class FindScreen extends HookWidget {
                         'ZG',
                         style: TextStyle(
                           color: backgroundColor,
-                          fontSize: FontSizePalette.md,
+                          fontSize: FontSizePalette.size16,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
@@ -83,25 +72,37 @@ class FindScreen extends HookWidget {
                 ],
               ),
             ),
-            // 広告バナー
+            // 広告バナー（手動スワイプ）
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: SpacePalette.base),
-              child: Container(
+              child: SizedBox(
                 height: 144,
-                decoration: BoxDecoration(
-                  color: ColorPalette.neutral100,
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
                 child: Stack(
                   children: [
-                    Center(
-                      child: Text(
-                        'Ad Banner ${bannerIndex.value + 1}',
-                        style: TextStyle(
-                          color: Colors.grey[600],
-                          fontSize: FontSizePalette.md,
-                        ),
-                      ),
+                    PageView.builder(
+                      controller: bannerPageController,
+                      onPageChanged: (index) {
+                        currentPage.value = index;
+                      },
+                      itemCount: 3,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: EdgeInsets.only(bottom: 16),
+                          decoration: BoxDecoration(
+                            color: ColorPalette.neutral100,
+                            borderRadius: BorderRadius.circular(RadiusPalette.base),
+                          ),
+                          child: Center(
+                            child: Text(
+                              'Ad Banner ${index + 1}',
+                              style: TextStyle(
+                                color: Colors.grey[600],
+                                fontSize: FontSizePalette.size16,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     // ページインジケーター
                     Positioned(
@@ -118,7 +119,7 @@ class FindScreen extends HookWidget {
                             margin: EdgeInsets.symmetric(horizontal: 3),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: bannerIndex.value == index
+                              color: currentPage.value == index
                                   ? ColorPalette.neutral800
                                   : ColorPalette.neutral400,
                             ),
@@ -204,7 +205,7 @@ class FindScreen extends HookWidget {
                           child: ProjectCard(
                             width: cardWidth,
                             height: cardHeight,
-                            // imageUrlを省略 → ランダム画像
+                            imageUrl: 'https://picsum.photos/seed/find-$index/400/225', // indexベースで固定
                             platformIcon: Icons.music_note,
                             currentAmount: 1000,
                             totalAmount: 4000,
@@ -274,7 +275,7 @@ class _FilterChip extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral100,
-          borderRadius: BorderRadius.circular(RadiusPalette.sm),
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

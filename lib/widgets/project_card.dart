@@ -73,7 +73,7 @@ class ProjectCard extends StatelessWidget {
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return Container(
-                  color: ColorPalette.neutral300,
+                  color: ColorPalette.neutral400,
                   child: Center(
                     child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
                   ),
@@ -128,7 +128,9 @@ class ProjectCard extends StatelessWidget {
                         // 金額
                         Text(
                           '\$${currentAmount.toInt()} / \$${totalAmount.toInt()} ($percentage%)',
-                          style: TextStylePalette.tagText
+                          style: TextStylePalette.tagText.copyWith(
+                            color: ColorPalette.neutral0
+                          )
                         ),
                         // 参加者アイコン（Stackで重ねる）
                         SizedBox(
@@ -197,7 +199,7 @@ class ProjectCard extends StatelessWidget {
                               height: 40,
                               decoration: BoxDecoration(
                                 color: ColorPalette.neutral0,
-                                borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                                borderRadius: BorderRadius.circular(RadiusPalette.base),
                               ),
                               child: Center(
                                 child: Text(
@@ -218,7 +220,7 @@ class ProjectCard extends StatelessWidget {
                             decoration: BoxDecoration(
                               color: Colors.transparent,
                               border: Border.all(color: ColorPalette.neutral0, width: 2),
-                              borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                              borderRadius: BorderRadius.circular(RadiusPalette.base),
                             ),
                             child: Icon(
                               Icons.favorite_border,

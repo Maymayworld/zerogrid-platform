@@ -57,11 +57,11 @@ class ProjectChatScreen extends HookWidget {
                 children: [
                   Text(
                     projectName,
-                    style: TextStylePalette.smallListTitle
+                    style: TextStylePalette.listTitle
                   ),
                   Text(
                     '$memberCount members • $onlineCount online',
-                    style: TextStylePalette.smallListSubTitle
+                    style: TextStylePalette.listLeading
                   ),
                 ],
               ),
@@ -85,12 +85,15 @@ class ProjectChatScreen extends HookWidget {
                     ),
                     margin: EdgeInsets.symmetric(vertical: SpacePalette.base),
                     decoration: BoxDecoration(
-                      color: ColorPalette.neutral100,
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      border: Border.all(
+                        color: ColorPalette.neutral200,
+                        width: 1,
+                      ),
+                      borderRadius: BorderRadius.circular(RadiusPalette.mini),
                     ),
                     child: Text(
                       'Nov 12',
-                      style: TextStylePalette.tagText
+                      style: TextStylePalette.subMiniTitle
                     ),
                   ),
                 ),
@@ -211,10 +214,10 @@ class _MessageBubble extends StatelessWidget {
         children: [
           Flexible(
             child: Container(
-              padding: EdgeInsets.all(SpacePalette.base),
+              padding: EdgeInsets.all(SpacePalette.inner),
               decoration: BoxDecoration(
                 color: ColorPalette.neutral800,
-                borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                borderRadius: BorderRadius.circular(RadiusPalette.base),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -222,7 +225,7 @@ class _MessageBubble extends StatelessWidget {
                   Text(
                     message,
                     style: TextStyle(
-                      fontSize: FontSizePalette.base,
+                      fontSize: FontSizePalette.size14,
                       color: ColorPalette.neutral0,
                     ),
                   ),
@@ -274,10 +277,10 @@ class _MessageBubble extends StatelessWidget {
                   ),
                 if (showAvatar && senderName != null) SizedBox(height: SpacePalette.xs),
                 Container(
-                  padding: EdgeInsets.all(SpacePalette.base),
+                  padding: EdgeInsets.all(SpacePalette.inner),
                   decoration: BoxDecoration(
                     color: ColorPalette.neutral100,
-                    borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                    borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
                   child: Text(
                     message,

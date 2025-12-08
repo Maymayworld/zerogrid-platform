@@ -13,7 +13,7 @@ class ProjectSuccessScreen extends StatelessWidget {
       backgroundColor: Color(0xFFD1FAE5), // ミントグリーン
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.all(SpacePalette.xl),
+          padding: EdgeInsets.all(SpacePalette.lg),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -31,7 +31,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                   color: ColorPalette.neutral0,
                 ),
               ),
-              SizedBox(height: SpacePalette.xl),
+              SizedBox(height: SpacePalette.lg),
               
               // タイトル
               Text(
@@ -50,12 +50,12 @@ class ProjectSuccessScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStylePalette.subText
               ),
-              SizedBox(height: SpacePalette.xl),
+              SizedBox(height: SpacePalette.lg),
               
               // Jump to Listボタン
               SizedBox(
                 width: double.infinity,
-                height: ButtonSizePalette.heightMd,
+                height: ButtonSizePalette.button,
                 child: ElevatedButton(
                   onPressed: () {
                     // キャンペーンリストに戻る（ボトムバー付き）
@@ -72,7 +72,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
                     ),
                   ),
                   child: Text(

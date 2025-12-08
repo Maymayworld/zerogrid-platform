@@ -77,20 +77,20 @@ class DashboardScreen extends HookWidget {
                       children: [
                         Text(
                           'Total Views',
-                          style: TextStylePalette.smallListSubTitle
+                          style: TextStylePalette.listLeading
                         ),
                         SizedBox(height: SpacePalette.xs),
                         Row(
                           children: [
                             Text(
                               '912,400',
-                              style: TextStylePalette.smallListTitle
+                              style: TextStylePalette.listTitle
                             ),
                             SizedBox(width: SpacePalette.sm),
                             Text(
                               '+31.8%',
                               style: TextStyle(
-                                fontSize: FontSizePalette.sm,
+                                fontSize: FontSizePalette.size12,
                                 color: ColorPalette.systemGreen,
                               ),
                             ),
@@ -105,12 +105,12 @@ class DashboardScreen extends HookWidget {
                       children: [
                         Text(
                           'Total Earnings',
-                          style: TextStylePalette.smallListSubTitle
+                          style: TextStylePalette.listLeading
                         ),
                         SizedBox(height: SpacePalette.xs),
                         Text(
                           '¥300,000',
-                          style: TextStylePalette.smallListTitle
+                          style: TextStylePalette.listTitle
                         ),
                       ],
                     ),
@@ -267,7 +267,7 @@ class _DropdownButton extends StatelessWidget {
         ),
         decoration: BoxDecoration(
           border: Border.all(color: ColorPalette.neutral200),
-          borderRadius: BorderRadius.circular(RadiusPalette.sm),
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -317,7 +317,7 @@ class _EarningItem extends StatelessWidget {
             child: Row(
               children: [
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(RadiusPalette.sm),
+                  borderRadius: BorderRadius.circular(RadiusPalette.base),
                   child: Image.network(
                     imageUrl,
                     width: 50,
