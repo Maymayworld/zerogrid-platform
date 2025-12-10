@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'screens/select_role/select_role_screen.dart';
+import 'features/auth/presentation/select_role_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 Future<void> main() async {

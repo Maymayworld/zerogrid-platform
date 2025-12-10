@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/project_card.dart';
 import '../../../shared/widgets/common_search_bar.dart';
-import '../../../features/creator/find/widgets/notification_sheet.dart';
+import 'widgets/notification_sheet.dart';
 import '../../../shared/widgets/project/detail_screen.dart';
 
 class FindScreen extends HookWidget {
