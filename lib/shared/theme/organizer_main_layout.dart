@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../shared/theme/app_theme.dart';
-import 'home/presentation/home_screen.dart';
-import 'campaign_screen.dart';
-import 'create_screen.dart';
-import 'chat_screen.dart';
-import 'profile_screen.dart';
+import '../../features/organizer/home/presentation/home_screen.dart';
+import '../../features/organizer/campaign/presentation/campaign_screen.dart';
+import '../../features/organizer/create_screen.dart';
+import '../../features/organizer/chat/presentation/chat_list_screen.dart';
+import '../../features/organizer/profile/presentation/profile_screen.dart';
 
 class OrganizerMainLayout extends HookWidget {
   @override
@@ -18,7 +18,7 @@ class OrganizerMainLayout extends HookWidget {
       HomeScreen(),
       CampaignScreen(),
       CreateScreen(),
-      ChatScreen(),
+      ChatListScreen(),
       ProfileScreen(),
     ];
 
@@ -198,7 +198,7 @@ class _OrganizerBottomNavBar extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: currentIndex == 2 ? ColorPalette.neutral800 : ColorPalette.neutral0,
+                color: currentIndex == 2 ? ColorPalette.neutral800 : ColorPalette.neutral100,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -210,7 +210,7 @@ class _OrganizerBottomNavBar extends StatelessWidget {
               ),
               child: Icon(
                 Icons.add,
-                color: currentIndex == 2 ? ColorPalette.neutral0 : ColorPalette.neutral400,
+                color: currentIndex == 2 ? ColorPalette.neutral100 : ColorPalette.neutral400,
                 size: 28,
               ),
             ),

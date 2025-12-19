@@ -1,4 +1,4 @@
-// lib/screens/creator/profile/widgets/edit_profile_screen.dart
+// lib/features/creator/profile/widgets/edit_profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,7 +19,7 @@ class EditProfileScreen extends HookWidget {
         backgroundColor: Colors.transparent,
         builder: (context) => Container(
           decoration: BoxDecoration(
-            color: ColorPalette.neutral0,
+            color: ColorPalette.neutral100,
             borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
           ),
           padding: EdgeInsets.all(SpacePalette.base),
@@ -78,9 +78,9 @@ class EditProfileScreen extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -129,7 +129,7 @@ class EditProfileScreen extends HookWidget {
                                 child: Icon(
                                   Icons.camera_alt,
                                   size: 16,
-                                  color: ColorPalette.neutral0,
+                                  color: ColorPalette.neutral100,
                                 ),
                               ),
                             ),
@@ -152,7 +152,7 @@ class EditProfileScreen extends HookWidget {
                         hintText: 'Enter your name',
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
-                        fillColor: ColorPalette.neutral100,
+                        fillColor: ColorPalette.neutral0,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                           borderSide: BorderSide.none,
@@ -176,7 +176,7 @@ class EditProfileScreen extends HookWidget {
                         hintText: 'Tell us about yourself',
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
-                        fillColor: ColorPalette.neutral100,
+                        fillColor: ColorPalette.neutral0,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                           borderSide: BorderSide.none,
@@ -197,7 +197,7 @@ class EditProfileScreen extends HookWidget {
                       child: Container(
                         padding: EdgeInsets.all(SpacePalette.base),
                         decoration: BoxDecoration(
-                          color: ColorPalette.neutral100,
+                          color: ColorPalette.neutral0,
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                         ),
                         child: Row(
@@ -231,7 +231,7 @@ class EditProfileScreen extends HookWidget {
             Container(
               padding: EdgeInsets.all(SpacePalette.base),
               decoration: BoxDecoration(
-                color: ColorPalette.neutral0,
+                color: ColorPalette.neutral100,
                 border: Border(
                   top: BorderSide(
                     color: ColorPalette.neutral200,
@@ -289,7 +289,7 @@ class _ImagePickerOption extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(SpacePalette.base),
         decoration: BoxDecoration(
-          color: ColorPalette.neutral100,
+          color: ColorPalette.neutral0,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(

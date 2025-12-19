@@ -22,7 +22,7 @@ class AnalyticsScreen extends HookWidget {
     return Scaffold(
       backgroundColor: backgroundColor,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral100,
+        backgroundColor: ColorPalette.neutral0,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -50,13 +50,13 @@ class AnalyticsScreen extends HookWidget {
                     Text(
                       'Total Spent',
                       style: TextStylePalette.normalText.copyWith(
-                        color: ColorPalette.neutral0
+                        color: ColorPalette.neutral100
                       )
                     ),
                     SizedBox(height: SpacePalette.sm),
                     Text(
                       '¥40,000',
-                      style: TextStylePalette.header.copyWith(color: ColorPalette.neutral0),
+                      style: TextStylePalette.header.copyWith(color: ColorPalette.neutral100),
                     ),
                     SizedBox(height: SpacePalette.base),
                   ],
@@ -732,7 +732,7 @@ class AnalyticsScreen extends HookWidget {
   void _showPeriodMenu(BuildContext context, ValueNotifier<String> selectedPeriod) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorPalette.neutral100,
+      backgroundColor: ColorPalette.neutral0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
       ),

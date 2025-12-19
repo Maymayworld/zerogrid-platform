@@ -14,7 +14,7 @@ class DashboardScreen extends HookWidget {
     final selectedDays = useState<String>('7 days');
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(SpacePalette.base),
@@ -123,7 +123,7 @@ class DashboardScreen extends HookWidget {
               Container(
                 height: 200,
                 decoration: BoxDecoration(
-                  color: ColorPalette.neutral100,
+                  color: ColorPalette.neutral0,
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
                 ),
                 child: Center(

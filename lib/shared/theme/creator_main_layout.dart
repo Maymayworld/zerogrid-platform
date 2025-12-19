@@ -1,12 +1,12 @@
 // lib/screens/creator/creator_main_layout.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import '../../shared/theme/app_theme.dart';
-import 'find/find_screen.dart';
-import 'likes/likes_screen.dart';
-import 'dashboard/dashboard_screen.dart';
-import 'campaign/campaign_screen.dart';
-import 'profile/profile_screen.dart';
+import 'app_theme.dart';
+import '../../features/creator/find/find_screen.dart';
+import '../../features/creator/likes/likes_screen.dart';
+import '../../features/creator/dashboard/dashboard_screen.dart';
+import '../../features/creator/campaign/campaign_screen.dart';
+import '../../features/creator/profile/profile_screen.dart';
 
 class CreatorMainLayout extends HookWidget {
   final int initialIndex;
@@ -205,7 +205,7 @@ class CustomBottomNavBar extends StatelessWidget {
               width: 64,
               height: 64,
               decoration: BoxDecoration(
-                color: currentIndex == 2 ? ColorPalette.neutral800 : ColorPalette.neutral0,
+                color: currentIndex == 2 ? ColorPalette.neutral800 : ColorPalette.neutral100,
                 shape: BoxShape.circle,
                 boxShadow: [
                   BoxShadow(
@@ -217,7 +217,7 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
               child: Icon(
                 Icons.dashboard_outlined,
-                color: currentIndex == 2 ? ColorPalette.neutral0 : ColorPalette.neutral400,
+                color: currentIndex == 2 ? ColorPalette.neutral100 : ColorPalette.neutral400,
                 size: 28,
               ),
             ),

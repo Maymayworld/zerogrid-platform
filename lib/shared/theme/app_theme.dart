@@ -1,21 +1,20 @@
-// lib/theme/app_theme.dart
+// lib/shared/theme/app_theme.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-// フォントはinterを使用
 // 太字はFontWeight.w600を使用
 
-Color backgroundColor = const Color(0xFFF5F5F5);
-Color subBackgroundColor = const Color(0xFFFFFFFF);
+Color backgroundColor = const Color(0xFFFFFFFF);
+Color subBackgroundColor = const Color(0xFFF5F5F5);
 Color progressColor = const Color(0xFF22C55E);
 
 // カラーパレット
 class ColorPalette {
   // 基本色
   // 基本背景色, 白テキスト色
-  static const Color neutral0 = Color(0xFFf5f5f5);
+  static const Color neutral0 = Color(0xFFffffff);
   // 薄いボックス背景色
-  static const Color neutral100 = Color(0xFFffffff);
+  static const Color neutral100 = Color(0xFFf5f5f5);
   // 区切り線, 枠線色
   static const Color neutral200 = Color(0xFFe5e5e5);
   // ヒントテキスト色
@@ -188,7 +187,7 @@ class TextStylePalette {
   );
   // ボタン内テキスト（白）
   static const TextStyle buttonTextWhite = TextStyle(
-    color: ColorPalette.neutral0,
+    color: ColorPalette.neutral100,
     fontSize: FontSizePalette.size16,
     fontWeight: FontWeight.bold
   );
@@ -226,17 +225,17 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.light(
         primary: ColorPalette.neutral800,
-        surface: ColorPalette.neutral100,
-        onPrimary: ColorPalette.neutral0,
+        surface: ColorPalette.neutral0,
+        onPrimary: ColorPalette.neutral100,
         onSurface: ColorPalette.neutral800,
         outline: ColorPalette.neutral200,
       ),
-      scaffoldBackgroundColor: ColorPalette.neutral100,
+      scaffoldBackgroundColor: ColorPalette.neutral0,
       textTheme: textTheme,
       
       // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: ColorPalette.neutral100,
+        backgroundColor: ColorPalette.neutral0,
         foregroundColor: ColorPalette.neutral800,
         elevation: 0,
         centerTitle: true,
@@ -246,7 +245,7 @@ class AppTheme {
       // InputDecoration
       inputDecorationTheme: InputDecorationTheme(
         // filled: true,
-        fillColor: ColorPalette.neutral0,
+        fillColor: ColorPalette.neutral100,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: SpacePalette.inner,
           vertical: SpacePalette.sm,
@@ -279,7 +278,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: ColorPalette.primaryColor,
-          foregroundColor: ColorPalette.neutral0,
+          foregroundColor: ColorPalette.neutral100,
           minimumSize: const Size(double.infinity, ButtonSizePalette.button),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(RadiusPalette.base),
@@ -288,9 +287,9 @@ class AppTheme {
         ),
       ),
       
-      // Card - neutral0背景
+      // Card - neutral100背景
       cardTheme: CardThemeData(
-        elevation: 1.5,
+        elevation: 1,
         margin: EdgeInsets.zero,
         shadowColor: ColorPalette.neutral800.withOpacity(0.1),
         surfaceTintColor: Colors.transparent,

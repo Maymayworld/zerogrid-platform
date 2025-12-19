@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_theme.dart';
+import '../../../shared/theme/app_theme.dart';
 import 'share_sheet.dart';
 import 'success_screen.dart';
 
@@ -49,9 +49,9 @@ class ProjectDetailScreen extends HookWidget {
     final imageHeight = screenWidth * 9 / 16;
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),

@@ -1,4 +1,4 @@
-// lib/screens/creator/profile_screen.dart
+// lib/features/creator/profile/presentation/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,7 +12,7 @@ class ProfileScreen extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(SpacePalette.base),
@@ -65,13 +65,13 @@ class ProfileScreen extends HookWidget {
                         Icon(
                           Icons.account_balance,
                           size: 16,
-                          color: ColorPalette.neutral0,
+                          color: ColorPalette.neutral100,
                         ),
                         SizedBox(width: SpacePalette.xs),
                         Text(
                           'Bank Account',
                           style: TextStylePalette.smText.copyWith(
-                            color: ColorPalette.neutral0
+                            color: ColorPalette.neutral100
                           )
                         ),
                       ],
@@ -80,7 +80,7 @@ class ProfileScreen extends HookWidget {
                     Text(
                       'Account Name',
                       style: TextStylePalette.smallHeader.copyWith(
-                        color: ColorPalette.neutral0
+                        color: ColorPalette.neutral100
                       )
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -90,7 +90,7 @@ class ProfileScreen extends HookWidget {
                         Text(
                           '**** 1084',
                           style: TextStylePalette.normalText.copyWith(
-                            color: ColorPalette.neutral0
+                            color: ColorPalette.neutral100
                           )
                         ),
                         Text(

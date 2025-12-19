@@ -1,4 +1,4 @@
-// lib/widgets/common_search_bar.dart
+// lib/shared/widgets/common_search_bar.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';

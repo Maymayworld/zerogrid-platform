@@ -25,7 +25,7 @@ class FilterBottomSheet extends HookWidget {
 
     return Container(
       decoration: BoxDecoration(
-        color: ColorPalette.neutral0,
+        color: ColorPalette.neutral100,
         borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
       ),
       padding: EdgeInsets.all(SpacePalette.lg),
@@ -195,7 +195,7 @@ class _PlatformChip extends StatelessWidget {
           vertical: SpacePalette.inner,
         ),
         decoration: BoxDecoration(
-          color: ColorPalette.neutral100,
+          color: ColorPalette.neutral0,
           border: Border.all(
             color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral200,
             width: 1.5,

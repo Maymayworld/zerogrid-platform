@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_theme.dart';
+import '../../../shared/theme/app_theme.dart';
 import 'detail_screen.dart';
-import 'chat_screen.dart';
+import '../chat/presentation/chat_screen.dart';
 import 'download_screen.dart';
 import 'upload_screen.dart';
 
@@ -41,7 +41,7 @@ class ProjectMenuScreen extends HookWidget {
     final percentage = (progress * 100).toInt();
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
         child: Column(
           children: [
@@ -143,7 +143,7 @@ class ProjectMenuScreen extends HookWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: ColorPalette.neutral100,
+                                  color: ColorPalette.neutral0,
                                   child: Center(
                                     child: Icon(
                                       Icons.image,
@@ -305,7 +305,7 @@ class _ChatBox extends StatelessWidget {
         aspectRatio: 1, // 正方形
         child: Container(
           decoration: BoxDecoration(
-            color: ColorPalette.neutral100,
+            color: ColorPalette.neutral0,
             borderRadius: BorderRadius.circular(RadiusPalette.base),
           ),
           child: Column(
@@ -350,7 +350,7 @@ class _ActionSection extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(SpacePalette.base),
         decoration: BoxDecoration(
-          color: ColorPalette.neutral100,
+          color: ColorPalette.neutral0,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(

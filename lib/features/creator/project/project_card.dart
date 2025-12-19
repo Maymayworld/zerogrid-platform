@@ -1,7 +1,7 @@
 // lib/widgets/project_card.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../theme/app_theme.dart';
+import '../../../shared/theme/app_theme.dart';
 
 class ProjectCard extends StatelessWidget {
   final double width;
@@ -105,7 +105,7 @@ class ProjectCard extends StatelessWidget {
                 ),
                 child: Icon(
                   platformIcon,
-                  color: ColorPalette.neutral0,
+                  color: ColorPalette.neutral100,
                   size: 12,
                 ),
               ),
@@ -129,7 +129,7 @@ class ProjectCard extends StatelessWidget {
                         Text(
                           '\$${currentAmount.toInt()} / \$${totalAmount.toInt()} ($percentage%)',
                           style: TextStylePalette.miniTitle.copyWith(
-                            color: ColorPalette.neutral0
+                            color: ColorPalette.neutral100
                           )
                         ),
                         // 参加者アイコン（Stackで重ねる）
@@ -148,14 +148,14 @@ class ProjectCard extends StatelessWidget {
                                     color: ColorPalette.neutral400,
                                     shape: BoxShape.circle,
                                     border: Border.all(
-                                      color: ColorPalette.neutral0,
+                                      color: ColorPalette.neutral100,
                                       width: 2,
                                     ),
                                   ),
                                   child: Icon(
                                     Icons.person,
                                     size: 10,
-                                    color: ColorPalette.neutral0,
+                                    color: ColorPalette.neutral100,
                                   ),
                                 ),
                               ),
@@ -171,7 +171,7 @@ class ProjectCard extends StatelessWidget {
                         Container(
                           height: 4,
                           decoration: BoxDecoration(
-                            color: ColorPalette.neutral0,
+                            color: ColorPalette.neutral100,
                             borderRadius: BorderRadius.circular(3),
                           ),
                         ),
@@ -198,7 +198,7 @@ class ProjectCard extends StatelessWidget {
                             child: Container(
                               height: 40,
                               decoration: BoxDecoration(
-                                color: ColorPalette.neutral0,
+                                color: ColorPalette.neutral100,
                                 borderRadius: BorderRadius.circular(RadiusPalette.base),
                               ),
                               child: Center(
@@ -219,12 +219,12 @@ class ProjectCard extends StatelessWidget {
                             height: 40,
                             decoration: BoxDecoration(
                               color: Colors.transparent,
-                              border: Border.all(color: ColorPalette.neutral0, width: 2),
+                              border: Border.all(color: ColorPalette.neutral100, width: 2),
                               borderRadius: BorderRadius.circular(RadiusPalette.base),
                             ),
                             child: Icon(
                               Icons.favorite_border,
-                              color: ColorPalette.neutral0,
+                              color: ColorPalette.neutral100,
                               size: 20,
                             ),
                           ),

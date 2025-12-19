@@ -1,7 +1,7 @@
 // lib/widgets/project/share_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_theme.dart';
+import '../../../shared/theme/app_theme.dart';
 
 class ProjectShareSheet extends StatelessWidget {
   final String projectName;
@@ -21,7 +21,7 @@ class ProjectShareSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: ColorPalette.neutral0,
+        color: ColorPalette.neutral100,
         borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
       ),
       padding: EdgeInsets.all(SpacePalette.lg),
@@ -94,7 +94,7 @@ class ProjectShareSheet extends StatelessWidget {
                                   color: ColorPalette.systemGreen,
                                   shape: BoxShape.circle,
                                   border: Border.all(
-                                    color: ColorPalette.neutral0,
+                                    color: ColorPalette.neutral100,
                                     width: 2,
                                   ),
                                 ),
@@ -167,7 +167,7 @@ class _ShareOption extends StatelessWidget {
             color: color,
             borderRadius: BorderRadius.circular(RadiusPalette.base),
           ),
-          child: Icon(icon, color: ColorPalette.neutral0, size: 28),
+          child: Icon(icon, color: ColorPalette.neutral100, size: 28),
         ),
         SizedBox(height: SpacePalette.xs),
         Text(
@@ -197,7 +197,7 @@ class _ActionButton extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: ColorPalette.neutral100,
+            color: ColorPalette.neutral0,
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: ColorPalette.neutral800, size: 24),

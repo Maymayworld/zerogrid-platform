@@ -1,7 +1,7 @@
 // lib/widgets/project/download_screen.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_theme.dart';
+import '../../../shared/theme/app_theme.dart';
 
 class ProjectDownloadScreen extends StatelessWidget {
   const ProjectDownloadScreen({Key? key}) : super(key: key);
@@ -9,9 +9,9 @@ class ProjectDownloadScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -96,7 +96,7 @@ class _FileItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette.neutral100,
+        color: ColorPalette.neutral0,
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
       child: Row(

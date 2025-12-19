@@ -36,7 +36,7 @@ class SelectRoleScreen extends HookConsumerWidget {
                       'How would you like to get\nstarted?',
                       style: TextStyle(
                         fontSize: FontSizePalette.size16,
-                        color: ColorPalette.neutral0,
+                        color: ColorPalette.neutral100,
                       ),
                     ),
                     SizedBox(height: SpacePalette.inner),

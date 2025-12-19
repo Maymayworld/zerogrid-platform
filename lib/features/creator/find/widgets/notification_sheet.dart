@@ -12,7 +12,7 @@ class NotificationSheet extends StatelessWidget {
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
-        color: ColorPalette.neutral0,
+        color: ColorPalette.neutral100,
       ),
       child: SafeArea(
         child: Column(

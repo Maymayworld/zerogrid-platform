@@ -2,10 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../shared/theme/app_theme.dart';
-import '../../../shared/widgets/project_card.dart';
+import '../project/project_card.dart';
 import '../../../shared/widgets/common_search_bar.dart';
 import 'widgets/notification_sheet.dart';
-import '../../../shared/widgets/project/detail_screen.dart';
+import '../project/detail_screen.dart';
+import 'widgets/filter_chip_widget.dart';
 
 class FindScreen extends HookWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -19,7 +20,7 @@ class FindScreen extends HookWidget {
 
     // 画面構成
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
         child: Column(
           children: [
@@ -39,11 +40,7 @@ class FindScreen extends HookWidget {
                     child: Center(
                       child: Text(
                         'ZG',
-                        style: TextStyle(
-                          color: backgroundColor,
-                          fontSize: FontSizePalette.size16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                        style: TextStylePalette.title.copyWith(color: ColorPalette.neutral0),
                       ),
                     ),
                   ),
@@ -59,7 +56,7 @@ class FindScreen extends HookWidget {
                       // 通知シートが開く
                       showModalBottomSheet(
                         context: context,
-                        isScrollControlled: true,
+                        isScrollControlled: true, // 画面最大まで開く
                         builder: (context) => NotificationSheet(),
                       );
                     },
@@ -89,7 +86,7 @@ class FindScreen extends HookWidget {
                         return Container(
                           margin: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            color: ColorPalette.neutral100,
+                            color: ColorPalette.neutral0,
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Center(
@@ -106,7 +103,7 @@ class FindScreen extends HookWidget {
                     ),
                     // ページインジケーター
                     Positioned(
-                      bottom: 8,
+                      bottom: 24,
                       left: 0,
                       right: 0,
                       child: Row(
@@ -141,35 +138,35 @@ class FindScreen extends HookWidget {
                   scrollDirection: Axis.horizontal,
                   child: Row(
                     children: [
-                      _FilterChip(
+                      FilterButton(
                         icon: Icons.all_inclusive,
                         label: 'All',
                         isSelected: selectedFilterIndex.value == 0,
                         onTap: () => selectedFilterIndex.value = 0,
                       ),
                       SizedBox(width: SpacePalette.sm),
-                      _FilterChip(
+                      FilterButton(
                         icon: Icons.video_library,
                         label: 'Video',
                         isSelected: selectedFilterIndex.value == 1,
                         onTap: () => selectedFilterIndex.value = 1,
                       ),
                       SizedBox(width: SpacePalette.sm),
-                      _FilterChip(
+                      FilterButton(
                         icon: Icons.image,
                         label: 'Photo',
                         isSelected: selectedFilterIndex.value == 2,
                         onTap: () => selectedFilterIndex.value = 2,
                       ),
                       SizedBox(width: SpacePalette.sm),
-                      _FilterChip(
+                      FilterButton(
                         icon: Icons.music_note,
                         label: 'Music',
                         isSelected: selectedFilterIndex.value == 3,
                         onTap: () => selectedFilterIndex.value = 3,
                       ),
                       SizedBox(width: SpacePalette.sm),
-                      _FilterChip(
+                      FilterButton(
                         icon: Icons.lightbulb_outline,
                         label: 'Creative',
                         isSelected: selectedFilterIndex.value == 4,
@@ -241,62 +238,6 @@ class FindScreen extends HookWidget {
               ),
             ),
             SizedBox(height: 80), // フッター分の余白
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// あとでWidgetsに分離
-class _FilterChip extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _FilterChip({
-    required this.icon,
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 200),
-        height: 36, // 高さを固定
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? 12 : 10,
-          vertical: 0, // 縦方向のpaddingは0に（高さで調整）
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral100,
-          borderRadius: BorderRadius.circular(RadiusPalette.base),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center, // 中央揃え
-          children: [
-            Icon(
-              icon,
-              size: 16,
-              color: isSelected ? ColorPalette.neutral100 : ColorPalette.neutral800,
-            ),
-            if (isSelected) ...[
-              SizedBox(width: 6),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: ColorPalette.neutral0,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
           ],
         ),
       ),

@@ -27,14 +27,14 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       'Dashboard', 
                       style: TextStylePalette.smallHeader.copyWith(
-                        color: ColorPalette.neutral0
+                        color: ColorPalette.neutral100
                       )
                     ),
                     SizedBox(height: SpacePalette.lg),
                     Text(
                       'Total Spent',
                       style: TextStylePalette.normalText.copyWith(
-                        color: ColorPalette.neutral0
+                        color: ColorPalette.neutral100
                       )
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -44,13 +44,13 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           '¥400,500',
                           style: TextStylePalette.header.copyWith(
-                            color: ColorPalette.neutral0
+                            color: ColorPalette.neutral100
                           )
                         ),
                         Container(
                           padding: EdgeInsets.all(SpacePalette.xs),
                           decoration: BoxDecoration(
-                            color: ColorPalette.neutral0.withOpacity(0.2),
+                            color: ColorPalette.neutral100.withOpacity(0.2),
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Row(
@@ -65,7 +65,7 @@ class HomeScreen extends StatelessWidget {
                                 child: Text(
                                   'Deposit',
                                   style: TextStylePalette.smText.copyWith(
-                                    color: ColorPalette.neutral0,
+                                    color: ColorPalette.neutral100,
                                     fontSize: 10,
                                   ),
                                 ),

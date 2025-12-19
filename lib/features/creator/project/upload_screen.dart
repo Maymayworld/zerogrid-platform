@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_theme.dart';
+import '../../../shared/theme/app_theme.dart';
 
 class ProjectUploadScreen extends HookWidget {
   const ProjectUploadScreen({Key? key}) : super(key: key);
@@ -45,9 +45,9 @@ class ProjectUploadScreen extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -153,7 +153,7 @@ class ProjectUploadScreen extends HookWidget {
                       Container(
                         padding: EdgeInsets.all(SpacePalette.base),
                         decoration: BoxDecoration(
-                          color: ColorPalette.neutral100,
+                          color: ColorPalette.neutral0,
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                         ),
                         child: Column(
@@ -182,7 +182,7 @@ class ProjectUploadScreen extends HookWidget {
             Container(
               padding: EdgeInsets.all(SpacePalette.base),
               decoration: BoxDecoration(
-                color: ColorPalette.neutral0,
+                color: ColorPalette.neutral100,
                 border: Border(
                   top: BorderSide(
                     color: ColorPalette.neutral200,
@@ -207,7 +207,7 @@ class ProjectUploadScreen extends HookWidget {
                     children: [
                       Icon(
                         Icons.upload_outlined,
-                        color: ColorPalette.neutral0,
+                        color: ColorPalette.neutral100,
                         size: 20,
                       ),
                       SizedBox(width: SpacePalette.sm),
@@ -248,7 +248,7 @@ class _PlatformLinkField extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette.neutral100,
+        color: ColorPalette.neutral0,
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
       child: Column(
@@ -279,7 +279,7 @@ class _PlatformLinkField extends StatelessWidget {
           SizedBox(height: SpacePalette.sm),
           Container(
             decoration: BoxDecoration(
-              color: ColorPalette.neutral0,
+              color: ColorPalette.neutral100,
               borderRadius: BorderRadius.circular(RadiusPalette.base),
               border: Border.all(
                 color: ColorPalette.neutral200,

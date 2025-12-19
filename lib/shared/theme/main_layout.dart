@@ -1,8 +1,8 @@
 // lib/screens/main_layout.dart
 import 'package:flutter/material.dart';
 import '../../features/auth/data/models/user_role.dart';
-import '../../features/creator/creator_main_layout.dart';
-import '../../features/organizer/organizer_main_layout.dart';
+import 'creator_main_layout.dart';
+import 'organizer_main_layout.dart';
 
 class MainLayout extends StatelessWidget {
   final UserRole userRole;

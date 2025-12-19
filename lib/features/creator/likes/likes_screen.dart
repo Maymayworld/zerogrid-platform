@@ -4,10 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/common_search_bar.dart';
-import '../../../shared/widgets/project_card.dart';
+import '../project/project_card.dart';
 import '../../../shared/widgets/filter_bottom_sheet.dart';
 import '../find/widgets/notification_sheet.dart';
-import '../../../shared/widgets/project/detail_screen.dart';
+import '../project/detail_screen.dart';
 
 class LikesScreen extends HookWidget {
   const LikesScreen({Key? key}) : super(key: key);
@@ -55,7 +55,7 @@ class LikesScreen extends HookWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
         child: Column(
           children: [

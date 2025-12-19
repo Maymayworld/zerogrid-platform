@@ -1,11 +1,16 @@
-// lib/widgets/project/success_screen.dart
+// lib/screens/organizer/deposit/presentation/pages/deposit_success_screen.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import '../../theme/app_theme.dart';
-import '../../../features/creator/creator_main_layout.dart';
+import '../../../../../../shared/theme/app_theme.dart';
+import '../../../../../../shared/theme/main_layout.dart';
+import '../../../../../../features/auth/data/models/user_role.dart';
 
-class ProjectSuccessScreen extends StatelessWidget {
-  const ProjectSuccessScreen({Key? key}) : super(key: key);
+class DepositSuccessScreen extends StatelessWidget {
+  final int amount;
+  
+  const DepositSuccessScreen({
+    Key? key,
+    required this.amount,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,35 +40,39 @@ class ProjectSuccessScreen extends StatelessWidget {
               
               // タイトル
               Text(
-                "You're in!",
+                "Deposit Successful!",
                 style: TextStylePalette.header
               ),
+              SizedBox(height: SpacePalette.sm),
               Text(
-                'Time to start earning.',
-                style: TextStylePalette.header
+                '¥${amount.toString().replaceAllMapped(
+                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                  (Match m) => '${m[1]},',
+                )} added to your balance.',
+                style: TextStylePalette.title
               ),
               SizedBox(height: SpacePalette.base),
               
               // 説明文
               Text(
-                'Start now. The sooner you create, the faster your views start climbing.',
+                'Your balance has been updated. You can now use these funds for your campaigns.',
                 textAlign: TextAlign.center,
                 style: TextStylePalette.subText
               ),
               SizedBox(height: SpacePalette.lg),
               
-              // Jump to Listボタン
+              // Back to Homeボタン
               SizedBox(
                 width: double.infinity,
                 height: ButtonSizePalette.button,
                 child: ElevatedButton(
                   onPressed: () {
-                    // キャンペーンリストに戻る（ボトムバー付き）
+                    // ホームに戻る（ボトムバー付き）
                     Navigator.pushAndRemoveUntil(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => CreatorMainLayout(
-                          initialIndex: 3, // Campaignタブを表示
+                        builder: (context) => MainLayout(
+                          userRole: UserRole.organizer,
                         ),
                       ),
                       (route) => false, // すべての履歴をクリア
@@ -76,7 +85,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Jump to List',
+                    'Back to Home',
                     style: TextStylePalette.buttonTextWhite
                   ),
                 ),
