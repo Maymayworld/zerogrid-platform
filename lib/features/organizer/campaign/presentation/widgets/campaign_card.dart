@@ -1,20 +1,20 @@
-// lib/features/organizer/project/presentation/widgets/project_card.dart
+// lib/features/organizer/campaign/presentation/widgets/campaign_card.dart
 import 'package:flutter/material.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
-class OrganizerProjectCard extends StatelessWidget {
+class OrganizerCampaignCard extends StatelessWidget {
   final double width;
   final double height;
-  final String projectName;
+  final String campaignName;
   final int budget;
   final String? imageUrl;
   final VoidCallback onEdit;
 
-  const OrganizerProjectCard({
+  const OrganizerCampaignCard({
     Key? key,
     required this.width,
     required this.height,
-    required this.projectName,
+    required this.campaignName,
     required this.budget,
     this.imageUrl,
     required this.onEdit,
@@ -89,7 +89,7 @@ class OrganizerProjectCard extends StatelessWidget {
                   children: [
                     // プロジェクト名
                     Text(
-                      projectName,
+                      campaignName,
                       style: TextStylePalette.miniTitle.copyWith(
                         color: ColorPalette.neutral100,
                       ),

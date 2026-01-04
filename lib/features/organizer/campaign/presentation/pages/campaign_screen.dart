@@ -2,11 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../../../shared/theme/app_theme.dart';
-import '../../project/presentation/widgets/project_card.dart';
-import '../../project/presentation/edit_project_screen.dart';
-import '../../create/data/models/campaign.dart';
-import '../../create/presentation/providers/campaign_service_provider.dart';
+import '../../../../../shared/theme/app_theme.dart';
+import '../widgets/campaign_card.dart';
+import 'edit_campaign_screen.dart';
+import '../../data/models/campaign.dart';
+import '../providers/campaign_service_provider.dart';
 
 class CampaignScreen extends HookConsumerWidget {
   const CampaignScreen({Key? key}) : super(key: key);
@@ -179,10 +179,10 @@ class CampaignScreen extends HookConsumerWidget {
 
           return Padding(
             padding: EdgeInsets.only(bottom: SpacePalette.base),
-            child: OrganizerProjectCard(
+            child: OrganizerCampaignCard(
               width: cardWidth,
               height: cardHeight,
-              projectName: campaign.name,
+              campaignName: campaign.name,
               budget: campaign.budget,
               imageUrl: campaign.thumbnailUrl,
               onEdit: () async {
@@ -190,7 +190,7 @@ class CampaignScreen extends HookConsumerWidget {
                 final result = await Navigator.push<bool>(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditProjectScreen(
+                    builder: (context) => EditCampaignScreen(
                       campaignId: campaign.id,
                     ),
                   ),

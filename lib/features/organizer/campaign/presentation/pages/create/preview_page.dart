@@ -1,12 +1,12 @@
-// lib/features/organizer/create/presentation/pages/preview_page.dart
+// lib/features/organizer/campaign/presentation/pages/create/preview_page.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zero_grid/features/auth/presentation/providers/user_profile_provider.dart';
-import 'package:zero_grid/features/organizer/create/presentation/providers/campaign_service_provider.dart';
-import 'package:zero_grid/features/organizer/create/presentation/providers/project_provider.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/providers/campaign_service_provider.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 
 class PreviewPage extends HookConsumerWidget {

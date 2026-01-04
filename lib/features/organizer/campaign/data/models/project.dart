@@ -1,4 +1,4 @@
-// lib/features/organizer/create/data/models/project.dart
+// lib/features/organizer/campaign/data/models/project.dart
 
 class Project {
   final String projectName;

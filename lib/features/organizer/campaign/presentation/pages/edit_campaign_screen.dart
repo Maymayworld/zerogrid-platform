@@ -1,17 +1,17 @@
-// lib/features/organizer/project/presentation/edit_project_screen.dart
+// lib/features/organizer/campaign/presentation/pages/edit_campaign_screen.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../../../shared/theme/app_theme.dart';
-import '../../../organizer/create/data/models/campaign.dart';
-import '../../../organizer/create/presentation/providers/campaign_service_provider.dart';
+import '../../../../../shared/theme/app_theme.dart';
+import '../../data/models/campaign.dart';
+import '../providers/campaign_service_provider.dart';
 
-class EditProjectScreen extends HookConsumerWidget {
+class EditCampaignScreen extends HookConsumerWidget {
   final String campaignId;
 
-  const EditProjectScreen({
+  const EditCampaignScreen({
     Key? key,
     required this.campaignId,
   }) : super(key: key);

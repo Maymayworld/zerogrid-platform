@@ -1,4 +1,4 @@
-// lib/features/organizer/create/presentation/providers/project_provider.dart
+// lib/features/organizer/campaign/presentation/providers/project_provider.dart
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../data/models/project.dart';
 

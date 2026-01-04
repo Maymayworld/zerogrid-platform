@@ -1,6 +1,6 @@
-// lib/features/organizer/presentation/pages/create_screen.dart
+// lib/features/organizer/campaign/presentation/pages/create/create_screen.dart
 import 'package:flutter/material.dart';
-import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../../shared/theme/app_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'manual_create_page1.dart';

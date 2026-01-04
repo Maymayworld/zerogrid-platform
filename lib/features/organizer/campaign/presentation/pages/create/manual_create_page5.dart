@@ -1,19 +1,46 @@
-// lib/features/organizer/create/presentation/pages/manual_create_page3.dart
+// lib/features/organizer/campaign/presentation/pages/create/manual_create_page5.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:zero_grid/features/organizer/create/presentation/pages/manual_create_page4.dart';
-import 'package:zero_grid/features/organizer/create/presentation/providers/project_provider.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page6.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 
-class ManualCreatePage3 extends HookConsumerWidget{
-  const ManualCreatePage3({super.key});
+class ManualCreatePage5 extends HookConsumerWidget{
+  const ManualCreatePage5({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final targetviewController = useTextEditingController();
+    final timelineController = useTextEditingController();
+
+    Future<void> selectDate() async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(DateTime.now().year + 5),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: ColorPalette.neutral800,
+                onPrimary: ColorPalette.neutral0,
+                surface: ColorPalette.neutral0,
+                onSurface: ColorPalette.neutral800
+              )
+            ),
+            child: child!,
+          );
+        }
+      );
+
+      if (picked != null) {
+        final formatted = '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
+        timelineController.text = formatted;
+      }
+    }
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral0,
@@ -33,7 +60,7 @@ class ManualCreatePage3 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Set Your Target Views',
+                  'Set Your Project Timeline',
                   style: TextStylePalette.header,
                 ),
               ),
@@ -41,7 +68,7 @@ class ManualCreatePage3 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Set the view goal you want this project to reach',
+                  'Choose when the project starts and when it wraps up',
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -50,22 +77,23 @@ class ManualCreatePage3 extends HookConsumerWidget{
                 width: double.infinity,
                 height: ButtonSizePalette.button,
                 child: TextField(
-                  controller: targetviewController,
+                  controller: timelineController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly
                   ],
                   cursorColor: ColorPalette.neutral800,
                   decoration: InputDecoration(
-                    suffixIcon: Center(
-                      widthFactor: 1,
-                      child: Padding(
-                        padding: const EdgeInsets.only(right: SpacePalette.inner),
-                        child: Text(
-                          'Views',
-                          style: TextStylePalette.smSubText,
-                        ),
-                      ),
+                    hintText: 'YYYY/MM/DD',
+                    hintStyle: TextStylePalette.hintText,
+                    suffixIcon: IconButton(
+                      constraints: BoxConstraints(),
+                      onPressed: selectDate,
+                      icon: Icon(
+                        Icons.calendar_month,
+                        color: ColorPalette.neutral400,
+                        size: 24,
+                      )
                     ),
                     border: OutlineInputBorder(),
                     enabledBorder: OutlineInputBorder(
@@ -87,7 +115,7 @@ class ManualCreatePage3 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'You can adjust this anytime',
+                  'The project will automatically become inactive when the end date is reached',
                   style: TextStylePalette.subGuide,
                 ),
               ),
@@ -97,10 +125,10 @@ class ManualCreatePage3 extends HookConsumerWidget{
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(projectProvider.notifier).setTargetViews(int.parse(targetviewController.text));
+                    ref.read(projectProvider.notifier).setEndDate(timelineController.text);
                     Navigator.push(
                       context, (MaterialPageRoute(
-                        builder: (context) => ManualCreatePage4()
+                        builder: (context) => ManualCreatePage6()
                         )
                       )
                     );

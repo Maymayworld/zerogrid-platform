@@ -1,19 +1,19 @@
-// lib/features/organizer/create/presentation/pages/manual_create_page4.dart
+// lib/features/organizer/campaign/presentation/pages/create/manual_create_page3.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:zero_grid/features/organizer/create/presentation/pages/manual_create_page5.dart';
-import 'package:zero_grid/features/organizer/create/presentation/providers/project_provider.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page4.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ManualCreatePage4 extends HookConsumerWidget{
-  const ManualCreatePage4({super.key});
+class ManualCreatePage3 extends HookConsumerWidget{
+  const ManualCreatePage3({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
 
-    final budgetController = useTextEditingController();
+    final targetviewController = useTextEditingController();
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral0,
@@ -33,7 +33,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Plan Your Budget',
+                  'Set Your Target Views',
                   style: TextStylePalette.header,
                 ),
               ),
@@ -41,7 +41,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'We’ll suggest ranges based on your category and target views',
+                  'Set the view goal you want this project to reach',
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -50,7 +50,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
                 width: double.infinity,
                 height: ButtonSizePalette.button,
                 child: TextField(
-                  controller: budgetController,
+                  controller: targetviewController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [
                     FilteringTextInputFormatter.digitsOnly
@@ -62,8 +62,8 @@ class ManualCreatePage4 extends HookConsumerWidget{
                       child: Padding(
                         padding: const EdgeInsets.only(right: SpacePalette.inner),
                         child: Text(
-                          '￥',
-                          style: TextStylePalette.subText,
+                          'Views',
+                          style: TextStylePalette.smSubText,
                         ),
                       ),
                     ),
@@ -83,16 +83,24 @@ class ManualCreatePage4 extends HookConsumerWidget{
                   ),
                 )
               ),
+              SizedBox(height: SpacePalette.sm),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'You can adjust this anytime',
+                  style: TextStylePalette.subGuide,
+                ),
+              ),
               Spacer(),
               SizedBox(
                 width: double.infinity,
                 height: 48,
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(projectProvider.notifier).setBudget(int.parse(budgetController.text));
+                    ref.read(projectProvider.notifier).setTargetViews(int.parse(targetviewController.text));
                     Navigator.push(
                       context, (MaterialPageRoute(
-                        builder: (context) => ManualCreatePage5()
+                        builder: (context) => ManualCreatePage4()
                         )
                       )
                     );

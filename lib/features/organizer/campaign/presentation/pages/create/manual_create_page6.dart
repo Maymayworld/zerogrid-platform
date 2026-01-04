@@ -1,12 +1,12 @@
-// lib/features/organizer/create/presentation/pages/manual_create_page6.dart
+// lib/features/organizer/campaign/presentation/pages/create/manual_create_page6.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:zero_grid/features/organizer/create/presentation/pages/loading_page.dart';
-import 'package:zero_grid/features/organizer/create/presentation/pages/preview_page.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/loading_page.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/preview_page.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:zero_grid/features/organizer/create/presentation/providers/project_provider.dart';
+import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 
 class ManualCreatePage6 extends HookConsumerWidget{
   const ManualCreatePage6({super.key});
