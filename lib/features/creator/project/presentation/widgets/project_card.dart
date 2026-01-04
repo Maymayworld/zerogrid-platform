@@ -1,7 +1,7 @@
-// lib/widgets/project_card.dart
+// lib/features/creator/project/presentation/widgets/project_card.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../shared/theme/app_theme.dart';
+import '../../../../../shared/theme/app_theme.dart';
 
 class ProjectCard extends StatelessWidget {
   final double width;

@@ -4,10 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/common_search_bar.dart';
-import '../project/project_card.dart';
+import '../project/presentation/widgets/project_card.dart';
 import '../../../shared/widgets/filter_bottom_sheet.dart';
 import '../find/widgets/notification_sheet.dart';
-import '../project/detail_screen.dart';
+import '../project/presentation/pages/detail_screen.dart';
 
 class LikesScreen extends HookWidget {
   const LikesScreen({Key? key}) : super(key: key);

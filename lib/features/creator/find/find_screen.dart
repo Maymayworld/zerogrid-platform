@@ -2,10 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../shared/theme/app_theme.dart';
-import '../project/project_card.dart';
+import '../project/presentation/widgets/project_card.dart';
 import '../../../shared/widgets/common_search_bar.dart';
 import 'widgets/notification_sheet.dart';
-import '../project/detail_screen.dart';
+import '../project/presentation/pages/detail_screen.dart';
 import 'widgets/filter_chip_widget.dart';
 
 class FindScreen extends HookWidget {

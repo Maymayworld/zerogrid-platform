@@ -1,7 +1,7 @@
-// lib/widgets/project/share_sheet.dart
+// lib/features/creator/project/presentation/widgets/share_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../shared/theme/app_theme.dart';
+import '../../../../../shared/theme/app_theme.dart';
 
 class ProjectShareSheet extends StatelessWidget {
   final String projectName;

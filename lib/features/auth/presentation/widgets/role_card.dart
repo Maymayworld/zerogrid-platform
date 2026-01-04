@@ -1,16 +1,15 @@
-// lib/screens/select_role/widgets/role_card.dart
+// lib/features/auth/presentation/widgets/role_card.dart
+// 確認済み
 import 'package:flutter/material.dart';
 import '../../../../shared/theme/app_theme.dart';
 
 class RoleCard extends StatelessWidget {
-  final IconData icon;
   final String title;
   final String description;
   final VoidCallback onTap;
 
   const RoleCard({
     Key? key,
-    required this.icon,
     required this.title,
     required this.description,
     required this.onTap,
@@ -18,53 +17,40 @@ class RoleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        height: 100,
-        padding: EdgeInsets.all(SpacePalette.sm),
-        decoration: BoxDecoration(
-          color: Colors.transparent,
+    return SizedBox(
+      height: 100,
+      child: Card(
+        color: ColorPalette.neutral0,
+        child: InkWell(
+          onTap: onTap,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          border: Border.all(
-            color: ColorPalette.neutral400,
-            width: 2,
-          ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Icon(
-            //   icon,
-            //   size: FontSizePalette.size24,
-            //   color: ColorPalette.neutral800,
-            // ),
-            Column(
+          child: Padding(
+            padding: EdgeInsets.all(SpacePalette.sm),
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Row(
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      title,
-                      style: TextStylePalette.listTitle
+                    Row(
+                      children: [
+                        Text(title, style: TextStylePalette.listTitle),
+                        Spacer(),
+                        Icon(
+                          Icons.arrow_forward,
+                          size: FontSizePalette.size14,
+                          color: ColorPalette.neutral800,
+                        ),
+                      ],
                     ),
-                    Spacer(),
-                    Icon(
-                      Icons.arrow_forward,
-                      size: FontSizePalette.size12,
-                      color: ColorPalette.neutral800,
-                    ),
+                    SizedBox(height: SpacePalette.xs),
+                    Text(description, style: TextStylePalette.listLeading),
                   ],
-                ),
-                SizedBox(height: SpacePalette.xs),
-                Text(
-                  description,
-                  style: TextStylePalette.listLeading
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );

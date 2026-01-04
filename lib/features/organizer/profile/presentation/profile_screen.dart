@@ -1,15 +1,40 @@
 // lib/features/organizer/profile/presentation/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
-import '../../../organizer/deposit/presentation/pages/select_amount_screen.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
+import '../../../auth/presentation/providers/user_profile_provider.dart';
+import '../../../auth/presentation/pages/select_role_screen.dart';
+import '../../deposit/presentation/pages/select_amount_screen.dart';
 
-class ProfileScreen extends HookWidget {
+class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isBalanceVisible = useState(true);
+    final profileState = ref.watch(userProfileProvider);
+    final profile = profileState.profile;
+
+    Future<void> handleLogout() async {
+      try {
+        await ref.read(authServiceProvider).signOut();
+        ref.read(userProfileProvider.notifier).clear();
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => SelectRoleScreen()),
+            (route) => false,
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Logout failed: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -26,19 +51,23 @@ class ProfileScreen extends HookWidget {
                   CircleAvatar(
                     radius: 50,
                     backgroundColor: ColorPalette.neutral400,
-                    child: Text(
-                      'ZG',
-                      style: TextStylePalette.header.copyWith(
-                        color: ColorPalette.neutral0,
-                      ),
-                    ),
+                    backgroundImage: profile?.avatarUrl != null
+                        ? NetworkImage(profile!.avatarUrl!)
+                        : null,
+                    child: profile?.avatarUrl == null
+                        ? Text(
+                            profile?.displayName.substring(0, 2).toUpperCase() ?? 'ZG',
+                            style: TextStylePalette.header.copyWith(
+                              color: ColorPalette.neutral0,
+                            ),
+                          )
+                        : null,
                   ),
                   Positioned(
                     bottom: 0,
                     right: 0,
                     child: GestureDetector(
                       onTap: () {
-                        // 画像編集処理
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(content: Text('Edit profile image...')),
                         );
@@ -66,17 +95,24 @@ class ProfileScreen extends HookWidget {
               ),
               SizedBox(height: SpacePalette.lg),
               
-              // Organizer Name
+              // 名前（DBから）
               Text(
-                'Zero Grid Inc.',
-                style: TextStylePalette.smallHeader
+                profile?.displayName ?? 'Loading...',
+                style: TextStylePalette.smallHeader,
               ),
               SizedBox(height: SpacePalette.sm),
               
-              // Organizer Badge
+              // ユーザーネーム
+              Text(
+                '@${profile?.username ?? ''}',
+                style: TextStylePalette.subText,
+              ),
+              SizedBox(height: SpacePalette.xs),
+              
+              // ロール
               Text(
                 'Organizer',
-                style: TextStylePalette.subText
+                style: TextStylePalette.smSubText,
               ),
               SizedBox(height: SpacePalette.lg),
               
@@ -102,8 +138,8 @@ class ProfileScreen extends HookWidget {
                         Text(
                           'My Wallet',
                           style: TextStylePalette.smText.copyWith(
-                            color: ColorPalette.neutral0
-                          )
+                            color: ColorPalette.neutral0,
+                          ),
                         ),
                       ],
                     ),
@@ -115,8 +151,8 @@ class ProfileScreen extends HookWidget {
                         Text(
                           isBalanceVisible.value ? '¥400,500' : '¥******',
                           style: TextStylePalette.header.copyWith(
-                            color: ColorPalette.neutral0
-                          )
+                            color: ColorPalette.neutral0,
+                          ),
                         ),
                         Row(
                           children: [
@@ -125,9 +161,9 @@ class ProfileScreen extends HookWidget {
                                 isBalanceVisible.value = !isBalanceVisible.value;
                               },
                               child: Icon(
-                                isBalanceVisible.value 
-                                  ? Icons.visibility_outlined 
-                                  : Icons.visibility_off_outlined,
+                                isBalanceVisible.value
+                                    ? Icons.visibility_outlined
+                                    : Icons.visibility_off_outlined,
                                 size: 20,
                                 color: ColorPalette.neutral0,
                               ),
@@ -153,11 +189,7 @@ class ProfileScreen extends HookWidget {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.add,
-                                      size: 16,
-                                      color: ColorPalette.neutral0,
-                                    ),
+                                    Icon(Icons.add, size: 16, color: ColorPalette.neutral0),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       'Deposit',
@@ -178,56 +210,33 @@ class ProfileScreen extends HookWidget {
               ),
               SizedBox(height: SpacePalette.lg),
               
-              // Payment Methods
+              // メニュー項目
               _ProfileMenuItem(
                 icon: Icons.payment_outlined,
                 label: 'Payment Methods',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Payment Methods coming soon...')),
-                  );
-                },
+                onTap: () {},
               ),
-              
-              // Notification Preferences
               _ProfileMenuItem(
                 icon: Icons.notifications_outlined,
                 label: 'Notification Preferences',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Notification Preferences coming soon...')),
-                  );
-                },
+                onTap: () {},
               ),
-              
-              // Give Feedback
               _ProfileMenuItem(
                 icon: Icons.feedback_outlined,
                 label: 'Give Feedback',
-                onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Give Feedback coming soon...')),
-                  );
-                },
+                onTap: () {},
               ),
               
               SizedBox(height: SpacePalette.base),
               
               // Logout Button
               GestureDetector(
-                onTap: () {
-                  // ログアウト処理（後で実装）
-                  print('Logout tapped');
-                },
+                onTap: handleLogout,
                 child: Container(
                   padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.logout,
-                        size: 20,
-                        color: ColorPalette.systemRed,
-                      ),
+                      Icon(Icons.logout, size: 20, color: ColorPalette.systemRed),
                       SizedBox(width: SpacePalette.base),
                       Text(
                         'Logout',
@@ -240,7 +249,7 @@ class ProfileScreen extends HookWidget {
                 ),
               ),
               
-              SizedBox(height: 80), // フッター分の余白
+              SizedBox(height: 80),
             ],
           ),
         ),
@@ -249,7 +258,6 @@ class ProfileScreen extends HookWidget {
   }
 }
 
-// プロフィールメニューアイテム
 class _ProfileMenuItem extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -269,31 +277,15 @@ class _ProfileMenuItem extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
         decoration: BoxDecoration(
           border: Border(
-            bottom: BorderSide(
-              color: ColorPalette.neutral200,
-              width: 1,
-            ),
+            bottom: BorderSide(color: ColorPalette.neutral200, width: 1),
           ),
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 20,
-              color: ColorPalette.neutral800,
-            ),
+            Icon(icon, size: 20, color: ColorPalette.neutral800),
             SizedBox(width: SpacePalette.base),
-            Expanded(
-              child: Text(
-                label,
-                style: TextStylePalette.bigText
-              ),
-            ),
-            Icon(
-              Icons.chevron_right,
-              size: 20,
-              color: ColorPalette.neutral400,
-            ),
+            Expanded(child: Text(label, style: TextStylePalette.bigText)),
+            Icon(Icons.chevron_right, size: 20, color: ColorPalette.neutral400),
           ],
         ),
       ),

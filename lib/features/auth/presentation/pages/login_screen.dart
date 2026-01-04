@@ -1,11 +1,14 @@
-// lib/screens/login/login_screen.dart
+// lib/features/auth/presentation/pages/login_screen.dart
+// 確認済み
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import '../../../shared/theme/app_theme.dart';
-import '../data/models/user_role.dart';
+import '../../../../shared/theme/app_theme.dart';
+import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
-import '../../../shared/theme/main_layout.dart';
+import '../../../../shared/theme/main_layout.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'signup_screen1.dart';
 
 class LoginScreen extends HookConsumerWidget {
   final UserRole role;
@@ -19,36 +22,45 @@ class LoginScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final emailController = useTextEditingController();
     final passwordController = useTextEditingController();
+    // パスワード状態はデフォルトで非表示
     final isPasswordVisible = useState(false);
+    // ローディング状態はデフォルトでfalse
     final isLoading = useState(false);
 
+    // ログイン処理
     Future<void> handleLogin() async {
       isLoading.value = true;
-      
+  
       try {
         final authService = ref.read(authServiceProvider);
-        final success = await authService.testLogin(
+    
+        // Supabaseでログイン
+        final response = await authService.signInWithEmail(
           email: emailController.text,
           password: passwordController.text,
         );
 
-        if (success && context.mounted) {
+        // ユーザーが取得できたら成功
+        if (response.user != null && context.mounted) {
           Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => MainLayout(userRole: role),
             ),
           );
-        } else {
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Login failed. Please check your credentials.'),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
+        }
+      // Supabase認証のエラーだけキャッチ
+      } on AuthException catch (e) {
+        // Supabase認証エラー
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('認証エラー: ${e.message}'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       } catch (e) {
+        // その他のエラー
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -296,9 +308,11 @@ class LoginScreen extends HookConsumerWidget {
                     ),
                     TextButton(
                       onPressed: () {
-                        // サインアップ画面へ遷移（後で実装）
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Sign up coming soon...')),
+                        // サインアップ画面へ遷移
+                        Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(
+                            builder: (context) => SignUpScreen1(role: role),
+                          ),
                         );
                       },
                       style: TextButton.styleFrom(

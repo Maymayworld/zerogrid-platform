@@ -1,8 +1,8 @@
-// lib/widgets/project/success_screen.dart
+// lib/features/creator/project/presentation/pages/success_screen.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../shared/theme/app_theme.dart';
-import '../../../shared/theme/creator_main_layout.dart';
+import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/theme/creator_main_layout.dart';
 
 class ProjectSuccessScreen extends StatelessWidget {
   const ProjectSuccessScreen({Key? key}) : super(key: key);

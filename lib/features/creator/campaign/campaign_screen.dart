@@ -4,10 +4,10 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/common_search_bar.dart';
-import '../project/project_card.dart';
+import '../project/presentation/widgets/project_card.dart';
 import '../../../shared/widgets/filter_bottom_sheet.dart';
 import '../find/widgets/notification_sheet.dart';
-import '../project/menu_screen.dart';
+import '../project/presentation/pages/menu_screen.dart';
 
 class CampaignScreen extends HookWidget {
   const CampaignScreen({Key? key}) : super(key: key);

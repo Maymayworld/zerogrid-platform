@@ -27,9 +27,9 @@ class EditProjectScreen extends HookWidget {
     final categoryController = useTextEditingController();
     
     return Scaffold(
-      backgroundColor: ColorPalette.neutral100,
+      backgroundColor: ColorPalette.neutral0,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral100,
+        backgroundColor: ColorPalette.neutral0,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
