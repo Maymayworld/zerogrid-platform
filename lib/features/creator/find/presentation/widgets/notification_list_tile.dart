@@ -1,7 +1,7 @@
 // lib/screens/creator/find/widgets/notification_list_tile.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/theme/app_theme.dart';
 
 class NotificationListTile extends StatelessWidget {
   final IconData categoryIcon;

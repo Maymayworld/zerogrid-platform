@@ -1,10 +1,10 @@
-// lib/screens/organizer/organizer_main_layout.dart
+// lib/shared/theme/organizer_main_layout.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../features/organizer/home/presentation/home_screen.dart';
-import '../../features/organizer/campaign/presentation/campaign_screen.dart';
-import '../../features/organizer/create/presentation/pages/create_screen.dart';
+import '../../features/organizer/campaign/presentation/pages/campaign_screen.dart';
+import '../../features/organizer/campaign/presentation/pages/create/create_screen.dart';
 import '../../features/organizer/chat/presentation/chat_list_screen.dart';
 import '../../features/organizer/profile/presentation/profile_screen.dart';
 

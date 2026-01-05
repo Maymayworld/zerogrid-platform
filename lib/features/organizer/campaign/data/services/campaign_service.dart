@@ -128,4 +128,31 @@ class CampaignService {
 
     return _supabase.storage.from('campaign-thumbnails').getPublicUrl(filePath);
   }
+
+    // 全てのアクティブな案件を取得（Creator用）
+  Future<List<Campaign>> getAllActiveCampaigns() async {
+    final response = await _supabase
+        .from('campaigns')
+        .select()
+        .eq('status', 'active')
+        .order('created_at', ascending: false);
+
+    return (response as List)
+        .map((map) => Campaign.fromMap(map))
+        .toList();
+  }
+
+  // カテゴリでフィルター
+  Future<List<Campaign>> getCampaignsByCategory(String category) async {
+    final response = await _supabase
+        .from('campaigns')
+        .select()
+        .eq('status', 'active')
+        .eq('category', category)
+        .order('created_at', ascending: false);
+
+    return (response as List)
+        .map((map) => Campaign.fromMap(map))
+        .toList();
+  }
 }

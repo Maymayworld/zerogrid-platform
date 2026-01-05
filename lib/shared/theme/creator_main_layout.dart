@@ -1,11 +1,11 @@
-// lib/screens/creator/creator_main_layout.dart
+// lib/shared/theme/creator_main_layout.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'app_theme.dart';
-import '../../features/creator/find/find_screen.dart';
-import '../../features/creator/likes/likes_screen.dart';
+import '../../features/creator/find/presentation/pages/find_screen.dart';
+import '../../features/creator/likes/presentation/pages/likes_screen.dart';
 import '../../features/creator/dashboard/dashboard_screen.dart';
-import '../../features/creator/campaign/campaign_screen.dart';
+import '../../features/creator/campaign/presentation/pages/campaign_screen.dart';
 import '../../features/creator/profile/profile_screen.dart';
 
 class CreatorMainLayout extends HookWidget {

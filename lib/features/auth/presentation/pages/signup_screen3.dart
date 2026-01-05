@@ -100,71 +100,83 @@ class SignUpScreen3 extends HookConsumerWidget {
       );
     }
 
-    // アカウント作成
-    Future<void> handleCreateAccount() async {
-      if (displayNameController.text.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please enter a display name'), backgroundColor: Colors.red),
-        );
-        return;
-      }
+    // signup_screen3.dart の handleCreateAccount を修正
+Future<void> handleCreateAccount() async {
+  if (displayNameController.text.isEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Please enter a display name'), backgroundColor: Colors.red),
+    );
+    return;
+  }
 
-      isLoading.value = true;
+  isLoading.value = true;
 
+  try {
+    final authService = ref.read(authServiceProvider);
+
+    // 1. Supabase Authでユーザー作成
+    final response = await authService.signUpWithEmail(
+      email: email,
+      password: password,
+    );
+
+    if (response.user == null) {
+      throw Exception('Failed to create user');
+    }
+
+    // 2. アバター画像をアップロード（選択されていれば）
+    String? avatarUrl;
+    if (selectedImageBytes.value != null && selectedImageName.value != null) {
       try {
-        final authService = ref.read(authServiceProvider);
-
-        // 1. Supabase Authでユーザー作成
-        final response = await authService.signUpWithEmail(
-          email: email,
-          password: password,
+        avatarUrl = await authService.uploadAvatarBytes(
+          selectedImageBytes.value!,
+          selectedImageName.value!,
         );
-
-        if (response.user == null) {
-          throw Exception('Failed to create user');
-        }
-
-        // 2. アバター画像をアップロード（選択されていれば）
-        String? avatarUrl;
-        if (selectedImageBytes.value != null && selectedImageName.value != null) {
-          avatarUrl = await authService.uploadAvatarBytes(
-            selectedImageBytes.value!,
-            selectedImageName.value!,
-          );
-        }
-
-        // 3. プロフィールをDBに保存
-        await authService.createProfile(
-          username: username,
-          displayName: displayNameController.text,
-          role: role.name,
-          avatarUrl: avatarUrl,
-        );
-
-        // 4. 成功画面へ
-        if (context.mounted) {
-          Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(builder: (context) => SignUpSuccessScreen(role: role)),
-            (route) => false,
-          );
-        }
-      } on AuthException catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(e.message), backgroundColor: Colors.red),
-          );
-        }
       } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-          );
-        }
-      } finally {
-        isLoading.value = false;
+        // アバターアップロード失敗は無視（オプションだから）
+        print('Avatar upload failed: $e');
       }
     }
+
+    // 3. プロフィールをDBに保存
+    try {
+      await authService.createProfile(
+        username: username,
+        displayName: displayNameController.text,
+        role: role.name,
+        avatarUrl: avatarUrl,
+      );
+    } catch (e) {
+      // プロフィール作成失敗 → Authユーザーも削除してやり直し
+      print('Profile creation failed, signing out: $e');
+      await authService.signOut();
+      rethrow;
+    }
+
+    // 4. 成功画面へ
+    if (context.mounted) {
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (context) => SignUpSuccessScreen(role: role)),
+        (route) => false,
+      );
+    }
+  } on AuthException catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message), backgroundColor: Colors.red),
+      );
+    }
+  } catch (e) {
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+      );
+    }
+  } finally {
+    isLoading.value = false;
+  }
+}
 
     // DisplayName監視
     useEffect(() {
