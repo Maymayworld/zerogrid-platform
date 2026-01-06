@@ -1,18 +1,18 @@
-// lib/features/creator/project/presentation/widgets/project_card.dart
+// lib/features/creator/campaign/presentation/widgets/project_card.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
 class ProjectCard extends StatelessWidget {
   final double width;
   final double height;
-  final String? imageUrl; // オプショナルに変更
+  final String? imageUrl;
   final IconData platformIcon;
   final double currentAmount;
   final double totalAmount;
   final double pricePerView;
   final int viewCount;
   final int participants;
+  final bool isLiked;  // ← 追加
   final VoidCallback onTap;
   final VoidCallback onLike;
 
@@ -20,26 +20,22 @@ class ProjectCard extends StatelessWidget {
     Key? key,
     required this.width,
     required this.height,
-    this.imageUrl, // オプショナル
+    this.imageUrl,
     required this.platformIcon,
     required this.currentAmount,
     required this.totalAmount,
     required this.pricePerView,
     required this.viewCount,
     required this.participants,
+    this.isLiked = false,  // ← デフォルトfalse
     required this.onTap,
     required this.onLike,
   }) : super(key: key);
 
-  // 画像URLを決定（Unsplashランダム画像対応）
   String _getImageUrl() {
     if (imageUrl != null && imageUrl!.isNotEmpty && imageUrl != 'placeholder') {
       return imageUrl!;
     }
-    // Unsplashランダム画像（Lorem Picsum使用）
-    // ※ Unsplash Source (source.unsplash.com) は2024年に廃止されたため
-    // Lorem Picsumを使用。実際のUnsplashを使う場合はAPI keyが必要です。
-    // カードごとに異なるが安定した画像を表示するためhashCodeを使用
     return 'https://picsum.photos/seed/${hashCode}/400/225';
   }
 
@@ -67,7 +63,7 @@ class ProjectCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            // 背景画像（16:9）
+            // 背景画像
             Image.network(
               displayImageUrl,
               fit: BoxFit.cover,
@@ -80,15 +76,15 @@ class ProjectCard extends StatelessWidget {
                 );
               },
             ),
-            // グラデーションオーバーレイ（下部50%のみ、中央から下部へ）
+            // グラデーションオーバーレイ
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.center, // 中央から開始
-                  end: Alignment.bottomCenter, // 下部で終了
+                  begin: Alignment.center,
+                  end: Alignment.bottomCenter,
                   colors: [
-                    Colors.transparent, // 中央は透明
-                    ColorPalette.neutral800, // 下部はneutral800
+                    Colors.transparent,
+                    ColorPalette.neutral800,
                   ],
                 ),
               ),
@@ -121,18 +117,16 @@ class ProjectCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 金額と参加者（プログレスバーの上）
+                    // 金額と参加者
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        // 金額
                         Text(
-                          '\$${currentAmount.toInt()} / \$${totalAmount.toInt()} ($percentage%)',
+                          '¥${currentAmount.toInt()} / ¥${totalAmount.toInt()} ($percentage%)',
                           style: TextStylePalette.miniTitle.copyWith(
                             color: ColorPalette.neutral100
                           )
                         ),
-                        // 参加者アイコン（Stackで重ねる）
                         SizedBox(
                           width: participants.clamp(0, 3) * 14.0 + 6,
                           height: 20,
@@ -191,7 +185,6 @@ class ProjectCard extends StatelessWidget {
                     // ボタン
                     Row(
                       children: [
-                        // 案件詳細ボタン
                         Expanded(
                           child: GestureDetector(
                             onTap: onTap,
@@ -203,7 +196,7 @@ class ProjectCard extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  '\$$pricePerView / 1000 views',
+                                  '¥${pricePerView.toStringAsFixed(1)} / 1000 views',
                                   style: TextStylePalette.buttonTextBlack
                                 ),
                               ),
@@ -211,20 +204,29 @@ class ProjectCard extends StatelessWidget {
                           ),
                         ),
                         SizedBox(width: SpacePalette.sm),
-                        // いいねボタン
+                        // いいねボタン（状態で色変更）
                         GestureDetector(
                           onTap: onLike,
                           child: Container(
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: Colors.transparent,
-                              border: Border.all(color: ColorPalette.neutral100, width: 2),
+                              color: isLiked 
+                                  ? ColorPalette.systemRed.withOpacity(0.2) 
+                                  : Colors.transparent,
+                              border: Border.all(
+                                color: isLiked 
+                                    ? ColorPalette.systemRed 
+                                    : ColorPalette.neutral100, 
+                                width: 2
+                              ),
                               borderRadius: BorderRadius.circular(RadiusPalette.base),
                             ),
                             child: Icon(
-                              Icons.favorite_border,
-                              color: ColorPalette.neutral100,
+                              isLiked ? Icons.favorite : Icons.favorite_border,
+                              color: isLiked 
+                                  ? ColorPalette.systemRed 
+                                  : ColorPalette.neutral100,
                               size: 20,
                             ),
                           ),

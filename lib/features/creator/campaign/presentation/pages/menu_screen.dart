@@ -1,14 +1,16 @@
-// lib/features/creator/project/presentation/pages/menu_screen.dart
+// lib/features/creator/campaign/presentation/pages/menu_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
-import 'detail_screen.dart';
+import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../chat/presentation/chat_screen.dart';
+import 'detail_screen.dart';
 import 'download_screen.dart';
 import 'upload_screen.dart';
 
 class ProjectMenuScreen extends HookWidget {
+  final Campaign? campaign;
+  // 後方互換のための個別パラメータ
   final String? imageUrl;
   final String projectName;
   final int creatorCount;
@@ -19,6 +21,7 @@ class ProjectMenuScreen extends HookWidget {
 
   const ProjectMenuScreen({
     Key? key,
+    this.campaign,
     this.imageUrl,
     this.projectName = 'Project Name',
     this.creatorCount = 16,
@@ -28,16 +31,23 @@ class ProjectMenuScreen extends HookWidget {
     this.viewCount = 400,
   }) : super(key: key);
 
+  // 実際に使う値を取得
+  String get _projectName => campaign?.name ?? projectName;
+  String? get _imageUrl => campaign?.thumbnailUrl ?? imageUrl;
+  double get _totalAmount => campaign?.budget.toDouble() ?? totalAmount;
+  double get _currentAmount => _totalAmount * 0.25;
+  double get _pricePerView => campaign?.pricePerThousand ?? pricePerView;
+
   String _getImageUrl() {
-    if (imageUrl != null && imageUrl!.isNotEmpty && imageUrl != 'placeholder') {
-      return imageUrl!;
+    if (_imageUrl != null && _imageUrl!.isNotEmpty && _imageUrl != 'placeholder') {
+      return _imageUrl!;
     }
     return 'https://picsum.photos/seed/${hashCode}/400/225';
   }
 
   @override
   Widget build(BuildContext context) {
-    final progress = currentAmount / totalAmount;
+    final progress = _currentAmount / _totalAmount;
     final percentage = (progress * 100).toInt();
 
     return Scaffold(
@@ -59,14 +69,11 @@ class ProjectMenuScreen extends HookWidget {
                     ),
                   ),
                   SizedBox(width: SpacePalette.base),
-                  Text(
-                    'Back',
-                    style: TextStylePalette.normalText
-                  ),
+                  Text('Back', style: TextStylePalette.normalText),
                 ],
               ),
             ),
-            // メインコンテンツ
+
             Expanded(
               child: SingleChildScrollView(
                 child: Padding(
@@ -77,7 +84,6 @@ class ProjectMenuScreen extends HookWidget {
                       // Project Name & Creators
                       Row(
                         children: [
-                          // クリエイターアバターグループ
                           SizedBox(
                             width: 80,
                             height: 40,
@@ -101,21 +107,15 @@ class ProjectMenuScreen extends HookWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  projectName,
-                                  style: TextStylePalette.lgListTitle
-                                ),
-                                Text(
-                                  '$creatorCount creators',
-                                  style: TextStylePalette.lgListLeading
-                                ),
+                                Text(_projectName, style: TextStylePalette.lgListTitle),
+                                Text('$creatorCount creators', style: TextStylePalette.lgListLeading),
                               ],
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: SpacePalette.base),
-                      
+
                       // 画像（タップ可能）
                       GestureDetector(
                         onTap: () {
@@ -123,13 +123,14 @@ class ProjectMenuScreen extends HookWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) => ProjectDetailScreen(
+                                campaign: campaign,
                                 imageUrl: _getImageUrl(),
-                                projectName: projectName,
-                                pricePerView: pricePerView,
+                                projectName: _projectName,
+                                pricePerView: _pricePerView,
                                 viewCount: viewCount,
-                                currentAmount: currentAmount,
-                                totalAmount: totalAmount,
-                                showAddReview: true, // menu_screenから遷移した場合
+                                currentAmount: _currentAmount,
+                                totalAmount: _totalAmount,
+                                showAddReview: true,
                               ),
                             ),
                           );
@@ -145,11 +146,7 @@ class ProjectMenuScreen extends HookWidget {
                                 return Container(
                                   color: ColorPalette.neutral0,
                                   child: Center(
-                                    child: Icon(
-                                      Icons.image,
-                                      size: 50,
-                                      color: ColorPalette.neutral400,
-                                    ),
+                                    child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
                                   ),
                                 );
                               },
@@ -158,23 +155,19 @@ class ProjectMenuScreen extends HookWidget {
                         ),
                       ),
                       SizedBox(height: SpacePalette.base),
-                      
+
                       // 金額とプログレスバー
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '\$${currentAmount.toInt()} / \$${totalAmount.toInt()}',
-                            style: TextStylePalette.miniTitle
+                            '¥${_currentAmount.toInt()} / ¥${_totalAmount.toInt()}',
+                            style: TextStylePalette.miniTitle,
                           ),
-                          Text(
-                            '$percentage%',
-                            style: TextStylePalette.normalText
-                          ),
+                          Text('$percentage%', style: TextStylePalette.normalText),
                         ],
                       ),
                       SizedBox(height: SpacePalette.sm),
-                      // プログレスバー
                       Stack(
                         children: [
                           Container(
@@ -197,8 +190,8 @@ class ProjectMenuScreen extends HookWidget {
                         ],
                       ),
                       SizedBox(height: SpacePalette.lg),
-                      
-                      // チャットボックス（横並び）
+
+                      // チャットボックス
                       Row(
                         children: [
                           Expanded(
@@ -210,7 +203,7 @@ class ProjectMenuScreen extends HookWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ProjectChatScreen(
-                                      projectName: projectName,
+                                      projectName: _projectName,
                                       memberCount: creatorCount,
                                       onlineCount: 5,
                                     ),
@@ -229,8 +222,8 @@ class ProjectMenuScreen extends HookWidget {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => ProjectChatScreen(
-                                      projectName: projectName,
-                                      memberCount: 2, // 1-on-1なので2人
+                                      projectName: _projectName,
+                                      memberCount: 2,
                                       onlineCount: 1,
                                     ),
                                   ),
@@ -241,12 +234,12 @@ class ProjectMenuScreen extends HookWidget {
                         ],
                       ),
                       SizedBox(height: SpacePalette.base),
-                      
+
                       // Download Project Files
                       _ActionSection(
                         icon: Icons.download,
                         title: 'Download Project Files',
-                        subtitle: '6 items',
+                        subtitle: '${campaign?.resources.length ?? 6} items',
                         onTap: () {
                           Navigator.push(
                             context,
@@ -257,7 +250,7 @@ class ProjectMenuScreen extends HookWidget {
                         },
                       ),
                       SizedBox(height: SpacePalette.base),
-                      
+
                       // Submit Your Video
                       _ActionSection(
                         icon: Icons.upload,
@@ -272,7 +265,7 @@ class ProjectMenuScreen extends HookWidget {
                           );
                         },
                       ),
-                      SizedBox(height: 100), // フッター分の余白
+                      SizedBox(height: 100),
                     ],
                   ),
                 ),
@@ -285,7 +278,6 @@ class ProjectMenuScreen extends HookWidget {
   }
 }
 
-// チャットボックス（正方形）
 class _ChatBox extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -302,7 +294,7 @@ class _ChatBox extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AspectRatio(
-        aspectRatio: 1, // 正方形
+        aspectRatio: 1,
         child: Container(
           decoration: BoxDecoration(
             color: ColorPalette.neutral0,
@@ -311,16 +303,9 @@ class _ChatBox extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                icon,
-                size: 32,
-                color: ColorPalette.neutral800,
-              ),
+              Icon(icon, size: 32, color: ColorPalette.neutral800),
               SizedBox(height: SpacePalette.sm),
-              Text(
-                label,
-                style: TextStylePalette.listTitle
-              ),
+              Text(label, style: TextStylePalette.listTitle),
             ],
           ),
         ),
@@ -329,7 +314,6 @@ class _ChatBox extends StatelessWidget {
   }
 }
 
-// アクションセクション
 class _ActionSection extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -355,32 +339,18 @@ class _ActionSection extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: ColorPalette.neutral800,
-            ),
+            Icon(icon, size: 24, color: ColorPalette.neutral800),
             SizedBox(width: SpacePalette.base),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: TextStylePalette.listTitle
-                  ),
-                  Text(
-                    subtitle,
-                    style: TextStylePalette.listLeading
-                  ),
+                  Text(title, style: TextStylePalette.listTitle),
+                  Text(subtitle, style: TextStylePalette.listLeading),
                 ],
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              size: 20,
-              color: ColorPalette.neutral400,
-            ),
+            Icon(Icons.chevron_right, size: 20, color: ColorPalette.neutral400),
           ],
         ),
       ),

@@ -1,24 +1,29 @@
-// lib/screens/creator/likes_screen.dart
+// lib/features/creator/likes/presentation/pages/likes_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/common_search_bar.dart';
+import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../campaign/presentation/widgets/project_card.dart';
-import '../../../../../shared/widgets/filter_bottom_sheet.dart';
-import '../../../find/presentation/widgets/notification_sheet.dart';
 import '../../../campaign/presentation/pages/detail_screen.dart';
+import '../../../find/presentation/widgets/notification_sheet.dart';
+import '../providers/like_service_provider.dart';
 
-class LikesScreen extends HookWidget {
+class LikesScreen extends HookConsumerWidget {
   const LikesScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final campaigns = useState<List<Campaign>>([]);
+    final isLoading = useState(true);
+    final error = useState<String?>(null);
     final selectedCategory = useState<String>('All');
-    final selectedPlatforms = useState<Set<String>>({});
-    final minPay = useState<double>(0);
-    final maxPay = useState<double>(500000);
+    final searchQuery = useState<String>('');
     final searchController = useTextEditingController();
+
+    final likedIds = ref.watch(likedCampaignIdsProvider);
 
     final categories = [
       {'icon': Icons.grid_view, 'label': 'All'},
@@ -28,38 +33,70 @@ class LikesScreen extends HookWidget {
       {'icon': Icons.podcasts_outlined, 'label': 'Podcast'},
     ];
 
-    void _showFilterModal() {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        backgroundColor: Colors.transparent,
-        builder: (context) => FilterBottomSheet(
-          selectedPlatforms: selectedPlatforms.value,
-          minPay: minPay.value,
-          maxPay: maxPay.value,
-          onApply: (platforms, min, max) {
-            selectedPlatforms.value = platforms;
-            minPay.value = min;
-            maxPay.value = max;
-          },
-        ),
-      );
+    Future<void> loadLikedCampaigns() async {
+      isLoading.value = true;
+      error.value = null;
+      try {
+        final likeService = ref.read(likeServiceProvider);
+        List<Campaign> result;
+
+        if (selectedCategory.value == 'All') {
+          result = await likeService.getLikedCampaigns();
+        } else {
+          result = await likeService.getLikedCampaignsByCategory(selectedCategory.value);
+        }
+
+        campaigns.value = result;
+      } catch (e) {
+        error.value = e.toString();
+      } finally {
+        isLoading.value = false;
+      }
     }
 
-    void _showNotificationSheet() {
-      showModalBottomSheet(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => NotificationSheet(),
-      );
+    Future<void> unlikeCampaign(String campaignId) async {
+      try {
+        final likeService = ref.read(likeServiceProvider);
+        await likeService.unlikeCampaign(campaignId);
+        
+        campaigns.value = campaigns.value
+            .where((c) => c.id != campaignId)
+            .toList();
+        
+        final currentIds = ref.read(likedCampaignIdsProvider);
+        ref.read(likedCampaignIdsProvider.notifier).state = 
+            {...currentIds}..remove(campaignId);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Removed from likes')),
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+        );
+      }
     }
+
+    useEffect(() {
+      loadLikedCampaigns();
+      return null;
+    }, [likedIds.length]);
+
+    useEffect(() {
+      loadLikedCampaigns();
+      return null;
+    }, [selectedCategory.value]);
+
+    final filteredCampaigns = campaigns.value.where((c) {
+      if (searchQuery.value.isEmpty) return true;
+      return c.name.toLowerCase().contains(searchQuery.value.toLowerCase());
+    }).toList();
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
         child: Column(
           children: [
-            // カテゴリーフィルター（横スクロール）
             Container(
               height: 70,
               padding: EdgeInsets.symmetric(vertical: SpacePalette.sm),
@@ -84,114 +121,153 @@ class LikesScreen extends HookWidget {
                 ),
               ),
             ),
-            // 検索バー + フィルター + 通知
+
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+              child: CommonSearchBar(
+                controller: searchController,
+                hintText: 'Search liked projects',
+                onChanged: (value) => searchQuery.value = value,
+              ),
+            ),
+            SizedBox(height: SpacePalette.base),
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // 検索バー
-                  Expanded(
-                    child: CommonSearchBar(
-                      controller: searchController,
-                      hintText: 'Search',
-                    ),
-                  ),
-                  SizedBox(width: SpacePalette.base),
-                  // フィルターボタン（ボーダーなし）
-                  GestureDetector(
-                    onTap: _showFilterModal,
-                    child: Icon(
-                      Icons.tune,
-                      size: 24,
-                      color: ColorPalette.neutral800,
-                    ),
+                  Text('Liked Projects', style: TextStylePalette.header),
+                  IconButton(
+                    icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
+                    onPressed: loadLikedCampaigns,
                   ),
                 ],
               ),
             ),
             SizedBox(height: SpacePalette.base),
-            // タイトル
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Liked Projects',
-                  style: TextStylePalette.header
-                ),
-              ),
-            ),
-            SizedBox(height: SpacePalette.base),
-            // いいねした案件リスト
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  final screenWidth = MediaQuery.of(context).size.width;
-                  final cardWidth = screenWidth - (SpacePalette.base * 2);
-                  final cardHeight = cardWidth * 9 / 16;
 
-                  return ListView.builder(
-                    padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
-                    itemCount: 10, // モックデータ
-                    itemBuilder: (context, index) {
-                      return Padding(
-                        padding: EdgeInsets.only(bottom: SpacePalette.base),
-                        child: ProjectCard(
-                          width: cardWidth,
-                          height: cardHeight,
-                          // imageUrlを省略 → ランダム画像
-                          platformIcon: _getPlatformIcon(index),
-                          currentAmount: 1000 + (index * 500),
-                          totalAmount: 4000,
-                          pricePerView: 1,
-                          viewCount: 400 + (index * 100),
-                          participants: 3,
-                          onTap: () {
-                            // 直接detail_screenに遷移（showAddReview=false）
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => ProjectDetailScreen(
-                                  projectName: 'Project Name ${index + 1}',
-                                  pricePerView: 300,
-                                  viewCount: 400 + (index * 100),
-                                  currentAmount: 1000 + (index * 500),
-                                  totalAmount: 4000,
-                                  showAddReview: false, // LikesScreenからはJoinボタン
-                                ),
-                              ),
-                            );
-                          },
-                          onLike: () {
-                            print('Project $index unliked');
-                          },
-                        ),
-                      );
-                    },
-                  );
-                },
+            Expanded(
+              child: _buildContent(
+                context,
+                isLoading: isLoading.value,
+                error: error.value,
+                campaigns: filteredCampaigns,
+                onRefresh: loadLikedCampaigns,
+                onUnlike: unlikeCampaign,
               ),
             ),
-            SizedBox(height: 80), // フッター分の余白
+            SizedBox(height: 80),
           ],
         ),
       ),
     );
   }
 
-  // プラットフォームアイコンをランダムに返す
-  IconData _getPlatformIcon(int index) {
-    final icons = [
-      Icons.music_note, // TikTok
-      Icons.camera_alt, // Instagram
-      Icons.play_arrow, // YouTube
-      Icons.image, // Photo
+  Widget _buildContent(
+    BuildContext context, {
+    required bool isLoading,
+    required String? error,
+    required List<Campaign> campaigns,
+    required VoidCallback onRefresh,
+    required Future<void> Function(String) onUnlike,
+  }) {
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: ColorPalette.neutral800),
+      );
+    }
+
+    if (error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
+            SizedBox(height: SpacePalette.base),
+            Text('Failed to load', style: TextStylePalette.subText),
+            SizedBox(height: SpacePalette.base),
+            ElevatedButton(onPressed: onRefresh, child: Text('Retry')),
+          ],
+        ),
+      );
+    }
+
+    if (campaigns.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.favorite_border, size: 48, color: ColorPalette.neutral400),
+            SizedBox(height: SpacePalette.base),
+            Text('No liked projects yet', style: TextStylePalette.subText),
+            SizedBox(height: SpacePalette.xs),
+            Text('Find campaigns and tap ♥ to save them here', 
+                style: TextStylePalette.smSubText),
+          ],
+        ),
+      );
+    }
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final cardWidth = screenWidth - (SpacePalette.base * 2);
+    final cardHeight = cardWidth * 9 / 16;
+
+    return RefreshIndicator(
+      onRefresh: () async => onRefresh(),
+      child: ListView.builder(
+        padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+        itemCount: campaigns.length,
+        itemBuilder: (context, index) {
+          final campaign = campaigns[index];
+
+          return Padding(
+            padding: EdgeInsets.only(bottom: SpacePalette.base),
+            child: ProjectCard(
+              width: cardWidth,
+              height: cardHeight,
+              imageUrl: campaign.thumbnailUrl,
+              platformIcon: _getPlatformIcon(campaign.platforms),
+              currentAmount: campaign.budget.toDouble() * 0.25,
+              totalAmount: campaign.budget.toDouble(),
+              pricePerView: campaign.pricePerThousand,
+              viewCount: 1000,
+              participants: 3,
+              isLiked: true,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ProjectDetailScreen(
+                      campaign: campaign,  // ← campaignオブジェクトを渡す
+                    ),
+                  ),
+                );
+              },
+              onLike: () => onUnlike(campaign.id),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  IconData _getPlatformIcon(List<String> platforms) {
+    if (platforms.contains('YouTube')) return Icons.play_arrow;
+    if (platforms.contains('Instagram')) return Icons.camera_alt;
+    if (platforms.contains('TikTok')) return Icons.music_note;
+    return Icons.video_library;
+  }
+
+  String _formatDeadline(DateTime deadline) {
+    final months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'
     ];
-    return icons[index % icons.length];
+    return '${months[deadline.month - 1]} ${deadline.day}, ${deadline.year}';
   }
 }
 
-// カテゴリーフィルターチップ
 class _CategoryChip extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -227,7 +303,6 @@ class _CategoryChip extends StatelessWidget {
             ),
           ),
           SizedBox(height: SpacePalette.xs),
-          // アンダーライン
           if (isSelected)
             Container(
               height: 2,
