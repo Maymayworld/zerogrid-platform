@@ -1,9 +1,12 @@
 // lib/features/creator/campaign/presentation/pages/menu_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../chat/presentation/chat_screen.dart';
+import '../../../chat/presentation/creator_personal_chat_screen.dart';
 import 'detail_screen.dart';
 import 'download_screen.dart';
 import 'upload_screen.dart';
@@ -199,16 +202,19 @@ class ProjectMenuScreen extends HookWidget {
                               icon: Icons.group,
                               label: 'Group Chat',
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProjectChatScreen(
-                                      projectName: _projectName,
-                                      memberCount: creatorCount,
-                                      onlineCount: 5,
+                                if (campaign != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => ProjectChatScreen(
+                                        campaignId: campaign!.id,
+                                        projectName: _projectName,
+                                        memberCount: creatorCount,
+                                        onlineCount: 5,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -218,16 +224,17 @@ class ProjectMenuScreen extends HookWidget {
                               icon: Icons.person,
                               label: '1-on-1 Chat',
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ProjectChatScreen(
-                                      projectName: _projectName,
-                                      memberCount: 2,
-                                      onlineCount: 1,
+                                if (campaign != null) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => CreatorPersonalChatScreen(
+                                        campaignId: campaign!.id,
+                                        organizerId: campaign!.organizerId,
+                                      ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               },
                             ),
                           ),

@@ -1,21 +1,131 @@
 // lib/features/organizer/chat/presentation/personal_chat_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/data/models/chat_room.dart';
+import '../../../../shared/data/models/chat_message.dart';
+import '../../../../shared/data/services/chat_service.dart';
+import '../../../../shared/presentation/providers/chat_service_provider.dart';
 
-class PersonalChatScreen extends HookWidget {
+class PersonalChatScreen extends HookConsumerWidget {
+  final String? roomId;
+  final String? campaignId;
+  final String? creatorId;
   final String creatorName;
   final String avatarUrl;
 
   const PersonalChatScreen({
     Key? key,
+    this.roomId,
+    this.campaignId,
+    this.creatorId,
     required this.creatorName,
     required this.avatarUrl,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final messageController = useTextEditingController();
+    final chatService = ref.watch(chatServiceProvider);
+    final currentUserId = Supabase.instance.client.auth.currentUser?.id;
+
+    final room = useState<ChatRoom?>(null);
+    final messages = useState<List<ChatMessage>>([]);
+    final isLoading = useState(true);
+    final isSending = useState(false);
+    final scrollController = useScrollController();
+    final channel = useState<RealtimeChannel?>(null);
+
+    // ルーム取得
+    Future<void> loadRoom() async {
+      try {
+        if (roomId != null) {
+          final rooms = await chatService.getMyRooms();
+          room.value = rooms.where((r) => r.id == roomId).firstOrNull;
+        } else if (campaignId != null && creatorId != null) {
+          room.value = await chatService.getPersonalRoom(
+            campaignId: campaignId!,
+            creatorId: creatorId!,
+          );
+        }
+      } catch (e) {
+        debugPrint('Failed to load room: $e');
+      }
+    }
+
+    // メッセージ取得
+    Future<void> loadMessages() async {
+      if (room.value == null) {
+        isLoading.value = false;
+        return;
+      }
+      try {
+        final result = await chatService.getMessages(room.value!.id);
+        messages.value = result;
+      } catch (e) {
+        debugPrint('Failed to load messages: $e');
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    // リアルタイム購読
+    void subscribeMessages() {
+      if (room.value == null) return;
+      channel.value = chatService.subscribeToMessages(
+        room.value!.id,
+        (newMessage) {
+          messages.value = [...messages.value, newMessage];
+          Future.delayed(Duration(milliseconds: 100), () {
+            if (scrollController.hasClients) {
+              scrollController.animateTo(
+                scrollController.position.maxScrollExtent,
+                duration: Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
+        },
+      );
+    }
+
+    // メッセージ送信
+    Future<void> sendMessage() async {
+      final content = messageController.text.trim();
+      if (content.isEmpty || room.value == null || isSending.value) return;
+
+      isSending.value = true;
+      try {
+        await chatService.sendMessage(
+          roomId: room.value!.id,
+          content: content,
+        );
+        messageController.clear();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to send: $e')),
+          );
+        }
+      } finally {
+        isSending.value = false;
+      }
+    }
+
+    // 初期化
+    useEffect(() {
+      loadRoom().then((_) {
+        loadMessages();
+        subscribeMessages();
+      });
+      return () {
+        if (channel.value != null) {
+          chatService.unsubscribe(channel.value!);
+        }
+      };
+    }, []);
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -36,10 +146,7 @@ class PersonalChatScreen extends HookWidget {
             ),
             SizedBox(width: SpacePalette.sm),
             Expanded(
-              child: Text(
-                creatorName,
-                style: TextStylePalette.listTitle
-              ),
+              child: Text(creatorName, style: TextStylePalette.listTitle),
             ),
           ],
         ),
@@ -48,53 +155,42 @@ class PersonalChatScreen extends HookWidget {
         children: [
           // メッセージリスト
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.all(SpacePalette.base),
-              children: [
-                // 日付区切り
-                Center(
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: SpacePalette.base,
-                      vertical: SpacePalette.xs,
-                    ),
-                    margin: EdgeInsets.symmetric(vertical: SpacePalette.base),
-                    decoration: BoxDecoration(
-                      border: Border.all(
-                        color: ColorPalette.neutral200,
-                        width: 1,
-                      ),
-                      borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                    ),
-                    child: Text(
-                      'Today',
-                      style: TextStylePalette.smSubTitle
-                    ),
-                  ),
-                ),
-                // メッセージ（左寄せ - クリエイター）
-                _MessageBubble(
-                  message: 'Hi! How are you?',
-                  time: '10:30 AM',
-                  isMe: false,
-                  avatarUrl: avatarUrl,
-                ),
-                SizedBox(height: SpacePalette.base),
-                // メッセージ（右寄せ - 自分）
-                _MessageBubble(
-                  message: 'I\'m good! How about you?',
-                  time: '10:32 AM',
-                  isMe: true,
-                ),
-                SizedBox(height: SpacePalette.base),
-                _MessageBubble(
-                  message: 'Pretty good! Thanks for asking.',
-                  time: '10:33 AM',
-                  isMe: false,
-                  avatarUrl: avatarUrl,
-                ),
-              ],
-            ),
+            child: isLoading.value
+                ? Center(child: CircularProgressIndicator())
+                : room.value == null
+                    ? Center(
+                        child: Text(
+                          'Chat room not found',
+                          style: TextStylePalette.listLeading,
+                        ),
+                      )
+                    : messages.value.isEmpty
+                        ? Center(
+                            child: Text(
+                              'No messages yet.\nSay hi to $creatorName!',
+                              style: TextStylePalette.listLeading,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: scrollController,
+                            padding: EdgeInsets.all(SpacePalette.base),
+                            itemCount: messages.value.length,
+                            itemBuilder: (context, index) {
+                              final message = messages.value[index];
+                              final isMe = message.senderId == currentUserId;
+
+                              return Padding(
+                                padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                                child: _MessageBubble(
+                                  message: message.content,
+                                  time: message.formattedTime,
+                                  isMe: isMe,
+                                  avatarUrl: isMe ? null : avatarUrl,
+                                ),
+                              );
+                            },
+                          ),
           ),
           // 入力フィールド
           Container(
@@ -120,6 +216,8 @@ class PersonalChatScreen extends HookWidget {
                       child: TextField(
                         controller: messageController,
                         style: TextStylePalette.normalText,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: (_) => sendMessage(),
                         decoration: InputDecoration(
                           hintText: 'Message...',
                           hintStyle: TextStylePalette.hintText,
@@ -137,10 +235,15 @@ class PersonalChatScreen extends HookWidget {
                     ),
                   ),
                   SizedBox(width: SpacePalette.sm),
-                  Icon(
-                    Icons.mic_outlined,
-                    color: ColorPalette.neutral400,
-                    size: 24,
+                  GestureDetector(
+                    onTap: isSending.value ? null : sendMessage,
+                    child: Icon(
+                      isSending.value ? Icons.hourglass_empty : Icons.send,
+                      color: isSending.value
+                          ? ColorPalette.neutral400
+                          : ColorPalette.neutral800,
+                      size: 24,
+                    ),
                   ),
                 ],
               ),
@@ -216,14 +319,12 @@ class _MessageBubble extends StatelessWidget {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // アバター
           CircleAvatar(
             radius: 16,
             backgroundColor: ColorPalette.neutral400,
             backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
           ),
           SizedBox(width: SpacePalette.sm),
-          // メッセージ
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,16 +335,10 @@ class _MessageBubble extends StatelessWidget {
                     color: ColorPalette.neutral0,
                     borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
-                  child: Text(
-                    message,
-                    style: TextStylePalette.normalText
-                  ),
+                  child: Text(message, style: TextStylePalette.normalText),
                 ),
                 SizedBox(height: SpacePalette.xs),
-                Text(
-                  time,
-                  style: TextStylePalette.subGuide
-                ),
+                Text(time, style: TextStylePalette.subGuide),
               ],
             ),
           ),

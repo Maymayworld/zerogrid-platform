@@ -1,27 +1,71 @@
 // lib/features/organizer/chat/presentation/chat_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/common_search_bar.dart';
+import '../../../../shared/data/models/chat_room.dart';
+import '../../../../shared/data/services/chat_service.dart';
+import '../../../../shared/presentation/providers/chat_service_provider.dart';
+import '../../../organizer/campaign/data/models/campaign.dart';
+import '../../../organizer/campaign/data/services/campaign_service.dart';
+import '../../../organizer/campaign/presentation/providers/campaign_service_provider.dart';
 import 'personal_chat_list_screen.dart';
 import 'group_chat_screen.dart';
 
-class ChatListScreen extends HookWidget {
+class ChatListScreen extends HookConsumerWidget {
   const ChatListScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final searchController = useTextEditingController();
+    final chatService = ref.watch(chatServiceProvider);
+    final campaignService = ref.watch(campaignServiceProvider);
+
+    final campaigns = useState<List<Campaign>>([]);
+    final isLoading = useState(true);
+    final searchQuery = useState('');
+
+    // 自分の案件一覧を取得
+    Future<void> loadCampaigns() async {
+      try {
+        final result = await campaignService.getMyCampaigns();
+        campaigns.value = result;
+      } catch (e) {
+        debugPrint('Failed to load campaigns: $e');
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    useEffect(() {
+      loadCampaigns();
+      return null;
+    }, []);
+
+    // 検索フィルター
+    final filteredCampaigns = campaigns.value.where((c) {
+      if (searchQuery.value.isEmpty) return true;
+      return c.name.toLowerCase().contains(searchQuery.value.toLowerCase());
+    }).toList();
+
+    // 色のリスト
+    final colors = [
+      Colors.red,
+      Colors.blue,
+      Colors.black,
+      Colors.purple,
+      Colors.green,
+      Colors.orange,
+      Colors.teal,
+    ];
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
-        title: Text(
-          'Chat',
-          style: TextStylePalette.header,
-        ),
+        title: Text('Chat', style: TextStylePalette.header),
         centerTitle: false,
       ),
       body: Column(
@@ -35,6 +79,7 @@ class ChatListScreen extends HookWidget {
                   child: CommonSearchBar(
                     controller: searchController,
                     hintText: 'Search',
+                    onChanged: (value) => searchQuery.value = value,
                   ),
                 ),
                 SizedBox(width: SpacePalette.base),
@@ -47,164 +92,58 @@ class ChatListScreen extends HookWidget {
             ),
           ),
           SizedBox(height: SpacePalette.base),
-          
-          // プロジェクトチャットリスト
+
+          // キャンペーンチャットリスト
           Expanded(
-            child: ListView(
-              padding: EdgeInsets.zero,
-              children: [
-                _ProjectChatItem(
-                  projectName: 'Project Mikasa',
-                  creatorCount: 16,
-                  projectColor: Colors.red,
-                  groupUnreadCount: 8,
-                  personalUnreadCount: 0,
-                  onGroupTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupChatScreen(
-                          projectName: 'Project Mikasa',
-                          memberCount: 16,
-                          onlineCount: 5,
+            child: isLoading.value
+                ? Center(child: CircularProgressIndicator())
+                : filteredCampaigns.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No campaigns yet.\nCreate a campaign to start chatting!',
+                          style: TextStylePalette.listLeading,
+                          textAlign: TextAlign.center,
                         ),
+                      )
+                    : ListView.builder(
+                        padding: EdgeInsets.zero,
+                        itemCount: filteredCampaigns.length,
+                        itemBuilder: (context, index) {
+                          final campaign = filteredCampaigns[index];
+                          final color = colors[index % colors.length];
+
+                          return _ProjectChatItem(
+                            campaign: campaign,
+                            projectColor: color,
+                            chatService: chatService,
+                            onGroupTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => GroupChatScreen(
+                                    campaignId: campaign.id,
+                                    projectName: campaign.name,
+                                    memberCount: 0, // 後でロード
+                                    onlineCount: 0,
+                                    projectColor: color,
+                                  ),
+                                ),
+                              );
+                            },
+                            onPersonalTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PersonalChatListScreen(
+                                    campaignId: campaign.id,
+                                    projectName: campaign.name,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                  onPersonalTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatListScreen(
-                          projectName: 'Project Mikasa',
-                          creatorCount: 16,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _ProjectChatItem(
-                  projectName: 'Project Armin',
-                  creatorCount: 9,
-                  projectColor: Colors.blue,
-                  groupUnreadCount: 2,
-                  personalUnreadCount: 0,
-                  onGroupTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupChatScreen(
-                          projectName: 'Project Armin',
-                          memberCount: 9,
-                          onlineCount: 3,
-                        ),
-                      ),
-                    );
-                  },
-                  onPersonalTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatListScreen(
-                          projectName: 'Project Armin',
-                          creatorCount: 9,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _ProjectChatItem(
-                  projectName: 'Project Annie Leonhart',
-                  creatorCount: 27,
-                  projectColor: Colors.black,
-                  groupUnreadCount: 2,
-                  personalUnreadCount: 0,
-                  onGroupTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupChatScreen(
-                          projectName: 'Project Annie Leonhart',
-                          memberCount: 27,
-                          onlineCount: 8,
-                        ),
-                      ),
-                    );
-                  },
-                  onPersonalTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatListScreen(
-                          projectName: 'Project Annie Leonhart',
-                          creatorCount: 27,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _ProjectChatItem(
-                  projectName: 'Project Sakamoto',
-                  creatorCount: 15,
-                  projectColor: Colors.purple,
-                  groupUnreadCount: 2,
-                  personalUnreadCount: 0,
-                  onGroupTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupChatScreen(
-                          projectName: 'Project Sakamoto',
-                          memberCount: 15,
-                          onlineCount: 6,
-                        ),
-                      ),
-                    );
-                  },
-                  onPersonalTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatListScreen(
-                          projectName: 'Project Sakamoto',
-                          creatorCount: 15,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _ProjectChatItem(
-                  projectName: 'Project Squarepants',
-                  creatorCount: 6,
-                  projectColor: Colors.black87,
-                  groupUnreadCount: 2,
-                  personalUnreadCount: 0,
-                  onGroupTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GroupChatScreen(
-                          projectName: 'Project Squarepants',
-                          memberCount: 6,
-                          onlineCount: 2,
-                        ),
-                      ),
-                    );
-                  },
-                  onPersonalTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatListScreen(
-                          projectName: 'Project Squarepants',
-                          creatorCount: 6,
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -212,27 +151,45 @@ class ChatListScreen extends HookWidget {
   }
 }
 
-class _ProjectChatItem extends StatelessWidget {
-  final String projectName;
-  final int creatorCount;
+class _ProjectChatItem extends HookWidget {
+  final Campaign campaign;
   final Color projectColor;
-  final int groupUnreadCount;
-  final int personalUnreadCount;
+  final ChatService chatService;
   final VoidCallback onGroupTap;
   final VoidCallback onPersonalTap;
 
   const _ProjectChatItem({
-    required this.projectName,
-    required this.creatorCount,
+    required this.campaign,
     required this.projectColor,
-    required this.groupUnreadCount,
-    required this.personalUnreadCount,
+    required this.chatService,
     required this.onGroupTap,
     required this.onPersonalTap,
   });
 
   @override
   Widget build(BuildContext context) {
+    final creatorCount = useState(0);
+
+    // 参加者数を取得
+    useEffect(() {
+      chatService.getGroupRoom(campaign.id).then((room) {
+        if (room != null) {
+          chatService.getRoomMemberCount(room.id).then((count) {
+            creatorCount.value = count - 1; // Organizer自身を除く
+          });
+        }
+      });
+      return null;
+    }, []);
+
+    // プロジェクトの頭文字を取得
+    String getProjectInitials() {
+      if (campaign.name.startsWith('Project ') && campaign.name.length > 8) {
+        return campaign.name.substring(8, 10).toUpperCase();
+      }
+      return campaign.name.substring(0, 2).toUpperCase();
+    }
+
     return Container(
       padding: EdgeInsets.symmetric(
         horizontal: SpacePalette.base,
@@ -253,32 +210,29 @@ class _ProjectChatItem extends StatelessWidget {
             radius: 24,
             backgroundColor: projectColor,
             child: Text(
-              projectName.substring(8, 10).toUpperCase(),
+              getProjectInitials(),
               style: TextStylePalette.smTitle.copyWith(
                 color: ColorPalette.neutral0,
               ),
             ),
           ),
           SizedBox(width: SpacePalette.inner),
-          
+
           // プロジェクト情報
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  projectName,
-                  style: TextStylePalette.listTitle,
-                ),
+                Text(campaign.name, style: TextStylePalette.listTitle),
                 SizedBox(height: SpacePalette.xs),
                 Text(
-                  '$creatorCount creators',
+                  '${creatorCount.value} creators',
                   style: TextStylePalette.listLeading,
                 ),
               ],
             ),
           ),
-          
+
           // GroupとPersonalボタン
           Row(
             children: [
@@ -300,28 +254,6 @@ class _ProjectChatItem extends StatelessWidget {
                         size: 16,
                         color: ColorPalette.neutral800,
                       ),
-                      if (groupUnreadCount > 0) ...[
-                        SizedBox(width: SpacePalette.xs),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 18),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorPalette.neutral800,
-                            borderRadius: BorderRadius.circular(9),
-                          ),
-                          child: Text(
-                            groupUnreadCount.toString(),
-                            style: TextStylePalette.miniTitle.copyWith(
-                              color: ColorPalette.neutral0,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),
@@ -345,28 +277,6 @@ class _ProjectChatItem extends StatelessWidget {
                         size: 16,
                         color: ColorPalette.neutral800,
                       ),
-                      if (personalUnreadCount > 0) ...[
-                        SizedBox(width: SpacePalette.xs),
-                        Container(
-                          constraints: BoxConstraints(minWidth: 18),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 5,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: ColorPalette.neutral800,
-                            borderRadius: BorderRadius.circular(9),
-                          ),
-                          child: Text(
-                            personalUnreadCount.toString(),
-                            style: TextStylePalette.miniTitle.copyWith(
-                              color: ColorPalette.neutral0,
-                              fontSize: 10,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
                     ],
                   ),
                 ),

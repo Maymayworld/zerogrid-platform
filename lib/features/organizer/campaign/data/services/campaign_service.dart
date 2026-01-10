@@ -1,4 +1,4 @@
-// lib/features/organizer/create/data/services/campaign_service.dart
+// lib/features/organizer/campaign/data/services/campaign_service.dart
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';

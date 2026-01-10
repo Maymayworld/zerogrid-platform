@@ -1,4 +1,4 @@
-// lib/features/organizer/create/data/models/campaign.dart
+// lib/features/organizer/campaign/data/models/campaign.dart
 import 'dart:convert';
 
 class Campaign {

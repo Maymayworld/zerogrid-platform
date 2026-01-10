@@ -1,23 +1,113 @@
 // lib/features/organizer/chat/presentation/personal_chat_list_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/common_search_bar.dart';
+import '../../../../shared/data/models/chat_room.dart';
+import '../../../../shared/data/models/chat_message.dart';
+import '../../../../shared/data/services/chat_service.dart';
+import '../../../../shared/presentation/providers/chat_service_provider.dart';
 import 'personal_chat_screen.dart';
 
-class PersonalChatListScreen extends HookWidget {
+/// クリエイター情報を保持するクラス
+class CreatorChatInfo {
+  final ChatRoom room;
+  final String creatorId;
+  final String creatorName;
+  final String avatarUrl;
+  final ChatMessage? latestMessage;
+
+  CreatorChatInfo({
+    required this.room,
+    required this.creatorId,
+    required this.creatorName,
+    required this.avatarUrl,
+    this.latestMessage,
+  });
+}
+
+class PersonalChatListScreen extends HookConsumerWidget {
+  final String campaignId;
   final String projectName;
-  final int creatorCount;
 
   const PersonalChatListScreen({
     Key? key,
+    required this.campaignId,
     required this.projectName,
-    required this.creatorCount,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final searchController = useTextEditingController();
+    final chatService = ref.watch(chatServiceProvider);
+    final supabase = Supabase.instance.client;
+
+    final creatorChats = useState<List<CreatorChatInfo>>([]);
+    final isLoading = useState(true);
+    final searchQuery = useState('');
+
+    // クリエイター一覧を取得
+    Future<void> loadCreatorChats() async {
+      try {
+        // 1. キャンペーンの1:1ルーム一覧を取得
+        final rooms = await chatService.getPersonalRoomsForCampaign(campaignId);
+
+        // 2. 各ルームのクリエイター情報を取得
+        final List<CreatorChatInfo> infos = [];
+        for (final room in rooms) {
+          if (room.creatorId == null) continue;
+
+          // プロファイル情報を取得
+          final profileResponse = await supabase
+              .from('profiles')
+              .select('display_name, avatar_url')
+              .eq('id', room.creatorId!)
+              .maybeSingle();
+
+          final displayName = profileResponse?['display_name'] ?? 'Unknown';
+          final avatarUrl = profileResponse?['avatar_url'] ??
+              'https://i.pravatar.cc/150?u=${room.creatorId}';
+
+          // 最新メッセージを取得
+          final latestMessage = await chatService.getLatestMessage(room.id);
+
+          infos.add(CreatorChatInfo(
+            room: room,
+            creatorId: room.creatorId!,
+            creatorName: displayName,
+            avatarUrl: avatarUrl,
+            latestMessage: latestMessage,
+          ));
+        }
+
+        // 最新メッセージの日時でソート（新しい順）
+        infos.sort((a, b) {
+          if (a.latestMessage == null && b.latestMessage == null) return 0;
+          if (a.latestMessage == null) return 1;
+          if (b.latestMessage == null) return -1;
+          return b.latestMessage!.createdAt.compareTo(a.latestMessage!.createdAt);
+        });
+
+        creatorChats.value = infos;
+      } catch (e) {
+        debugPrint('Failed to load creator chats: $e');
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    useEffect(() {
+      loadCreatorChats();
+      return null;
+    }, []);
+
+    // 検索フィルター
+    final filteredChats = creatorChats.value.where((c) {
+      if (searchQuery.value.isEmpty) return true;
+      return c.creatorName.toLowerCase().contains(searchQuery.value.toLowerCase());
+    }).toList();
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -31,14 +121,8 @@ class PersonalChatListScreen extends HookWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Personal Chat',
-              style: TextStylePalette.title,
-            ),
-            Text(
-              projectName,
-              style: TextStylePalette.listLeading,
-            ),
+            Text('Personal Chat', style: TextStylePalette.title),
+            Text(projectName, style: TextStylePalette.listLeading),
           ],
         ),
         actions: [
@@ -46,7 +130,7 @@ class PersonalChatListScreen extends HookWidget {
             padding: EdgeInsets.only(right: SpacePalette.base),
             child: Center(
               child: Text(
-                '$creatorCount creators',
+                '${creatorChats.value.length} creators',
                 style: TextStylePalette.smSubTitle,
               ),
             ),
@@ -64,6 +148,7 @@ class PersonalChatListScreen extends HookWidget {
                   child: CommonSearchBar(
                     controller: searchController,
                     hintText: 'Search',
+                    onChanged: (value) => searchQuery.value = value,
                   ),
                 ),
                 SizedBox(width: SpacePalette.base),
@@ -75,157 +160,44 @@ class PersonalChatListScreen extends HookWidget {
               ],
             ),
           ),
-          
+
           // チャットリスト
           Expanded(
-            child: ListView(
-              children: [
-                _PersonalChatItem(
-                  name: 'Kathryn Murphy',
-                  message: 'Can\'t wait to see you! <',
-                  time: '9:30 PM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=10',
-                  hasUnread: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Kathryn Murphy',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=10',
+            child: isLoading.value
+                ? Center(child: CircularProgressIndicator())
+                : filteredChats.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No creators yet.\nWait for creators to join!',
+                          style: TextStylePalette.listLeading,
+                          textAlign: TextAlign.center,
                         ),
+                      )
+                    : ListView.builder(
+                        itemCount: filteredChats.length,
+                        itemBuilder: (context, index) {
+                          final info = filteredChats[index];
+                          return _PersonalChatItem(
+                            name: info.creatorName,
+                            message: info.latestMessage?.content ?? '',
+                            time: info.latestMessage?.formattedTime ?? '',
+                            avatarUrl: info.avatarUrl,
+                            hasUnread: false, // TODO: 未読管理
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => PersonalChatScreen(
+                                    roomId: info.room.id,
+                                    creatorName: info.creatorName,
+                                    avatarUrl: info.avatarUrl,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Kristin Watson',
-                  message: 'Scale of this world is mind-blowing. Can\'t get enou...',
-                  time: '4:41 PM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=11',
-                  hasUnread: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Kristin Watson',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=11',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Wade Warren',
-                  message: 'Why not add a little thrill? How about sneaking...',
-                  time: '2:19 PM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=12',
-                  hasUnread: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Wade Warren',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=12',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Darlene Robertson',
-                  message: 'okayy <<<',
-                  time: '2:07 PM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=13',
-                  hasUnread: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Darlene Robertson',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=13',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Jenny Wilson',
-                  message: 'that sounds cool!',
-                  time: '12:33 PM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=14',
-                  hasUnread: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Jenny Wilson',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=14',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Cody Fisher',
-                  message: 'I need more details about the features of yo...',
-                  time: '11:50 AM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=15',
-                  hasUnread: true,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Cody Fisher',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=15',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Eleanor Pena',
-                  message: 'when will it be ready?',
-                  time: '10:45 AM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=16',
-                  hasUnread: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Eleanor Pena',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=16',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                _PersonalChatItem(
-                  name: 'Brooklyn Simmons',
-                  message: '',
-                  time: '09:41 AM',
-                  avatarUrl: 'https://i.pravatar.cc/150?img=17',
-                  hasUnread: false,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => PersonalChatScreen(
-                          creatorName: 'Brooklyn Simmons',
-                          avatarUrl: 'https://i.pravatar.cc/150?img=17',
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ],
-            ),
           ),
         ],
       ),
@@ -276,7 +248,7 @@ class _PersonalChatItem extends StatelessWidget {
               backgroundImage: NetworkImage(avatarUrl),
             ),
             SizedBox(width: SpacePalette.inner),
-            
+
             // メッセージ情報
             Expanded(
               child: Column(
@@ -285,14 +257,9 @@ class _PersonalChatItem extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        name,
-                        style: TextStylePalette.listTitle,
-                      ),
-                      Text(
-                        time,
-                        style: TextStylePalette.smSubText,
-                      ),
+                      Text(name, style: TextStylePalette.listTitle),
+                      if (time.isNotEmpty)
+                        Text(time, style: TextStylePalette.smSubText),
                     ],
                   ),
                   if (message.isNotEmpty) ...[
