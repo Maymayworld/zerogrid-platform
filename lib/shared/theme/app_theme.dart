@@ -28,6 +28,13 @@ class ColorPalette {
   static const Color systemGreen = Color(0xFF22C55E);
   static const Color systemRed = Color(0xFFEF4444);
   static const Color primaryColor = Color(0xFF262626);
+  
+  // LakeBlue（Duolingoスタイル用）
+  static const Color lakeBlue500 = Color(0xFF33AFBD);
+  static const Color lakeBlue700 = Color(0xFF007C8A);
+  
+  // LINE
+  static const Color lineGreen = Color(0xFF00B900);
 }
 
 // フォントサイズ
@@ -67,6 +74,8 @@ class RadiusPalette {
   static const double base = 8.0;
   // カードの角丸度
   static const double lg = 12.0;
+  // 完全な丸（pill shape）
+  static const double full = 999.0;
 }
 
 // Button Sizes
@@ -79,6 +88,8 @@ class ButtonSizePalette {
   static const double innerButton = 40.0;
   // 横長ボタン、入力フィールド
   static const double button = 48.0;
+  // ソーシャルログインボタン
+  static const double socialButton = 50.0;
 }
 
 // テキストスタイル
@@ -155,6 +166,13 @@ class TextStylePalette {
     fontSize: FontSizePalette.size12,
     fontWeight: FontWeight.bold
   );
+  // ガイドテキスト（下線付き）
+  static const TextStyle guideUnderline = TextStyle(
+    color: ColorPalette.neutral800,
+    fontSize: FontSizePalette.size12,
+    fontWeight: FontWeight.w600,
+    decoration: TextDecoration.underline,
+  );
   // Dividerテキスト
   // Divider上に表示するテキスト
   // 例：「または」
@@ -187,13 +205,19 @@ class TextStylePalette {
   );
   // ボタン内テキスト（白）
   static const TextStyle buttonTextWhite = TextStyle(
-    color: ColorPalette.neutral100,
+    color: ColorPalette.neutral0,
     fontSize: FontSizePalette.size16,
     fontWeight: FontWeight.bold
   );
   // ボタン内テキスト（黒）
   static const TextStyle buttonTextBlack = TextStyle(
     color: ColorPalette.neutral800,
+    fontSize: FontSizePalette.size16,
+    fontWeight: FontWeight.bold
+  );
+  // ボタン内テキスト（無効時）
+  static const TextStyle buttonTextDisabled = TextStyle(
+    color: ColorPalette.neutral400,
     fontSize: FontSizePalette.size16,
     fontWeight: FontWeight.bold
   );
