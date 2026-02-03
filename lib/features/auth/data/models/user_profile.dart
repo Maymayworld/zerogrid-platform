@@ -17,15 +17,17 @@ class UserProfile {
     required this.createdAt,
   });
 
-  // Supabaseのレスポンスから変換
+  // Supabaseのレスポンスから変換（nullセーフ）
   factory UserProfile.fromMap(Map<String, dynamic> map) {
     return UserProfile(
-      id: map['id'] as String,
-      username: map['username'] as String,
-      displayName: map['display_name'] as String,
-      avatarUrl: map['avatar_url'] as String?,
-      role: map['role'] as String,
-      createdAt: DateTime.parse(map['created_at'] as String),
+      id: map['id']?.toString() ?? '',
+      username: map['username']?.toString() ?? '',
+      displayName: map['display_name']?.toString() ?? '',
+      avatarUrl: map['avatar_url']?.toString(),
+      role: map['role']?.toString() ?? 'creator',
+      createdAt: map['created_at'] != null
+          ? DateTime.parse(map['created_at'].toString())
+          : DateTime.now(),
     );
   }
 }

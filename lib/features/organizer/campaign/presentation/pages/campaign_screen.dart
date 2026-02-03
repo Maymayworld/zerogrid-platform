@@ -73,7 +73,7 @@ class CampaignScreen extends HookConsumerWidget {
             child: Container(
               height: ButtonSizePalette.filter,
               decoration: BoxDecoration(
-                color: ColorPalette.neutral0,
+                color: ColorPalette.white,
                 borderRadius: BorderRadius.circular(RadiusPalette.base),
               ),
               child: TextField(

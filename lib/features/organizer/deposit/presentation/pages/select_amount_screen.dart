@@ -62,13 +62,13 @@ class SelectAmountScreen extends HookWidget {
                 Text(
                   'Balance',
                   style: TextStylePalette.normalText.copyWith(
-                    color: ColorPalette.neutral0
+                    color: ColorPalette.white
                   )
                 ),
                 SizedBox(height: SpacePalette.sm),
                 Text(
                   '¥400,500',
-                  style: TextStylePalette.header.copyWith(color: ColorPalette.neutral0),
+                  style: TextStylePalette.header.copyWith(color: ColorPalette.white),
                 ),
                 SizedBox(height: SpacePalette.base),
               ],
@@ -104,7 +104,7 @@ class SelectAmountScreen extends HookWidget {
                       itemBuilder: (context, index) {
                         final amounts = [10000, 50000, 100000];
                         return Card(
-                          color: ColorPalette.neutral0,
+                          color: ColorPalette.white,
                           child: InkWell(
                             onTap: () => selectAmount(amounts[index]),
                             splashColor: ColorPalette.neutral200.withOpacity(0.3),
@@ -180,7 +180,7 @@ class SelectAmountScreen extends HookWidget {
                               decoration: BoxDecoration(
                                 color: selectedAmount.value == 10000 
                                   ? ColorPalette.neutral800 
-                                  : ColorPalette.neutral0,
+                                  : ColorPalette.white,
                                 borderRadius: BorderRadius.circular(RadiusPalette.mini),
                                 border: Border.all(
                                   color: selectedAmount.value == 10000
@@ -193,7 +193,7 @@ class SelectAmountScreen extends HookWidget {
                                   '¥10,000',
                                   style: TextStylePalette.smTitle.copyWith(
                                     color: selectedAmount.value == 10000
-                                      ? ColorPalette.neutral0
+                                      ? ColorPalette.white
                                       : ColorPalette.neutral800,
                                   ),
                                 ),
@@ -210,7 +210,7 @@ class SelectAmountScreen extends HookWidget {
                               decoration: BoxDecoration(
                                 color: selectedAmount.value == 50000 
                                   ? ColorPalette.neutral800 
-                                  : ColorPalette.neutral0,
+                                  : ColorPalette.white,
                                 borderRadius: BorderRadius.circular(RadiusPalette.mini),
                                 border: Border.all(
                                   color: selectedAmount.value == 50000
@@ -223,7 +223,7 @@ class SelectAmountScreen extends HookWidget {
                                   '¥50,000',
                                   style: TextStylePalette.smTitle.copyWith(
                                     color: selectedAmount.value == 50000
-                                      ? ColorPalette.neutral0
+                                      ? ColorPalette.white
                                       : ColorPalette.neutral800,
                                   ),
                                 ),
@@ -240,7 +240,7 @@ class SelectAmountScreen extends HookWidget {
                               decoration: BoxDecoration(
                                 color: selectedAmount.value == 100000 
                                   ? ColorPalette.neutral800 
-                                  : ColorPalette.neutral0,
+                                  : ColorPalette.white,
                                 borderRadius: BorderRadius.circular(RadiusPalette.mini),
                                 border: Border.all(
                                   color: selectedAmount.value == 100000
@@ -253,7 +253,7 @@ class SelectAmountScreen extends HookWidget {
                                   '¥100,000',
                                   style: TextStylePalette.smTitle.copyWith(
                                     color: selectedAmount.value == 100000
-                                      ? ColorPalette.neutral0
+                                      ? ColorPalette.white
                                       : ColorPalette.neutral800,
                                   ),
                                 ),

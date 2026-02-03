@@ -91,7 +91,7 @@ class DashboardScreen extends HookWidget {
                               '+31.8%',
                               style: TextStyle(
                                 fontSize: FontSizePalette.size12,
-                                color: ColorPalette.systemGreen,
+                                color: ColorPalette.positive500,
                               ),
                             ),
                           ],
@@ -123,7 +123,7 @@ class DashboardScreen extends HookWidget {
               Container(
                 height: 200,
                 decoration: BoxDecoration(
-                  color: ColorPalette.neutral0,
+                  color: ColorPalette.white,
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
                 ),
                 child: Center(
@@ -163,7 +163,7 @@ class DashboardScreen extends HookWidget {
                   alignment: Alignment.centerLeft,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: ColorPalette.systemGreen,
+                      color: ColorPalette.positive500,
                       borderRadius: BorderRadius.circular(4),
                     ),
                   ),

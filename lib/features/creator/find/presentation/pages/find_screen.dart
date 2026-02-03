@@ -112,7 +112,7 @@ class FindScreen extends HookConsumerWidget {
                     child: Center(
                       child: Text(
                         'ZG',
-                        style: TextStylePalette.title.copyWith(color: ColorPalette.neutral0),
+                        style: TextStylePalette.title.copyWith(color: ColorPalette.white),
                       ),
                     ),
                   ),
@@ -151,7 +151,7 @@ class FindScreen extends HookConsumerWidget {
                         return Container(
                           margin: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            color: ColorPalette.neutral0,
+                            color: ColorPalette.white,
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Center(

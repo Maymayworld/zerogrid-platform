@@ -7,22 +7,26 @@ import 'auth_provider.dart';
 class UserProfileState {
   final UserProfile? profile;
   final bool isLoading;
+  final bool hasLoaded; // ロード済みかどうか（nullでも完了した場合true）
   final String? error;
 
   const UserProfileState({
     this.profile,
     this.isLoading = false,
+    this.hasLoaded = false,
     this.error,
   });
 
   UserProfileState copyWith({
     UserProfile? profile,
     bool? isLoading,
+    bool? hasLoaded,
     String? error,
   }) {
     return UserProfileState(
       profile: profile ?? this.profile,
       isLoading: isLoading ?? this.isLoading,
+      hasLoaded: hasLoaded ?? this.hasLoaded,
       error: error,
     );
   }
@@ -35,13 +39,18 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
 
   // プロフィール読み込み
   Future<void> loadProfile() async {
+    print('[loadProfile] start');
     state = state.copyWith(isLoading: true, error: null);
 
     try {
+      print('[loadProfile] calling getCurrentProfile');
       final profile = await _authService.getCurrentProfile();
-      state = state.copyWith(profile: profile, isLoading: false);
+      print('[loadProfile] profile = $profile');
+      state = state.copyWith(profile: profile, isLoading: false, hasLoaded: true);
+      print('[loadProfile] done');
     } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+      print('[loadProfile] error = $e');
+      state = state.copyWith(isLoading: false, hasLoaded: true, error: e.toString());
     }
   }
 

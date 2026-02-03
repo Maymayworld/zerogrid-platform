@@ -231,7 +231,7 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
                   Expanded(
                     child: Container(
                       decoration: BoxDecoration(
-                        color: ColorPalette.neutral0,
+                        color: ColorPalette.white,
                         borderRadius: BorderRadius.circular(RadiusPalette.lg),
                       ),
                       child: TextField(
@@ -309,7 +309,7 @@ class _MessageBubble extends StatelessWidget {
                   Text(
                     message,
                     style: TextStylePalette.normalText.copyWith(
-                      color: ColorPalette.neutral0,
+                      color: ColorPalette.white,
                     ),
                   ),
                   SizedBox(height: SpacePalette.xs),
@@ -353,7 +353,7 @@ class _MessageBubble extends StatelessWidget {
                 Container(
                   padding: EdgeInsets.all(SpacePalette.inner),
                   decoration: BoxDecoration(
-                    color: ColorPalette.neutral0,
+                    color: ColorPalette.white,
                     borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
                   child: Text(message, style: TextStylePalette.normalText),

@@ -29,15 +29,15 @@ class _LoggedInWrapper extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(userProfileProvider);
 
-    // 初回ロード（まだ何も始まってない場合）
-    if (profileState.profile == null && !profileState.isLoading && profileState.error == null) {
+    // 初回ロード（まだロードしていない場合）
+    if (!profileState.hasLoaded && !profileState.isLoading) {
       Future.microtask(() {
         ref.read(userProfileProvider.notifier).loadProfile();
       });
-      
+
       // ローディング表示
       return Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: ColorPalette.white,
         body: Center(
           child: CircularProgressIndicator(color: ColorPalette.neutral800),
         ),
@@ -47,7 +47,7 @@ class _LoggedInWrapper extends HookConsumerWidget {
     // ローディング中
     if (profileState.isLoading) {
       return Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: ColorPalette.white,
         body: Center(
           child: CircularProgressIndicator(color: ColorPalette.neutral800),
         ),
@@ -57,7 +57,7 @@ class _LoggedInWrapper extends HookConsumerWidget {
     // エラー or プロフィールがない → ログアウトして再登録
     if (profileState.error != null || profileState.profile == null) {
       return Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: ColorPalette.white,
         body: Center(
           child: Padding(
             padding: EdgeInsets.all(24),

@@ -26,7 +26,7 @@ class FilterButton extends StatelessWidget {
           vertical: 0, // 縦方向のpaddingは0に（高さで調整）
         ),
         decoration: BoxDecoration(
-          color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral0,
+          color: isSelected ? ColorPalette.neutral800 : ColorPalette.white,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(
@@ -36,7 +36,7 @@ class FilterButton extends StatelessWidget {
             Icon(
               icon,
               size: 16,
-              color: isSelected ? ColorPalette.neutral0 : ColorPalette.neutral800,
+              color: isSelected ? ColorPalette.white : ColorPalette.neutral800,
             ),
             if (isSelected) ...[
               SizedBox(width: 6),

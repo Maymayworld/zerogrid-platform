@@ -26,8 +26,8 @@ class ManualCreatePage5 extends HookConsumerWidget{
             data: Theme.of(context).copyWith(
               colorScheme: ColorScheme.light(
                 primary: ColorPalette.neutral800,
-                onPrimary: ColorPalette.neutral0,
-                surface: ColorPalette.neutral0,
+                onPrimary: ColorPalette.white,
+                surface: ColorPalette.white,
                 onSurface: ColorPalette.neutral800
               )
             ),
@@ -43,9 +43,9 @@ class ManualCreatePage5 extends HookConsumerWidget{
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
         icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),

@@ -188,7 +188,7 @@ Future<void> handleCreateAccount() async {
     }, [displayNameController]);
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

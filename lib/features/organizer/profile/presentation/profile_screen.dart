@@ -58,7 +58,7 @@ class ProfileScreen extends HookConsumerWidget {
                         ? Text(
                             profile?.displayName.substring(0, 2).toUpperCase() ?? 'ZG',
                             style: TextStylePalette.header.copyWith(
-                              color: ColorPalette.neutral0,
+                              color: ColorPalette.white,
                             ),
                           )
                         : null,
@@ -76,7 +76,7 @@ class ProfileScreen extends HookConsumerWidget {
                         width: 32,
                         height: 32,
                         decoration: BoxDecoration(
-                          color: ColorPalette.neutral0,
+                          color: ColorPalette.white,
                           shape: BoxShape.circle,
                           border: Border.all(
                             color: ColorPalette.neutral200,
@@ -132,13 +132,13 @@ class ProfileScreen extends HookConsumerWidget {
                         Icon(
                           Icons.account_balance_wallet_outlined,
                           size: 16,
-                          color: ColorPalette.neutral0,
+                          color: ColorPalette.white,
                         ),
                         SizedBox(width: SpacePalette.xs),
                         Text(
                           'My Wallet',
                           style: TextStylePalette.smText.copyWith(
-                            color: ColorPalette.neutral0,
+                            color: ColorPalette.white,
                           ),
                         ),
                       ],
@@ -151,7 +151,7 @@ class ProfileScreen extends HookConsumerWidget {
                         Text(
                           isBalanceVisible.value ? '¥400,500' : '¥******',
                           style: TextStylePalette.header.copyWith(
-                            color: ColorPalette.neutral0,
+                            color: ColorPalette.white,
                           ),
                         ),
                         Row(
@@ -165,7 +165,7 @@ class ProfileScreen extends HookConsumerWidget {
                                     ? Icons.visibility_outlined
                                     : Icons.visibility_off_outlined,
                                 size: 20,
-                                color: ColorPalette.neutral0,
+                                color: ColorPalette.white,
                               ),
                             ),
                             SizedBox(width: SpacePalette.base),
@@ -184,17 +184,17 @@ class ProfileScreen extends HookConsumerWidget {
                                   vertical: SpacePalette.xs,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: ColorPalette.neutral0.withOpacity(0.2),
+                                  color: ColorPalette.white.withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(RadiusPalette.mini),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.add, size: 16, color: ColorPalette.neutral0),
+                                    Icon(Icons.add, size: 16, color: ColorPalette.white),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       'Deposit',
                                       style: TextStylePalette.smText.copyWith(
-                                        color: ColorPalette.neutral0,
+                                        color: ColorPalette.white,
                                       ),
                                     ),
                                   ],
@@ -236,12 +236,12 @@ class ProfileScreen extends HookConsumerWidget {
                   padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
                   child: Row(
                     children: [
-                      Icon(Icons.logout, size: 20, color: ColorPalette.systemRed),
+                      Icon(Icons.logout, size: 20, color: ColorPalette.critical500),
                       SizedBox(width: SpacePalette.base),
                       Text(
                         'Logout',
                         style: TextStylePalette.bigText.copyWith(
-                          color: ColorPalette.systemRed,
+                          color: ColorPalette.critical500,
                         ),
                       ),
                     ],

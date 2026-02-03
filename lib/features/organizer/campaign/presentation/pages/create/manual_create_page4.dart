@@ -16,9 +16,9 @@ class ManualCreatePage4 extends HookConsumerWidget{
     final budgetController = useTextEditingController();
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
         icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),

@@ -96,7 +96,7 @@ class _FileItem extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette.neutral0,
+        color: ColorPalette.white,
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
       child: Row(

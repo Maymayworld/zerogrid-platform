@@ -91,7 +91,7 @@ class ProjectShareSheet extends StatelessWidget {
                                 width: 16,
                                 height: 16,
                                 decoration: BoxDecoration(
-                                  color: ColorPalette.systemGreen,
+                                  color: ColorPalette.positive500,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: ColorPalette.neutral100,
@@ -197,7 +197,7 @@ class _ActionButton extends StatelessWidget {
           width: 50,
           height: 50,
           decoration: BoxDecoration(
-            color: ColorPalette.neutral0,
+            color: ColorPalette.white,
             shape: BoxShape.circle,
           ),
           child: Icon(icon, color: ColorPalette.neutral800, size: 24),

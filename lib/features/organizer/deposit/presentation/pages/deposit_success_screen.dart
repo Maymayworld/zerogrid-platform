@@ -27,13 +27,13 @@ class DepositSuccessScreen extends StatelessWidget {
                 width: 100,
                 height: 100,
                 decoration: BoxDecoration(
-                  color: ColorPalette.systemGreen,
+                  color: ColorPalette.positive500,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   Icons.check,
                   size: 60,
-                  color: ColorPalette.neutral0,
+                  color: ColorPalette.white,
                 ),
               ),
               SizedBox(height: SpacePalette.lg),

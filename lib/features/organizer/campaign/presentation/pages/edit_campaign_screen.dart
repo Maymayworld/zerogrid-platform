@@ -126,7 +126,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Project updated successfully!'),
-              backgroundColor: ColorPalette.systemGreen,
+              backgroundColor: ColorPalette.positive500,
             ),
           );
           Navigator.pop(context, true); // trueを返して更新を通知
@@ -145,9 +145,9 @@ class EditCampaignScreen extends HookConsumerWidget {
     // ローディング中
     if (isLoading.value) {
       return Scaffold(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         appBar: AppBar(
-          backgroundColor: ColorPalette.neutral0,
+          backgroundColor: ColorPalette.white,
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -165,9 +165,9 @@ class EditCampaignScreen extends HookConsumerWidget {
     // エラー
     if (error.value != null) {
       return Scaffold(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         appBar: AppBar(
-          backgroundColor: ColorPalette.neutral0,
+          backgroundColor: ColorPalette.white,
           elevation: 0,
           leading: IconButton(
             icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -183,7 +183,7 @@ class EditCampaignScreen extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -268,7 +268,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                                 child: Icon(
                                   Icons.edit,
                                   size: 20,
-                                  color: ColorPalette.neutral0,
+                                  color: ColorPalette.white,
                                 ),
                               ),
                             ),
@@ -329,7 +329,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.sm),
                   Container(
                     decoration: BoxDecoration(
-                      color: ColorPalette.neutral0,
+                      color: ColorPalette.white,
                       borderRadius: BorderRadius.circular(RadiusPalette.base),
                     ),
                     child: DropdownButtonFormField<String>(
@@ -374,9 +374,9 @@ class EditCampaignScreen extends HookConsumerWidget {
                           selectedPlatforms.value = current;
                         },
                         selectedColor: ColorPalette.neutral800,
-                        checkmarkColor: ColorPalette.neutral0,
+                        checkmarkColor: ColorPalette.white,
                         labelStyle: TextStyle(
-                          color: isSelected ? ColorPalette.neutral0 : ColorPalette.neutral800,
+                          color: isSelected ? ColorPalette.white : ColorPalette.neutral800,
                         ),
                       );
                     }).toList(),
@@ -391,7 +391,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           Container(
             padding: EdgeInsets.all(SpacePalette.base),
             decoration: BoxDecoration(
-              color: ColorPalette.neutral0,
+              color: ColorPalette.white,
               border: Border(
                 top: BorderSide(color: ColorPalette.neutral200, width: 1),
               ),
@@ -429,7 +429,7 @@ class EditCampaignScreen extends HookConsumerWidget {
       hintText: hint,
       hintStyle: TextStylePalette.hintText,
       filled: true,
-      fillColor: ColorPalette.neutral0,
+      fillColor: ColorPalette.white,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(RadiusPalette.base),
         borderSide: BorderSide.none,

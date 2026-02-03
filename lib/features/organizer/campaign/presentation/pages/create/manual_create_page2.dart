@@ -39,9 +39,9 @@ class ManualCreatePage2 extends HookConsumerWidget{
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
         icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -208,7 +208,7 @@ class CategoryBox extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
           ? ColorPalette.neutral100
-          : ColorPalette.neutral0,
+          : ColorPalette.white,
           border: Border.all(
             color: isSelected
             ? ColorPalette.neutral800
@@ -261,7 +261,7 @@ class PlatformBox extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected
           ? ColorPalette.neutral100
-          : ColorPalette.neutral0,
+          : ColorPalette.white,
           border: Border.all(
             color: isSelected
             ? ColorPalette.neutral800

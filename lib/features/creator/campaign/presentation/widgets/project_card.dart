@@ -174,7 +174,7 @@ class ProjectCard extends StatelessWidget {
                           child: Container(
                             height: 4,
                             decoration: BoxDecoration(
-                              color: ColorPalette.systemGreen,
+                              color: ColorPalette.positive500,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
@@ -212,11 +212,11 @@ class ProjectCard extends StatelessWidget {
                             height: 40,
                             decoration: BoxDecoration(
                               color: isLiked 
-                                  ? ColorPalette.systemRed.withOpacity(0.2) 
+                                  ? ColorPalette.critical500.withOpacity(0.2) 
                                   : Colors.transparent,
                               border: Border.all(
                                 color: isLiked 
-                                    ? ColorPalette.systemRed 
+                                    ? ColorPalette.critical500 
                                     : ColorPalette.neutral100, 
                                 width: 2
                               ),
@@ -225,7 +225,7 @@ class ProjectCard extends StatelessWidget {
                             child: Icon(
                               isLiked ? Icons.favorite : Icons.favorite_border,
                               color: isLiked 
-                                  ? ColorPalette.systemRed 
+                                  ? ColorPalette.critical500 
                                   : ColorPalette.neutral100,
                               size: 20,
                             ),

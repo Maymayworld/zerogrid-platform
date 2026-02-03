@@ -51,7 +51,7 @@ class GiveFeedbackSheet extends HookWidget {
                     height: 52,
                     decoration: BoxDecoration(
                       color: selectedEmoji.value == index
-                          ? ColorPalette.neutral0
+                          ? ColorPalette.white
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(RadiusPalette.base),
                       border: Border.all(
@@ -82,7 +82,7 @@ class GiveFeedbackSheet extends HookWidget {
                 hintText: 'Tell us something',
                 hintStyle: TextStylePalette.hintText,
                 filled: true,
-                fillColor: ColorPalette.neutral0,
+                fillColor: ColorPalette.white,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
                   borderSide: BorderSide.none,

@@ -10,9 +10,9 @@ class LoadingPage extends HookWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
         icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -28,7 +28,7 @@ class LoadingPage extends HookWidget {
               Align(
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(
-                  color: ColorPalette.primaryColor,
+                  color: ColorPalette.chillBlue500,
                 ),
               ),
               SizedBox(height: SpacePalette.base),

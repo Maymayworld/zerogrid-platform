@@ -153,7 +153,7 @@ class ProjectUploadScreen extends HookWidget {
                       Container(
                         padding: EdgeInsets.all(SpacePalette.base),
                         decoration: BoxDecoration(
-                          color: ColorPalette.neutral0,
+                          color: ColorPalette.white,
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
                         ),
                         child: Column(
@@ -168,7 +168,7 @@ class ProjectUploadScreen extends HookWidget {
                               value: uploadProgress.value,
                               backgroundColor: ColorPalette.neutral200,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                ColorPalette.systemGreen,
+                                ColorPalette.positive500,
                               ),
                             ),
                           ],
@@ -248,7 +248,7 @@ class _PlatformLinkField extends StatelessWidget {
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette.neutral0,
+        color: ColorPalette.white,
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
       child: Column(

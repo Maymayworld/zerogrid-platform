@@ -195,7 +195,7 @@ class _PlatformChip extends StatelessWidget {
           vertical: SpacePalette.inner,
         ),
         decoration: BoxDecoration(
-          color: ColorPalette.neutral0,
+          color: ColorPalette.white,
           border: Border.all(
             color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral200,
             width: 1.5,

@@ -30,7 +30,7 @@ class CreatorMainLayout extends HookWidget {
     ];
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: ColorPalette.white,
       body: Stack(
         children: [
           // メインコンテンツ
@@ -96,7 +96,7 @@ class CustomBottomNavBar extends StatelessWidget {
         Container(
           height: 70,
           decoration: BoxDecoration(
-            color: backgroundColor,
+            color: ColorPalette.white,
             boxShadow: [
               BoxShadow(
                 color: ColorPalette.neutral800.withOpacity(0.05),

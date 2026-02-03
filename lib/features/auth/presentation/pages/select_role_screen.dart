@@ -28,7 +28,7 @@ class SelectRoleScreen extends StatelessWidget {
                         Text(
                           'Welcome! ',
                           style: TextStylePalette.header.copyWith(
-                            color: ColorPalette.neutral0,
+                            color: ColorPalette.white,
                           ),
                         ),
                         Text(
@@ -41,7 +41,7 @@ class SelectRoleScreen extends StatelessWidget {
                     Text(
                       'How would you like to get\nstarted?',
                       style: TextStylePalette.bigText.copyWith(
-                        color: ColorPalette.neutral0,
+                        color: ColorPalette.white,
                       ),
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -54,7 +54,7 @@ class SelectRoleScreen extends StatelessWidget {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: backgroundColor,
+                color: ColorPalette.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(RadiusPalette.lg),
                   topRight: Radius.circular(RadiusPalette.lg),

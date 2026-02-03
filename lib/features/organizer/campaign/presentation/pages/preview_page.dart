@@ -78,7 +78,7 @@ class PreviewPage extends HookConsumerWidget {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Campaign posted successfully!'),
-              backgroundColor: ColorPalette.systemGreen,
+              backgroundColor: ColorPalette.positive500,
             ),
           );
           // ホーム画面に戻る（全てpop）
@@ -105,9 +105,9 @@ class PreviewPage extends HookConsumerWidget {
         project.endDate.isNotEmpty;
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         title: Text('Preview', style: TextStylePalette.title),
         centerTitle: true,
@@ -210,7 +210,7 @@ class PreviewPage extends HookConsumerWidget {
                                   ? Text(
                                       profile?.displayName.substring(0, 1).toUpperCase() ?? 'C',
                                       style: TextStylePalette.smTitle.copyWith(
-                                        color: ColorPalette.neutral0,
+                                        color: ColorPalette.white,
                                       ),
                                     )
                                   : null,

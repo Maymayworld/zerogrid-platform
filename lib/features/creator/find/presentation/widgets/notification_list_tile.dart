@@ -34,7 +34,7 @@ class NotificationListTile extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: ColorPalette.neutral0,
+              color: ColorPalette.white,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(
@@ -64,7 +64,7 @@ class NotificationListTile extends StatelessWidget {
                         height: 8,
                         margin: EdgeInsets.only(left: SpacePalette.sm),
                         decoration: BoxDecoration(
-                          color: ColorPalette.systemGreen,
+                          color: ColorPalette.positive500,
                           shape: BoxShape.circle,
                         ),
                       ),

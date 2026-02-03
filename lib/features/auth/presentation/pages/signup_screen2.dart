@@ -79,16 +79,16 @@ class SignUpScreen2 extends HookConsumerWidget {
     Color getBorderColor() {
       switch (usernameStatus.value) {
         case UsernameStatus.taken:
-          return ColorPalette.systemRed;
+          return ColorPalette.critical500;
         case UsernameStatus.available:
-          return ColorPalette.systemGreen;
+          return ColorPalette.positive500;
         default:
           return ColorPalette.neutral200;
       }
     }
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -148,14 +148,14 @@ class SignUpScreen2 extends HookConsumerWidget {
               if (usernameStatus.value == UsernameStatus.taken)
                 Text(
                   'This username is already taken',
-                  style: TextStylePalette.smSubText.copyWith(color: ColorPalette.systemRed),
+                  style: TextStylePalette.smSubText.copyWith(color: ColorPalette.critical500),
                 ),
               if (usernameStatus.value == UsernameStatus.available)
                 Row(
                   children: [
                     Text(
                       'Username is available ',
-                      style: TextStylePalette.smSubText.copyWith(color: ColorPalette.systemGreen),
+                      style: TextStylePalette.smSubText.copyWith(color: ColorPalette.positive500),
                     ),
                     Text('🎉', style: TextStyle(fontSize: 12)),
                   ],
@@ -190,7 +190,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                       Icon(
                         Icons.arrow_forward,
                         color: usernameStatus.value == UsernameStatus.available
-                            ? ColorPalette.neutral0
+                            ? ColorPalette.white
                             : ColorPalette.neutral400,
                         size: 20,
                       ),
@@ -219,10 +219,10 @@ class SignUpScreen2 extends HookConsumerWidget {
       case UsernameStatus.taken:
         return IconButton(
           onPressed: () => controller.clear(),
-          icon: Icon(Icons.close, color: ColorPalette.systemRed, size: 20),
+          icon: Icon(Icons.close, color: ColorPalette.critical500, size: 20),
         );
       case UsernameStatus.available:
-        return Icon(Icons.check, color: ColorPalette.systemGreen, size: 20);
+        return Icon(Icons.check, color: ColorPalette.positive500, size: 20);
       default:
         return null;
     }

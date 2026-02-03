@@ -4,37 +4,69 @@ import 'package:google_fonts/google_fonts.dart';
 
 // 太字はFontWeight.w600を使用
 
-Color backgroundColor = const Color(0xFFFFFFFF);
-Color subBackgroundColor = const Color(0xFFF5F5F5);
-Color progressColor = const Color(0xFF22C55E);
-
 // カラーパレット
 class ColorPalette {
-  // 基本色
+
+  // Foundation
   // 基本背景色, 白テキスト色
-  static const Color neutral0 = Color(0xFFffffff);
+  static const Color white = Colors.white;
+  static const Color black = Colors.black;
+
+  // Neutral
+  static const Color neutral50 = Color(0xFFfafafa);
   // 薄いボックス背景色
   static const Color neutral100 = Color(0xFFf5f5f5);
   // 区切り線, 枠線色
   static const Color neutral200 = Color(0xFFe5e5e5);
+  static const Color neutral300 = Color(0xFFd4d4d4); // ほぼ使わない
   // ヒントテキスト色
   static const Color neutral400 = Color(0xFFa3a3a3);
   // グレーテキスト色
   static const Color neutral500 = Color(0xFF737373);
+  static const Color neutral600 = Color(0xFF525252); // ほぼ使わない
+  static const Color neutral700 = Color(0xFF404040); // ほぼ使わない
   // 黒テキスト色
   static const Color neutral800 = Color(0xFF262626);
+  static const Color neutral900 = Color(0xFF171717); // ほぼ使わない
+  static const Color neutral950 = Color(0xFF0a0a0a); // ほぼ使わない
 
-  // システムカラー
-  static const Color systemGreen = Color(0xFF22C55E);
-  static const Color systemRed = Color(0xFFEF4444);
-  static const Color primaryColor = Color(0xFF262626);
-  
-  // LakeBlue（Duolingoスタイル用）
-  static const Color lakeBlue500 = Color(0xFF33AFBD);
-  static const Color lakeBlue700 = Color(0xFF007C8A);
-  
-  // LINE
-  static const Color lineGreen = Color(0xFF00B900);
+  // Chill Blue
+  static const Color chillBlue100 = Color(0xFFe8f6f7);
+  static const Color chillBlue200 = Color(0xFFc2e9ec);
+  static const Color chillBlue300 = Color(0xFF99d7de);
+  static const Color chillBlue400 = Color(0xFF66c3cd);
+  static const Color chillBlue500 = Color(0xFF33afbd); // primaryColor
+  static const Color chillBlue600 = Color(0xFF009bac);
+  static const Color chillBlue700 = Color(0xFF007c8a);
+  static const Color chillBlue800 = Color(0xFF005d67);
+  static const Color chillBlue900 = Color(0xFF003e45);
+
+  // States
+  // Positive
+  static const Color positive50 = Color(0xFFf0fdf4);
+  static const Color positive100 = Color(0xFFdcfce7);
+  static const Color positive200 = Color(0xFFbbf7d0);
+  static const Color positive300 = Color(0xFF86efac);
+  static const Color positive400 = Color(0xFF4ade80);
+  static const Color positive500 = Color(0xFF22c55e);
+  static const Color positive600 = Color(0xFF16a34a);
+  static const Color positive700 = Color(0xFF15803d);
+  static const Color positive800 = Color(0xFF166534);
+  static const Color positive900 = Color(0xFF14532d);
+  static const Color positive950 = Color(0xFF052e16);
+
+  // Critical
+  static const Color critical50 = Color(0xFFfef2f2);
+  static const Color critical100 = Color(0xFFfee2e2);
+  static const Color critical200 = Color(0xFFfecaca);
+  static const Color critical300 = Color(0xFFfca5a5);
+  static const Color critical400 = Color(0xFFf87171);
+  static const Color critical500 = Color(0xFFef4444);
+  static const Color critical600 = Color(0xFFdc2626);
+  static const Color critical700 = Color(0xFFb91c1c);
+  static const Color critical800 = Color(0xFF991b1b);
+  static const Color critical900 = Color(0xFF7f1d1d);
+  static const Color critical950 = Color(0xFF450a0a);
 }
 
 // フォントサイズ
@@ -205,7 +237,7 @@ class TextStylePalette {
   );
   // ボタン内テキスト（白）
   static const TextStyle buttonTextWhite = TextStyle(
-    color: ColorPalette.neutral0,
+    color: ColorPalette.white,
     fontSize: FontSizePalette.size16,
     fontWeight: FontWeight.bold
   );
@@ -249,17 +281,17 @@ class AppTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.light(
         primary: ColorPalette.neutral800,
-        surface: ColorPalette.neutral0,
+        surface: ColorPalette.white,
         onPrimary: ColorPalette.neutral100,
         onSurface: ColorPalette.neutral800,
         outline: ColorPalette.neutral200,
       ),
-      scaffoldBackgroundColor: ColorPalette.neutral0,
+      scaffoldBackgroundColor: ColorPalette.white,
       textTheme: textTheme,
       
       // AppBar
       appBarTheme: AppBarTheme(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         foregroundColor: ColorPalette.neutral800,
         elevation: 0,
         centerTitle: true,
@@ -269,7 +301,7 @@ class AppTheme {
       // InputDecoration
       inputDecorationTheme: InputDecorationTheme(
         // filled: true,
-        fillColor: ColorPalette.neutral0,
+        fillColor: ColorPalette.white,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: SpacePalette.inner,
           vertical: SpacePalette.sm,
@@ -284,15 +316,15 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.primaryColor, width: 2),
+          borderSide: const BorderSide(color: ColorPalette.chillBlue500, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.primaryColor),
+          borderSide: const BorderSide(color: ColorPalette.chillBlue500),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.primaryColor, width: 2),
+          borderSide: const BorderSide(color: ColorPalette.chillBlue500, width: 2),
         ),
         labelStyle: TextStylePalette.normalText,
         hintStyle: TextStylePalette.hintText,
@@ -301,7 +333,7 @@ class AppTheme {
       // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorPalette.primaryColor,
+          backgroundColor: ColorPalette.chillBlue500,
           foregroundColor: ColorPalette.neutral100,
           minimumSize: const Size(double.infinity, ButtonSizePalette.button),
           shape: RoundedRectangleBorder(
@@ -320,7 +352,7 @@ class AppTheme {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.lg),
         ),
-        color: ColorPalette.neutral0,
+        color: ColorPalette.white,
       ),
     );
   }

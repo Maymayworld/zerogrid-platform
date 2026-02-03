@@ -20,9 +20,9 @@ class AnalyticsScreen extends HookWidget {
     final selectedPlatform = useState('YouTube');
     
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -118,7 +118,7 @@ class AnalyticsScreen extends HookWidget {
                       Text(
                         '+18%',
                         style: TextStylePalette.guide.copyWith(
-                          color: ColorPalette.systemGreen,
+                          color: ColorPalette.positive500,
                         ),
                       ),
                     ],
@@ -177,13 +177,13 @@ class AnalyticsScreen extends HookWidget {
                               FlSpot(2, 85000),
                             ],
                             isCurved: true,
-                            color: ColorPalette.systemGreen,
+                            color: ColorPalette.positive500,
                             barWidth: 3,
                             isStrokeCapRound: true,
                             dotData: FlDotData(show: false),
                             belowBarData: BarAreaData(
                               show: true,
-                              color: ColorPalette.systemGreen.withOpacity(0.3),
+                              color: ColorPalette.positive500.withOpacity(0.3),
                             ),
                           ),
                         ],
@@ -684,12 +684,12 @@ class AnalyticsScreen extends HookWidget {
                                     Icon(
                                       Icons.arrow_upward,
                                       size: 12,
-                                      color: ColorPalette.systemGreen,
+                                      color: ColorPalette.positive500,
                                     ),
                                     Text(
                                       '+21.9%',
                                       style: TextStylePalette.guide.copyWith(
-                                        color: ColorPalette.systemGreen,
+                                        color: ColorPalette.positive500,
                                       ),
                                     ),
                                   ],
@@ -732,7 +732,7 @@ class AnalyticsScreen extends HookWidget {
   void _showPeriodMenu(BuildContext context, ValueNotifier<String> selectedPeriod) {
     showModalBottomSheet(
       context: context,
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
       ),

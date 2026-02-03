@@ -173,7 +173,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
             IconButton(
               icon: Icon(
                 isLiked ? Icons.favorite : Icons.favorite_border,
-                color: isLiked ? ColorPalette.systemRed : ColorPalette.neutral800,
+                color: isLiked ? ColorPalette.critical500 : ColorPalette.neutral800,
               ),
               onPressed: toggleLike,
             ),
@@ -262,7 +262,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                             child: Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: ColorPalette.systemGreen,
+                                color: ColorPalette.positive500,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -297,7 +297,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                           CircleAvatar(
                             radius: 20,
                             backgroundColor: ColorPalette.neutral800,
-                            child: Text('C', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.neutral0)),
+                            child: Text('C', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
                           ),
                           SizedBox(width: SpacePalette.sm),
                           Column(

@@ -212,7 +212,7 @@ class _ProjectChatItem extends HookWidget {
             child: Text(
               getProjectInitials(),
               style: TextStylePalette.smTitle.copyWith(
-                color: ColorPalette.neutral0,
+                color: ColorPalette.white,
               ),
             ),
           ),

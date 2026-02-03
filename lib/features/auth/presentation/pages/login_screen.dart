@@ -104,7 +104,7 @@ class LoginScreen extends HookConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: SpacePalette.base),
@@ -139,7 +139,7 @@ class LoginScreen extends HookConsumerWidget {
                     child: const FaIcon(
                       FontAwesomeIcons.line,
                       size: 24,
-                      color: ColorPalette.lineGreen,
+                      color: ColorPalette.positive500,
                     ),
                   ),
                   const SizedBox(width: SpacePalette.base),
@@ -265,7 +265,7 @@ class _SocialLoginButton extends StatelessWidget {
         width: 100,
         height: ButtonSizePalette.socialButton,
         decoration: BoxDecoration(
-          color: ColorPalette.neutral0,
+          color: ColorPalette.white,
           borderRadius: BorderRadius.circular(RadiusPalette.full),
           border: Border.all(color: ColorPalette.neutral200),
         ),
@@ -320,7 +320,7 @@ class DuolingoTextField extends StatelessWidget {
             child: Container(
               height: ButtonSizePalette.button,
               decoration: BoxDecoration(
-                color: ColorPalette.neutral0,
+                color: ColorPalette.white,
                 borderRadius: BorderRadius.circular(RadiusPalette.base),
                 border: Border.all(color: ColorPalette.neutral200),
               ),
@@ -397,7 +397,7 @@ class _DuolingoButtonState extends State<DuolingoButton> {
                 child: Container(
                   height: ButtonSizePalette.button,
                   decoration: BoxDecoration(
-                    color: ColorPalette.lakeBlue700,
+                    color: ColorPalette.chillBlue700,
                     borderRadius: BorderRadius.circular(RadiusPalette.full),
                   ),
                 ),
@@ -413,7 +413,7 @@ class _DuolingoButtonState extends State<DuolingoButton> {
                 height: ButtonSizePalette.button,
                 decoration: BoxDecoration(
                   color: widget.isEnabled 
-                      ? ColorPalette.lakeBlue500 
+                      ? ColorPalette.chillBlue500 
                       : ColorPalette.neutral200,
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
                 ),
@@ -423,7 +423,7 @@ class _DuolingoButtonState extends State<DuolingoButton> {
                           width: 20,
                           height: 20,
                           child: CircularProgressIndicator(
-                            color: ColorPalette.neutral0,
+                            color: ColorPalette.white,
                             strokeWidth: 2,
                           ),
                         )

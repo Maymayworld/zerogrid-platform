@@ -22,8 +22,8 @@ class SignUpSuccessScreen extends StatelessWidget {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              ColorPalette.systemGreen.withOpacity(0.3),
-              ColorPalette.neutral0,
+              ColorPalette.positive500.withOpacity(0.3),
+              ColorPalette.white,
             ],
           ),
         ),
@@ -39,7 +39,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                   width: 80,
                   height: 80,
                   decoration: BoxDecoration(
-                    color: ColorPalette.systemGreen,
+                    color: ColorPalette.positive500,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(

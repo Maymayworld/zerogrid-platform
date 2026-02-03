@@ -67,7 +67,7 @@ class SignUpScreen1 extends HookConsumerWidget {
     }
 
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,

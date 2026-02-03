@@ -20,7 +20,7 @@ class RoleCard extends StatelessWidget {
     return SizedBox(
       height: 100,
       child: Card(
-        color: ColorPalette.neutral0,
+        color: ColorPalette.white,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(RadiusPalette.base),

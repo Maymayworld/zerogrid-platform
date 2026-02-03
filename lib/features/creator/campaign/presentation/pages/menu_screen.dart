@@ -147,7 +147,7 @@ class ProjectMenuScreen extends HookWidget {
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) {
                                 return Container(
-                                  color: ColorPalette.neutral0,
+                                  color: ColorPalette.white,
                                   child: Center(
                                     child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
                                   ),
@@ -185,7 +185,7 @@ class ProjectMenuScreen extends HookWidget {
                             child: Container(
                               height: 8,
                               decoration: BoxDecoration(
-                                color: ColorPalette.systemGreen,
+                                color: ColorPalette.positive500,
                                 borderRadius: BorderRadius.circular(4),
                               ),
                             ),
@@ -304,7 +304,7 @@ class _ChatBox extends StatelessWidget {
         aspectRatio: 1,
         child: Container(
           decoration: BoxDecoration(
-            color: ColorPalette.neutral0,
+            color: ColorPalette.white,
             borderRadius: BorderRadius.circular(RadiusPalette.base),
           ),
           child: Column(
@@ -341,7 +341,7 @@ class _ActionSection extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(SpacePalette.base),
         decoration: BoxDecoration(
-          color: ColorPalette.neutral0,
+          color: ColorPalette.white,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(

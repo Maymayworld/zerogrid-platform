@@ -287,7 +287,7 @@ class _PersonalChatItem extends StatelessWidget {
                               child: Text(
                                 '1',
                                 style: TextStylePalette.miniTitle.copyWith(
-                                  color: ColorPalette.neutral0,
+                                  color: ColorPalette.white,
                                   fontSize: 10,
                                 ),
                               ),

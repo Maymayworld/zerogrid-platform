@@ -16,9 +16,9 @@ class ManualCreatePage3 extends HookConsumerWidget{
     final targetviewController = useTextEditingController();
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral0,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral0,
+        backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
         icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
