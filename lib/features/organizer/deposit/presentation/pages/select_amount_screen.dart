@@ -5,283 +5,233 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'deposit_success_screen.dart';
 
 class SelectAmountScreen extends HookWidget {
-
   @override
   Widget build(BuildContext context) {
-    final selectedAmount = useState<int?>(null);
-    final isAmountSelected = useState(false);
+    final selectedAmount = useState<int>(10000);
+    final isTotalExpanded = useState(false);
 
-    final width = MediaQuery.of(context).size.width;
-    final cardWidth = (width - SpacePalette.base * 4) / 3;
-
-    void selectAmount(int amount) {
-      selectedAmount.value = amount;
-      isAmountSelected.value = true;
+    String formatCurrency(int amount) {
+      return '¥${amount.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      )}';
     }
 
     void incrementAmount() {
-      if (selectedAmount.value != null) {
-        selectedAmount.value = selectedAmount.value! + 10000;
-      }
+      selectedAmount.value = selectedAmount.value + 10000;
     }
 
     void decrementAmount() {
-      if (selectedAmount.value != null && selectedAmount.value! > 10000) {
-        selectedAmount.value = selectedAmount.value! - 10000;
+      if (selectedAmount.value > 10000) {
+        selectedAmount.value = selectedAmount.value - 10000;
       }
     }
 
-    int calculateTotal() {
-      if (selectedAmount.value == null) return 0;
-      final platformFee = (selectedAmount.value! * 0.1).round();
-      return selectedAmount.value! + platformFee;
+    int calculatePlatformFee() {
+      return (selectedAmount.value * 0.1).round();
     }
 
-    int calculatePlatformFee() {
-      if (selectedAmount.value == null) return 0;
-      return (selectedAmount.value! * 0.1).round();
+    int calculateTotal() {
+      return selectedAmount.value + calculatePlatformFee();
     }
 
     return Scaffold(
-      backgroundColor: ColorPalette.neutral100,
+      backgroundColor: ColorPalette.white,
       appBar: AppBar(
-        backgroundColor: ColorPalette.neutral100,
-        title: Text('Deposit', style: TextStylePalette.title),
+        backgroundColor: ColorPalette.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text('Deposit', style: TextStylePalette.title.copyWith(
+          color: ColorPalette.neutral800,
+        )),
+        centerTitle: true,
       ),
-      body: Column(
-        children: [
-          // Balance Section
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(SpacePalette.base),
-            color: ColorPalette.neutral800,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: SpacePalette.base),
-                Text(
-                  'Balance',
-                  style: TextStylePalette.normalText.copyWith(
-                    color: ColorPalette.white
-                  )
+      body: SafeArea(
+        child: Column(
+          children: [
+            // Balance Section - 両端まで伸びる（マージンなし、角丸なし）
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.base,
+                vertical: SpacePalette.lg,
+              ),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    ColorPalette.chillBlue400,
+                    ColorPalette.chillBlue600,
+                  ],
                 ),
-                SizedBox(height: SpacePalette.sm),
-                Text(
-                  '¥400,500',
-                  style: TextStylePalette.header.copyWith(color: ColorPalette.white),
-                ),
-                SizedBox(height: SpacePalette.base),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(SpacePalette.base),
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      isAmountSelected.value ? 'Deposit Amount' : 'Select Deposit Amount',
-                      style: TextStylePalette.title
+                  Text(
+                    'Balance',
+                    style: TextStylePalette.smText.copyWith(
+                      color: ColorPalette.white.withValues(alpha: 0.9),
                     ),
                   ),
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // メインコンテンツ
-                  if (!isAmountSelected.value) ...[
-                    // 初期状態: GridView
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3,
-                        crossAxisSpacing: SpacePalette.sm,
-                        mainAxisSpacing: SpacePalette.sm,
-                        childAspectRatio: cardWidth / 100,
+                  SizedBox(height: SpacePalette.xs),
+                  Text(
+                    '¥400,500',
+                    style: TextStylePalette.header.copyWith(
+                      color: ColorPalette.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Deposit Amount Card (金額設定部分のみ)
+            Container(
+              width: double.infinity,
+              margin: EdgeInsets.all(SpacePalette.base),
+              padding: EdgeInsets.all(SpacePalette.base),
+              decoration: BoxDecoration(
+                color: ColorPalette.white,
+                borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorPalette.neutral800.withValues(alpha: 0.08),
+                    blurRadius: 10,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Deposit Amount',
+                    style: TextStylePalette.title.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+
+                  SizedBox(height: SpacePalette.lg),
+
+                  // Amount with +/- buttons (中央配置)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // Minus button
+                      GestureDetector(
+                        onTap: decrementAmount,
+                        child: Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: ColorPalette.neutral200),
+                            borderRadius: BorderRadius.circular(RadiusPalette.base),
+                          ),
+                          child: Icon(
+                            Icons.remove,
+                            color: ColorPalette.neutral600,
+                            size: 24,
+                          ),
+                        ),
                       ),
-                      itemCount: 3,
-                      itemBuilder: (context, index) {
-                        final amounts = [10000, 50000, 100000];
-                        return Card(
-                          color: ColorPalette.white,
-                          child: InkWell(
-                            onTap: () => selectAmount(amounts[index]),
-                            splashColor: ColorPalette.neutral200.withOpacity(0.3),
-                            highlightColor: ColorPalette.neutral200.withOpacity(0.2),
-                            borderRadius: BorderRadius.circular(RadiusPalette.lg),
-                            child: Center(
-                              child: Text(
-                                '¥${amounts[index].toString().replaceAllMapped(
-                                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                  (Match m) => '${m[1]},',
-                                )}',
-                                style: TextStylePalette.smTitle,
-                              ),
-                            ),
+
+                      // Amount display
+                      Container(
+                        width: 160,
+                        alignment: Alignment.center,
+                        child: Text(
+                          formatCurrency(selectedAmount.value),
+                          style: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            color: ColorPalette.neutral800,
                           ),
-                        );
-                      },
-                    ),
-                  ] else ...[
-                    // 選択後: 金額調整UI
-                    // 大きな金額表示とプラス・マイナスボタン
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 40,
-                          height: 40,
+                        ),
+                      ),
+
+                      // Plus button
+                      GestureDetector(
+                        onTap: incrementAmount,
+                        child: Container(
+                          width: 44,
+                          height: 44,
                           decoration: BoxDecoration(
                             border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
+                            borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
-                          child: IconButton(
-                            icon: Icon(Icons.remove, size: 20),
-                            onPressed: decrementAmount,
-                            padding: EdgeInsets.zero,
-                          ),
-                        ),
-                        SizedBox(width: SpacePalette.lg),
-                        Text(
-                          '¥${selectedAmount.value!.toString().replaceAllMapped(
-                            RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                            (Match m) => '${m[1]},',
-                          )}',
-                          style: TextStylePalette.header,
-                        ),
-                        SizedBox(width: SpacePalette.lg),
-                        Container(
-                          width: 40,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: IconButton(
-                            icon: Icon(Icons.add, size: 20),
-                            onPressed: incrementAmount,
-                            padding: EdgeInsets.zero,
+                          child: Icon(
+                            Icons.add,
+                            color: ColorPalette.neutral600,
+                            size: 24,
                           ),
                         ),
-                      ],
-                    ),
-                    
-                    SizedBox(height: SpacePalette.lg),
-                    
-                    // 金額選択ボタン
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => selectedAmount.value = 10000,
-                            child: Container(
-                              height: ButtonSizePalette.filter,
-                              decoration: BoxDecoration(
-                                color: selectedAmount.value == 10000 
-                                  ? ColorPalette.neutral800 
-                                  : ColorPalette.white,
-                                borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                                border: Border.all(
-                                  color: selectedAmount.value == 10000
-                                    ? ColorPalette.neutral800
-                                    : ColorPalette.neutral200,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '¥10,000',
-                                  style: TextStylePalette.smTitle.copyWith(
-                                    color: selectedAmount.value == 10000
-                                      ? ColorPalette.white
-                                      : ColorPalette.neutral800,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: SpacePalette.sm),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => selectedAmount.value = 50000,
-                            child: Container(
-                              height: ButtonSizePalette.filter,
-                              decoration: BoxDecoration(
-                                color: selectedAmount.value == 50000 
-                                  ? ColorPalette.neutral800 
-                                  : ColorPalette.white,
-                                borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                                border: Border.all(
-                                  color: selectedAmount.value == 50000
-                                    ? ColorPalette.neutral800
-                                    : ColorPalette.neutral200,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '¥50,000',
-                                  style: TextStylePalette.smTitle.copyWith(
-                                    color: selectedAmount.value == 50000
-                                      ? ColorPalette.white
-                                      : ColorPalette.neutral800,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: SpacePalette.sm),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => selectedAmount.value = 100000,
-                            child: Container(
-                              height: ButtonSizePalette.filter,
-                              decoration: BoxDecoration(
-                                color: selectedAmount.value == 100000 
-                                  ? ColorPalette.neutral800 
-                                  : ColorPalette.white,
-                                borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                                border: Border.all(
-                                  color: selectedAmount.value == 100000
-                                    ? ColorPalette.neutral800
-                                    : ColorPalette.neutral200,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '¥100,000',
-                                  style: TextStylePalette.smTitle.copyWith(
-                                    color: selectedAmount.value == 100000
-                                      ? ColorPalette.white
-                                      : ColorPalette.neutral800,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    
-                    Spacer(),
-                    
-                    // 内訳表示
-                    Column(
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: SpacePalette.lg),
+
+                  // Quick amount selection buttons
+                  Row(
+                    children: [
+                      _AmountButton(
+                        amount: 10000,
+                        isSelected: selectedAmount.value == 10000,
+                        onTap: () => selectedAmount.value = 10000,
+                        formatCurrency: formatCurrency,
+                      ),
+                      SizedBox(width: SpacePalette.sm),
+                      _AmountButton(
+                        amount: 50000,
+                        isSelected: selectedAmount.value == 50000,
+                        onTap: () => selectedAmount.value = 50000,
+                        formatCurrency: formatCurrency,
+                      ),
+                      SizedBox(width: SpacePalette.sm),
+                      _AmountButton(
+                        amount: 100000,
+                        isSelected: selectedAmount.value == 100000,
+                        onTap: () => selectedAmount.value = 100000,
+                        formatCurrency: formatCurrency,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+
+            Spacer(),
+
+            // Bottom Section (Total & Button)
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+              child: Column(
+                children: [
+                  // 内訳 (展開時のみ表示)
+                  AnimatedCrossFade(
+                    firstChild: SizedBox.shrink(),
+                    secondChild: Column(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               'Deposit amount',
-                              style: TextStylePalette.normalText,
+                              style: TextStylePalette.smText.copyWith(
+                                color: ColorPalette.neutral500,
+                              ),
                             ),
                             Text(
-                              '¥${selectedAmount.value!.toString().replaceAllMapped(
-                                RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                (Match m) => '${m[1]},',
-                              )}',
-                              style: TextStylePalette.normalText,
+                              formatCurrency(selectedAmount.value),
+                              style: TextStylePalette.smText.copyWith(
+                                color: ColorPalette.neutral600,
+                              ),
                             ),
                           ],
                         ),
@@ -291,81 +241,160 @@ class SelectAmountScreen extends HookWidget {
                           children: [
                             Text(
                               'Platform fee',
-                              style: TextStylePalette.normalText,
+                              style: TextStylePalette.smText.copyWith(
+                                color: ColorPalette.neutral500,
+                              ),
                             ),
                             Text(
-                              '¥${calculatePlatformFee().toString().replaceAllMapped(
-                                RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                (Match m) => '${m[1]},',
-                              )}',
-                              style: TextStylePalette.normalText,
+                              formatCurrency(calculatePlatformFee()),
+                              style: TextStylePalette.smText.copyWith(
+                                color: ColorPalette.neutral600,
+                              ),
                             ),
                           ],
                         ),
                         SizedBox(height: SpacePalette.base),
-                        Divider(color: ColorPalette.neutral200, height: 1),
-                        SizedBox(height: SpacePalette.base),
+                      ],
+                    ),
+                    crossFadeState: isTotalExpanded.value
+                      ? CrossFadeState.showSecond
+                      : CrossFadeState.showFirst,
+                    duration: Duration(milliseconds: 200),
+                  ),
+
+                  // Total (タップで展開)
+                  GestureDetector(
+                    onTap: () => isTotalExpanded.value = !isTotalExpanded.value,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
                         Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
                               'Total',
-                              style: TextStylePalette.smTitle,
+                              style: TextStylePalette.normalText.copyWith(
+                                color: ColorPalette.neutral600,
+                              ),
                             ),
-                            Text(
-                              '¥${calculateTotal().toString().replaceAllMapped(
-                                RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                                (Match m) => '${m[1]},',
-                              )}',
-                              style: TextStylePalette.smTitle,
+                            SizedBox(width: SpacePalette.xs),
+                            Icon(
+                              isTotalExpanded.value
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                              size: 20,
+                              color: ColorPalette.neutral600,
                             ),
                           ],
                         ),
+                        Text(
+                          formatCurrency(calculateTotal()),
+                          style: TextStylePalette.smTitle,
+                        ),
                       ],
                     ),
-                    SizedBox(height: SpacePalette.base),
-                  ],
-                  
-                  Spacer(),
-                  
-                  // Depositボタン
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: isAmountSelected.value ? () {
-                        // デポジット処理 → 成功画面に遷移
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => DepositSuccessScreen(
-                              amount: calculateTotal(),
-                            ),
-                          ),
-                        );
-                      } : null,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: ColorPalette.neutral800,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(RadiusPalette.base),
-                        ),
-                      ),
-                      child: Text(
-                        isAmountSelected.value 
-                          ? 'Deposit ¥${selectedAmount.value!.toString().replaceAllMapped(
-                              RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                              (Match m) => '${m[1]},',
-                            )}'
-                          : 'Deposit',
-                        style: TextStylePalette.buttonTextWhite
-                      ),
-                    ),
                   ),
+
+                  SizedBox(height: SpacePalette.base),
                 ],
               ),
             ),
+
+            // Deposit Button with solid shadow (角丸full)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                SpacePalette.base,
+                0,
+                SpacePalette.base,
+                SpacePalette.base,
+              ),
+              child: Container(
+                width: double.infinity,
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  boxShadow: [
+                    // ソリッドシャドウ（下にずらした黒い影）
+                    BoxShadow(
+                      color: ColorPalette.chillBlue700,
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => DepositSuccessScreen(
+                          amount: calculateTotal(),
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.chillBlue500,
+                    foregroundColor: ColorPalette.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Deposit ${formatCurrency(selectedAmount.value)}',
+                    style: TextStylePalette.buttonTextWhite.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _AmountButton extends StatelessWidget {
+  final int amount;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final String Function(int) formatCurrency;
+
+  const _AmountButton({
+    required this.amount,
+    required this.isSelected,
+    required this.onTap,
+    required this.formatCurrency,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          height: 44,
+          decoration: BoxDecoration(
+            color: isSelected ? ColorPalette.chillBlue500 : ColorPalette.white,
+            borderRadius: BorderRadius.circular(RadiusPalette.base),
+            border: Border.all(
+              color: isSelected ? ColorPalette.chillBlue500 : ColorPalette.neutral200,
+            ),
           ),
-        ],
+          child: Center(
+            child: Text(
+              formatCurrency(amount),
+              style: TextStylePalette.smTitle.copyWith(
+                color: isSelected ? ColorPalette.white : ColorPalette.neutral800,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
