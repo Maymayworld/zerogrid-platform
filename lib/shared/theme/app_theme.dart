@@ -31,15 +31,16 @@ class ColorPalette {
   static const Color neutral950 = Color(0xFF0a0a0a); // ほぼ使わない
 
   // Chill Blue
-  static const Color chillBlue100 = Color(0xFFe8f6f7);
-  static const Color chillBlue200 = Color(0xFFc2e9ec);
-  static const Color chillBlue300 = Color(0xFF99d7de);
-  static const Color chillBlue400 = Color(0xFF66c3cd);
-  static const Color chillBlue500 = Color(0xFF33afbd); 
-  static const Color chillBlue600 = Color(0xFF009bac); // primaryColor
-  static const Color chillBlue700 = Color(0xFF007c8a);
-  static const Color chillBlue800 = Color(0xFF005d67);
-  static const Color chillBlue900 = Color(0xFF003e45);
+  static const Color chillBlue100 = Color(0xFFf0f8ff);
+  static const Color chillBlue200 = Color(0xFFd2e9ff);
+  static const Color chillBlue300 = Color(0xFFa6d3ff);
+  static const Color chillBlue400 = Color(0xFF79bcff);
+  static const Color chillBlue500 = Color(0xFF4da6ff); 
+  static const Color chillBlue600 = Color(0xFF2090ff); // primaryColor
+  static const Color chillBlue700 = Color(0xFF1a73cc);
+  static const Color chillBlue800 = Color(0xFF135699);
+  static const Color chillBlue900 = Color(0xFF0d3a66);
+  static const Color chillBlue950 = Color(0xFF061d33);
 
   // States
   // Positive
