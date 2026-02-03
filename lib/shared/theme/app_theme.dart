@@ -35,8 +35,8 @@ class ColorPalette {
   static const Color chillBlue200 = Color(0xFFc2e9ec);
   static const Color chillBlue300 = Color(0xFF99d7de);
   static const Color chillBlue400 = Color(0xFF66c3cd);
-  static const Color chillBlue500 = Color(0xFF33afbd); // primaryColor
-  static const Color chillBlue600 = Color(0xFF009bac);
+  static const Color chillBlue500 = Color(0xFF33afbd); 
+  static const Color chillBlue600 = Color(0xFF009bac); // primaryColor
   static const Color chillBlue700 = Color(0xFF007c8a);
   static const Color chillBlue800 = Color(0xFF005d67);
   static const Color chillBlue900 = Color(0xFF003e45);

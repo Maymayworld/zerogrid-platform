@@ -33,14 +33,20 @@ class OrganizerMainLayout extends HookWidget {
               children: screens,
             ),
           ),
-          // Liquid Glass ボトムナビゲーション
+          // Liquid Glass ボトムナビゲーション（浮かせて配置）
           Positioned(
-            left: 0,
-            right: 0,
+            left: SpacePalette.base,
+            right: SpacePalette.base,
             bottom: 0,
-            child: _LiquidGlassNavBar(
-              currentIndex: currentIndex.value,
-              onTap: (index) => currentIndex.value = index,
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                child: _LiquidGlassNavBar(
+                  currentIndex: currentIndex.value,
+                  onTap: (index) => currentIndex.value = index,
+                ),
+              ),
             ),
           ),
         ],
@@ -60,52 +66,54 @@ class _LiquidGlassNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: ColorPalette.white,
-        boxShadow: [
-          BoxShadow(
-            color: ColorPalette.neutral800.withOpacity(0.08),
-            blurRadius: 20,
-            offset: Offset(0, -4),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        top: false,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(RadiusPalette.full),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
-          height: 70,
-          padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+          height: 80,
+          decoration: BoxDecoration(
+            color: ColorPalette.white.withOpacity(0.75),
+            borderRadius: BorderRadius.circular(RadiusPalette.full),
+            border: Border.all(
+              color: ColorPalette.white.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _LiquidNavItem(
-                icon: Icons.home_rounded,
+              _GlassNavItem(
+                icon: Icons.home_outlined,
+                selectedIcon: Icons.home_rounded,
                 label: 'Home',
                 isSelected: currentIndex == 0,
                 onTap: () => onTap(0),
               ),
-              _LiquidNavItem(
-                icon: Icons.grid_view_rounded,
+              _GlassNavItem(
+                icon: Icons.grid_view_outlined,
+                selectedIcon: Icons.grid_view_rounded,
                 label: 'Campaigns',
                 isSelected: currentIndex == 1,
                 onTap: () => onTap(1),
               ),
-              // 中央の＋ボタン
-              _CenterAddButton(
+              // 中央の黒いボタン
+              _CenterBlackButton(
                 isSelected: currentIndex == 2,
                 onTap: () => onTap(2),
               ),
-              _LiquidNavItem(
-                icon: Icons.chat_bubble_rounded,
+              _GlassNavItem(
+                icon: Icons.chat_bubble_outline_rounded,
+                selectedIcon: Icons.chat_bubble_rounded,
                 label: 'Chat',
                 isSelected: currentIndex == 3,
                 onTap: () => onTap(3),
                 showBadge: true,
                 badgeCount: 1,
               ),
-              _LiquidNavItem(
-                icon: Icons.person_rounded,
+              _GlassNavItem(
+                icon: Icons.person_outline_rounded,
+                selectedIcon: Icons.person_rounded,
                 label: 'Profile',
                 isSelected: currentIndex == 4,
                 onTap: () => onTap(4),
@@ -118,17 +126,19 @@ class _LiquidGlassNavBar extends StatelessWidget {
   }
 }
 
-// Liquid Glass スタイルのナビゲーションアイテム
-class _LiquidNavItem extends StatelessWidget {
+// Liquid Glass スタイルのナビゲーションアイテム（縦並び、常に表示）
+class _GlassNavItem extends StatelessWidget {
   final IconData icon;
+  final IconData selectedIcon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
   final bool showBadge;
   final int badgeCount;
 
-  const _LiquidNavItem({
+  const _GlassNavItem({
     required this.icon,
+    required this.selectedIcon,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -141,70 +151,93 @@ class _LiquidNavItem extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        padding: EdgeInsets.symmetric(
-          horizontal: isSelected ? SpacePalette.inner : SpacePalette.sm,
-          vertical: SpacePalette.sm,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected ? ColorPalette.neutral100 : Colors.transparent,
-          borderRadius: BorderRadius.circular(RadiusPalette.full),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
+      child: SizedBox(
+        width: 60,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Icon(
-                  icon,
-                  color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
-                  size: 24,
+            // 選択時の白いガラスオーバーレイ
+            AnimatedOpacity(
+              duration: Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              opacity: isSelected ? 1.0 : 0.0,
+              child: Container(
+                width: 52,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: ColorPalette.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorPalette.neutral800.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-                // バッジ
-                if (showBadge && badgeCount > 0)
-                  Positioned(
-                    right: -6,
-                    top: -4,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: ColorPalette.critical500,
-                        shape: BoxShape.circle,
+              ),
+            ),
+            // アイコンとラベル（縦並び）
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 200),
+                      child: Icon(
+                        isSelected ? selectedIcon : icon,
+                        key: ValueKey(isSelected),
+                        color: isSelected
+                            ? ColorPalette.neutral800
+                            : ColorPalette.neutral400,
+                        size: 24,
                       ),
-                      child: Center(
-                        child: Text(
-                          badgeCount.toString(),
-                          style: TextStyle(
-                            color: ColorPalette.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                    ),
+                    // バッジ
+                    if (showBadge && badgeCount > 0)
+                      Positioned(
+                        right: -8,
+                        top: -4,
+                        child: Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: ColorPalette.critical500,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: ColorPalette.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              badgeCount.toString(),
+                              style: TextStyle(
+                                color: ColorPalette.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                  ],
+                ),
+                SizedBox(height: 4),
+                AnimatedDefaultTextStyle(
+                  duration: Duration(milliseconds: 200),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? ColorPalette.neutral800
+                        : ColorPalette.neutral400,
                   ),
+                  child: Text(label),
+                ),
               ],
-            ),
-            // 選択時にラベルを表示
-            AnimatedSize(
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              child: isSelected
-                  ? Padding(
-                      padding: EdgeInsets.only(left: SpacePalette.sm),
-                      child: Text(
-                        label,
-                        style: TextStylePalette.miniTitle.copyWith(
-                          color: ColorPalette.neutral800,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    )
-                  : SizedBox.shrink(),
             ),
           ],
         ),
@@ -213,12 +246,12 @@ class _LiquidNavItem extends StatelessWidget {
   }
 }
 
-// 中央の＋ボタン
-class _CenterAddButton extends StatelessWidget {
+// 中央の黒いボタン（常に黒）
+class _CenterBlackButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _CenterAddButton({
+  const _CenterBlackButton({
     required this.isSelected,
     required this.onTap,
   });
@@ -227,26 +260,24 @@ class _CenterAddButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-        width: 56,
-        height: 56,
+      child: Container(
+        width: 52,
+        height: 52,
         decoration: BoxDecoration(
-          color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral100,
+          color: ColorPalette.neutral800, // 常に黒
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: ColorPalette.neutral800.withOpacity(0.15),
+              color: ColorPalette.neutral800.withOpacity(0.3),
               blurRadius: 12,
               offset: Offset(0, 4),
             ),
           ],
         ),
         child: Icon(
-          Icons.add_rounded,
-          color: isSelected ? ColorPalette.white : ColorPalette.neutral600,
-          size: 28,
+          isSelected ? Icons.check_rounded : Icons.smartphone_rounded,
+          color: ColorPalette.white,
+          size: 24,
         ),
       ),
     );
