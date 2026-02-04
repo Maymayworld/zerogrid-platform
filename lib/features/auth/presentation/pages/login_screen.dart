@@ -397,7 +397,7 @@ class _DuolingoButtonState extends State<DuolingoButton> {
                 child: Container(
                   height: ButtonSizePalette.button,
                   decoration: BoxDecoration(
-                    color: ColorPalette.chillBlue700,
+                    color: ColorPalette.smashedPumpkin800,
                     borderRadius: BorderRadius.circular(RadiusPalette.full),
                   ),
                 ),
@@ -412,8 +412,8 @@ class _DuolingoButtonState extends State<DuolingoButton> {
               child: Container(
                 height: ButtonSizePalette.button,
                 decoration: BoxDecoration(
-                  color: widget.isEnabled 
-                      ? ColorPalette.chillBlue500 
+                  color: widget.isEnabled
+                      ? ColorPalette.smashedPumpkin600
                       : ColorPalette.neutral200,
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
                 ),

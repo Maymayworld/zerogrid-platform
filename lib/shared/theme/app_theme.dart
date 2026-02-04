@@ -30,17 +30,17 @@ class ColorPalette {
   static const Color neutral900 = Color(0xFF171717); // ほぼ使わない
   static const Color neutral950 = Color(0xFF0a0a0a); // ほぼ使わない
 
-  // Chill Blue
-  static const Color chillBlue100 = Color(0xFFf0f8ff);
-  static const Color chillBlue200 = Color(0xFFd2e9ff);
-  static const Color chillBlue300 = Color(0xFFa6d3ff);
-  static const Color chillBlue400 = Color(0xFF79bcff);
-  static const Color chillBlue500 = Color(0xFF4da6ff); 
-  static const Color chillBlue600 = Color(0xFF2090ff); // primaryColor
-  static const Color chillBlue700 = Color(0xFF1a73cc);
-  static const Color chillBlue800 = Color(0xFF135699);
-  static const Color chillBlue900 = Color(0xFF0d3a66);
-  static const Color chillBlue950 = Color(0xFF061d33);
+  // Smashed Pumpkin
+  static const Color smashedPumpkin100 = Color(0xFFfff4f0);
+  static const Color smashedPumpkin200 = Color(0xFFfee1d7);
+  static const Color smashedPumpkin300 = Color(0xFFfec2af);
+  static const Color smashedPumpkin400 = Color(0xFFfda486);
+  static const Color smashedPumpkin500 = Color(0xFFfd855e); 
+  static const Color smashedPumpkin600 = Color(0xFFfc6736); // primaryColor
+  static const Color smashedPumpkin700 = Color(0xFFca522b);
+  static const Color smashedPumpkin800 = Color(0xFF973e20);
+  static const Color smashedPumpkin900 = Color(0xFF652916);
+  static const Color smashedPumpkin950 = Color(0xFF32150b);
 
   // States
   // Positive
@@ -317,15 +317,15 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.chillBlue500, width: 2),
+          borderSide: const BorderSide(color: ColorPalette.smashedPumpkin600, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.chillBlue500),
+          borderSide: const BorderSide(color: ColorPalette.smashedPumpkin600),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.chillBlue500, width: 2),
+          borderSide: const BorderSide(color: ColorPalette.smashedPumpkin600, width: 2),
         ),
         labelStyle: TextStylePalette.normalText,
         hintStyle: TextStylePalette.hintText,
@@ -334,7 +334,7 @@ class AppTheme {
       // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorPalette.chillBlue500,
+          backgroundColor: ColorPalette.smashedPumpkin600,
           foregroundColor: ColorPalette.neutral100,
           minimumSize: const Size(double.infinity, ButtonSizePalette.button),
           shape: RoundedRectangleBorder(

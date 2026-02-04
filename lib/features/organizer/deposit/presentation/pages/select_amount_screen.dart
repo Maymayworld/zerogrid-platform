@@ -64,8 +64,8 @@ class SelectAmountScreen extends HookWidget {
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    ColorPalette.chillBlue400,
-                    ColorPalette.chillBlue600,
+                    ColorPalette.smashedPumpkin500,
+                    ColorPalette.smashedPumpkin700,
                   ],
                 ),
               ),
@@ -315,7 +315,7 @@ class SelectAmountScreen extends HookWidget {
                   boxShadow: [
                     // ソリッドシャドウ（下にずらした黒い影）
                     BoxShadow(
-                      color: ColorPalette.chillBlue700,
+                      color: ColorPalette.smashedPumpkin800,
                       offset: Offset(0, 4),
                       blurRadius: 0,
                       spreadRadius: 0,
@@ -334,7 +334,7 @@ class SelectAmountScreen extends HookWidget {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.chillBlue500,
+                    backgroundColor: ColorPalette.smashedPumpkin600,
                     foregroundColor: ColorPalette.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(RadiusPalette.full),
@@ -379,10 +379,10 @@ class _AmountButton extends StatelessWidget {
         child: Container(
           height: 44,
           decoration: BoxDecoration(
-            color: isSelected ? ColorPalette.chillBlue500 : ColorPalette.white,
+            color: isSelected ? ColorPalette.smashedPumpkin600 : ColorPalette.white,
             borderRadius: BorderRadius.circular(RadiusPalette.base),
             border: Border.all(
-              color: isSelected ? ColorPalette.chillBlue500 : ColorPalette.neutral200,
+              color: isSelected ? ColorPalette.smashedPumpkin600 : ColorPalette.neutral200,
             ),
           ),
           child: Center(
