@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/campaign.dart';
 import '../providers/campaign_service_provider.dart';
+import 'submission_review_screen.dart';
 
 class EditCampaignScreen extends HookConsumerWidget {
   final String campaignId;
@@ -380,6 +381,54 @@ class EditCampaignScreen extends HookConsumerWidget {
                         ),
                       );
                     }).toList(),
+                  ),
+                  SizedBox(height: SpacePalette.lg),
+
+                  // View Submissions
+                  Text('Submissions', style: TextStylePalette.smTitle),
+                  SizedBox(height: SpacePalette.sm),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubmissionReviewScreen(
+                            campaignId: campaignId,
+                            campaignName: projectNameController.text,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(SpacePalette.base),
+                      decoration: BoxDecoration(
+                        color: ColorPalette.white,
+                        borderRadius: BorderRadius.circular(RadiusPalette.base),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.video_library,
+                            size: 24,
+                            color: ColorPalette.neutral800,
+                          ),
+                          SizedBox(width: SpacePalette.base),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('View Submissions',
+                                    style: TextStylePalette.listTitle),
+                                Text('Review creator video submissions',
+                                    style: TextStylePalette.listLeading),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.chevron_right,
+                              size: 20, color: ColorPalette.neutral400),
+                        ],
+                      ),
+                    ),
                   ),
                   SizedBox(height: SpacePalette.lg),
                 ],

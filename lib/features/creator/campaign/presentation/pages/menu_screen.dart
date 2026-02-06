@@ -262,12 +262,16 @@ class ProjectMenuScreen extends HookWidget {
                       _ActionSection(
                         icon: Icons.upload,
                         title: 'Submit Your Video',
-                        subtitle: '1 video uploaded',
+                        subtitle: 'Submit video links',
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProjectUploadScreen(),
+                              builder: (context) => ProjectUploadScreen(
+                                campaignId: campaign?.id ?? '',
+                                campaignName: _projectName,
+                                platforms: campaign?.platforms ?? [],
+                              ),
                             ),
                           );
                         },
