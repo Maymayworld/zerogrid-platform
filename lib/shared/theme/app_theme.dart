@@ -409,7 +409,7 @@ class AppTheme {
           foregroundColor: ColorPalette.neutral100,
           minimumSize: const Size(double.infinity, ButtonSizePalette.button),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(RadiusPalette.base),
+            borderRadius: BorderRadius.circular(RadiusPalette.full),
           ),
           textStyle: TextStylePalette.buttonTextWhite,
         ),

@@ -8,6 +8,7 @@ import '../providers/participation_service_provider.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
 import '../widgets/share_sheet.dart';
 import 'success_screen.dart';
+import 'review_screen.dart';
 
 class ProjectDetailScreen extends HookConsumerWidget {
   final Campaign? campaign;  // Campaignオブジェクトを受け取る
@@ -343,47 +344,61 @@ class ProjectDetailScreen extends HookConsumerWidget {
 
                     if (_description.isNotEmpty) SizedBox(height: CardSectionSize.spacing),
 
-                    // Reviews カード
-                    _CardSection(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Reviews header
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text('Reviews', style: TextStylePalette.title),
-                              Row(
-                                children: [
-                                  Icon(Icons.star, size: 16, color: Colors.amber),
-                                  SizedBox(width: SpacePalette.xs),
-                                  Text('5.0', style: TextStylePalette.listTitle),
-                                  SizedBox(width: SpacePalette.xs),
-                                  Text('(10)', style: TextStylePalette.listLeading),
-                                  SizedBox(width: SpacePalette.xs),
-                                  Icon(Icons.chevron_right, size: 18, color: ColorPalette.neutral400),
-                                ],
-                              ),
-                            ],
+                    // Reviews カード（タップでレビュー一覧へ遷移）
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ReviewScreen(
+                              campaign: campaign,
+                              showJoinButton: !isAlreadyJoined.value && !showAddReview,
+                              showAddReview: showAddReview,
+                            ),
                           ),
-                          SizedBox(height: SpacePalette.base),
+                        );
+                      },
+                      child: _CardSection(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Reviews header
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text('Reviews', style: TextStylePalette.title),
+                                Row(
+                                  children: [
+                                    Icon(Icons.star, size: 16, color: Colors.amber),
+                                    SizedBox(width: SpacePalette.xs),
+                                    Text('5.0', style: TextStylePalette.listTitle),
+                                    SizedBox(width: SpacePalette.xs),
+                                    Text('(10)', style: TextStylePalette.listLeading),
+                                    SizedBox(width: SpacePalette.xs),
+                                    Icon(Icons.chevron_right, size: 18, color: ColorPalette.neutral400),
+                                  ],
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: SpacePalette.base),
 
-                          _ReviewItem(
-                            creatorName: 'Creator Name',
-                            comment: '"Happy to work with you!"',
-                            rating: 5,
-                          ),
-                          _ReviewItem(
-                            creatorName: 'Creator Name',
-                            comment: '"This is a fun project 🎬 This is a fun project 🎬 This is a fun project 🎬 T...',
-                            rating: 5,
-                          ),
-                          _ReviewItem(
-                            creatorName: 'Creator Name',
-                            comment: '"ez 5 stars!!"',
-                            rating: 5,
-                          ),
-                        ],
+                            _ReviewItem(
+                              creatorName: 'Creator Name',
+                              comment: '"Happy to work with you!"',
+                              rating: 5,
+                            ),
+                            _ReviewItem(
+                              creatorName: 'Creator Name',
+                              comment: '"This is a fun project \u{1F3AC} This is a fun project \u{1F3AC} This is a fun project \u{1F3AC} T...',
+                              rating: 5,
+                            ),
+                            _ReviewItem(
+                              creatorName: 'Creator Name',
+                              comment: '"ez 5 stars!!"',
+                              rating: 5,
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import 'login_screen.dart';
@@ -25,7 +26,7 @@ class SignUpScreen1 extends HookConsumerWidget {
 
     void handleContinue() {
       // バリデーション
-      if (emailController.text.isEmpty || 
+      if (emailController.text.isEmpty ||
           passwordController.text.isEmpty ||
           confirmPasswordController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -60,9 +61,21 @@ class SignUpScreen1 extends HookConsumerWidget {
       );
     }
 
+    Future<void> handleAppleSignUp() async {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Apple signup coming soon...')),
+      );
+    }
+
     Future<void> handleLineSignUp() async {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('LINE signup coming soon...')),
+      );
+    }
+
+    Future<void> handleGoogleSignUp() async {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Google signup coming soon...')),
       );
     }
 
@@ -94,25 +107,13 @@ class SignUpScreen1 extends HookConsumerWidget {
               Text('Email', style: TextStylePalette.smTitle),
               SizedBox(height: SpacePalette.sm),
               SizedBox(
-                height: 48,
+                height: ButtonSizePalette.button,
                 child: TextField(
                   controller: emailController,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     hintText: 'mail@gmail.com',
                     hintStyle: TextStylePalette.hintText,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral200),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral200),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
-                    ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
                       vertical: SpacePalette.inner,
@@ -126,12 +127,12 @@ class SignUpScreen1 extends HookConsumerWidget {
               Text('Password', style: TextStylePalette.smTitle),
               SizedBox(height: SpacePalette.sm),
               SizedBox(
-                height: 48,
+                height: ButtonSizePalette.button,
                 child: TextField(
                   controller: passwordController,
                   obscureText: !isPasswordVisible.value,
                   decoration: InputDecoration(
-                    hintText: '••••••',
+                    hintText: '\u2022\u2022\u2022\u2022\u2022\u2022',
                     hintStyle: TextStyle(color: ColorPalette.neutral400),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -144,18 +145,6 @@ class SignUpScreen1 extends HookConsumerWidget {
                       onPressed: () {
                         isPasswordVisible.value = !isPasswordVisible.value;
                       },
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral200),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral200),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
                     ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
@@ -170,12 +159,12 @@ class SignUpScreen1 extends HookConsumerWidget {
               Text('Confirm Password', style: TextStylePalette.smTitle),
               SizedBox(height: SpacePalette.sm),
               SizedBox(
-                height: 48,
+                height: ButtonSizePalette.button,
                 child: TextField(
                   controller: confirmPasswordController,
                   obscureText: !isConfirmPasswordVisible.value,
                   decoration: InputDecoration(
-                    hintText: '••••••',
+                    hintText: '\u2022\u2022\u2022\u2022\u2022\u2022',
                     hintStyle: TextStyle(color: ColorPalette.neutral400),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -189,18 +178,6 @@ class SignUpScreen1 extends HookConsumerWidget {
                         isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
                       },
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral200),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral200),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: ColorPalette.neutral800, width: 2),
-                    ),
                     contentPadding: EdgeInsets.symmetric(
                       horizontal: SpacePalette.base,
                       vertical: SpacePalette.inner,
@@ -213,13 +190,13 @@ class SignUpScreen1 extends HookConsumerWidget {
               // Continue Button
               SizedBox(
                 width: double.infinity,
-                height: 48,
+                height: ButtonSizePalette.button,
                 child: ElevatedButton(
                   onPressed: handleContinue,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
                     ),
                   ),
                   child: Text('Continue', style: TextStylePalette.buttonTextWhite),
@@ -227,7 +204,7 @@ class SignUpScreen1 extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.lg),
 
-              // or
+              // or divider
               Row(
                 children: [
                   Expanded(child: Divider(color: ColorPalette.neutral200)),
@@ -240,48 +217,30 @@ class SignUpScreen1 extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.lg),
 
-              // Continue with LINE
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: OutlinedButton(
-                  onPressed: handleLineSignUp,
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: ColorPalette.neutral200),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                    ),
+              // Social Login Buttons（Apple / LINE / Google）
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  _SocialSignUpButton(
+                    onTap: handleAppleSignUp,
+                    child: FaIcon(FontAwesomeIcons.apple, size: 24, color: ColorPalette.neutral800),
                   ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: 20,
-                        height: 20,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF00B900),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'L',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Text('Continue with LINE', style: TextStylePalette.buttonTextBlack),
-                    ],
+                  SizedBox(width: SpacePalette.base),
+                  _SocialSignUpButton(
+                    onTap: handleLineSignUp,
+                    child: FaIcon(FontAwesomeIcons.line, size: 24, color: ColorPalette.positive500),
                   ),
-                ),
+                  SizedBox(width: SpacePalette.base),
+                  _SocialSignUpButton(
+                    onTap: handleGoogleSignUp,
+                    child: FaIcon(FontAwesomeIcons.google, size: 20, color: ColorPalette.neutral800),
+                  ),
+                ],
               ),
+
               Spacer(),
 
-              // Have an account
+              // Have an account? Sign In
               Center(
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
@@ -309,6 +268,31 @@ class SignUpScreen1 extends HookConsumerWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// ソーシャルサインアップボタン（pill shape、丸アイコン）
+class _SocialSignUpButton extends StatelessWidget {
+  final VoidCallback onTap;
+  final Widget child;
+
+  const _SocialSignUpButton({required this.onTap, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: ButtonSizePalette.socialButton,
+        height: ButtonSizePalette.socialButton,
+        decoration: BoxDecoration(
+          color: ColorPalette.white,
+          shape: BoxShape.circle,
+          border: Border.all(color: ColorPalette.neutral200),
+        ),
+        child: Center(child: child),
       ),
     );
   }

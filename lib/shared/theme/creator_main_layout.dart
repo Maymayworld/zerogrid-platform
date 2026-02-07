@@ -1,9 +1,10 @@
 // lib/shared/theme/creator_main_layout.dart
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'app_theme.dart';
 import '../../features/creator/find/presentation/pages/find_screen.dart';
-import '../../features/creator/likes/presentation/pages/likes_screen.dart';
+import '../../features/creator/feed/presentation/pages/feed_screen.dart';
 import '../../features/creator/dashboard/dashboard_screen.dart';
 import '../../features/creator/campaign/presentation/pages/campaign_screen.dart';
 import '../../features/creator/profile/profile_screen.dart';
@@ -19,11 +20,10 @@ class CreatorMainLayout extends HookWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = useState(initialIndex);
-    final width = MediaQuery.of(context).size.width;
 
     final screens = [
       FindScreen(),
-      LikesScreen(),
+      FeedScreen(),
       DashboardScreen(),
       CampaignScreen(),
       ProfileScreen(),
@@ -40,15 +40,20 @@ class CreatorMainLayout extends HookWidget {
               children: screens,
             ),
           ),
-          // フッター
+          // Liquid Glass ボトムナビゲーション（浮かせて配置）
           Positioned(
-            left: 0,
-            right: 0,
+            left: SpacePalette.base,
+            right: SpacePalette.base,
             bottom: 0,
-            child: CustomBottomNavBar(
-              currentIndex: currentIndex.value,
-              onTap: (index) => currentIndex.value = index,
-              width: width,
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                child: _LiquidGlassNavBar(
+                  currentIndex: currentIndex.value,
+                  onTap: (index) => currentIndex.value = index,
+                ),
+              ),
             ),
           ),
         ],
@@ -57,188 +62,93 @@ class CreatorMainLayout extends HookWidget {
   }
 }
 
-class CustomBottomNavBar extends StatelessWidget {
+class _LiquidGlassNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
-  final double width;
 
-  const CustomBottomNavBar({
-    Key? key,
+  const _LiquidGlassNavBar({
     required this.currentIndex,
     required this.onTap,
-    required this.width,
-  }) : super(key: key);
-
-  // 各タブの位置を計算
-  double _getIndicatorPosition() {
-    switch (currentIndex) {
-      case 0: // Find
-        return width * 0.1 - 20; // インジケーター幅40の半分を引く
-      case 1: // Likes
-        return width * 0.3 - 20;
-      case 2: // Dashboard
-        return width * 0.5 - 20;
-      case 3: // Campaigns
-        return width * 0.7 - 20;
-      case 4: // Profile
-        return width * 0.9 - 20;
-      default:
-        return width * 0.1 - 20;
-    }
-  }
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      clipBehavior: Clip.none,
-      children: [
-        // フッター背景
-        Container(
-          height: 70,
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(RadiusPalette.full),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        child: Container(
+          height: 80,
           decoration: BoxDecoration(
-            color: ColorPalette.white,
-            boxShadow: [
-              BoxShadow(
-                color: ColorPalette.neutral800.withOpacity(0.05),
-                blurRadius: 10,
-                offset: Offset(0, -2),
+            color: ColorPalette.white.withOpacity(0.75),
+            borderRadius: BorderRadius.circular(RadiusPalette.full),
+            border: Border.all(
+              color: ColorPalette.white.withOpacity(0.3),
+              width: 1,
+            ),
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _GlassNavItem(
+                icon: Icons.search,
+                selectedIcon: Icons.search,
+                label: 'Find',
+                isSelected: currentIndex == 0,
+                onTap: () => onTap(0),
+              ),
+              _GlassNavItem(
+                icon: Icons.article_outlined,
+                selectedIcon: Icons.article_rounded,
+                label: 'Feed',
+                isSelected: currentIndex == 1,
+                onTap: () => onTap(1),
+              ),
+              // 中央の黒いボタン
+              _CenterBlackButton(
+                isSelected: currentIndex == 2,
+                onTap: () => onTap(2),
+              ),
+              _GlassNavItem(
+                icon: Icons.campaign_outlined,
+                selectedIcon: Icons.campaign_rounded,
+                label: 'Campaigns',
+                isSelected: currentIndex == 3,
+                onTap: () => onTap(3),
+              ),
+              _GlassNavItem(
+                icon: Icons.person_outline_rounded,
+                selectedIcon: Icons.person_rounded,
+                label: 'Profile',
+                isSelected: currentIndex == 4,
+                onTap: () => onTap(4),
               ),
             ],
           ),
-          child: SafeArea(
-            child: SizedBox(height: 60),
-          ),
         ),
-        // Divider（フッター上部の線）
-        Positioned(
-          left: 0,
-          right: 0,
-          top: 0,
-          child: Container(
-            height: 1,
-            color: ColorPalette.neutral200,
-          ),
-        ),
-        // 選択インジケーター（移動する線）
-        AnimatedPositioned(
-          duration: Duration(milliseconds: 250),
-          curve: Curves.easeInOut,
-          left: _getIndicatorPosition(),
-          top: 0,
-          child: Container(
-            width: 40,
-            height: 3,
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral800,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(2),
-                bottomRight: Radius.circular(2),
-              ),
-            ),
-          ),
-        ),
-        // ナビゲーションアイテム（Stackで配置）
-        SafeArea(
-          child: SizedBox(
-            height: 60,
-            child: Stack(
-              children: [
-                // Find - 左から10%の位置
-                Positioned(
-                  left: width * 0.1 - 30, // アイテム幅60の半分を引く
-                  top: 0,
-                  bottom: 0,
-                  child: _NavItem(
-                    icon: Icons.search,
-                    label: 'Find',
-                    isSelected: currentIndex == 0,
-                    onTap: () => onTap(0),
-                  ),
-                ),
-                // Likes - 左から30%の位置
-                Positioned(
-                  left: width * 0.3 - 30,
-                  top: 0,
-                  bottom: 0,
-                  child: _NavItem(
-                    icon: Icons.favorite_border,
-                    label: 'Likes',
-                    isSelected: currentIndex == 1,
-                    onTap: () => onTap(1),
-                  ),
-                ),
-                // Campaigns - 左から70%の位置
-                Positioned(
-                  left: width * 0.7 - 30,
-                  top: 0,
-                  bottom: 0,
-                  child: _NavItem(
-                    icon: Icons.campaign_outlined,
-                    label: 'Campaigns',
-                    isSelected: currentIndex == 3,
-                    onTap: () => onTap(3),
-                  ),
-                ),
-                // Profile - 左から90%の位置
-                Positioned(
-                  left: width * 0.9 - 30,
-                  top: 0,
-                  bottom: 0,
-                  child: _NavItem(
-                    icon: Icons.person_outline,
-                    label: 'Profile',
-                    isSelected: currentIndex == 4,
-                    onTap: () => onTap(4),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-        // Dashboard - フッターに重ねる形で配置
-        Positioned(
-          left: width * 0.5 - 32, // ボタン幅64の半分を引く
-          bottom: 40, // フッターから少し上
-          child: GestureDetector(
-            onTap: () => onTap(2),
-            child: Container(
-              width: 64,
-              height: 64,
-              decoration: BoxDecoration(
-                color: currentIndex == 2 ? ColorPalette.neutral800 : ColorPalette.neutral100,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorPalette.neutral800.withOpacity(0.15),
-                    blurRadius: 8,
-                    offset: Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Icon(
-                Icons.dashboard_outlined,
-                color: currentIndex == 2 ? ColorPalette.neutral100 : ColorPalette.neutral400,
-                size: 28,
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }
 
-class _NavItem extends StatelessWidget {
+// Liquid Glass スタイルのナビゲーションアイテム
+class _GlassNavItem extends StatelessWidget {
   final IconData icon;
+  final IconData selectedIcon;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
+  final bool showBadge;
+  final int badgeCount;
 
-  const _NavItem({
+  const _GlassNavItem({
     required this.icon,
+    required this.selectedIcon,
     required this.label,
     required this.isSelected,
     required this.onTap,
+    this.showBadge = false,
+    this.badgeCount = 0,
   });
 
   @override
@@ -247,29 +157,132 @@ class _NavItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 60, // 固定幅
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
+        width: 60,
+        child: Stack(
+          alignment: Alignment.center,
           children: [
-            Icon(
-              icon,
-              color: isSelected ? Colors.black : Colors.grey[400],
-              size: 24,
-            ),
-            SizedBox(height: 4),
-            Text(
-              label,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 11,
-                color: isSelected ? Colors.black : Colors.grey[400],
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+            // 選択時の白いガラスオーバーレイ
+            AnimatedOpacity(
+              duration: Duration(milliseconds: 250),
+              curve: Curves.easeInOut,
+              opacity: isSelected ? 1.0 : 0.0,
+              child: Container(
+                width: 52,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: ColorPalette.white.withOpacity(0.85),
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorPalette.neutral800.withOpacity(0.05),
+                      blurRadius: 8,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
+                ),
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
+            ),
+            // アイコンとラベル（縦並び）
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    AnimatedSwitcher(
+                      duration: Duration(milliseconds: 200),
+                      child: Icon(
+                        isSelected ? selectedIcon : icon,
+                        key: ValueKey(isSelected),
+                        color: isSelected
+                            ? ColorPalette.neutral800
+                            : ColorPalette.neutral400,
+                        size: 24,
+                      ),
+                    ),
+                    // バッジ
+                    if (showBadge && badgeCount > 0)
+                      Positioned(
+                        right: -8,
+                        top: -4,
+                        child: Container(
+                          width: 18,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: ColorPalette.critical500,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: ColorPalette.white,
+                              width: 2,
+                            ),
+                          ),
+                          child: Center(
+                            child: Text(
+                              badgeCount.toString(),
+                              style: TextStyle(
+                                color: ColorPalette.white,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                SizedBox(height: 4),
+                AnimatedDefaultTextStyle(
+                  duration: Duration(milliseconds: 200),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? ColorPalette.neutral800
+                        : ColorPalette.neutral400,
+                  ),
+                  child: Text(label),
+                ),
+              ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+// 中央の黒いボタン（常に黒）
+class _CenterBlackButton extends StatelessWidget {
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _CenterBlackButton({
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          color: ColorPalette.neutral800,
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: ColorPalette.neutral800.withOpacity(0.3),
+              blurRadius: 12,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Icon(
+          isSelected ? Icons.dashboard_rounded : Icons.dashboard_outlined,
+          color: ColorPalette.white,
+          size: 24,
         ),
       ),
     );
