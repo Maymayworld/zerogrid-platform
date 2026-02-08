@@ -172,101 +172,144 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
           ],
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
           // メッセージリスト
-          Expanded(
-            child: isLoading.value
-                ? Center(child: CircularProgressIndicator())
-                : room.value == null
-                    ? Center(
-                        child: Text(
-                          'Chat room not available',
-                          style: TextStylePalette.listLeading,
-                        ),
-                      )
-                    : messages.value.isEmpty
-                        ? Center(
-                            child: Text(
-                              'No messages yet.\nSay hi to the organizer!',
-                              style: TextStylePalette.listLeading,
-                              textAlign: TextAlign.center,
-                            ),
-                          )
-                        : ListView.builder(
-                            controller: scrollController,
-                            padding: EdgeInsets.all(SpacePalette.base),
-                            itemCount: messages.value.length,
-                            itemBuilder: (context, index) {
-                              final message = messages.value[index];
-                              final isMe = message.senderId == currentUserId;
+          isLoading.value
+              ? Center(child: CircularProgressIndicator())
+              : room.value == null
+                  ? Center(
+                      child: Text(
+                        'Chat room not available',
+                        style: TextStylePalette.listLeading,
+                      ),
+                    )
+                  : messages.value.isEmpty
+                      ? Center(
+                          child: Text(
+                            'No messages yet.\nSay hi to the organizer!',
+                            style: TextStylePalette.listLeading,
+                            textAlign: TextAlign.center,
+                          ),
+                        )
+                      : ListView.builder(
+                          controller: scrollController,
+                          padding: EdgeInsets.only(
+                            left: SpacePalette.base,
+                            right: SpacePalette.base,
+                            top: SpacePalette.base,
+                            bottom: 100,
+                          ),
+                          itemCount: messages.value.length,
+                          itemBuilder: (context, index) {
+                            final message = messages.value[index];
+                            final isMe = message.senderId == currentUserId;
 
-                              return Padding(
-                                padding: EdgeInsets.only(bottom: SpacePalette.sm),
-                                child: _MessageBubble(
-                                  message: message.content,
-                                  time: message.formattedTime,
-                                  isMe: isMe,
-                                  avatarUrl: isMe ? null : organizerAvatarUrl.value,
-                                ),
-                              );
-                            },
-                          ),
-          ),
-          // 入力フィールド
-          Container(
-            padding: EdgeInsets.all(SpacePalette.base),
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral100,
-              border: Border(
-                top: BorderSide(
-                  color: ColorPalette.neutral200,
-                  width: 1.5,
-                ),
-              ),
-            ),
-            child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorPalette.white,
-                        borderRadius: BorderRadius.circular(RadiusPalette.lg),
-                      ),
-                      child: TextField(
-                        controller: messageController,
-                        style: TextStylePalette.normalText,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: (_) => sendMessage(),
-                        decoration: InputDecoration(
-                          hintText: 'Message...',
-                          hintStyle: TextStylePalette.hintText,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: SpacePalette.base,
-                            vertical: SpacePalette.sm,
-                          ),
-                          suffixIcon: Icon(
-                            Icons.emoji_emotions_outlined,
-                            color: ColorPalette.neutral400,
-                          ),
+                            return Padding(
+                              padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                              child: _MessageBubble(
+                                message: message.content,
+                                time: message.formattedTime,
+                                isMe: isMe,
+                                avatarUrl: isMe ? null : organizerAvatarUrl.value,
+                              ),
+                            );
+                          },
                         ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: SpacePalette.sm),
-                  GestureDetector(
-                    onTap: isSending.value ? null : sendMessage,
-                    child: Icon(
-                      isSending.value ? Icons.hourglass_empty : Icons.send,
-                      color: isSending.value
-                          ? ColorPalette.neutral400
-                          : ColorPalette.neutral800,
-                      size: 24,
-                    ),
+          // 入力フィールド（Stack下部に配置）
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              padding: EdgeInsets.fromLTRB(
+                SpacePalette.base,
+                SpacePalette.sm,
+                SpacePalette.base,
+                SpacePalette.base,
+              ),
+              decoration: BoxDecoration(
+                color: ColorPalette.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(RadiusPalette.xl),
+                  topRight: Radius.circular(RadiusPalette.xl),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: ColorPalette.neutral800.withOpacity(0.06),
+                    offset: Offset(0, -2),
+                    blurRadius: 8,
                   ),
                 ],
+              ),
+              child: SafeArea(
+                top: false,
+                child: Row(
+                  children: [
+                    // + ボタン
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: ColorPalette.neutral100,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: ColorPalette.neutral500,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: SpacePalette.sm),
+                    // テキストフィールド
+                    Expanded(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorPalette.neutral100,
+                          borderRadius: BorderRadius.circular(RadiusPalette.full),
+                        ),
+                        child: TextField(
+                          controller: messageController,
+                          style: TextStylePalette.normalText,
+                          textInputAction: TextInputAction.send,
+                          onSubmitted: (_) => sendMessage(),
+                          decoration: InputDecoration(
+                            hintText: 'Message...',
+                            hintStyle: TextStylePalette.hintText,
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: SpacePalette.base,
+                              vertical: SpacePalette.sm,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: SpacePalette.sm),
+                    // 送信ボタン
+                    GestureDetector(
+                      onTap: isSending.value ? null : sendMessage,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: isSending.value
+                              ? ColorPalette.neutral400
+                              : ColorPalette.smashedPumpkin600,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_upward,
+                          color: ColorPalette.white,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -293,44 +336,41 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isMe) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.all(SpacePalette.inner),
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral800,
-                borderRadius: BorderRadius.circular(RadiusPalette.base),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: SpacePalette.base,
+              vertical: SpacePalette.inner,
+            ),
+            decoration: BoxDecoration(
+              color: ColorPalette.smashedPumpkin600,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(RadiusPalette.xl),
+                topRight: Radius.circular(RadiusPalette.xl),
+                bottomLeft: Radius.circular(RadiusPalette.xl),
+                bottomRight: Radius.circular(RadiusPalette.mini),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    message,
-                    style: TextStylePalette.normalText.copyWith(
-                      color: ColorPalette.white,
-                    ),
-                  ),
-                  SizedBox(height: SpacePalette.xs),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        time,
-                        style: TextStylePalette.subGuide.copyWith(
-                          color: ColorPalette.neutral400,
-                        ),
-                      ),
-                      SizedBox(width: SpacePalette.xs),
-                      Icon(
-                        Icons.done_all,
-                        size: 12,
-                        color: ColorPalette.neutral400,
-                      ),
-                    ],
-                  ),
-                ],
+            ),
+            child: Text(
+              message,
+              style: TextStylePalette.normalText.copyWith(
+                color: ColorPalette.white,
+              ),
+            ),
+          ),
+          SizedBox(height: SpacePalette.xs),
+          Padding(
+            padding: EdgeInsets.only(right: SpacePalette.xs),
+            child: Text(
+              'Delivered',
+              style: TextStylePalette.subGuide.copyWith(
+                color: ColorPalette.neutral400,
+                fontSize: 11,
               ),
             ),
           ),
@@ -338,28 +378,31 @@ class _MessageBubble extends StatelessWidget {
       );
     } else {
       return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          CircleAvatar(
-            radius: 16,
-            backgroundColor: ColorPalette.neutral400,
-            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-          ),
-          SizedBox(width: SpacePalette.sm),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: EdgeInsets.all(SpacePalette.inner),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SpacePalette.base,
+                    vertical: SpacePalette.inner,
+                  ),
                   decoration: BoxDecoration(
                     color: ColorPalette.white,
-                    borderRadius: BorderRadius.circular(RadiusPalette.base),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(RadiusPalette.xl),
+                      topRight: Radius.circular(RadiusPalette.xl),
+                      bottomLeft: Radius.circular(RadiusPalette.mini),
+                      bottomRight: Radius.circular(RadiusPalette.xl),
+                    ),
                   ),
                   child: Text(message, style: TextStylePalette.normalText),
                 ),
-                SizedBox(height: SpacePalette.xs),
-                Text(time, style: TextStylePalette.subGuide),
               ],
             ),
           ),

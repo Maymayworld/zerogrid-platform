@@ -11,6 +11,7 @@ import '../../../../../shared/widgets/common_search_bar.dart';
 import '../widgets/notification_sheet.dart';
 import '../widgets/filter_chip_widget.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
+import '../../../campaign/presentation/pages/campaign_screen.dart' as campaign_page;
 
 class FindScreen extends HookConsumerWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -120,6 +121,23 @@ class FindScreen extends HookConsumerWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(child: CommonSearchBar()),
                   SizedBox(width: SpacePalette.sm),
+                  // キャンペーンページへ遷移
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const campaign_page.CampaignScreen(),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.work_outline,
+                      size: 24,
+                      color: ColorPalette.neutral800,
+                    ),
+                  ),
+                  SizedBox(width: SpacePalette.inner),
                   // ハートボタン → Like済みフィルタートグル
                   GestureDetector(
                     onTap: () {

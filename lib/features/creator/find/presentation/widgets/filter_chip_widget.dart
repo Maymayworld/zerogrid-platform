@@ -26,8 +26,18 @@ class FilterButton extends StatelessWidget {
           vertical: 0, // 縦方向のpaddingは0に（高さで調整）
         ),
         decoration: BoxDecoration(
-          color: isSelected ? ColorPalette.neutral800 : ColorPalette.white,
+          color: isSelected ? ColorPalette.smashedPumpkin600 : ColorPalette.white,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? ColorPalette.smashedPumpkin700
+                  : ColorPalette.neutral200,
+              offset: Offset(0, 4),
+              blurRadius: 0,
+              spreadRadius: 0,
+            ),
+          ],
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

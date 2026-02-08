@@ -6,7 +6,7 @@ import 'app_theme.dart';
 import '../../features/creator/find/presentation/pages/find_screen.dart';
 import '../../features/creator/feed/presentation/pages/feed_screen.dart';
 import '../../features/creator/dashboard/dashboard_screen.dart';
-import '../../features/creator/campaign/presentation/pages/campaign_screen.dart';
+import '../../features/creator/chat/presentation/creator_chat_list_screen.dart';
 import '../../features/creator/profile/profile_screen.dart';
 
 class CreatorMainLayout extends HookWidget {
@@ -25,7 +25,7 @@ class CreatorMainLayout extends HookWidget {
       FindScreen(),
       FeedScreen(),
       DashboardScreen(),
-      CampaignScreen(),
+      CreatorChatListScreen(),
       ProfileScreen(),
     ];
 
@@ -110,11 +110,13 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 onTap: () => onTap(2),
               ),
               _GlassNavItem(
-                icon: Icons.campaign_outlined,
-                selectedIcon: Icons.campaign_rounded,
-                label: 'Campaigns',
+                icon: Icons.chat_bubble_outline,
+                selectedIcon: Icons.chat_bubble_rounded,
+                label: 'Chat',
                 isSelected: currentIndex == 3,
                 onTap: () => onTap(3),
+                showBadge: true,
+                badgeCount: 1,
               ),
               _GlassNavItem(
                 icon: Icons.person_outline_rounded,
