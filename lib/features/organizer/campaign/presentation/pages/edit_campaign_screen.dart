@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/campaign.dart';
 import '../providers/campaign_service_provider.dart';
+import 'submissions_screen.dart';
 
 class EditCampaignScreen extends HookConsumerWidget {
   final String campaignId;
@@ -380,6 +381,67 @@ class EditCampaignScreen extends HookConsumerWidget {
                         ),
                       );
                     }).toList(),
+                  ),
+                  SizedBox(height: SpacePalette.lg),
+
+                  // View Submissions
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SubmissionsScreen(
+                            campaignId: campaignId,
+                            campaignName: projectNameController.text,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(SpacePalette.base),
+                      decoration: BoxDecoration(
+                        color: ColorPalette.white,
+                        borderRadius: BorderRadius.circular(RadiusPalette.base),
+                        border: Border.all(
+                          color: ColorPalette.neutral200,
+                          width: 1,
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: ColorPalette.neutral100,
+                              borderRadius: BorderRadius.circular(RadiusPalette.mini),
+                            ),
+                            child: Icon(
+                              Icons.inbox_outlined,
+                              color: ColorPalette.neutral600,
+                              size: 20,
+                            ),
+                          ),
+                          SizedBox(width: SpacePalette.base),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('View Submissions', style: TextStylePalette.smTitle),
+                                Text(
+                                  'Review creator submissions',
+                                  style: TextStylePalette.subText,
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(
+                            Icons.chevron_right,
+                            color: ColorPalette.neutral400,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                   SizedBox(height: SpacePalette.lg),
                 ],

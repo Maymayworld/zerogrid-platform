@@ -5,7 +5,12 @@ import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/theme/creator_main_layout.dart';
 
 class ProjectSuccessScreen extends StatelessWidget {
-  const ProjectSuccessScreen({Key? key}) : super(key: key);
+  final String? campaignName;
+  
+  const ProjectSuccessScreen({
+    Key? key,
+    this.campaignName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
