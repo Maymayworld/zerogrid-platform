@@ -10,12 +10,14 @@ import '../../../../creator/submission/presentation/providers/submission_provide
 class ProjectUploadScreen extends HookConsumerWidget {
   final String campaignId;
   final String campaignName;
+  final String organizerId;
   final List<String> platforms;
 
   const ProjectUploadScreen({
     Key? key,
     required this.campaignId,
     required this.campaignName,
+    required this.organizerId,
     this.platforms = const ['YouTube', 'Instagram', 'TikTok'],
   }) : super(key: key);
 
@@ -145,9 +147,8 @@ class ProjectUploadScreen extends HookConsumerWidget {
         final submissionService = ref.read(submissionServiceProvider);
         await submissionService.createSubmission(
           campaignId: campaignId,
+          organizerId: organizerId,
           videoUrls: videoUrls,
-          caption: captionController.text.trim(),
-          scheduleAt: scheduledDate.value,
         );
 
         if (context.mounted) {
@@ -661,61 +662,46 @@ class _SubmissionStatusCard extends StatelessWidget {
                   style: TextStylePalette.subText,
                 ),
               ),
-              _StatusBadge(status: submission.status),
+              _StatusBadge(status: submission.status.name),
             ],
           ),
           SizedBox(height: SpacePalette.sm),
-          // Show platform URLs
-          ...submission.platformUrls.entries.map((entry) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: 4),
-              child: Row(
-                children: [
-                  Icon(
-                    _getPlatformIcon(entry.key),
-                    size: 14,
+          // Show platform and URL
+          Row(
+            children: [
+              Icon(
+                _getPlatformIcon(submission.platform),
+                size: 14,
+                color: ColorPalette.neutral500,
+              ),
+              SizedBox(width: SpacePalette.xs),
+              Expanded(
+                child: Text(
+                  submission.videoUrl,
+                  style: TextStyle(
+                    fontSize: 12,
                     color: ColorPalette.neutral500,
                   ),
-                  SizedBox(width: SpacePalette.xs),
-                  Expanded(
-                    child: Text(
-                      entry.value,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: ColorPalette.neutral500,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ],
+          ),
+          if (submission.viewCount > 0) ...[
+            SizedBox(height: SpacePalette.xs),
+            Row(
+              children: [
+                Icon(Icons.visibility, size: 12, color: ColorPalette.neutral400),
+                SizedBox(width: 4),
+                Text(
+                  submission.formattedViewCount,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: ColorPalette.neutral400,
                   ),
-                ],
-              ),
-            );
-          }),
-          if (submission.reviewNote != null && submission.reviewNote!.isNotEmpty) ...[
-            SizedBox(height: SpacePalette.sm),
-            Container(
-              padding: EdgeInsets.all(SpacePalette.sm),
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral100,
-                borderRadius: BorderRadius.circular(RadiusPalette.mini),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(Icons.comment, size: 14, color: ColorPalette.neutral500),
-                  SizedBox(width: SpacePalette.xs),
-                  Expanded(
-                    child: Text(
-                      submission.reviewNote!,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: ColorPalette.neutral600,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ],
         ],
@@ -757,16 +743,20 @@ class _StatusBadge extends StatelessWidget {
 
     switch (status) {
       case 'approved':
-        bgColor = ColorPalette.positive500.withOpacity(0.1);
+        bgColor = ColorPalette.positive500.withValues(alpha: 0.1);
         textColor = ColorPalette.positive500;
         break;
       case 'rejected':
-        bgColor = Colors.red.withOpacity(0.1);
+        bgColor = Colors.red.withValues(alpha: 0.1);
         textColor = Colors.red;
         break;
-      case 'submitted':
-        bgColor = Colors.orange.withOpacity(0.1);
+      case 'pending':
+        bgColor = Colors.orange.withValues(alpha: 0.1);
         textColor = Colors.orange;
+        break;
+      case 'skipped':
+        bgColor = ColorPalette.neutral300;
+        textColor = ColorPalette.neutral600;
         break;
       default:
         bgColor = ColorPalette.neutral200;

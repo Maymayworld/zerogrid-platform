@@ -270,6 +270,7 @@ class ProjectMenuScreen extends HookWidget {
                               builder: (context) => ProjectUploadScreen(
                                 campaignId: campaign?.id ?? '',
                                 campaignName: _projectName,
+                                organizerId: campaign?.organizerId ?? '',
                                 platforms: campaign?.platforms ?? [],
                               ),
                             ),
