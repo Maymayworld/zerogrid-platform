@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
+import 'login_screen.dart';
 import 'signup_screen3.dart';
 
 enum UsernameStatus { none, checking, taken, available }
@@ -25,9 +26,6 @@ class SignUpScreen2 extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final usernameController = useTextEditingController();
     final usernameStatus = useState(UsernameStatus.none);
-
-    // デバウンス用
-    final debounceTimer = useRef<Future<void>?>(null);
 
     // ユーザーネーム重複チェック（Supabase）
     Future<void> checkUsername(String username) async {
@@ -76,128 +74,122 @@ class SignUpScreen2 extends HookConsumerWidget {
       );
     }
 
-    Color getBorderColor() {
-      switch (usernameStatus.value) {
-        case UsernameStatus.taken:
-          return ColorPalette.critical500;
-        case UsernameStatus.available:
-          return ColorPalette.positive500;
-        default:
-          return ColorPalette.neutral200;
-      }
-    }
+    final bool isAvailable = usernameStatus.value == UsernameStatus.available;
 
     return Scaffold(
       backgroundColor: ColorPalette.white,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: TextButton.icon(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800, size: 20),
-          label: Text('Back', style: TextStylePalette.normalText),
         ),
-        leadingWidth: 100,
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(SpacePalette.base),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Pick Your Username', style: TextStylePalette.header),
-              SizedBox(height: SpacePalette.sm),
-              Text(
-                'This one\'s just for you and it has to be unique.\nThis can be changed later.',
-                style: TextStylePalette.subText,
+              // プログレスバー（ステップ 1/3）
+              ClipRRect(
+                borderRadius: BorderRadius.circular(4),
+                child: LinearProgressIndicator(
+                  value: 1 / 3,
+                  minHeight: 4,
+                  backgroundColor: ColorPalette.neutral200,
+                  valueColor: AlwaysStoppedAnimation<Color>(ColorPalette.neutral800),
+                ),
               ),
               SizedBox(height: SpacePalette.lg),
 
-              // Username TextField
-              SizedBox(
-                height: 48,
-                child: TextField(
-                  controller: usernameController,
-                  onChanged: checkUsername,
-                  decoration: InputDecoration(
-                    suffixIcon: _buildSuffixIcon(usernameStatus.value, usernameController),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: getBorderColor(), width: 2),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: getBorderColor()),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      borderSide: BorderSide(color: getBorderColor(), width: 2),
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: SpacePalette.base,
-                      vertical: SpacePalette.inner,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: SpacePalette.sm),
-
-              // ステータスメッセージ
-              if (usernameStatus.value == UsernameStatus.checking)
-                Text('Checking...', style: TextStylePalette.smSubText),
-              if (usernameStatus.value == UsernameStatus.taken)
-                Text(
-                  'This username is already taken',
-                  style: TextStylePalette.smSubText.copyWith(color: ColorPalette.critical500),
-                ),
-              if (usernameStatus.value == UsernameStatus.available)
-                Row(
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text(
-                      'Username is available ',
-                      style: TextStylePalette.smSubText.copyWith(color: ColorPalette.positive500),
+                    Spacer(flex: 2),
+
+                    // タイトル（中央寄せ）
+                    Text('Pick Your Username', style: TextStylePalette.header),
+                    SizedBox(height: SpacePalette.lg),
+
+                    // Username TextField（@プレフィックス付き）
+                    SizedBox(
+                      height: ButtonSizePalette.button,
+                      child: TextField(
+                        controller: usernameController,
+                        onChanged: checkUsername,
+                        textAlign: TextAlign.center,
+                        style: TextStylePalette.header,
+                        decoration: InputDecoration(
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.only(left: SpacePalette.base),
+                            child: Text(
+                              '@',
+                              style: TextStylePalette.header.copyWith(
+                                color: ColorPalette.neutral400,
+                              ),
+                            ),
+                          ),
+                          prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: SpacePalette.base,
+                            vertical: SpacePalette.inner,
+                          ),
+                          suffixIcon: _buildSuffixIcon(usernameStatus.value, usernameController),
+                        ),
+                      ),
                     ),
-                    Text('🎉', style: TextStyle(fontSize: 12)),
+                    SizedBox(height: SpacePalette.sm),
+
+                    // ステータスメッセージ
+                    if (usernameStatus.value == UsernameStatus.checking)
+                      Text('Checking...', style: TextStylePalette.smSubText),
+                    if (usernameStatus.value == UsernameStatus.taken)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.close, size: 14, color: ColorPalette.critical500),
+                          SizedBox(width: SpacePalette.xs),
+                          Text(
+                            'This username is already taken',
+                            style: TextStylePalette.smSubText.copyWith(
+                              color: ColorPalette.critical500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    if (usernameStatus.value == UsernameStatus.available)
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.check, size: 14, color: ColorPalette.positive500),
+                          SizedBox(width: SpacePalette.xs),
+                          Text(
+                            'Username is available ',
+                            style: TextStylePalette.smSubText.copyWith(
+                              color: ColorPalette.positive500,
+                            ),
+                          ),
+                          Text('\u{1F389}', style: TextStyle(fontSize: 12)),
+                        ],
+                      ),
+
+                    Spacer(flex: 3),
                   ],
                 ),
-
-              SizedBox(height: SpacePalette.lg),
-
-              // Next Button
-              SizedBox(
-                width: double.infinity,
-                height: 48,
-                child: ElevatedButton(
-                  onPressed: usernameStatus.value == UsernameStatus.available ? handleNext : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: usernameStatus.value == UsernameStatus.available
-                        ? ColorPalette.neutral800
-                        : ColorPalette.neutral100,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Next',
-                        style: usernameStatus.value == UsernameStatus.available
-                            ? TextStylePalette.buttonTextWhite
-                            : TextStylePalette.buttonTextBlack.copyWith(color: ColorPalette.neutral400),
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Icon(
-                        Icons.arrow_forward,
-                        color: usernameStatus.value == UsernameStatus.available
-                            ? ColorPalette.white
-                            : ColorPalette.neutral400,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
               ),
+
+              // Next Button（Duolingoスタイル）
+              DuolingoButton(
+                onPressed: handleNext,
+                isEnabled: isAvailable,
+                text: 'Next',
+              ),
+              SizedBox(height: SpacePalette.base),
             ],
           ),
         ),

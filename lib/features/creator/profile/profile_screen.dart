@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../shared/theme/app_theme.dart';
 import 'widgets/edit_profile_screen.dart';
 import 'widgets/give_feedback_sheet.dart';
-import 'widgets/settings_screen.dart';
+import '../submission/presentation/pages/connected_accounts_screen.dart';
 
 class ProfileScreen extends HookWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -119,20 +119,20 @@ class ProfileScreen extends HookWidget {
                 },
               ),
               
-              // Settings Button
+              // Connected Accounts
               _ProfileMenuItem(
-                icon: Icons.settings_outlined,
-                label: 'Settings',
+                icon: Icons.link,
+                label: 'Connected Accounts',
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => SettingsScreen(),
+                      builder: (context) => ConnectedAccountsScreen(),
                     ),
                   );
                 },
               ),
-              
+
               // Give Feedback Button
               _ProfileMenuItem(
                 icon: Icons.feedback_outlined,

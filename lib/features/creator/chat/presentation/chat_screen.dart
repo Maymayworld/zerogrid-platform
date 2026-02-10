@@ -170,68 +170,86 @@ class ProjectChatScreen extends HookConsumerWidget {
           ],
         ),
       ),
-      body: Column(
+      body: Stack(
         children: [
           // メッセージリスト
-          Expanded(
-            child: isLoading.value
-                ? Center(child: CircularProgressIndicator())
-                : messages.value.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No messages yet',
-                          style: TextStylePalette.listLeading,
-                        ),
-                      )
-                    : ListView.builder(
-                        controller: scrollController,
-                        padding: EdgeInsets.all(SpacePalette.base),
-                        itemCount: messages.value.length,
-                        itemBuilder: (context, index) {
-                          final message = messages.value[index];
-                          final isMe = message.senderId == currentUserId;
-                          
-                          // 前のメッセージと同じ送信者かチェック
-                          final showAvatar = index == 0 ||
-                              messages.value[index - 1].senderId != message.senderId;
+          isLoading.value
+              ? Center(child: CircularProgressIndicator())
+              : messages.value.isEmpty
+                  ? Center(
+                      child: Text(
+                        'No messages yet',
+                        style: TextStylePalette.listLeading,
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: scrollController,
+                      padding: EdgeInsets.only(
+                        left: SpacePalette.base,
+                        right: SpacePalette.base,
+                        top: SpacePalette.base,
+                        bottom: 100,
+                      ),
+                      itemCount: messages.value.length,
+                      itemBuilder: (context, index) {
+                        final message = messages.value[index];
+                        final isMe = message.senderId == currentUserId;
 
-                          return Padding(
-                            padding: EdgeInsets.only(bottom: SpacePalette.sm),
-                            child: _MessageBubble(
-                              message: message.content,
-                              time: message.formattedTime,
-                              isMe: isMe,
-                              senderName: isMe ? null : 'Member',
-                              avatarUrl: isMe
-                                  ? null
-                                  : 'https://i.pravatar.cc/150?u=${message.senderId}',
-                              showAvatar: showAvatar && !isMe,
-                            ),
-                          );
-                        },
-                      ),
-          ),
-          // 入力フィールド
-          Container(
-            padding: EdgeInsets.all(SpacePalette.base),
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral100,
-              border: Border(
-                top: BorderSide(
-                  color: ColorPalette.neutral200,
-                  width: 1.5,
-                ),
-              ),
-            ),
+                        // 前のメッセージと同じ送信者かチェック
+                        final showAvatar = index == 0 ||
+                            messages.value[index - 1].senderId != message.senderId;
+
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                          child: _MessageBubble(
+                            message: message.content,
+                            time: message.formattedTime,
+                            isMe: isMe,
+                            senderName: isMe ? null : 'Member',
+                            avatarUrl: isMe
+                                ? null
+                                : 'https://i.pravatar.cc/150?u=${message.senderId}',
+                            showAvatar: showAvatar && !isMe,
+                          ),
+                        );
+                      },
+                    ),
+          // 入力フィールド（Stack下部に配置）
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
             child: SafeArea(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorPalette.white,
-                        borderRadius: BorderRadius.circular(RadiusPalette.lg),
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  SpacePalette.base,
+                  SpacePalette.sm,
+                  SpacePalette.base,
+                  SpacePalette.base,
+                ),
+                child: Row(
+                  children: [
+                    // + ボタン
+                    GestureDetector(
+                      onTap: () {},
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: ColorPalette.neutral200,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.add,
+                          color: ColorPalette.neutral500,
+                          size: 20,
+                        ),
                       ),
+                    ),
+                    SizedBox(width: SpacePalette.sm),
+                    // テキストフィールド
+                    Expanded(
                       child: TextField(
                         controller: messageController,
                         style: TextStylePalette.normalText,
@@ -240,31 +258,49 @@ class ProjectChatScreen extends HookConsumerWidget {
                         decoration: InputDecoration(
                           hintText: 'Message...',
                           hintStyle: TextStylePalette.hintText,
-                          border: InputBorder.none,
+                          filled: true,
+                          fillColor: ColorPalette.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            borderSide: BorderSide(color: ColorPalette.neutral200),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            borderSide: BorderSide(color: ColorPalette.neutral200),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            borderSide: BorderSide(color: ColorPalette.neutral400),
+                          ),
                           contentPadding: EdgeInsets.symmetric(
                             horizontal: SpacePalette.base,
                             vertical: SpacePalette.sm,
                           ),
-                          suffixIcon: Icon(
-                            Icons.emoji_emotions_outlined,
-                            color: ColorPalette.neutral400,
-                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(width: SpacePalette.sm),
-                  GestureDetector(
-                    onTap: isSending.value ? null : sendMessage,
-                    child: Icon(
-                      isSending.value ? Icons.hourglass_empty : Icons.send,
-                      color: isSending.value
-                          ? ColorPalette.neutral400
-                          : ColorPalette.neutral800,
-                      size: 24,
+                    SizedBox(width: SpacePalette.sm),
+                    // 送信ボタン
+                    GestureDetector(
+                      onTap: isSending.value ? null : sendMessage,
+                      child: Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          color: isSending.value
+                              ? ColorPalette.neutral400
+                              : ColorPalette.smashedPumpkin600,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.arrow_upward,
+                          color: ColorPalette.white,
+                          size: 20,
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -295,40 +331,41 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isMe) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          Flexible(
-            child: Container(
-              padding: EdgeInsets.all(SpacePalette.inner),
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral800,
-                borderRadius: BorderRadius.circular(RadiusPalette.base),
+          Container(
+            constraints: BoxConstraints(
+              maxWidth: MediaQuery.of(context).size.width * 0.7,
+            ),
+            padding: EdgeInsets.symmetric(
+              horizontal: SpacePalette.base,
+              vertical: SpacePalette.inner,
+            ),
+            decoration: BoxDecoration(
+              color: ColorPalette.smashedPumpkin600,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(RadiusPalette.xl),
+                topRight: Radius.circular(RadiusPalette.xl),
+                bottomLeft: Radius.circular(RadiusPalette.xl),
+                bottomRight: Radius.circular(RadiusPalette.mini),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                    message,
-                    style: TextStyle(
-                      fontSize: FontSizePalette.size14,
-                      color: ColorPalette.neutral100,
-                    ),
-                  ),
-                  SizedBox(height: SpacePalette.xs),
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(time, style: TextStylePalette.subGuide),
-                      SizedBox(width: SpacePalette.xs),
-                      Icon(
-                        Icons.done_all,
-                        size: 12,
-                        color: ColorPalette.neutral500,
-                      ),
-                    ],
-                  ),
-                ],
+            ),
+            child: Text(
+              message,
+              style: TextStylePalette.normalText.copyWith(
+                color: ColorPalette.white,
+              ),
+            ),
+          ),
+          SizedBox(height: SpacePalette.xs),
+          Padding(
+            padding: EdgeInsets.only(right: SpacePalette.xs),
+            child: Text(
+              'Delivered',
+              style: TextStylePalette.subGuide.copyWith(
+                color: ColorPalette.neutral400,
+                fontSize: 11,
               ),
             ),
           ),
@@ -336,38 +373,31 @@ class _MessageBubble extends StatelessWidget {
       );
     } else {
       return Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // アバター
-          if (showAvatar)
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: ColorPalette.neutral400,
-              backgroundImage:
-                  avatarUrl != null ? NetworkImage(avatarUrl!) : null,
-            )
-          else
-            SizedBox(width: 32),
-          SizedBox(width: SpacePalette.sm),
-          // メッセージ
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (showAvatar && senderName != null)
-                  Text(senderName!, style: TextStylePalette.miniTitle),
-                if (showAvatar && senderName != null)
-                  SizedBox(height: SpacePalette.xs),
                 Container(
-                  padding: EdgeInsets.all(SpacePalette.inner),
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width * 0.7,
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SpacePalette.base,
+                    vertical: SpacePalette.inner,
+                  ),
                   decoration: BoxDecoration(
                     color: ColorPalette.white,
-                    borderRadius: BorderRadius.circular(RadiusPalette.base),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(RadiusPalette.xl),
+                      topRight: Radius.circular(RadiusPalette.xl),
+                      bottomLeft: Radius.circular(RadiusPalette.mini),
+                      bottomRight: Radius.circular(RadiusPalette.xl),
+                    ),
                   ),
                   child: Text(message, style: TextStylePalette.normalText),
                 ),
-                SizedBox(height: SpacePalette.xs),
-                Text(time, style: TextStylePalette.subGuide),
               ],
             ),
           ),

@@ -30,16 +30,17 @@ class ColorPalette {
   static const Color neutral900 = Color(0xFF171717); // ほぼ使わない
   static const Color neutral950 = Color(0xFF0a0a0a); // ほぼ使わない
 
-  // Chill Blue
-  static const Color chillBlue100 = Color(0xFFe8f6f7);
-  static const Color chillBlue200 = Color(0xFFc2e9ec);
-  static const Color chillBlue300 = Color(0xFF99d7de);
-  static const Color chillBlue400 = Color(0xFF66c3cd);
-  static const Color chillBlue500 = Color(0xFF33afbd); 
-  static const Color chillBlue600 = Color(0xFF009bac); // primaryColor
-  static const Color chillBlue700 = Color(0xFF007c8a);
-  static const Color chillBlue800 = Color(0xFF005d67);
-  static const Color chillBlue900 = Color(0xFF003e45);
+  // Smashed Pumpkin
+  static const Color smashedPumpkin100 = Color(0xFFfff4f0);
+  static const Color smashedPumpkin200 = Color(0xFFfee1d7);
+  static const Color smashedPumpkin300 = Color(0xFFfec2af);
+  static const Color smashedPumpkin400 = Color(0xFFfda486);
+  static const Color smashedPumpkin500 = Color(0xFFfd855e); 
+  static const Color smashedPumpkin600 = Color(0xFFfc6736); // primaryColor
+  static const Color smashedPumpkin700 = Color(0xFFca522b);
+  static const Color smashedPumpkin800 = Color(0xFF973e20);
+  static const Color smashedPumpkin900 = Color(0xFF652916);
+  static const Color smashedPumpkin950 = Color(0xFF32150b);
 
   // States
   // Positive
@@ -106,6 +107,8 @@ class RadiusPalette {
   static const double base = 8.0;
   // カードの角丸度
   static const double lg = 12.0;
+  // セクションカードの角丸度
+  static const double xl = 16.0;
   // 完全な丸（pill shape）
   static const double full = 999.0;
 }
@@ -273,6 +276,75 @@ class TextStylePalette {
   );
 }
 
+// カテゴリチップサイズ
+class CategoryChipSize {
+  // 固定高さ（ButtonSizePalette.tag = 30と同じ）
+  static const double height = 30.0;
+  // 左右padding
+  static const double horizontalPadding = 12.0;
+  // 上下padding
+  static const double verticalPadding = 8.0;
+  // アイコンとテキストの間隔
+  static const double iconTextSpacing = 8.0;
+  // アイコンサイズ
+  static const double iconSize = 14.0;
+}
+
+/// カテゴリチップウィジェット
+/// アイコン + テキストのチップUI（neutral50塗り、neutral200ボーダー、Radius8）
+/// 横幅は中身に合わせて自動調整
+class CategoryChip extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  const CategoryChip({
+    Key? key,
+    required this.icon,
+    required this.label,
+    this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        height: CategoryChipSize.height,
+        padding: EdgeInsets.symmetric(
+          horizontal: CategoryChipSize.horizontalPadding,
+          vertical: CategoryChipSize.verticalPadding,
+        ),
+        decoration: BoxDecoration(
+          color: ColorPalette.neutral50,
+          border: Border.all(color: ColorPalette.neutral200),
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: CategoryChipSize.iconSize, color: ColorPalette.neutral800),
+            SizedBox(width: CategoryChipSize.iconTextSpacing),
+            Text(label, style: TextStylePalette.smText),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// セクションカードサイズ定数
+class CardSectionSize {
+  // カードの角丸度
+  static const double radius = 16.0;
+  // カード内部padding（上下左右）
+  static const double padding = 16.0;
+  // カード間の間隔
+  static const double spacing = 16.0;
+  // カード外側の左右マージン
+  static const double horizontalMargin = 16.0;
+}
+
 class AppTheme {
   static ThemeData get lightTheme {
     final textTheme = GoogleFonts.interTextTheme();
@@ -316,15 +388,15 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.chillBlue500, width: 2),
+          borderSide: const BorderSide(color: ColorPalette.smashedPumpkin600, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.chillBlue500),
+          borderSide: const BorderSide(color: ColorPalette.smashedPumpkin600),
         ),
         focusedErrorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(RadiusPalette.base),
-          borderSide: const BorderSide(color: ColorPalette.chillBlue500, width: 2),
+          borderSide: const BorderSide(color: ColorPalette.smashedPumpkin600, width: 2),
         ),
         labelStyle: TextStylePalette.normalText,
         hintStyle: TextStylePalette.hintText,
@@ -333,24 +405,24 @@ class AppTheme {
       // ElevatedButton
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: ColorPalette.chillBlue500,
+          backgroundColor: ColorPalette.smashedPumpkin600,
           foregroundColor: ColorPalette.neutral100,
           minimumSize: const Size(double.infinity, ButtonSizePalette.button),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(RadiusPalette.base),
+            borderRadius: BorderRadius.circular(RadiusPalette.full),
           ),
           textStyle: TextStylePalette.buttonTextWhite,
         ),
       ),
       
-      // Card - neutral100背景
+      // Card - 白背景セクションカード
       cardTheme: CardThemeData(
         elevation: 1,
         margin: EdgeInsets.zero,
         shadowColor: ColorPalette.neutral800.withOpacity(0.1),
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(RadiusPalette.lg),
+          borderRadius: BorderRadius.circular(RadiusPalette.xl),
         ),
         color: ColorPalette.white,
       ),

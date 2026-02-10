@@ -1,4 +1,5 @@
 // lib/features/auth/presentation/pages/signup_success_screen.dart
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/theme/main_layout.dart';
@@ -6,92 +7,122 @@ import '../../data/models/user_role.dart';
 
 class SignUpSuccessScreen extends StatelessWidget {
   final UserRole role;
+  final String? username;
+  final Uint8List? avatarBytes;
 
   const SignUpSuccessScreen({
     Key? key,
     required this.role,
+    this.username,
+    this.avatarBytes,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              ColorPalette.positive500.withOpacity(0.3),
-              ColorPalette.white,
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(SpacePalette.base),
-            child: Column(
-              children: [
-                Spacer(flex: 2),
+      backgroundColor: ColorPalette.white,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(SpacePalette.base),
+          child: Column(
+            children: [
+              Spacer(flex: 3),
 
-                // チェックアイコン
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: ColorPalette.positive500,
-                    shape: BoxShape.circle,
-                  ),
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 40,
-                  ),
-                ),
-                SizedBox(height: SpacePalette.lg),
-
-                // タイトル
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('You\'re all set ', style: TextStylePalette.header),
-                    Text('🎉', style: TextStyle(fontSize: 24)),
-                  ],
-                ),
-                SizedBox(height: SpacePalette.sm),
-                Text(
-                  'Welcome to ZeroGrid. Let\'s get started.',
-                  style: TextStylePalette.subText,
-                ),
-
-                Spacer(flex: 3),
-
-                // Continue Button
-                SizedBox(
-                  width: double.infinity,
-                  height: 48,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.pushAndRemoveUntil(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MainLayout(userRole: role),
-                        ),
-                        (route) => false,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorPalette.neutral800,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(RadiusPalette.base),
-                      ),
+              // プロフィール画像 + デコレーション
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  // スパークル装飾（左上）
+                  Positioned(
+                    top: -10,
+                    left: -10,
+                    child: Icon(
+                      Icons.auto_awesome,
+                      size: 24,
+                      color: ColorPalette.smashedPumpkin400,
                     ),
-                    child: Text('Continue', style: TextStylePalette.buttonTextWhite),
                   ),
+                  // スパークル装飾（右上）
+                  Positioned(
+                    top: -5,
+                    right: -15,
+                    child: Icon(
+                      Icons.auto_awesome,
+                      size: 32,
+                      color: ColorPalette.positive400,
+                    ),
+                  ),
+                  // プロフィール画像
+                  Container(
+                    width: 100,
+                    height: 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: ColorPalette.neutral100,
+                      border: Border.all(color: ColorPalette.neutral200, width: 2),
+                    ),
+                    child: avatarBytes != null
+                        ? ClipOval(
+                            child: Image.memory(
+                              avatarBytes!,
+                              fit: BoxFit.cover,
+                              width: 100,
+                              height: 100,
+                            ),
+                          )
+                        : Icon(
+                            Icons.person,
+                            size: 50,
+                            color: ColorPalette.neutral400,
+                          ),
+                  ),
+                ],
+              ),
+              SizedBox(height: SpacePalette.lg),
+
+              // Welcome text
+              Text(
+                'Welcome to Zero Grid,',
+                style: TextStylePalette.header,
+              ),
+              if (username != null)
+                Text(
+                  '@$username',
+                  style: TextStylePalette.header,
                 ),
-                SizedBox(height: SpacePalette.lg),
-              ],
-            ),
+              SizedBox(height: SpacePalette.sm),
+              Text(
+                'You\'re all set. Time to earn and create!',
+                style: TextStylePalette.subText,
+              ),
+
+              Spacer(flex: 4),
+
+              // Let's Go Button
+              SizedBox(
+                width: double.infinity,
+                height: ButtonSizePalette.button,
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MainLayout(userRole: role),
+                      ),
+                      (route) => false,
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: ColorPalette.smashedPumpkin600,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
+                    ),
+                  ),
+                  child: Text("Let's Go", style: TextStylePalette.buttonTextWhite),
+                ),
+              ),
+              SizedBox(height: SpacePalette.lg),
+            ],
           ),
         ),
       ),

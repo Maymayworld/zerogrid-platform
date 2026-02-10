@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(flutter analyze:*)"
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub get:*)",
+      "Bash(dir:*)",
+      "Bash(find:*)"
     ]
-  }
+  },
+  "enabledMcpjsonServers": [
+    "supabase"
+  ]
 }

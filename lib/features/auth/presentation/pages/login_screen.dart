@@ -397,7 +397,7 @@ class _DuolingoButtonState extends State<DuolingoButton> {
                 child: Container(
                   height: ButtonSizePalette.button,
                   decoration: BoxDecoration(
-                    color: ColorPalette.chillBlue700,
+                    color: ColorPalette.smashedPumpkin700,
                     borderRadius: BorderRadius.circular(RadiusPalette.full),
                   ),
                 ),
@@ -412,8 +412,8 @@ class _DuolingoButtonState extends State<DuolingoButton> {
               child: Container(
                 height: ButtonSizePalette.button,
                 decoration: BoxDecoration(
-                  color: widget.isEnabled 
-                      ? ColorPalette.chillBlue500 
+                  color: widget.isEnabled
+                      ? ColorPalette.smashedPumpkin600
                       : ColorPalette.neutral200,
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
                 ),
@@ -437,6 +437,97 @@ class _DuolingoButtonState extends State<DuolingoButton> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Duolingoスタイルのアウトラインボタン（白背景 + neutral200影）
+class DuolingoOutlineButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final String text;
+  final IconData? icon;
+
+  const DuolingoOutlineButton({
+    Key? key,
+    required this.onPressed,
+    required this.text,
+    this.icon,
+  }) : super(key: key);
+
+  @override
+  State<DuolingoOutlineButton> createState() => _DuolingoOutlineButtonState();
+}
+
+class _DuolingoOutlineButtonState extends State<DuolingoOutlineButton> {
+  bool _isPressed = false;
+
+  static const double shadowOffset = 4.0;
+  static const double buttonHeight = 40.0;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool showShadow = !_isPressed;
+
+    final content = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: SpacePalette.base),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (widget.icon != null) ...[
+            Icon(widget.icon, size: 18, color: ColorPalette.neutral800),
+            const SizedBox(width: SpacePalette.sm),
+          ],
+          Text(widget.text, style: TextStylePalette.smTitle),
+        ],
+      ),
+    );
+
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onPressed();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: IntrinsicWidth(
+        child: SizedBox(
+          height: buttonHeight + shadowOffset,
+          child: Stack(
+            children: [
+              // 影（neutral200）
+              if (showShadow)
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  top: shadowOffset,
+                  child: Container(
+                    height: buttonHeight,
+                    decoration: BoxDecoration(
+                      color: ColorPalette.neutral200,
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
+                    ),
+                  ),
+                ),
+              // 本体（白背景 + neutral200ボーダー）
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 50),
+                left: 0,
+                right: 0,
+                top: _isPressed ? shadowOffset : 0,
+                child: Container(
+                  height: buttonHeight,
+                  decoration: BoxDecoration(
+                    color: ColorPalette.white,
+                    borderRadius: BorderRadius.circular(RadiusPalette.full),
+                    border: Border.all(color: ColorPalette.neutral200, width: 2),
+                  ),
+                  child: Center(child: content),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

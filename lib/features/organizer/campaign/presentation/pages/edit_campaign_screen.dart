@@ -7,7 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/campaign.dart';
 import '../providers/campaign_service_provider.dart';
-import 'submissions_screen.dart';
+import 'submission_review_screen.dart';
 
 class EditCampaignScreen extends HookConsumerWidget {
   final String campaignId;
@@ -385,12 +385,14 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.lg),
 
                   // View Submissions
+                  Text('Submissions', style: TextStylePalette.smTitle),
+                  SizedBox(height: SpacePalette.sm),
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SubmissionsScreen(
+                          builder: (context) => SubmissionReviewScreen(
                             campaignId: campaignId,
                             campaignName: projectNameController.text,
                           ),
@@ -402,43 +404,28 @@ class EditCampaignScreen extends HookConsumerWidget {
                       decoration: BoxDecoration(
                         color: ColorPalette.white,
                         borderRadius: BorderRadius.circular(RadiusPalette.base),
-                        border: Border.all(
-                          color: ColorPalette.neutral200,
-                          width: 1,
-                        ),
                       ),
                       child: Row(
                         children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: ColorPalette.neutral100,
-                              borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                            ),
-                            child: Icon(
-                              Icons.inbox_outlined,
-                              color: ColorPalette.neutral600,
-                              size: 20,
-                            ),
+                          Icon(
+                            Icons.video_library,
+                            size: 24,
+                            color: ColorPalette.neutral800,
                           ),
                           SizedBox(width: SpacePalette.base),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('View Submissions', style: TextStylePalette.smTitle),
-                                Text(
-                                  'Review creator submissions',
-                                  style: TextStylePalette.subText,
-                                ),
+                                Text('View Submissions',
+                                    style: TextStylePalette.listTitle),
+                                Text('Review creator video submissions',
+                                    style: TextStylePalette.listLeading),
                               ],
                             ),
                           ),
-                          Icon(
-                            Icons.chevron_right,
-                            color: ColorPalette.neutral400,
-                          ),
+                          Icon(Icons.chevron_right,
+                              size: 20, color: ColorPalette.neutral400),
                         ],
                       ),
                     ),

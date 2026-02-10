@@ -11,6 +11,7 @@ import '../../../../../shared/widgets/common_search_bar.dart';
 import '../widgets/notification_sheet.dart';
 import '../widgets/filter_chip_widget.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
+import '../../../campaign/presentation/pages/campaign_screen.dart' as campaign_page;
 
 class FindScreen extends HookConsumerWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -26,6 +27,7 @@ class FindScreen extends HookConsumerWidget {
     final scrollController = FixedExtentScrollController();
 
     final likedIds = ref.watch(likedCampaignIdsProvider);
+    final showLikedOnly = useState(false);
 
     final filterCategories = ['All', 'Business', 'Entertainment', 'Music', 'Podcast'];
 
@@ -102,23 +104,57 @@ class FindScreen extends HookConsumerWidget {
               padding: const EdgeInsets.all(SpacePalette.base),
               child: Row(
                 children: [
+                  // アバターアイコン
                   Container(
-                    width: 48,
-                    height: 48,
+                    width: 40,
+                    height: 40,
                     decoration: BoxDecoration(
-                      color: ColorPalette.neutral800,
-                      borderRadius: BorderRadius.circular(8),
+                      color: ColorPalette.neutral200,
+                      shape: BoxShape.circle,
                     ),
-                    child: Center(
-                      child: Text(
-                        'ZG',
-                        style: TextStylePalette.title.copyWith(color: ColorPalette.white),
-                      ),
+                    child: Icon(
+                      Icons.person,
+                      size: 22,
+                      color: ColorPalette.neutral400,
                     ),
                   ),
                   SizedBox(width: SpacePalette.sm),
                   Expanded(child: CommonSearchBar()),
                   SizedBox(width: SpacePalette.sm),
+                  // キャンペーンページへ遷移
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const campaign_page.CampaignScreen(),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.work_outline,
+                      size: 24,
+                      color: ColorPalette.neutral800,
+                    ),
+                  ),
+                  SizedBox(width: SpacePalette.inner),
+                  // ハートボタン → Like済みフィルタートグル
+                  GestureDetector(
+                    onTap: () {
+                      showLikedOnly.value = !showLikedOnly.value;
+                    },
+                    child: Icon(
+                      showLikedOnly.value
+                          ? Icons.favorite
+                          : Icons.favorite_border,
+                      size: 24,
+                      color: showLikedOnly.value
+                          ? ColorPalette.critical500
+                          : ColorPalette.neutral800,
+                    ),
+                  ),
+                  SizedBox(width: SpacePalette.inner),
+                  // 通知ベル
                   GestureDetector(
                     onTap: () {
                       showModalBottomSheet(
@@ -231,7 +267,9 @@ class FindScreen extends HookConsumerWidget {
                 ref,
                 isLoading: isLoading.value,
                 error: error.value,
-                campaigns: campaigns.value,
+                campaigns: showLikedOnly.value
+                    ? campaigns.value.where((c) => likedIds.contains(c.id)).toList()
+                    : campaigns.value,
                 likedIds: likedIds,
                 scrollController: scrollController,
                 onRefresh: loadCampaigns,

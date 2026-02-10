@@ -28,7 +28,7 @@ class LoadingPage extends HookWidget {
               Align(
                 alignment: Alignment.center,
                 child: CircularProgressIndicator(
-                  color: ColorPalette.chillBlue500,
+                  color: ColorPalette.smashedPumpkin600,
                 ),
               ),
               SizedBox(height: SpacePalette.base),
