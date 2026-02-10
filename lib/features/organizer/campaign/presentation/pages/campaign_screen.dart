@@ -7,6 +7,7 @@ import '../widgets/campaign_card.dart';
 import 'edit_campaign_screen.dart';
 import '../../data/models/campaign.dart';
 import '../providers/campaign_service_provider.dart';
+import '../../../approval/presentation/pages/approval_history_screen.dart';
 
 class CampaignScreen extends HookConsumerWidget {
   const CampaignScreen({Key? key}) : super(key: key);
@@ -53,6 +54,18 @@ class CampaignScreen extends HookConsumerWidget {
         title: Text('Campaign', style: TextStylePalette.header),
         centerTitle: false,
         actions: [
+          IconButton(
+            icon: Icon(Icons.history, color: ColorPalette.neutral800),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ApprovalHistoryScreen(),
+                ),
+              );
+            },
+            tooltip: 'Approval History',
+          ),
           IconButton(
             icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
             onPressed: loadCampaigns,

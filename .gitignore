@@ -65,3 +65,7 @@ migrate_working_dir/
 **/ios/Flutter/ephemeral/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+
+# Secrets
+.secrets/
+supabase/.temp/

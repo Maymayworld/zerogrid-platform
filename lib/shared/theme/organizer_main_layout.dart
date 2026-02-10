@@ -2,22 +2,27 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../features/organizer/home/presentation/home_screen.dart';
 import '../../features/organizer/campaign/presentation/pages/campaign_screen.dart';
 import '../../features/organizer/campaign/presentation/pages/create/create_screen.dart';
 import '../../features/organizer/chat/presentation/chat_list_screen.dart';
 import '../../features/organizer/profile/presentation/profile_screen.dart';
+import '../../features/organizer/approval/presentation/pages/approval_request_screen.dart';
+import '../../features/organizer/approval/presentation/providers/approval_provider.dart';
 
-class OrganizerMainLayout extends HookWidget {
+class OrganizerMainLayout extends HookConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = useState(0);
+    final hasPendingRequests = ref.watch(hasPendingRequestsProvider);
 
+    // 中央ボタン（index 2）の画面を動的に切り替え
     final screens = [
       HomeScreen(),
       CampaignScreen(),
-      CreateScreen(),
+      hasPendingRequests ? ApprovalRequestScreen() : CreateScreen(),
       ChatListScreen(),
       ProfileScreen(),
     ];
@@ -45,6 +50,7 @@ class OrganizerMainLayout extends HookWidget {
                 child: _LiquidGlassNavBar(
                   currentIndex: currentIndex.value,
                   onTap: (index) => currentIndex.value = index,
+                  hasPendingRequests: hasPendingRequests,
                 ),
               ),
             ),
@@ -58,10 +64,12 @@ class OrganizerMainLayout extends HookWidget {
 class _LiquidGlassNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
+  final bool hasPendingRequests;
 
   const _LiquidGlassNavBar({
     required this.currentIndex,
     required this.onTap,
+    required this.hasPendingRequests,
   });
 
   @override
@@ -97,10 +105,11 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 isSelected: currentIndex == 1,
                 onTap: () => onTap(1),
               ),
-              // 中央の黒いボタン
+              // 中央の黒いボタン（リクエストの有無でアイコン切り替え）
               _CenterBlackButton(
                 isSelected: currentIndex == 2,
                 onTap: () => onTap(2),
+                hasPendingRequests: hasPendingRequests,
               ),
               _GlassNavItem(
                 icon: Icons.chat_bubble_outline_rounded,
@@ -246,39 +255,75 @@ class _GlassNavItem extends StatelessWidget {
   }
 }
 
-// 中央の黒いボタン（常に黒）
+// 中央の黒いボタン（リクエストの有無でアイコン切り替え）
 class _CenterBlackButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
+  final bool hasPendingRequests;
 
   const _CenterBlackButton({
     required this.isSelected,
     required this.onTap,
+    required this.hasPendingRequests,
   });
 
   @override
   Widget build(BuildContext context) {
+    // リクエストあり → スマホアイコン（Approval画面）
+    // リクエストなし → プラスアイコン（案件作成画面）
+    final IconData icon;
+    if (isSelected) {
+      icon = Icons.check_rounded;
+    } else if (hasPendingRequests) {
+      icon = Icons.smartphone_rounded;
+    } else {
+      icon = Icons.add_rounded;
+    }
+
     return GestureDetector(
       onTap: onTap,
-      child: Container(
-        width: 52,
-        height: 52,
-        decoration: BoxDecoration(
-          color: ColorPalette.neutral800, // 常に黒
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: ColorPalette.neutral800.withOpacity(0.3),
-              blurRadius: 12,
-              offset: Offset(0, 4),
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: 52,
+            height: 52,
+            decoration: BoxDecoration(
+              color: ColorPalette.neutral800, // 常に黒
+              shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: ColorPalette.neutral800.withOpacity(0.3),
+                  blurRadius: 12,
+                  offset: Offset(0, 4),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Icon(
-          isSelected ? Icons.check_rounded : Icons.smartphone_rounded,
-          color: ColorPalette.white,
-          size: 24,
-        ),
+            child: Icon(
+              icon,
+              color: ColorPalette.white,
+              size: 24,
+            ),
+          ),
+          // リクエストありの場合、バッジ表示
+          if (hasPendingRequests && !isSelected)
+            Positioned(
+              right: -2,
+              top: -2,
+              child: Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: ColorPalette.critical500,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: ColorPalette.white,
+                    width: 2,
+                  ),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
