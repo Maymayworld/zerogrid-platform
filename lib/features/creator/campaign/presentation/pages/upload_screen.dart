@@ -6,6 +6,7 @@ import '../../../../../shared/theme/app_theme.dart';
 import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/submission/data/models/social_connection.dart';
 import '../../../../creator/submission/presentation/providers/submission_providers.dart';
+import '../../../../auth/presentation/providers/oauth_provider.dart';
 
 class ProjectUploadScreen extends HookConsumerWidget {
   final String campaignId;
@@ -89,13 +90,29 @@ class ProjectUploadScreen extends HookConsumerWidget {
 
     // Handle OAuth connection
     Future<void> handleConnect(String platform) async {
-      // TODO: Implement OAuth flow with flutter_web_auth_2
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('$platform OAuth connection coming soon. You can still submit URLs.'),
-          backgroundColor: ColorPalette.neutral800,
-        ),
-      );
+      try {
+        final oauthService = ref.read(oAuthServiceProvider);
+        switch (platform.toLowerCase()) {
+          case 'youtube':
+            await oauthService.connectYouTube();
+            break;
+          case 'instagram':
+            await oauthService.connectInstagram();
+            break;
+          case 'tiktok':
+            await oauthService.connectTikTok();
+            break;
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to connect $platform: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
 
     // Handle submission

@@ -50,7 +50,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
     final filteredSubmissions = filterStatus.value == 'all'
         ? submissions.value
         : submissions.value
-            .where((s) => s.status == filterStatus.value)
+            .where((s) => s.status.name == filterStatus.value)
             .toList();
 
     return Scaffold(
@@ -92,19 +92,19 @@ class SubmissionReviewScreen extends HookConsumerWidget {
                   ),
                   SizedBox(width: SpacePalette.sm),
                   _FilterChip(
-                    label: 'Submitted',
+                    label: 'Pending',
                     count: submissions.value
-                        .where((s) => s.status == 'submitted')
+                        .where((s) => s.status == SubmissionStatus.pending)
                         .length,
-                    isSelected: filterStatus.value == 'submitted',
-                    onTap: () => filterStatus.value = 'submitted',
+                    isSelected: filterStatus.value == 'pending',
+                    onTap: () => filterStatus.value = 'pending',
                     color: Colors.orange,
                   ),
                   SizedBox(width: SpacePalette.sm),
                   _FilterChip(
                     label: 'Approved',
                     count: submissions.value
-                        .where((s) => s.status == 'approved')
+                        .where((s) => s.status == SubmissionStatus.approved)
                         .length,
                     isSelected: filterStatus.value == 'approved',
                     onTap: () => filterStatus.value = 'approved',
@@ -114,7 +114,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
                   _FilterChip(
                     label: 'Rejected',
                     count: submissions.value
-                        .where((s) => s.status == 'rejected')
+                        .where((s) => s.status == SubmissionStatus.rejected)
                         .length,
                     isSelected: filterStatus.value == 'rejected',
                     onTap: () => filterStatus.value = 'rejected',
@@ -314,9 +314,7 @@ class _SubmissionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      submission.creatorDisplayName ??
-                          submission.creatorUsername ??
-                          'Creator',
+                      submission.creatorName ?? 'Creator',
                       style: TextStylePalette.listTitle,
                     ),
                     Text(
@@ -326,85 +324,63 @@ class _SubmissionCard extends StatelessWidget {
                   ],
                 ),
               ),
-              _StatusBadge(status: submission.status),
+              _StatusBadge(status: submission.status.name),
             ],
           ),
           SizedBox(height: SpacePalette.base),
 
-          // Video URLs
-          ...submission.platformUrls.entries.map((entry) {
-            return Padding(
-              padding: EdgeInsets.only(bottom: SpacePalette.sm),
-              child: GestureDetector(
-                onTap: () {
-                  // TODO: Open URL with url_launcher
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('URL: ${entry.value}')),
-                  );
-                },
-                child: Container(
-                  padding: EdgeInsets.all(SpacePalette.sm),
-                  decoration: BoxDecoration(
-                    color: ColorPalette.neutral100,
-                    borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        _getPlatformIcon(entry.key),
-                        size: 18,
-                        color: _getPlatformColor(entry.key),
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Expanded(
-                        child: Text(
-                          entry.value,
-                          style: TextStyle(
-                            fontSize: 13,
-                            color: Colors.blue[700],
-                            decoration: TextDecoration.underline,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      Icon(
-                        Icons.open_in_new,
-                        size: 16,
-                        color: ColorPalette.neutral400,
-                      ),
-                    ],
-                  ),
-                ),
+          // Video URL
+          GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('URL: ${submission.videoUrl}')),
+              );
+            },
+            child: Container(
+              padding: EdgeInsets.all(SpacePalette.sm),
+              decoration: BoxDecoration(
+                color: ColorPalette.neutral100,
+                borderRadius: BorderRadius.circular(RadiusPalette.mini),
               ),
-            );
-          }),
+              child: Row(
+                children: [
+                  Icon(
+                    _getPlatformIcon(submission.platform),
+                    size: 18,
+                    color: _getPlatformColor(submission.platform),
+                  ),
+                  SizedBox(width: SpacePalette.sm),
+                  Expanded(
+                    child: Text(
+                      submission.videoUrl,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.blue[700],
+                        decoration: TextDecoration.underline,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Icon(
+                    Icons.open_in_new,
+                    size: 16,
+                    color: ColorPalette.neutral400,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SizedBox(height: SpacePalette.sm),
 
-          // Caption
-          if (submission.caption.isNotEmpty) ...[
+          // Video title
+          if (submission.videoTitle != null &&
+              submission.videoTitle!.isNotEmpty) ...[
             Text(
-              submission.caption,
+              submission.videoTitle!,
               style: TextStylePalette.subText,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: SpacePalette.sm),
-          ],
-
-          // Schedule info
-          if (submission.scheduleAt != null) ...[
-            Row(
-              children: [
-                Icon(Icons.schedule, size: 14, color: ColorPalette.neutral500),
-                SizedBox(width: 4),
-                Text(
-                  'Scheduled: ${_formatDateTime(submission.scheduleAt!)}',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: ColorPalette.neutral500,
-                  ),
-                ),
-              ],
             ),
             SizedBox(height: SpacePalette.sm),
           ],
@@ -439,8 +415,8 @@ class _SubmissionCard extends StatelessWidget {
             SizedBox(height: SpacePalette.sm),
           ],
 
-          // Action buttons (only for submitted status)
-          if (submission.status == 'submitted')
+          // Action buttons (only for pending status)
+          if (submission.isPending)
             Row(
               children: [
                 Expanded(
@@ -601,16 +577,6 @@ class _SubmissionCard extends StatelessWidget {
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
 
-  String _formatDateTime(DateTime dt) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final hour = dt.hour.toString().padLeft(2, '0');
-    final minute = dt.minute.toString().padLeft(2, '0');
-    return '${months[dt.month - 1]} ${dt.day}, ${dt.year} at $hour:$minute';
-  }
-
   IconData _getPlatformIcon(String platform) {
     switch (platform.toLowerCase()) {
       case 'youtube':
@@ -657,7 +623,7 @@ class _StatusBadge extends StatelessWidget {
         bgColor = Colors.red.withOpacity(0.1);
         textColor = Colors.red;
         break;
-      case 'submitted':
+      case 'pending':
         bgColor = Colors.orange.withOpacity(0.1);
         textColor = Colors.orange;
         break;

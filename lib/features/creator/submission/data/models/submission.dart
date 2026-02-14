@@ -20,6 +20,7 @@ class Submission {
   final SubmissionStatus status;
   final DateTime submittedAt;
   final DateTime? reviewedAt;
+  final String? reviewNote;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -41,6 +42,7 @@ class Submission {
     required this.status,
     required this.submittedAt,
     this.reviewedAt,
+    this.reviewNote,
     required this.createdAt,
     required this.updatedAt,
     this.campaignName,
@@ -67,6 +69,7 @@ class Submission {
       reviewedAt: map['reviewed_at'] != null
           ? DateTime.parse(map['reviewed_at'] as String)
           : null,
+      reviewNote: map['review_note'] as String?,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
       campaignName: map['campaign_name'] as String?,
@@ -89,6 +92,7 @@ class Submission {
       'status': status.name,
       'submitted_at': submittedAt.toIso8601String(),
       'reviewed_at': reviewedAt?.toIso8601String(),
+      'review_note': reviewNote,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
     };
@@ -107,6 +111,7 @@ class Submission {
     SubmissionStatus? status,
     DateTime? submittedAt,
     DateTime? reviewedAt,
+    String? reviewNote,
     DateTime? createdAt,
     DateTime? updatedAt,
     String? campaignName,
@@ -126,6 +131,7 @@ class Submission {
       status: status ?? this.status,
       submittedAt: submittedAt ?? this.submittedAt,
       reviewedAt: reviewedAt ?? this.reviewedAt,
+      reviewNote: reviewNote ?? this.reviewNote,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       campaignName: campaignName ?? this.campaignName,

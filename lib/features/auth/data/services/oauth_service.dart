@@ -55,16 +55,26 @@ class OAuthService {
     }
   }
 
-  // Connect YouTube via Google OAuth
+  // Connect YouTube via Google OAuth (Edge Function)
   Future<void> connectYouTube() async {
-    try {
-      await _client.auth.signInWithOAuth(
-        OAuthProvider.google,
-        scopes: 'https://www.googleapis.com/auth/youtube.readonly',
-        redirectTo: 'io.zerogrid.app://oauth-callback',
-      );
-    } catch (e) {
-      throw Exception('Failed to connect YouTube: $e');
+    final userId = currentUserId;
+    if (userId == null) throw Exception('Not authenticated');
+
+    final response = await _client.functions.invoke(
+      'youtube-oauth-url',
+      body: {'user_id': userId},
+    );
+
+    if (response.status != 200) {
+      throw Exception('Failed to get YouTube OAuth URL');
+    }
+
+    final url = response.data['url'] as String?;
+    if (url != null) {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
     }
   }
 

@@ -4,7 +4,8 @@
       "Bash(flutter analyze:*)",
       "Bash(flutter pub get:*)",
       "Bash(dir:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "mcp__supabase__execute_sql"
     ]
   },
   "enabledMcpjsonServers": [

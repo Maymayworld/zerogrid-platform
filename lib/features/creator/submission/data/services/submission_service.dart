@@ -122,6 +122,39 @@ class SubmissionService {
         .toList();
   }
 
+  /// Get all submissions for a campaign (for organizer review)
+  Future<List<Submission>> getCampaignSubmissions(String campaignId) async {
+    final response = await _supabase
+        .from('submission_requests')
+        .select('''
+          *,
+          profiles:creator_id (display_name, avatar_url)
+        ''')
+        .eq('campaign_id', campaignId)
+        .order('submitted_at', ascending: false);
+
+    return (response as List).map((map) {
+      return Submission.fromMap({
+        ...map,
+        'creator_name': map['profiles']?['display_name'],
+        'creator_avatar_url': map['profiles']?['avatar_url'],
+      });
+    }).toList();
+  }
+
+  /// Update submission status (approve/reject)
+  Future<void> updateSubmissionStatus({
+    required String submissionId,
+    required String status,
+    String? reviewNote,
+  }) async {
+    await _supabase.from('submission_requests').update({
+      'status': status,
+      'reviewed_at': DateTime.now().toUtc().toIso8601String(),
+      if (reviewNote != null) 'review_note': reviewNote,
+    }).eq('id', submissionId);
+  }
+
   /// Update view count for a submission (called periodically)
   Future<void> updateViewCount(String submissionId, int viewCount) async {
     await _supabase.from('submission_requests').update({

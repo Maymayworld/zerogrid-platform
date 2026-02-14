@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/social_connection.dart';
 import '../providers/submission_providers.dart';
+import '../../../../auth/presentation/providers/oauth_provider.dart';
 
 class ConnectedAccountsScreen extends HookConsumerWidget {
   const ConnectedAccountsScreen({Key? key}) : super(key: key);
@@ -72,18 +73,31 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
     }
 
     Future<void> handleConnect(String provider) async {
-      // TODO: Implement full OAuth flow with flutter_web_auth_2
-      // For now, show a placeholder message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            'OAuth connection for $provider requires API credentials. '
-            'Set up your developer app credentials first.',
-          ),
-          backgroundColor: ColorPalette.neutral800,
-          duration: Duration(seconds: 3),
-        ),
-      );
+      try {
+        final oauthService = ref.read(oAuthServiceProvider);
+        switch (provider) {
+          case 'youtube':
+            await oauthService.connectYouTube();
+            break;
+          case 'instagram':
+            await oauthService.connectInstagram();
+            break;
+          case 'tiktok':
+            await oauthService.connectTikTok();
+            break;
+        }
+        // Reload connections after OAuth completes
+        await loadConnections();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to connect $provider: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     }
 
     Future<void> handleDisconnect(String connectionId) async {

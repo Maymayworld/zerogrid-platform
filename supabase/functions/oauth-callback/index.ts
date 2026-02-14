@@ -40,6 +40,7 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     let accessToken: string
+    let refreshToken: string = ''
     let platformUserId: string
     let platformUsername: string | undefined
 
@@ -69,6 +70,7 @@ serve(async (req) => {
       }
 
       accessToken = tokenData.access_token
+      refreshToken = tokenData.refresh_token || ''
       platformUserId = tokenData.user_id.toString()
 
       // Get username
@@ -104,6 +106,7 @@ serve(async (req) => {
       }
 
       accessToken = tokenData.access_token
+      refreshToken = tokenData.refresh_token || ''
       platformUserId = tokenData.open_id
 
       // Get user info
@@ -116,23 +119,82 @@ serve(async (req) => {
       const userData = await userResponse.json()
       platformUsername = userData.data?.user?.display_name
 
+    } else if (platform === 'youtube') {
+      // Exchange code for access token via Google OAuth
+      const clientId = Deno.env.get('GOOGLE_CLIENT_ID')!
+      const clientSecret = Deno.env.get('GOOGLE_CLIENT_SECRET')!
+      const redirectUri = Deno.env.get('GOOGLE_REDIRECT_URI') ||
+        `${supabaseUrl}/functions/v1/oauth-callback`
+
+      const tokenResponse = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          grant_type: 'authorization_code',
+          redirect_uri: redirectUri,
+          code: code,
+        }),
+      })
+
+      const tokenData = await tokenResponse.json()
+
+      if (tokenData.error) {
+        throw new Error(tokenData.error_description || tokenData.error)
+      }
+
+      accessToken = tokenData.access_token
+      refreshToken = tokenData.refresh_token || ''
+
+      // Get YouTube channel info
+      const channelResponse = await fetch(
+        'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',
+        {
+          headers: { 'Authorization': `Bearer ${accessToken}` },
+        }
+      )
+      const channelData = await channelResponse.json()
+      const channel = channelData.items?.[0]
+      platformUserId = channel?.id || ''
+      platformUsername = channel?.snippet?.title
+
     } else {
       throw new Error(`Unknown platform: ${platform}`)
     }
 
-    // Save to database
-    const { error: dbError } = await supabase
+    // Save to database - check existing then insert or update
+    const { data: existing } = await supabase
       .from('social_connections')
-      .upsert({
-        user_id,
-        platform,
-        platform_user_id: platformUserId,
-        platform_username: platformUsername,
-        access_token: accessToken,
-        updated_at: new Date().toISOString(),
-      }, {
-        onConflict: 'user_id,platform',
-      })
+      .select('id')
+      .eq('user_id', user_id)
+      .eq('provider', platform)
+      .maybeSingle()
+
+    const connectionData = {
+      user_id,
+      provider: platform,
+      provider_account_id: platformUserId,
+      provider_account_name: platformUsername,
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      status: 'connected',
+      updated_at: new Date().toISOString(),
+    }
+
+    let dbError
+    if (existing) {
+      const result = await supabase
+        .from('social_connections')
+        .update(connectionData)
+        .eq('id', existing.id)
+      dbError = result.error
+    } else {
+      const result = await supabase
+        .from('social_connections')
+        .insert(connectionData)
+      dbError = result.error
+    }
 
     if (dbError) {
       throw new Error(`Database error: ${dbError.message}`)
@@ -141,9 +203,10 @@ serve(async (req) => {
     // Return success page that closes the window
     return new Response(
       `<html>
+        <head><meta charset="utf-8"></head>
         <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
           <div style="text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">✓</div>
+            <div style="font-size: 48px; margin-bottom: 16px;">&#x2713;</div>
             <h2 style="margin: 0 0 8px 0;">Connected!</h2>
             <p style="color: #666; margin: 0;">You can close this window</p>
           </div>
@@ -152,15 +215,16 @@ serve(async (req) => {
           setTimeout(() => { window.close(); }, 2000);
         </script>
       </html>`,
-      { headers: { 'Content-Type': 'text/html' } }
+      { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     )
   } catch (error) {
     console.error('OAuth callback error:', error)
     return new Response(
       `<html>
+        <head><meta charset="utf-8"></head>
         <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
           <div style="text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">✗</div>
+            <div style="font-size: 48px; margin-bottom: 16px;">&#x2717;</div>
             <h2 style="margin: 0 0 8px 0;">Connection Failed</h2>
             <p style="color: #666; margin: 0;">${error.message}</p>
           </div>
@@ -169,7 +233,7 @@ serve(async (req) => {
           setTimeout(() => { window.close(); }, 3000);
         </script>
       </html>`,
-      { headers: { 'Content-Type': 'text/html' } }
+      { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     )
   }
 })

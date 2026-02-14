@@ -2,14 +2,18 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'app_theme.dart';
 import '../../features/creator/find/presentation/pages/find_screen.dart';
 import '../../features/creator/feed/presentation/pages/feed_screen.dart';
 import '../../features/creator/dashboard/dashboard_screen.dart';
-import '../../features/creator/chat/presentation/creator_chat_list_screen.dart';
+import '../../features/creator/campaign/presentation/pages/campaign_screen.dart';
+import '../../features/creator/campaign/presentation/pages/upload_screen.dart';
+import '../../features/creator/campaign/presentation/providers/participation_service_provider.dart';
 import '../../features/creator/profile/profile_screen.dart';
+import '../../features/organizer/campaign/data/models/campaign.dart';
 
-class CreatorMainLayout extends HookWidget {
+class CreatorMainLayout extends HookConsumerWidget {
   final int initialIndex;
 
   const CreatorMainLayout({
@@ -18,14 +22,14 @@ class CreatorMainLayout extends HookWidget {
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final currentIndex = useState(initialIndex);
 
     final screens = [
       FindScreen(),
       FeedScreen(),
       DashboardScreen(),
-      CreatorChatListScreen(),
+      CampaignScreen(),
       ProfileScreen(),
     ];
 
@@ -38,6 +42,37 @@ class CreatorMainLayout extends HookWidget {
             child: IndexedStack(
               index: currentIndex.value,
               children: screens,
+            ),
+          ),
+          // FAB（プラスボタン）
+          Positioned(
+            right: SpacePalette.base + 4,
+            bottom: 100,
+            child: SafeArea(
+              top: false,
+              child: GestureDetector(
+                onTap: () => _showCampaignSelector(context, ref),
+                child: Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: ColorPalette.smashedPumpkin600,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorPalette.smashedPumpkin600.withOpacity(0.4),
+                        blurRadius: 16,
+                        offset: Offset(0, 6),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    Icons.add,
+                    color: ColorPalette.white,
+                    size: 28,
+                  ),
+                ),
+              ),
             ),
           ),
           // Liquid Glass ボトムナビゲーション（浮かせて配置）
@@ -57,6 +92,225 @@ class CreatorMainLayout extends HookWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  void _showCampaignSelector(BuildContext context, WidgetRef ref) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _CampaignSelectorSheet(ref: ref),
+    );
+  }
+}
+
+class _CampaignSelectorSheet extends HookWidget {
+  final WidgetRef ref;
+
+  const _CampaignSelectorSheet({required this.ref});
+
+  @override
+  Widget build(BuildContext context) {
+    final campaigns = useState<List<Campaign>>([]);
+    final isLoading = useState(true);
+
+    useEffect(() {
+      Future<void> load() async {
+        try {
+          final service = ref.read(participationServiceProvider);
+          final result = await service.getParticipatingCampaigns();
+          campaigns.value = result;
+        } catch (e) {
+          debugPrint('Failed to load campaigns: $e');
+        } finally {
+          isLoading.value = false;
+        }
+      }
+      load();
+      return null;
+    }, []);
+
+    return Container(
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
+      ),
+      decoration: BoxDecoration(
+        color: ColorPalette.white,
+        borderRadius: BorderRadius.vertical(
+          top: Radius.circular(RadiusPalette.lg),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // ハンドル
+          Padding(
+            padding: EdgeInsets.only(top: SpacePalette.sm),
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: ColorPalette.neutral300,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+          ),
+          // タイトル
+          Padding(
+            padding: EdgeInsets.all(SpacePalette.base),
+            child: Row(
+              children: [
+                Icon(Icons.upload, color: ColorPalette.neutral800, size: 24),
+                SizedBox(width: SpacePalette.sm),
+                Text('Submit Video', style: TextStylePalette.header),
+              ],
+            ),
+          ),
+          Divider(height: 1, color: ColorPalette.neutral200),
+          // コンテンツ
+          Flexible(
+            child: isLoading.value
+                ? Padding(
+                    padding: EdgeInsets.all(SpacePalette.lg),
+                    child: Center(
+                      child: CircularProgressIndicator(
+                        color: ColorPalette.neutral800,
+                      ),
+                    ),
+                  )
+                : campaigns.value.isEmpty
+                    ? Padding(
+                        padding: EdgeInsets.all(SpacePalette.lg),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.campaign_outlined,
+                              size: 48,
+                              color: ColorPalette.neutral400,
+                            ),
+                            SizedBox(height: SpacePalette.base),
+                            Text(
+                              'No campaigns yet',
+                              style: TextStylePalette.subText,
+                            ),
+                            SizedBox(height: SpacePalette.xs),
+                            Text(
+                              'Join campaigns from the Find tab!',
+                              style: TextStylePalette.smSubText,
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        padding: EdgeInsets.symmetric(
+                          vertical: SpacePalette.sm,
+                        ),
+                        itemCount: campaigns.value.length,
+                        separatorBuilder: (_, __) => Divider(
+                          height: 1,
+                          indent: SpacePalette.base + 48 + SpacePalette.sm,
+                          color: ColorPalette.neutral200,
+                        ),
+                        itemBuilder: (context, index) {
+                          final campaign = campaigns.value[index];
+                          return _CampaignTile(
+                            campaign: campaign,
+                            onTap: () {
+                              Navigator.pop(context);
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => ProjectUploadScreen(
+                                    campaignId: campaign.id,
+                                    campaignName: campaign.name,
+                                    organizerId: campaign.organizerId,
+                                    platforms: campaign.platforms,
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+          ),
+          SizedBox(height: MediaQuery.of(context).padding.bottom),
+        ],
+      ),
+    );
+  }
+}
+
+class _CampaignTile extends StatelessWidget {
+  final Campaign campaign;
+  final VoidCallback onTap;
+
+  const _CampaignTile({required this.campaign, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: SpacePalette.base,
+          vertical: SpacePalette.sm,
+        ),
+        child: Row(
+          children: [
+            // サムネイル
+            ClipRRect(
+              borderRadius: BorderRadius.circular(RadiusPalette.base),
+              child: Container(
+                width: 48,
+                height: 48,
+                color: ColorPalette.neutral200,
+                child: campaign.thumbnailUrl != null &&
+                        campaign.thumbnailUrl!.isNotEmpty
+                    ? Image.network(
+                        campaign.thumbnailUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => Icon(
+                          Icons.campaign,
+                          color: ColorPalette.neutral400,
+                        ),
+                      )
+                    : Icon(
+                        Icons.campaign,
+                        color: ColorPalette.neutral400,
+                      ),
+              ),
+            ),
+            SizedBox(width: SpacePalette.sm),
+            // キャンペーン情報
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    campaign.name,
+                    style: TextStylePalette.listTitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 2),
+                  Text(
+                    campaign.platforms.join(' · '),
+                    style: TextStylePalette.smSubText,
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 16,
+              color: ColorPalette.neutral400,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -110,13 +364,11 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 onTap: () => onTap(2),
               ),
               _GlassNavItem(
-                icon: Icons.chat_bubble_outline,
-                selectedIcon: Icons.chat_bubble_rounded,
-                label: 'Chat',
+                icon: Icons.work_outline,
+                selectedIcon: Icons.work_rounded,
+                label: 'Campaign',
                 isSelected: currentIndex == 3,
                 onTap: () => onTap(3),
-                showBadge: true,
-                badgeCount: 1,
               ),
               _GlassNavItem(
                 icon: Icons.person_outline_rounded,
