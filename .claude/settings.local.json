@@ -5,10 +5,12 @@
       "Bash(flutter pub get:*)",
       "Bash(dir:*)",
       "Bash(find:*)",
-      "mcp__supabase__execute_sql"
+      "mcp__supabase__execute_sql",
+      "mcp__supabase__deploy_edge_function"
     ]
   },
   "enabledMcpjsonServers": [
-    "supabase"
+    "supabase",
+    "stripe"
   ]
 }

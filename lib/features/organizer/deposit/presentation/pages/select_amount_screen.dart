@@ -2,13 +2,31 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
 import 'deposit_success_screen.dart';
+import '../../../payment/presentation/providers/payment_provider.dart';
+import '../../../payment/presentation/pages/payment_methods_screen.dart';
 
-class SelectAmountScreen extends HookWidget {
+class SelectAmountScreen extends HookConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final selectedAmount = useState<int>(10000);
     final isTotalExpanded = useState(false);
+    final isProcessing = useState(false);
+    final balance = ref.watch(walletBalanceProvider);
+
+    // Load balance on mount
+    useEffect(() {
+      Future.microtask(() async {
+        try {
+          final paymentService = ref.read(paymentServiceProvider);
+          final bal = await paymentService.getBalance();
+          ref.read(walletBalanceProvider.notifier).state = bal;
+        } catch (_) {}
+      });
+      return null;
+    }, []);
 
     String formatCurrency(int amount) {
       return '¥${amount.toString().replaceAllMapped(
@@ -35,6 +53,93 @@ class SelectAmountScreen extends HookWidget {
       return selectedAmount.value + calculatePlatformFee();
     }
 
+    Future<void> handleDeposit() async {
+      try {
+        isProcessing.value = true;
+        final paymentService = ref.read(paymentServiceProvider);
+
+        // Check if user has payment methods
+        final methods = await paymentService.listPaymentMethods();
+        if (methods.isEmpty) {
+          if (!context.mounted) return;
+          final shouldAdd = await showDialog<bool>(
+            context: context,
+            builder: (ctx) => AlertDialog(
+              title: Text('No Payment Method'),
+              content: Text('Please add a payment method first.'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, false),
+                  child: Text('Cancel'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(ctx, true),
+                  child: Text('Add Card'),
+                ),
+              ],
+            ),
+          );
+          if (shouldAdd == true && context.mounted) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const PaymentMethodsScreen()),
+            );
+          }
+          return;
+        }
+
+        // Create PaymentIntent
+        final result = await paymentService.createPaymentIntent(calculateTotal());
+        final clientSecret = result['client_secret']!;
+        final paymentIntentId = result['payment_intent_id']!;
+
+        // Present payment sheet
+        await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: clientSecret,
+            customerId: result['customer_id']!,
+            customerEphemeralKeySecret: result['ephemeral_key_secret']!,
+            merchantDisplayName: 'Zero Grid',
+            style: ThemeMode.light,
+          ),
+        );
+        await Stripe.instance.presentPaymentSheet();
+
+        // Confirm deposit on server
+        final newBalance = await paymentService.confirmDeposit(paymentIntentId);
+        ref.read(walletBalanceProvider.notifier).state = newBalance;
+
+        if (!context.mounted) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DepositSuccessScreen(
+              amount: calculateTotal(),
+            ),
+          ),
+        );
+      } on StripeException catch (e) {
+        if (e.error.code == FailureCode.Canceled) return;
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment failed: ${e.error.localizedMessage}'),
+            backgroundColor: ColorPalette.critical500,
+          ),
+        );
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Payment failed: $e'),
+            backgroundColor: ColorPalette.critical500,
+          ),
+        );
+      } finally {
+        isProcessing.value = false;
+      }
+    }
+
     return Scaffold(
       backgroundColor: ColorPalette.white,
       appBar: AppBar(
@@ -52,7 +157,7 @@ class SelectAmountScreen extends HookWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Balance Section - 両端まで伸びる（マージンなし、角丸なし）
+            // Balance Section
             Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(
@@ -80,7 +185,7 @@ class SelectAmountScreen extends HookWidget {
                   ),
                   SizedBox(height: SpacePalette.xs),
                   Text(
-                    '¥400,500',
+                    formatCurrency(balance),
                     style: TextStylePalette.header.copyWith(
                       color: ColorPalette.white,
                       fontSize: 28,
@@ -91,7 +196,7 @@ class SelectAmountScreen extends HookWidget {
               ),
             ),
 
-            // Deposit Amount Card (金額設定部分のみ)
+            // Deposit Amount Card
             Container(
               width: double.infinity,
               margin: EdgeInsets.all(SpacePalette.base),
@@ -119,11 +224,10 @@ class SelectAmountScreen extends HookWidget {
 
                   SizedBox(height: SpacePalette.lg),
 
-                  // Amount with +/- buttons (中央配置)
+                  // Amount with +/- buttons
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Minus button
                       GestureDetector(
                         onTap: decrementAmount,
                         child: Container(
@@ -140,8 +244,6 @@ class SelectAmountScreen extends HookWidget {
                           ),
                         ),
                       ),
-
-                      // Amount display
                       Container(
                         width: 160,
                         alignment: Alignment.center,
@@ -154,8 +256,6 @@ class SelectAmountScreen extends HookWidget {
                           ),
                         ),
                       ),
-
-                      // Plus button
                       GestureDetector(
                         onTap: incrementAmount,
                         child: Container(
@@ -213,7 +313,7 @@ class SelectAmountScreen extends HookWidget {
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
               child: Column(
                 children: [
-                  // 内訳 (展開時のみ表示)
+                  // Breakdown (expanded)
                   AnimatedCrossFade(
                     firstChild: SizedBox.shrink(),
                     secondChild: Column(
@@ -262,7 +362,7 @@ class SelectAmountScreen extends HookWidget {
                     duration: Duration(milliseconds: 200),
                   ),
 
-                  // Total (タップで展開)
+                  // Total
                   GestureDetector(
                     onTap: () => isTotalExpanded.value = !isTotalExpanded.value,
                     child: Row(
@@ -299,7 +399,7 @@ class SelectAmountScreen extends HookWidget {
               ),
             ),
 
-            // Deposit Button with solid shadow (角丸full)
+            // Deposit Button
             Padding(
               padding: EdgeInsets.fromLTRB(
                 SpacePalette.base,
@@ -313,7 +413,6 @@ class SelectAmountScreen extends HookWidget {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
                   boxShadow: [
-                    // ソリッドシャドウ（下にずらした黒い影）
                     BoxShadow(
                       color: ColorPalette.smashedPumpkin800,
                       offset: Offset(0, 4),
@@ -323,16 +422,7 @@ class SelectAmountScreen extends HookWidget {
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DepositSuccessScreen(
-                          amount: calculateTotal(),
-                        ),
-                      ),
-                    );
-                  },
+                  onPressed: isProcessing.value ? null : handleDeposit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.smashedPumpkin600,
                     foregroundColor: ColorPalette.white,
@@ -341,13 +431,22 @@ class SelectAmountScreen extends HookWidget {
                     ),
                     elevation: 0,
                   ),
-                  child: Text(
-                    'Deposit ${formatCurrency(selectedAmount.value)}',
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: isProcessing.value
+                      ? SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: ColorPalette.white,
+                          ),
+                        )
+                      : Text(
+                          'Deposit ${formatCurrency(selectedAmount.value)}',
+                          style: TextStylePalette.buttonTextWhite.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                 ),
               ),
             ),

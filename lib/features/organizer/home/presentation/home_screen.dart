@@ -1,13 +1,29 @@
 // lib/features/organizer/home/presentation/home_screen.dart
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
 import 'analytics_screen.dart';
 import '../../deposit/presentation/pages/select_amount_screen.dart';
+import '../../payment/presentation/providers/payment_provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends HookConsumerWidget {
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final balance = ref.watch(walletBalanceProvider);
+
+    // Load balance on mount
+    useEffect(() {
+      Future.microtask(() async {
+        try {
+          final paymentService = ref.read(paymentServiceProvider);
+          final bal = await paymentService.getBalance();
+          ref.read(walletBalanceProvider.notifier).state = bal;
+        } catch (_) {}
+      });
+      return null;
+    }, []);
     final statusBarHeight = MediaQuery.of(context).padding.top;
 
     return Scaffold(
@@ -16,7 +32,7 @@ class HomeScreen extends StatelessWidget {
         child: Column(
           children: [
             // ヘッダー（青いグラデーション）
-            _DashboardHeader(statusBarHeight: statusBarHeight),
+            _DashboardHeader(statusBarHeight: statusBarHeight, balance: balance),
 
             // コンテンツエリア
             Padding(
@@ -45,8 +61,16 @@ class HomeScreen extends StatelessWidget {
 // ダッシュボードヘッダー
 class _DashboardHeader extends StatelessWidget {
   final double statusBarHeight;
+  final int balance;
 
-  const _DashboardHeader({required this.statusBarHeight});
+  const _DashboardHeader({required this.statusBarHeight, required this.balance});
+
+  String _formatCurrency(int amount) {
+    return '¥${amount.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    )}';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,9 +102,9 @@ class _DashboardHeader extends StatelessWidget {
               ),
               SizedBox(height: SpacePalette.lg),
 
-              // Total Spent セクション
+              // Balance セクション
               Text(
-                'Total Spent',
+                'Balance',
                 style: TextStylePalette.normalText.copyWith(
                   color: ColorPalette.white.withOpacity(0.9),
                 ),
@@ -91,33 +115,16 @@ class _DashboardHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // 左側: 金額とバランス
+                  // 左側: 残高
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Text(
-                            '¥400,500',
-                            style: TextStylePalette.header.copyWith(
-                              color: ColorPalette.white,
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: SpacePalette.sm),
-                          Icon(
-                            Icons.visibility_outlined,
-                            color: ColorPalette.white.withOpacity(0.8),
-                            size: 24,
-                          ),
-                        ],
-                      ),
-                      SizedBox(height: SpacePalette.xs),
                       Text(
-                        'Balance: ¥200,000',
-                        style: TextStylePalette.normalText.copyWith(
-                          color: ColorPalette.white.withOpacity(0.8),
+                        _formatCurrency(balance),
+                        style: TextStylePalette.header.copyWith(
+                          color: ColorPalette.white,
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],

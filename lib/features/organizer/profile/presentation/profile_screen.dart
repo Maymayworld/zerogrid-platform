@@ -7,6 +7,8 @@ import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/user_profile_provider.dart';
 import '../../../auth/presentation/pages/select_role_screen.dart';
 import '../../deposit/presentation/pages/select_amount_screen.dart';
+import '../../payment/presentation/pages/payment_methods_screen.dart';
+import '../../payment/presentation/providers/payment_provider.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -16,6 +18,26 @@ class ProfileScreen extends HookConsumerWidget {
     final isBalanceVisible = useState(true);
     final profileState = ref.watch(userProfileProvider);
     final profile = profileState.profile;
+    final balance = ref.watch(walletBalanceProvider);
+
+    String formatCurrency(int amount) {
+      return '¥${amount.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      )}';
+    }
+
+    // Load balance on mount
+    useEffect(() {
+      Future.microtask(() async {
+        try {
+          final paymentService = ref.read(paymentServiceProvider);
+          final bal = await paymentService.getBalance();
+          ref.read(walletBalanceProvider.notifier).state = bal;
+        } catch (_) {}
+      });
+      return null;
+    }, []);
 
     Future<void> handleLogout() async {
       try {
@@ -149,7 +171,7 @@ class ProfileScreen extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
-                          isBalanceVisible.value ? '¥400,500' : '¥******',
+                          isBalanceVisible.value ? formatCurrency(balance) : '¥******',
                           style: TextStylePalette.header.copyWith(
                             color: ColorPalette.white,
                           ),
@@ -214,7 +236,14 @@ class ProfileScreen extends HookConsumerWidget {
               _ProfileMenuItem(
                 icon: Icons.payment_outlined,
                 label: 'Payment Methods',
-                onTap: () {},
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const PaymentMethodsScreen(),
+                    ),
+                  );
+                },
               ),
               _ProfileMenuItem(
                 icon: Icons.notifications_outlined,
