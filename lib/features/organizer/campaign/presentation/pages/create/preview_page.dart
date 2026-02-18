@@ -293,16 +293,30 @@ class PreviewPage extends HookConsumerWidget {
 
               // Postボタン
               SizedBox(height: SpacePalette.base),
-              SizedBox(
+              Container(
                 width: double.infinity,
-                height: 48,
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  boxShadow: canPost ? [
+                    BoxShadow(
+                      color: ColorPalette.smashedPumpkin800,
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
+                      spreadRadius: 0,
+                    ),
+                  ] : [],
+                ),
                 child: ElevatedButton(
                   onPressed: canPost && !isLoading.value ? handlePost : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: canPost ? ColorPalette.neutral800 : ColorPalette.neutral100,
+                    backgroundColor: canPost ? ColorPalette.smashedPumpkin600 : ColorPalette.neutral100,
+                    foregroundColor: ColorPalette.white,
+                    disabledBackgroundColor: ColorPalette.neutral100,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
                     ),
+                    elevation: 0,
                   ),
                   child: isLoading.value
                       ? SizedBox(
@@ -313,7 +327,10 @@ class PreviewPage extends HookConsumerWidget {
                       : Text(
                           'Post',
                           style: canPost
-                              ? TextStylePalette.buttonTextWhite
+                              ? TextStylePalette.buttonTextWhite.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                )
                               : TextStylePalette.buttonTextBlack.copyWith(
                                   color: ColorPalette.neutral400,
                                 ),

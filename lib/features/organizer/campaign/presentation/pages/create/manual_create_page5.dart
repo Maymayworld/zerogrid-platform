@@ -120,9 +120,20 @@ class ManualCreatePage5 extends HookConsumerWidget{
                 ),
               ),
               Spacer(),
-              SizedBox(
+              Container(
                 width: double.infinity,
-                height: 48,
+                height: 52,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorPalette.smashedPumpkin800,
+                      offset: Offset(0, 4),
+                      blurRadius: 0,
+                      spreadRadius: 0,
+                    ),
+                  ],
+                ),
                 child: ElevatedButton(
                   onPressed: () {
                     ref.read(projectProvider.notifier).setEndDate(timelineController.text);
@@ -134,14 +145,19 @@ class ManualCreatePage5 extends HookConsumerWidget{
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.neutral800,
+                    backgroundColor: ColorPalette.smashedPumpkin600,
+                    foregroundColor: ColorPalette.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
                     ),
+                    elevation: 0,
                   ),
                   child: Text(
                     'Next',
-                    style: TextStylePalette.buttonTextWhite
+                    style: TextStylePalette.buttonTextWhite.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),

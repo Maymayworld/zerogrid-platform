@@ -12,7 +12,6 @@ class SelectAmountScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedAmount = useState<int>(10000);
-    final isTotalExpanded = useState(false);
     final isProcessing = useState(false);
     final balance = ref.watch(walletBalanceProvider);
 
@@ -45,12 +44,8 @@ class SelectAmountScreen extends HookConsumerWidget {
       }
     }
 
-    int calculatePlatformFee() {
-      return (selectedAmount.value * 0.1).round();
-    }
-
     int calculateTotal() {
-      return selectedAmount.value + calculatePlatformFee();
+      return selectedAmount.value;
     }
 
     Future<void> handleDeposit() async {
@@ -311,93 +306,23 @@ class SelectAmountScreen extends HookConsumerWidget {
             // Bottom Section (Total & Button)
             Padding(
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
-              child: Column(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Breakdown (expanded)
-                  AnimatedCrossFade(
-                    firstChild: SizedBox.shrink(),
-                    secondChild: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Deposit amount',
-                              style: TextStylePalette.smText.copyWith(
-                                color: ColorPalette.neutral500,
-                              ),
-                            ),
-                            Text(
-                              formatCurrency(selectedAmount.value),
-                              style: TextStylePalette.smText.copyWith(
-                                color: ColorPalette.neutral600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: SpacePalette.sm),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'Platform fee',
-                              style: TextStylePalette.smText.copyWith(
-                                color: ColorPalette.neutral500,
-                              ),
-                            ),
-                            Text(
-                              formatCurrency(calculatePlatformFee()),
-                              style: TextStylePalette.smText.copyWith(
-                                color: ColorPalette.neutral600,
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: SpacePalette.base),
-                      ],
-                    ),
-                    crossFadeState: isTotalExpanded.value
-                      ? CrossFadeState.showSecond
-                      : CrossFadeState.showFirst,
-                    duration: Duration(milliseconds: 200),
-                  ),
-
-                  // Total
-                  GestureDetector(
-                    onTap: () => isTotalExpanded.value = !isTotalExpanded.value,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              'Total',
-                              style: TextStylePalette.normalText.copyWith(
-                                color: ColorPalette.neutral600,
-                              ),
-                            ),
-                            SizedBox(width: SpacePalette.xs),
-                            Icon(
-                              isTotalExpanded.value
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                              size: 20,
-                              color: ColorPalette.neutral600,
-                            ),
-                          ],
-                        ),
-                        Text(
-                          formatCurrency(calculateTotal()),
-                          style: TextStylePalette.smTitle,
-                        ),
-                      ],
+                  Text(
+                    'Total',
+                    style: TextStylePalette.normalText.copyWith(
+                      color: ColorPalette.neutral600,
                     ),
                   ),
-
-                  SizedBox(height: SpacePalette.base),
+                  Text(
+                    formatCurrency(calculateTotal()),
+                    style: TextStylePalette.smTitle,
+                  ),
                 ],
               ),
             ),
+            SizedBox(height: SpacePalette.base),
 
             // Deposit Button
             Padding(
