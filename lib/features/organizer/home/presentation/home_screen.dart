@@ -7,6 +7,7 @@ import '../../../../shared/theme/app_theme.dart';
 import 'analytics_screen.dart';
 import '../../deposit/presentation/pages/select_amount_screen.dart';
 import '../../payment/presentation/providers/payment_provider.dart';
+import 'providers/organizer_stats_provider.dart';
 
 class HomeScreen extends HookConsumerWidget {
   @override
@@ -175,9 +176,23 @@ class _DashboardHeader extends StatelessWidget {
 }
 
 // Cumulative Total Views カード
-class _ViewsCard extends StatelessWidget {
+class _ViewsCard extends ConsumerWidget {
+  String _formatNumber(int num) {
+    if (num >= 1000000) {
+      return '${(num / 1000000).toStringAsFixed(1)}M';
+    } else if (num >= 1000) {
+      return '${num.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      )}';
+    }
+    return num.toString();
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final totalViewsAsync = ref.watch(totalViewsProvider);
+
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
@@ -213,10 +228,10 @@ class _ViewsCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Text('Today', style: TextStylePalette.smText),
+                    Text('All Time', style: TextStylePalette.smText),
                     SizedBox(width: SpacePalette.xs),
                     Icon(
-                      Icons.keyboard_arrow_down,
+                      Icons.insights,
                       size: 16,
                       color: ColorPalette.neutral600,
                     ),
@@ -238,50 +253,32 @@ class _ViewsCard extends StatelessWidget {
 
           SizedBox(height: SpacePalette.xs),
 
-          // 数値とトレンド
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Text(
-                '912,400',
-                style: TextStylePalette.header.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
+          // 数値
+          totalViewsAsync.when(
+            data: (totalViews) => Text(
+              _formatNumber(totalViews),
+              style: TextStylePalette.header.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-              SizedBox(width: SpacePalette.sm),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SpacePalette.sm,
-                  vertical: SpacePalette.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: ColorPalette.critical50,
-                  borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.trending_down,
-                      size: 14,
-                      color: ColorPalette.critical500,
-                    ),
-                    SizedBox(width: 2),
-                    Text(
-                      '-21,9%',
-                      style: TextStylePalette.smText.copyWith(
-                        color: ColorPalette.critical500,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            loading: () => Text(
+              '---',
+              style: TextStylePalette.header.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-            ],
+            ),
+            error: (_, __) => Text(
+              'Error',
+              style: TextStylePalette.header.copyWith(
+                fontWeight: FontWeight.bold,
+                color: ColorPalette.critical500,
+              ),
+            ),
           ),
 
           SizedBox(height: SpacePalette.lg),
 
-          // グラフ
+          // グラフ（プレースホルダー）
           SizedBox(
             height: 150,
             child: LineChart(
@@ -307,9 +304,9 @@ class _ViewsCard extends StatelessWidget {
                       getTitlesWidget: (value, meta) {
                         String text;
                         if (value == 0) {
-                          text = '¥0';
+                          text = '0';
                         } else {
-                          text = '${(value / 1000).toInt()} K';
+                          text = '${(value / 1000).toInt()}K';
                         }
                         return Text(
                           text,
@@ -322,26 +319,7 @@ class _ViewsCard extends StatelessWidget {
                     ),
                   ),
                   bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 30,
-                      getTitlesWidget: (value, meta) {
-                        const times = ['12:00 AM', '10:00 AM', '08:00 PM'];
-                        if (value.toInt() >= 0 && value.toInt() < times.length) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: SpacePalette.sm),
-                            child: Text(
-                              times[value.toInt()],
-                              style: TextStylePalette.smSubText.copyWith(
-                                fontSize: 10,
-                                color: ColorPalette.neutral400,
-                              ),
-                            ),
-                          );
-                        }
-                        return const SizedBox.shrink();
-                      },
-                    ),
+                    sideTitles: SideTitles(showTitles: false),
                   ),
                   rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                   topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
@@ -350,12 +328,9 @@ class _ViewsCard extends StatelessWidget {
                 lineBarsData: [
                   LineChartBarData(
                     spots: [
-                      FlSpot(0, 80000),
-                      FlSpot(0.5, 90000),
-                      FlSpot(1, 70000),
-                      FlSpot(1.3, 140000),
-                      FlSpot(1.6, 110000),
-                      FlSpot(2, 50000),
+                      FlSpot(0, 0),
+                      FlSpot(1, 0),
+                      FlSpot(2, 0),
                     ],
                     isCurved: true,
                     curveSmoothness: 0.35,
@@ -390,9 +365,42 @@ class _ViewsCard extends StatelessWidget {
 }
 
 // Your Projects カード
-class _ProjectsCard extends StatelessWidget {
+class _ProjectsCard extends ConsumerWidget {
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return ColorPalette.smashedPumpkin600;
+      case 'completed':
+        return ColorPalette.positive500;
+      case 'draft':
+        return ColorPalette.neutral500;
+      default:
+        return ColorPalette.neutral500;
+    }
+  }
+
+  Color _getStatusBgColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return ColorPalette.smashedPumpkin100;
+      case 'completed':
+        return ColorPalette.positive50;
+      case 'draft':
+        return ColorPalette.neutral200;
+      default:
+        return ColorPalette.neutral200;
+    }
+  }
+
+  String _capitalizeStatus(String status) {
+    if (status.isEmpty) return status;
+    return status[0].toUpperCase() + status.substring(1).toLowerCase();
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final campaignsAsync = ref.watch(myCampaignStatsProvider);
+
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
@@ -440,29 +448,64 @@ class _ProjectsCard extends StatelessWidget {
           Divider(color: ColorPalette.neutral200, height: 1),
 
           // プロジェクトリスト
-          _ProjectListItem(
-            imageUrl: 'assets/project1.png',
-            projectName: 'Project Armin',
-            budget: '¥100 K',
-            status: 'Active',
-            statusColor: ColorPalette.smashedPumpkin600,
-            statusBgColor: ColorPalette.smashedPumpkin100,
-          ),
-          _ProjectListItem(
-            imageUrl: 'assets/project2.png',
-            projectName: 'Project Mikasa',
-            budget: '¥100 K',
-            status: 'Completed',
-            statusColor: ColorPalette.positive500,
-            statusBgColor: ColorPalette.positive50,
-          ),
-          _ProjectListItem(
-            imageUrl: 'assets/project3.png',
-            projectName: 'Project Annie\nLeonhart',
-            budget: '¥100 K',
-            status: 'Active',
-            statusColor: ColorPalette.smashedPumpkin600,
-            statusBgColor: ColorPalette.smashedPumpkin100,
+          campaignsAsync.when(
+            data: (campaigns) {
+              if (campaigns.isEmpty) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(vertical: SpacePalette.lg),
+                  child: Center(
+                    child: Column(
+                      children: [
+                        Icon(
+                          Icons.campaign_outlined,
+                          size: 48,
+                          color: ColorPalette.neutral400,
+                        ),
+                        SizedBox(height: SpacePalette.sm),
+                        Text(
+                          'No campaigns yet',
+                          style: TextStylePalette.normalText.copyWith(
+                            color: ColorPalette.neutral500,
+                          ),
+                        ),
+                        Text(
+                          'Create your first campaign to get started',
+                          style: TextStylePalette.listLeading,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+              return Column(
+                children: campaigns.take(5).map((campaign) => _ProjectListItem(
+                  campaignId: campaign.id,
+                  imageUrl: campaign.thumbnailUrl,
+                  projectName: campaign.name,
+                  budget: campaign.formattedBudget,
+                  totalViews: campaign.formattedViews,
+                  progressPercentage: campaign.progressPercentage,
+                  status: _capitalizeStatus(campaign.status),
+                  statusColor: _getStatusColor(campaign.status),
+                  statusBgColor: _getStatusBgColor(campaign.status),
+                )).toList(),
+              );
+            },
+            loading: () => Padding(
+              padding: EdgeInsets.symmetric(vertical: SpacePalette.lg),
+              child: Center(child: CircularProgressIndicator()),
+            ),
+            error: (_, __) => Padding(
+              padding: EdgeInsets.symmetric(vertical: SpacePalette.lg),
+              child: Center(
+                child: Text(
+                  'Failed to load campaigns',
+                  style: TextStylePalette.normalText.copyWith(
+                    color: ColorPalette.critical500,
+                  ),
+                ),
+              ),
+            ),
           ),
         ],
       ),
@@ -471,17 +514,23 @@ class _ProjectsCard extends StatelessWidget {
 }
 
 class _ProjectListItem extends StatelessWidget {
-  final String imageUrl;
+  final String campaignId;
+  final String? imageUrl;
   final String projectName;
   final String budget;
+  final String totalViews;
+  final double progressPercentage;
   final String status;
   final Color statusColor;
   final Color statusBgColor;
 
   const _ProjectListItem({
-    required this.imageUrl,
+    required this.campaignId,
+    this.imageUrl,
     required this.projectName,
     required this.budget,
+    required this.totalViews,
+    required this.progressPercentage,
     required this.status,
     required this.statusColor,
     required this.statusBgColor,
@@ -520,19 +569,21 @@ class _ProjectListItem extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(RadiusPalette.base),
-                child: Image.network(
-                  'https://picsum.photos/seed/${projectName.hashCode}/100',
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Icon(Icons.image, color: ColorPalette.neutral400);
-                  },
-                ),
+                child: imageUrl != null
+                    ? Image.network(
+                        imageUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(Icons.campaign, color: ColorPalette.neutral400);
+                        },
+                      )
+                    : Icon(Icons.campaign, color: ColorPalette.neutral400),
               ),
             ),
 
             SizedBox(width: SpacePalette.inner),
 
-            // 名前とバジェット
+            // 名前と統計
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -540,19 +591,47 @@ class _ProjectListItem extends StatelessWidget {
                   Text(
                     projectName,
                     style: TextStylePalette.listTitle,
-                    maxLines: 2,
+                    maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: SpacePalette.xs),
-                  Text(
-                    'Budget: $budget',
-                    style: TextStylePalette.listLeading.copyWith(
-                      color: ColorPalette.neutral500,
+                  Row(
+                    children: [
+                      Text(
+                        'Budget: $budget',
+                        style: TextStylePalette.listLeading.copyWith(
+                          color: ColorPalette.neutral500,
+                        ),
+                      ),
+                      SizedBox(width: SpacePalette.sm),
+                      Icon(Icons.visibility, size: 12, color: ColorPalette.neutral400),
+                      SizedBox(width: 2),
+                      Text(
+                        totalViews,
+                        style: TextStylePalette.listLeading.copyWith(
+                          color: ColorPalette.neutral500,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: SpacePalette.xs),
+                  // 進捗バー
+                  LinearProgressIndicator(
+                    value: progressPercentage / 100,
+                    backgroundColor: ColorPalette.neutral200,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      progressPercentage >= 100 
+                          ? ColorPalette.positive500 
+                          : ColorPalette.smashedPumpkin500,
                     ),
+                    minHeight: 4,
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 ],
               ),
             ),
+
+            SizedBox(width: SpacePalette.sm),
 
             // ステータスバッジ
             Container(

@@ -2,6 +2,8 @@
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../data/services/organizer_stats_service.dart';
 
+export '../../data/services/organizer_stats_service.dart' show CampaignStats;
+
 final organizerStatsServiceProvider = Provider<OrganizerStatsService>((ref) {
   return OrganizerStatsService();
 });

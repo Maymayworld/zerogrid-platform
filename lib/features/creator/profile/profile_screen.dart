@@ -13,6 +13,7 @@ import '../submission/presentation/pages/connected_accounts_screen.dart';
 import 'data/models/bank_account.dart';
 import 'presentation/providers/bank_account_provider.dart';
 import 'presentation/pages/bank_account_screen.dart';
+import '../earnings/presentation/pages/earnings_screen.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -140,6 +141,20 @@ class ProfileScreen extends HookConsumerWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const BankAccountScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.payments_outlined,
+                    iconBackgroundColor: const Color(0xFFE8F5E9),
+                    iconColor: const Color(0xFF4CAF50),
+                    label: 'Earnings',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EarningsScreen(),
                         ),
                       );
                     },
