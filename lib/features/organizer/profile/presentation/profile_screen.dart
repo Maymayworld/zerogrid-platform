@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/profile_menu_section.dart';
 import '../../../auth/presentation/providers/auth_provider.dart';
 import '../../../auth/presentation/providers/user_profile_provider.dart';
 import '../../../auth/presentation/pages/select_role_screen.dart';
@@ -66,8 +67,8 @@ class ProfileScreen extends HookConsumerWidget {
           child: Column(
             children: [
               SizedBox(height: SpacePalette.lg),
-              
-              // プロフィール写真
+
+              // Profile avatar
               Stack(
                 children: [
                   CircleAvatar(
@@ -116,28 +117,28 @@ class ProfileScreen extends HookConsumerWidget {
                 ],
               ),
               SizedBox(height: SpacePalette.lg),
-              
-              // 名前（DBから）
+
+              // Name
               Text(
                 profile?.displayName ?? 'Loading...',
                 style: TextStylePalette.smallHeader,
               ),
               SizedBox(height: SpacePalette.sm),
-              
-              // ユーザーネーム
+
+              // Username
               Text(
                 '@${profile?.username ?? ''}',
                 style: TextStylePalette.subText,
               ),
               SizedBox(height: SpacePalette.xs),
-              
-              // ロール
+
+              // Role
               Text(
                 'Organizer',
                 style: TextStylePalette.smSubText,
               ),
               SizedBox(height: SpacePalette.lg),
-              
+
               // My Wallet Card
               Container(
                 width: double.infinity,
@@ -231,91 +232,102 @@ class ProfileScreen extends HookConsumerWidget {
                 ),
               ),
               SizedBox(height: SpacePalette.lg),
-              
-              // メニュー項目
-              _ProfileMenuItem(
-                icon: Icons.payment_outlined,
-                label: 'Payment Methods',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const PaymentMethodsScreen(),
-                    ),
-                  );
-                },
-              ),
-              _ProfileMenuItem(
-                icon: Icons.notifications_outlined,
-                label: 'Notification Preferences',
-                onTap: () {},
-              ),
-              _ProfileMenuItem(
-                icon: Icons.feedback_outlined,
-                label: 'Give Feedback',
-                onTap: () {},
-              ),
-              
-              SizedBox(height: SpacePalette.base),
-              
-              // Logout Button
-              GestureDetector(
-                onTap: handleLogout,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
-                  child: Row(
-                    children: [
-                      Icon(Icons.logout, size: 20, color: ColorPalette.critical500),
-                      SizedBox(width: SpacePalette.base),
-                      Text(
-                        'Logout',
-                        style: TextStylePalette.bigText.copyWith(
-                          color: ColorPalette.critical500,
-                        ),
-                      ),
-                    ],
+
+              // Account section
+              ProfileMenuSection(
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.person_outlined,
+                    iconBackgroundColor: ColorPalette.smashedPumpkin100,
+                    iconColor: ColorPalette.smashedPumpkin600,
+                    label: 'Account Settings',
+                    onTap: () {},
                   ),
-                ),
+                  ProfileMenuItem(
+                    icon: Icons.payment_outlined,
+                    iconBackgroundColor: const Color(0xFFE8F5E9),
+                    iconColor: const Color(0xFF4CAF50),
+                    label: 'Payment',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const PaymentMethodsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
-              
+              SizedBox(height: SpacePalette.base),
+
+              // Preferences section
+              ProfileMenuSection(
+                header: 'Preferences',
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.notifications_outlined,
+                    iconBackgroundColor: const Color(0xFFFFF3E0),
+                    iconColor: const Color(0xFFFF9800),
+                    label: 'Notifications',
+                    onTap: () {},
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.verified_user_outlined,
+                    iconBackgroundColor: const Color(0xFFE3F2FD),
+                    iconColor: const Color(0xFF2196F3),
+                    label: 'Permissions',
+                    onTap: () {},
+                  ),
+                ],
+              ),
+              SizedBox(height: SpacePalette.base),
+
+              // Resources section
+              ProfileMenuSection(
+                header: 'Resources',
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.headset_mic_outlined,
+                    iconBackgroundColor: const Color(0xFFF3E5F5),
+                    iconColor: const Color(0xFF9C27B0),
+                    label: 'Contact Support',
+                    onTap: () {},
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.star_outline,
+                    iconBackgroundColor: const Color(0xFFFFF8E1),
+                    iconColor: const Color(0xFFFFC107),
+                    label: 'Rate in App Store',
+                    onTap: () {},
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.alternate_email,
+                    iconBackgroundColor: ColorPalette.neutral100,
+                    iconColor: ColorPalette.neutral800,
+                    label: 'Follow @ZeroGrid',
+                    onTap: () {},
+                  ),
+                ],
+              ),
+              SizedBox(height: SpacePalette.base),
+
+              // Sign Out section
+              ProfileMenuSection(
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.power_settings_new,
+                    label: 'Sign Out',
+                    isDestructive: true,
+                    showChevron: false,
+                    onTap: handleLogout,
+                  ),
+                ],
+              ),
+
               SizedBox(height: 80),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ProfileMenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(color: ColorPalette.neutral200, width: 1),
-          ),
-        ),
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: ColorPalette.neutral800),
-            SizedBox(width: SpacePalette.base),
-            Expanded(child: Text(label, style: TextStylePalette.bigText)),
-            Icon(Icons.chevron_right, size: 20, color: ColorPalette.neutral400),
-          ],
         ),
       ),
     );

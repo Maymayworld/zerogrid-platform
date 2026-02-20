@@ -11,6 +11,7 @@ import '../../../../../shared/widgets/common_search_bar.dart';
 import '../widgets/notification_sheet.dart';
 import '../widgets/filter_chip_widget.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
+import '../../../../../shared/presentation/providers/notification_provider.dart';
 
 class FindScreen extends HookConsumerWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -145,10 +146,44 @@ class FindScreen extends HookConsumerWidget {
                         builder: (context) => NotificationSheet(),
                       );
                     },
-                    child: Icon(
-                      Icons.notifications_outlined,
-                      size: 24,
-                      color: ColorPalette.neutral800,
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Icon(
+                          Icons.notifications_outlined,
+                          size: 24,
+                          color: ColorPalette.neutral800,
+                        ),
+                        if (ref.watch(unreadNotificationCountProvider) > 0)
+                          Positioned(
+                            right: -4,
+                            top: -4,
+                            child: Container(
+                              width: 16,
+                              height: 16,
+                              decoration: BoxDecoration(
+                                color: ColorPalette.critical500,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: ColorPalette.neutral100,
+                                  width: 2,
+                                ),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  ref.watch(unreadNotificationCountProvider) > 9
+                                      ? '9+'
+                                      : ref.watch(unreadNotificationCountProvider).toString(),
+                                  style: TextStyle(
+                                    color: ColorPalette.white,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],

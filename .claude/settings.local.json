@@ -6,7 +6,10 @@
       "Bash(dir:*)",
       "Bash(find:*)",
       "mcp__supabase__execute_sql",
-      "mcp__supabase__deploy_edge_function"
+      "mcp__supabase__deploy_edge_function",
+      "mcp__supabase__list_tables",
+      "mcp__supabase__apply_migration",
+      "Bash(findstr:*)"
     ]
   },
   "enabledMcpjsonServers": [

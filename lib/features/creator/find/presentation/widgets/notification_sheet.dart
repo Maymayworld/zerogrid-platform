@@ -1,14 +1,17 @@
-// lib/screens/creator/find/widgets/notification_sheet.dart
+// lib/features/creator/find/presentation/widgets/notification_sheet.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/presentation/providers/notification_provider.dart';
 import 'notification_list_tile.dart';
 
-class NotificationSheet extends StatelessWidget {
+class NotificationSheet extends HookConsumerWidget {
   const NotificationSheet({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final notificationsAsync = ref.watch(notificationsStreamProvider);
+
     return Container(
       height: MediaQuery.of(context).size.height,
       decoration: BoxDecoration(
@@ -41,12 +44,26 @@ class NotificationSheet extends StatelessWidget {
                     child: Center(
                       child: Text(
                         'Notification',
-                        style: TextStylePalette.title
+                        style: TextStylePalette.title,
                       ),
                     ),
                   ),
-                  // 右側のスペース（戻るボタンと対称にするため）
-                  SizedBox(width: 40),
+                  // Mark all as read ボタン
+                  GestureDetector(
+                    onTap: () async {
+                      final service = ref.read(notificationServiceProvider);
+                      await service.markAllAsRead();
+                    },
+                    behavior: HitTestBehavior.opaque,
+                    child: Container(
+                      padding: EdgeInsets.all(8),
+                      child: Icon(
+                        Icons.done_all,
+                        size: 24,
+                        color: ColorPalette.neutral800,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -58,26 +75,63 @@ class NotificationSheet extends StatelessWidget {
             ),
             // 通知リスト
             Expanded(
-              child: ListView.separated(
-                padding: EdgeInsets.zero,
-                itemCount: _mockNotifications.length,
-                separatorBuilder: (context, index) => Divider(
-                  color: ColorPalette.neutral200,
-                  height: 1,
-                  thickness: 1,
-                  indent: 0,
-                  endIndent: 0,
-                ),
-                itemBuilder: (context, index) {
-                  final notification = _mockNotifications[index];
-                  return NotificationListTile(
-                    categoryIcon: notification['icon'] as IconData,
-                    title: notification['title'] as String,
-                    description: notification['description'] as String,
-                    dateTime: notification['dateTime'] as String,
-                    isUnread: notification['isUnread'] as bool,
+              child: notificationsAsync.when(
+                data: (notifications) {
+                  if (notifications.isEmpty) {
+                    return Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.notifications_none,
+                            size: 64,
+                            color: ColorPalette.neutral300,
+                          ),
+                          SizedBox(height: SpacePalette.base),
+                          Text(
+                            'No notifications yet',
+                            style: TextStylePalette.subText,
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+
+                  return ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: notifications.length,
+                    separatorBuilder: (context, index) => Divider(
+                      color: ColorPalette.neutral200,
+                      height: 1,
+                      thickness: 1,
+                      indent: 0,
+                      endIndent: 0,
+                    ),
+                    itemBuilder: (context, index) {
+                      final notification = notifications[index];
+                      return NotificationListTile(
+                        notification: notification,
+                        onTap: () async {
+                          if (!notification.isRead) {
+                            final service = ref.read(notificationServiceProvider);
+                            await service.markAsRead(notification.id);
+                          }
+                        },
+                      );
+                    },
                   );
                 },
+                loading: () => Center(
+                  child: CircularProgressIndicator(
+                    color: ColorPalette.neutral800,
+                  ),
+                ),
+                error: (e, _) => Center(
+                  child: Text(
+                    'Failed to load notifications',
+                    style: TextStylePalette.subText,
+                  ),
+                ),
               ),
             ),
           ],
@@ -86,56 +140,3 @@ class NotificationSheet extends StatelessWidget {
     );
   }
 }
-
-// モックデータ
-final List<Map<String, dynamic>> _mockNotifications = [
-  {
-    'icon': Icons.grid_view_outlined,
-    'title': 'Category',
-    'description': 'Title\nDescription',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': true,
-  },
-  {
-    'icon': Icons.grid_view_outlined,
-    'title': 'Category',
-    'description': 'Title\nDescription',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': true,
-  },
-  {
-    'icon': Icons.grid_view_outlined,
-    'title': 'Category',
-    'description': 'Title\nDescription',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': true,
-  },
-  {
-    'icon': Icons.error_outline,
-    'title': 'Project Name',
-    'description': 'Your project has reached 75% of the target\nYou have a remaining budget of ¥1,000 to use.',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': false,
-  },
-  {
-    'icon': Icons.grid_view_outlined,
-    'title': 'Category',
-    'description': 'Title\nDescription',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': false,
-  },
-  {
-    'icon': Icons.notifications_outlined,
-    'title': 'Project Name',
-    'description': 'Title\nDescription',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': false,
-  },
-  {
-    'icon': Icons.grid_view_outlined,
-    'title': 'Category',
-    'description': 'Title\nDescription',
-    'dateTime': 'Nov 28, 2025 09:41 PM',
-    'isUnread': false,
-  },
-];

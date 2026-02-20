@@ -1,93 +1,136 @@
-// lib/screens/creator/find/widgets/notification_list_tile.dart
+// lib/features/creator/find/presentation/widgets/notification_list_tile.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/data/models/app_notification.dart';
 
 class NotificationListTile extends StatelessWidget {
-  final IconData categoryIcon;
-  final String title;
-  final String description;
-  final String dateTime;
-  final bool isUnread;
+  final AppNotification notification;
+  final VoidCallback? onTap;
 
   const NotificationListTile({
     Key? key,
-    required this.categoryIcon,
-    required this.title,
-    required this.description,
-    required this.dateTime,
-    this.isUnread = false,
+    required this.notification,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: SpacePalette.base,
-        vertical: SpacePalette.inner,
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // カテゴリーアイコン
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: ColorPalette.white,
-              borderRadius: BorderRadius.circular(8),
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(
+          horizontal: SpacePalette.base,
+          vertical: SpacePalette.inner,
+        ),
+        color: notification.isRead ? null : ColorPalette.smashedPumpkin600.withOpacity(0.05),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // カテゴリーアイコン
+            Container(
+              width: 40,
+              height: 40,
+              decoration: BoxDecoration(
+                color: ColorPalette.white,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                _getIcon(notification.type),
+                size: 20,
+                color: _getIconColor(notification.type),
+              ),
             ),
-            child: Icon(
-              categoryIcon,
-              size: 20,
-              color: ColorPalette.neutral800,
-            ),
-          ),
-          SizedBox(width: SpacePalette.base),
-          // タイトルと説明
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        title,
-                        style: TextStylePalette.listTitle
-                      ),
-                    ),
-                    // 未読インジケーター
-                    if (isUnread)
-                      Container(
-                        width: 8,
-                        height: 8,
-                        margin: EdgeInsets.only(left: SpacePalette.sm),
-                        decoration: BoxDecoration(
-                          color: ColorPalette.positive500,
-                          shape: BoxShape.circle,
+            SizedBox(width: SpacePalette.base),
+            // タイトルと説明
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          notification.title,
+                          style: TextStylePalette.listTitle,
                         ),
                       ),
-                  ],
-                ),
-                SizedBox(height: SpacePalette.xs),
-                Text(
-                  description,
-                  style: TextStylePalette.listLeading,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+                      // 未読インジケーター
+                      if (!notification.isRead)
+                        Container(
+                          width: 8,
+                          height: 8,
+                          margin: EdgeInsets.only(left: SpacePalette.sm),
+                          decoration: BoxDecoration(
+                            color: ColorPalette.smashedPumpkin600,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                    ],
+                  ),
+                  SizedBox(height: SpacePalette.xs),
+                  Text(
+                    notification.body,
+                    style: TextStylePalette.listLeading,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(width: SpacePalette.sm),
-          // 日時
-          Text(
-            dateTime,
-            style: TextStylePalette.smSubText
-          ),
-        ],
+            SizedBox(width: SpacePalette.sm),
+            // 相対時間
+            Text(
+              _formatRelativeTime(notification.createdAt),
+              style: TextStylePalette.smSubText,
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  IconData _getIcon(String type) {
+    switch (type) {
+      case 'campaign_joined':
+        return Icons.person_add_outlined;
+      case 'submission_created':
+        return Icons.upload_outlined;
+      case 'submission_approved':
+        return Icons.check_circle_outline;
+      case 'submission_rejected':
+        return Icons.cancel_outlined;
+      case 'new_message':
+        return Icons.chat_bubble_outline;
+      default:
+        return Icons.notifications_outlined;
+    }
+  }
+
+  Color _getIconColor(String type) {
+    switch (type) {
+      case 'campaign_joined':
+        return ColorPalette.smashedPumpkin600;
+      case 'submission_created':
+        return ColorPalette.neutral800;
+      case 'submission_approved':
+        return ColorPalette.positive500;
+      case 'submission_rejected':
+        return ColorPalette.critical500;
+      case 'new_message':
+        return ColorPalette.neutral800;
+      default:
+        return ColorPalette.neutral500;
+    }
+  }
+
+  String _formatRelativeTime(DateTime dateTime) {
+    final now = DateTime.now();
+    final diff = now.difference(dateTime);
+
+    if (diff.inMinutes < 1) return 'Now';
+    if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+    if (diff.inHours < 24) return '${diff.inHours}h ago';
+    if (diff.inDays < 7) return '${diff.inDays}d ago';
+    return '${dateTime.month}/${dateTime.day}';
   }
 }

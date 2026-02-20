@@ -1,6 +1,7 @@
 // lib/features/creator/submission/data/services/submission_service.dart
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/submission.dart';
+import '../../../../../shared/data/services/notification_service.dart';
 
 class SubmissionService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -36,6 +37,35 @@ class SubmissionService {
       }).select().single();
 
       submissions.add(Submission.fromMap(response));
+    }
+
+    // Organizerに提出通知を送る
+    if (submissions.isNotEmpty) {
+      final campaignResponse = await _supabase
+          .from('campaigns')
+          .select('name')
+          .eq('id', campaignId)
+          .limit(1);
+      final campaignName = (campaignResponse as List).isNotEmpty
+          ? campaignResponse[0]['name'] as String? ?? ''
+          : '';
+
+      final creatorProfile = await _supabase
+          .from('profiles')
+          .select('display_name')
+          .eq('id', _userId!)
+          .limit(1);
+      final creatorName = (creatorProfile as List).isNotEmpty
+          ? creatorProfile[0]['display_name'] as String? ?? 'A creator'
+          : 'A creator';
+
+      await NotificationService().createNotification(
+        userId: organizerId,
+        type: 'submission_created',
+        title: 'New Submission',
+        body: '$creatorName submitted content for "$campaignName"',
+        data: {'campaign_id': campaignId, 'campaign_name': campaignName},
+      );
     }
 
     return submissions;

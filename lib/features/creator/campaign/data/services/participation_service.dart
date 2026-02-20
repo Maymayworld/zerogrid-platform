@@ -2,6 +2,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../../../shared/data/services/chat_service.dart';
+import '../../../../../shared/data/services/notification_service.dart';
 
 class ParticipationService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -20,13 +21,14 @@ class ParticipationService {
       'status': 'active',
     });
 
-    // 2. 案件情報を取得してorganizer_idを得る
+    // 2. 案件情報を取得してorganizer_idとcampaign名を得る
     final campaignResponse = await _supabase
         .from('campaigns')
-        .select('organizer_id')
+        .select('organizer_id, name')
         .eq('id', campaignId)
         .single();
     final organizerId = campaignResponse['organizer_id'] as String;
+    final campaignName = campaignResponse['name'] as String? ?? '';
 
     // 3. グループチャットルームを取得or作成
     final groupRoom = await _chatService.getOrCreateGroupRoom(campaignId);
@@ -46,6 +48,24 @@ class ParticipationService {
     // 7. 1:1チャットにクリエイターとOrganizerを追加
     await _chatService.addMemberToRoom(personalRoom.id, _userId!);
     await _chatService.addMemberToRoom(personalRoom.id, organizerId);
+
+    // 8. OrganizerにCreator参加を通知
+    final creatorProfile = await _supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', _userId!)
+        .limit(1);
+    final creatorName = (creatorProfile as List).isNotEmpty
+        ? creatorProfile[0]['display_name'] as String? ?? 'Someone'
+        : 'Someone';
+
+    await NotificationService().createNotification(
+      userId: organizerId,
+      type: 'campaign_joined',
+      title: 'New Participant',
+      body: '$creatorName joined your campaign "$campaignName"',
+      data: {'campaign_id': campaignId, 'campaign_name': campaignName},
+    );
   }
 
   /// 参加をキャンセル

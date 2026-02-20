@@ -96,10 +96,10 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen>
 
     switch (direction) {
       case SwipeDirection.right:
-        await notifier.approve(request.id);
+        await notifier.approve(request.id, request: request);
         break;
       case SwipeDirection.left:
-        await notifier.reject(request.id);
+        await notifier.reject(request.id, request: request);
         break;
       case SwipeDirection.up:
         await notifier.skip(request.id);

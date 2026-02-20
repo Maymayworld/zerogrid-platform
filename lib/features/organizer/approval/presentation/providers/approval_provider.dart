@@ -3,6 +3,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/approval_request.dart';
 import '../../data/services/approval_service.dart';
+import '../../../../../shared/data/services/notification_service.dart';
 
 // Service provider
 final approvalServiceProvider = Provider<ApprovalService>((ref) {
@@ -43,10 +44,19 @@ class ApprovalNotifier extends StateNotifier<AsyncValue<void>> {
 
   ApprovalNotifier(this._service, this._ref) : super(const AsyncValue.data(null));
 
-  Future<void> approve(String requestId) async {
+  Future<void> approve(String requestId, {ApprovalRequest? request}) async {
     state = const AsyncValue.loading();
     try {
       await _service.approveRequest(requestId);
+      if (request != null) {
+        await NotificationService().createNotification(
+          userId: request.creatorId,
+          type: 'submission_approved',
+          title: 'Submission Approved',
+          body: 'Your submission for "${request.campaignName}" was approved!',
+          data: {'campaign_id': request.campaignId, 'campaign_name': request.campaignName},
+        );
+      }
       _ref.invalidate(pendingRequestsProvider);
       state = const AsyncValue.data(null);
     } catch (e, st) {
@@ -54,10 +64,19 @@ class ApprovalNotifier extends StateNotifier<AsyncValue<void>> {
     }
   }
 
-  Future<void> reject(String requestId) async {
+  Future<void> reject(String requestId, {ApprovalRequest? request}) async {
     state = const AsyncValue.loading();
     try {
       await _service.rejectRequest(requestId);
+      if (request != null) {
+        await NotificationService().createNotification(
+          userId: request.creatorId,
+          type: 'submission_rejected',
+          title: 'Submission Rejected',
+          body: 'Your submission for "${request.campaignName}" was rejected.',
+          data: {'campaign_id': request.campaignId, 'campaign_name': request.campaignName},
+        );
+      }
       _ref.invalidate(pendingRequestsProvider);
       state = const AsyncValue.data(null);
     } catch (e, st) {

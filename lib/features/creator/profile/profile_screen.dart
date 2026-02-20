@@ -1,17 +1,59 @@
-// lib/features/creator/profile/presentation/profile_screen.dart
+// lib/features/creator/profile/profile_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/profile_menu_section.dart';
+import '../../auth/presentation/providers/auth_provider.dart';
+import '../../auth/presentation/providers/user_profile_provider.dart';
+import '../../auth/presentation/pages/select_role_screen.dart';
 import 'widgets/edit_profile_screen.dart';
 import 'widgets/give_feedback_sheet.dart';
 import '../submission/presentation/pages/connected_accounts_screen.dart';
+import 'data/models/bank_account.dart';
+import 'presentation/providers/bank_account_provider.dart';
+import 'presentation/pages/bank_account_screen.dart';
 
-class ProfileScreen extends HookWidget {
+class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final profileState = ref.watch(userProfileProvider);
+    final profile = profileState.profile;
+    final bankAccount = ref.watch(bankAccountProvider);
+
+    // Load bank account on mount
+    useEffect(() {
+      Future.microtask(() async {
+        try {
+          final service = ref.read(bankAccountServiceProvider);
+          final account = await service.getBankAccount();
+          ref.read(bankAccountProvider.notifier).state = account;
+        } catch (_) {}
+      });
+      return null;
+    }, []);
+
+    Future<void> handleLogout() async {
+      try {
+        await ref.read(authServiceProvider).signOut();
+        ref.read(userProfileProvider.notifier).clear();
+        if (context.mounted) {
+          Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => SelectRoleScreen()),
+            (route) => false,
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Logout failed: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
@@ -20,216 +62,264 @@ class ProfileScreen extends HookWidget {
           child: Column(
             children: [
               SizedBox(height: SpacePalette.lg),
-              
-              // プロフィール写真（1つのみ）
+
+              // Profile avatar
               CircleAvatar(
                 radius: 50,
                 backgroundColor: ColorPalette.neutral400,
-                backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=1'),
+                backgroundImage: profile?.avatarUrl != null
+                    ? NetworkImage(profile!.avatarUrl!)
+                    : null,
+                child: profile?.avatarUrl == null
+                    ? Text(
+                        profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
+                        style: TextStylePalette.header.copyWith(
+                          color: ColorPalette.white,
+                        ),
+                      )
+                    : null,
               ),
               SizedBox(height: SpacePalette.lg),
-              
-              // Creator Name
+
+              // Name
               Text(
-                'Creator Name',
-                style: TextStylePalette.smallHeader
+                profile?.displayName ?? 'Loading...',
+                style: TextStylePalette.smallHeader,
               ),
               SizedBox(height: SpacePalette.sm),
-              
-              // Creator Badge
+
+              // Role badge
               Text(
                 'Creator',
-                style: TextStylePalette.subText
+                style: TextStylePalette.subText,
+              ),
+              SizedBox(height: SpacePalette.lg),
+
+              // Bank Account Card
+              _buildBankAccountCard(context, bankAccount),
+              SizedBox(height: SpacePalette.lg),
+
+              // Account section
+              ProfileMenuSection(
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.edit_outlined,
+                    iconBackgroundColor: ColorPalette.smashedPumpkin100,
+                    iconColor: ColorPalette.smashedPumpkin600,
+                    label: 'Edit Profile',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditProfileScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.link,
+                    iconBackgroundColor: const Color(0xFFE8F5E9),
+                    iconColor: const Color(0xFF4CAF50),
+                    label: 'Connected Accounts',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ConnectedAccountsScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.account_balance_outlined,
+                    iconBackgroundColor: const Color(0xFFE3F2FD),
+                    iconColor: const Color(0xFF2196F3),
+                    label: 'Bank Account',
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const BankAccountScreen(),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
               SizedBox(height: SpacePalette.base),
-              
-              // Bio
-              Text(
-                'man of culture',
-                style: TextStylePalette.normalText
+
+              // Preferences section
+              ProfileMenuSection(
+                header: 'Preferences',
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.notifications_outlined,
+                    iconBackgroundColor: const Color(0xFFFFF3E0),
+                    iconColor: const Color(0xFFFF9800),
+                    label: 'Notifications',
+                    onTap: () {},
+                  ),
+                ],
               ),
-              SizedBox(height: SpacePalette.lg),
-              
-              // Bank Account Card
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(SpacePalette.base),
-                decoration: BoxDecoration(
-                  color: ColorPalette.neutral800,
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.account_balance,
-                          size: 16,
-                          color: ColorPalette.neutral100,
-                        ),
-                        SizedBox(width: SpacePalette.xs),
-                        Text(
-                          'Bank Account',
-                          style: TextStylePalette.smText.copyWith(
-                            color: ColorPalette.neutral100
-                          )
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: SpacePalette.base),
-                    Text(
-                      'Account Name',
-                      style: TextStylePalette.smallHeader.copyWith(
-                        color: ColorPalette.neutral100
-                      )
-                    ),
-                    SizedBox(height: SpacePalette.sm),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '**** 1084',
-                          style: TextStylePalette.normalText.copyWith(
-                            color: ColorPalette.neutral100
-                          )
-                        ),
-                        Text(
-                          'VISA',
-                          style: TextStylePalette.header
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+              SizedBox(height: SpacePalette.base),
+
+              // Resources section
+              ProfileMenuSection(
+                header: 'Resources',
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.feedback_outlined,
+                    iconBackgroundColor: const Color(0xFFF3E5F5),
+                    iconColor: const Color(0xFF9C27B0),
+                    label: 'Give Feedback',
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => GiveFeedbackSheet(),
+                      );
+                    },
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.headset_mic_outlined,
+                    iconBackgroundColor: const Color(0xFFE0F2F1),
+                    iconColor: const Color(0xFF009688),
+                    label: 'Contact Support',
+                    onTap: () {},
+                  ),
+                ],
               ),
-              SizedBox(height: SpacePalette.lg),
-              
-              // Edit Profile Button
-              _ProfileMenuItem(
-                icon: Icons.edit_outlined,
-                label: 'Edit Profile',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => EditProfileScreen(),
-                    ),
-                  );
-                },
-              ),
-              
-              // Connected Accounts
-              _ProfileMenuItem(
-                icon: Icons.link,
-                label: 'Connected Accounts',
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ConnectedAccountsScreen(),
-                    ),
-                  );
-                },
+              SizedBox(height: SpacePalette.base),
+
+              // Sign Out section
+              ProfileMenuSection(
+                children: [
+                  ProfileMenuItem(
+                    icon: Icons.power_settings_new,
+                    label: 'Sign Out',
+                    isDestructive: true,
+                    showChevron: false,
+                    onTap: handleLogout,
+                  ),
+                ],
               ),
 
-              // Give Feedback Button
-              _ProfileMenuItem(
-                icon: Icons.feedback_outlined,
-                label: 'Give Feedback',
-                onTap: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (context) => GiveFeedbackSheet(),
-                  );
-                },
-              ),
-              
-              SizedBox(height: SpacePalette.base),
-              
-              // Logout Button
-              GestureDetector(
-                onTap: () {
-                  // ログアウト処理（後で実装）
-                  print('Logout tapped');
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.logout,
-                        size: 20,
-                        color: Colors.red,
-                      ),
-                      SizedBox(width: SpacePalette.base),
-                      Text(
-                        'Logout',
-                        style: GoogleFonts.inter(
-                          fontSize: FontSizePalette.size16,
-                          color: Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              
-              SizedBox(height: 80), // フッター分の余白
+              SizedBox(height: 80),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-// プロフィールメニューアイテム
-class _ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _ProfileMenuItem({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
+  Widget _buildBankAccountCard(BuildContext context, BankAccount? bankAccount) {
+    if (bankAccount != null) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(SpacePalette.base),
         decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: ColorPalette.neutral200,
-              width: 1,
+          color: ColorPalette.neutral800,
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.account_balance,
+                  size: 16,
+                  color: ColorPalette.neutral100,
+                ),
+                SizedBox(width: SpacePalette.xs),
+                Text(
+                  'Bank Account',
+                  style: TextStylePalette.smText.copyWith(
+                    color: ColorPalette.neutral100,
+                  ),
+                ),
+              ],
             ),
+            SizedBox(height: SpacePalette.base),
+            Text(
+              bankAccount.accountHolder,
+              style: TextStylePalette.smallHeader.copyWith(
+                color: ColorPalette.neutral100,
+              ),
+            ),
+            SizedBox(height: SpacePalette.sm),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${bankAccount.bankName} - ${bankAccount.branchName}',
+                  style: TextStylePalette.smText.copyWith(
+                    color: ColorPalette.neutral100.withOpacity(0.7),
+                  ),
+                ),
+                Text(
+                  bankAccount.maskedAccountNumber,
+                  style: TextStylePalette.normalText.copyWith(
+                    color: ColorPalette.neutral100,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Empty state - prompt to add bank account
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const BankAccountScreen(),
           ),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(SpacePalette.base),
+        decoration: BoxDecoration(
+          color: ColorPalette.neutral800,
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
         child: Row(
           children: [
             Icon(
-              icon,
-              size: 20,
-              color: ColorPalette.neutral800,
+              Icons.account_balance_outlined,
+              size: 24,
+              color: ColorPalette.white,
             ),
-            SizedBox(width: SpacePalette.base),
+            SizedBox(width: SpacePalette.inner),
             Expanded(
-              child: Text(
-                label,
-                style: TextStylePalette.bigText
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Bank Account',
+                    style: TextStylePalette.smallHeader.copyWith(
+                      color: ColorPalette.white,
+                    ),
+                  ),
+                  SizedBox(height: SpacePalette.xs),
+                  Text(
+                    'Add your bank account for payouts',
+                    style: TextStylePalette.smText.copyWith(
+                      color: ColorPalette.neutral100.withOpacity(0.7),
+                    ),
+                  ),
+                ],
               ),
             ),
             Icon(
-              Icons.chevron_right,
+              Icons.add_circle_outline,
               size: 20,
-              color: ColorPalette.neutral400,
+              color: ColorPalette.white,
             ),
           ],
         ),

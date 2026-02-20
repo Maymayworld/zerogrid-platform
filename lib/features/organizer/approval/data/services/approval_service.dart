@@ -2,6 +2,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/approval_request.dart';
+import '../../../../../shared/data/services/notification_service.dart';
 
 class ApprovalService {
   final SupabaseClient _supabase = Supabase.instance.client;
