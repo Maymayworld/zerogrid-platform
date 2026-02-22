@@ -334,7 +334,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
               child: Container(
                 decoration: BoxDecoration(
                   color: shadowColor,
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
+                  borderRadius: BorderRadius.circular(RadiusPalette.lg),
                 ),
               ),
             ),
@@ -347,7 +347,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
               child: Container(
                 decoration: BoxDecoration(
                   color: color,
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
+                  borderRadius: BorderRadius.circular(RadiusPalette.lg),
                 ),
                 child: Center(
                   child: Text(
