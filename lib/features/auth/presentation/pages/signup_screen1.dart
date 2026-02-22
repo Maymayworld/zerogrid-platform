@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/user_role.dart';
+import '../providers/auth_provider.dart';
 import 'login_screen.dart';
 import 'signup_screen2.dart';
 
@@ -62,15 +64,33 @@ class SignUpScreen1 extends HookConsumerWidget {
     }
 
     Future<void> handleAppleSignUp() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Apple signup coming soon...')),
-      );
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_oauth_role', role.name);
+        final authService = ref.read(authServiceProvider);
+        await authService.signInWithApple();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
 
     Future<void> handleGoogleSignUp() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Google signup coming soon...')),
-      );
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_oauth_role', role.name);
+        final authService = ref.read(authServiceProvider);
+        await authService.signInWithGoogle();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
 
     return Scaffold(

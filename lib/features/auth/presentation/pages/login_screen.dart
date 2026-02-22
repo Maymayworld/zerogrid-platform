@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/user_role.dart';
@@ -86,15 +87,33 @@ class LoginScreen extends HookConsumerWidget {
     }
 
     Future<void> handleAppleLogin() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Apple login coming soon...')),
-      );
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_oauth_role', role.name);
+        final authService = ref.read(authServiceProvider);
+        await authService.signInWithApple();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
 
     Future<void> handleGoogleLogin() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Google login coming soon...')),
-      );
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('pending_oauth_role', role.name);
+        final authService = ref.read(authServiceProvider);
+        await authService.signInWithGoogle();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
     }
 
     return Scaffold(
@@ -105,10 +124,12 @@ class LoginScreen extends HookConsumerWidget {
           child: Column(
             children: [
               const Spacer(flex: 2),
+
+              SizedBox(height: SpacePalette.lg*3),
               
               // タイトル
               Text(
-                'sign in',
+                'Log In',
                 style: TextStylePalette.header,
               ),
               const SizedBox(height: SpacePalette.lg),

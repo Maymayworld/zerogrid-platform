@@ -16,6 +16,7 @@ class SignUpScreen3 extends HookConsumerWidget {
   final String email;
   final String password;
   final String username;
+  final bool isOAuth;
 
   const SignUpScreen3({
     Key? key,
@@ -23,6 +24,7 @@ class SignUpScreen3 extends HookConsumerWidget {
     required this.email,
     required this.password,
     required this.username,
+    this.isOAuth = false,
   }) : super(key: key);
 
   @override
@@ -113,14 +115,16 @@ class SignUpScreen3 extends HookConsumerWidget {
       try {
         final authService = ref.read(authServiceProvider);
 
-        // 1. Supabase Authでユーザー作成
-        final response = await authService.signUpWithEmail(
-          email: email,
-          password: password,
-        );
+        // 1. OAuthユーザーでなければ、Supabase Authでユーザー作成
+        if (!isOAuth) {
+          final response = await authService.signUpWithEmail(
+            email: email,
+            password: password,
+          );
 
-        if (response.user == null) {
-          throw Exception('Failed to create user');
+          if (response.user == null) {
+            throw Exception('Failed to create user');
+          }
         }
 
         // 2. アバター画像をアップロード（選択されていれば）

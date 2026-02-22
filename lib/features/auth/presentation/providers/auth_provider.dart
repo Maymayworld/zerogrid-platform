@@ -113,6 +113,16 @@ class AuthService {
     return imageUrl;
   }
 
+  // Google OAuthログイン（Web: ブラウザリダイレクト）
+  Future<bool> signInWithGoogle() async {
+    return await _supabase.auth.signInWithOAuth(OAuthProvider.google);
+  }
+
+  // Apple OAuthログイン（Web: ブラウザリダイレクト）
+  Future<bool> signInWithApple() async {
+    return await _supabase.auth.signInWithOAuth(OAuthProvider.apple);
+  }
+
   // ログアウト
   Future<void> signOut() async {
     await _supabase.auth.signOut();

@@ -14,12 +14,14 @@ class SignUpScreen2 extends HookConsumerWidget {
   final UserRole role;
   final String email;
   final String password;
+  final bool isOAuth;
 
   const SignUpScreen2({
     Key? key,
     required this.role,
     required this.email,
     required this.password,
+    this.isOAuth = false,
   }) : super(key: key);
 
   @override
@@ -69,6 +71,7 @@ class SignUpScreen2 extends HookConsumerWidget {
             email: email,
             password: password,
             username: usernameController.text,
+            isOAuth: isOAuth,
           ),
         ),
       );
