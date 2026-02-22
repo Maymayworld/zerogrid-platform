@@ -83,56 +83,62 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // Top gradient area - animated color
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    _isCreator
-                        ? _creatorButtonColor.withOpacity(0.15)
-                        : _organizerButtonColor.withOpacity(0.15),
-                    ColorPalette.white,
-                  ],
-                  stops: const [0.0, 0.7],
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: SpacePalette.lg,
-                  vertical: SpacePalette.lg,
-                ),
-                child: Column(
-                  children: [
-                    SizedBox(height: SpacePalette.lg),
-                    // Welcome text
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+            // Top gradient area - animated color, height = width * 9/16
+            Builder(
+              builder: (context) {
+                final width = MediaQuery.of(context).size.width;
+                return AnimatedContainer(
+                  duration: const Duration(milliseconds: 300),
+                  height: width * 9 / 16,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        _isCreator
+                            ? _creatorButtonColor.withOpacity(0.15)
+                            : _organizerButtonColor.withOpacity(0.15),
+                        ColorPalette.white,
+                      ],
+                      stops: const [0.0, 1.0],
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: SpacePalette.lg,
+                      vertical: SpacePalette.lg,
+                    ),
+                    child: Column(
                       children: [
-                        Text(
-                          'Welcome! ',
-                          style: TextStylePalette.header.copyWith(
-                            color: ColorPalette.neutral800,
-                          ),
+                        SizedBox(height: SpacePalette.lg),
+                        // Welcome text
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              'Welcome! ',
+                              style: TextStylePalette.header.copyWith(
+                                color: ColorPalette.neutral800,
+                              ),
+                            ),
+                            const Text(
+                              '👋',
+                              style: TextStyle(fontSize: FontSizePalette.size24),
+                            ),
+                          ],
                         ),
-                        const Text(
-                          '👋',
-                          style: TextStyle(fontSize: FontSizePalette.size24),
+                        SizedBox(height: SpacePalette.sm),
+                        Text(
+                          'Tell us which side are you?',
+                          style: TextStylePalette.normalText.copyWith(
+                            color: ColorPalette.neutral500,
+                          ),
                         ),
                       ],
                     ),
-                    SizedBox(height: SpacePalette.sm),
-                    Text(
-                      'Tell us which side are you?',
-                      style: TextStylePalette.normalText.copyWith(
-                        color: ColorPalette.neutral500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
 
             // Main content
@@ -334,7 +340,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
               child: Container(
                 decoration: BoxDecoration(
                   color: shadowColor,
-                  borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                  borderRadius: BorderRadius.circular(buttonHeight / 2),
                 ),
               ),
             ),
@@ -347,7 +353,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
               child: Container(
                 decoration: BoxDecoration(
                   color: color,
-                  borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                  borderRadius: BorderRadius.circular(buttonHeight / 2),
                 ),
                 child: Center(
                   child: Text(
