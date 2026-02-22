@@ -118,6 +118,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                             Text(
                               'Welcome! ',
                               style: TextStylePalette.header.copyWith(
+                                fontSize: 32,
                                 color: ColorPalette.neutral800,
                               ),
                             ),
@@ -180,12 +181,12 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                       ),
                     ),
 
-                    SizedBox(height: SpacePalette.lg + SpacePalette.sm),
+                    SizedBox(height: SpacePalette.lg*3),
 
                     // Role selector slider
                     _buildRoleSelector(),
 
-                    SizedBox(height: SpacePalette.lg),
+                    SizedBox(height: SpacePalette.lg*3),
 
                     // Stats text
                     AnimatedSwitcher(
@@ -208,7 +209,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
 
             // Bottom button
             Padding(
-              padding: const EdgeInsets.all(SpacePalette.lg),
+              padding: const EdgeInsets.all(SpacePalette.base),
               child: AnimatedBuilder(
                 animation: _animationController,
                 builder: (context, child) {
@@ -358,7 +359,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                 child: Center(
                   child: Text(
                     text,
-                    style: TextStylePalette.miniTitle.copyWith(
+                    style: TextStylePalette.buttonTextWhite.copyWith(
                       color: ColorPalette.white,
                       fontWeight: FontWeight.w600,
                     ),
