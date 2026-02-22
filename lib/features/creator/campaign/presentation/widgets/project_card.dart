@@ -6,7 +6,7 @@ class ProjectCard extends StatelessWidget {
   final double width;
   final double height;
   final String? imageUrl;
-  final IconData platformIcon;
+  final Widget platformIcon;
   final double currentAmount;
   final double totalAmount;
   final double pricePerView;
@@ -99,11 +99,7 @@ class ProjectCard extends StatelessWidget {
                   color: ColorPalette.neutral800.withOpacity(0.6),
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Icon(
-                  platformIcon,
-                  color: ColorPalette.neutral100,
-                  size: 12,
-                ),
+                child: platformIcon,
               ),
             ),
             // 下部情報

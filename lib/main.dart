@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'shared/theme/app_theme.dart';
-import 'features/auth/presentation/pages/select_role_screen.dart';
+import 'features/splash/presentation/pages/splash_screen.dart';
 import 'app_wrapper.dart';
 
 void main() async {
@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Zero Grid',
       theme: AppTheme.lightTheme,
-      home: AppWrapper(),  // ここでセッション確認
+      home: SplashScreen(nextScreen: AppWrapper()),
     );
   }
 }

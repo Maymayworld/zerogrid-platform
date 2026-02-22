@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../theme/app_theme.dart';
+import 'platform_icon.dart';
 
 class FilterBottomSheet extends HookWidget {
   final Set<String> selectedPlatforms;
@@ -62,7 +63,7 @@ class FilterBottomSheet extends HookWidget {
             Row(
               children: [
                 _PlatformChip(
-                  icon: Icons.music_note,
+                  iconWidget: PlatformIcon.tiktok(size: 16),
                   label: 'TikTok',
                   isSelected: platforms.value.contains('tiktok'),
                   onTap: () {
@@ -77,7 +78,7 @@ class FilterBottomSheet extends HookWidget {
                 ),
                 SizedBox(width: SpacePalette.sm),
                 _PlatformChip(
-                  icon: Icons.camera_alt,
+                  iconWidget: PlatformIcon.instagram(size: 16),
                   label: 'Instagram',
                   isSelected: platforms.value.contains('instagram'),
                   onTap: () {
@@ -92,7 +93,7 @@ class FilterBottomSheet extends HookWidget {
                 ),
                 SizedBox(width: SpacePalette.sm),
                 _PlatformChip(
-                  icon: Icons.play_arrow,
+                  iconWidget: PlatformIcon.youtube(size: 16),
                   label: 'YouTube',
                   isSelected: platforms.value.contains('youtube'),
                   onTap: () {
@@ -173,13 +174,13 @@ class FilterBottomSheet extends HookWidget {
 
 // プラットフォーム選択チップ
 class _PlatformChip extends StatelessWidget {
-  final IconData icon;
+  final Widget iconWidget;
   final String label;
   final bool isSelected;
   final VoidCallback onTap;
 
   const _PlatformChip({
-    required this.icon,
+    required this.iconWidget,
     required this.label,
     required this.isSelected,
     required this.onTap,
@@ -204,11 +205,7 @@ class _PlatformChip extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 24,
-              color: ColorPalette.neutral800,
-            ),
+            SizedBox(width: 24, height: 24, child: iconWidget),
             SizedBox(height: SpacePalette.xs),
             Text(
               label,

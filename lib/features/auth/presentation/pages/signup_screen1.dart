@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/user_role.dart';
 import 'login_screen.dart';
 import 'signup_screen2.dart';
@@ -64,12 +64,6 @@ class SignUpScreen1 extends HookConsumerWidget {
     Future<void> handleAppleSignUp() async {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Apple signup coming soon...')),
-      );
-    }
-
-    Future<void> handleLineSignUp() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('LINE signup coming soon...')),
       );
     }
 
@@ -217,23 +211,18 @@ class SignUpScreen1 extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.lg),
 
-              // Social Login Buttons（Apple / LINE / Google）
+              // Social Login Buttons（Apple / Google）
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _SocialSignUpButton(
                     onTap: handleAppleSignUp,
-                    child: FaIcon(FontAwesomeIcons.apple, size: 24, color: ColorPalette.neutral800),
-                  ),
-                  SizedBox(width: SpacePalette.base),
-                  _SocialSignUpButton(
-                    onTap: handleLineSignUp,
-                    child: FaIcon(FontAwesomeIcons.line, size: 24, color: ColorPalette.positive500),
+                    child: PlatformIcon.apple(size: 24),
                   ),
                   SizedBox(width: SpacePalette.base),
                   _SocialSignUpButton(
                     onTap: handleGoogleSignUp,
-                    child: FaIcon(FontAwesomeIcons.google, size: 20, color: ColorPalette.neutral800),
+                    child: PlatformIcon.google(size: 20),
                   ),
                 ],
               ),

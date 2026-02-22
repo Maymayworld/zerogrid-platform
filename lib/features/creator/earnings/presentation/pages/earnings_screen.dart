@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../../shared/presentation/providers/reward_provider.dart';
 import '../../../../../shared/presentation/providers/view_count_provider.dart';
 import '../../../../../shared/data/services/reward_service.dart';
@@ -349,17 +350,8 @@ class _PerformanceCard extends StatelessWidget {
     return num.toString();
   }
 
-  IconData _getPlatformIcon() {
-    switch (stat.platform.toLowerCase()) {
-      case 'youtube':
-        return Icons.play_circle_outline;
-      case 'tiktok':
-        return Icons.music_note;
-      case 'instagram':
-        return Icons.camera_alt_outlined;
-      default:
-        return Icons.video_library;
-    }
+  Widget _getPlatformIconWidget() {
+    return PlatformIcon.fromPlatform(stat.platform, size: 20);
   }
 
   Color _getPlatformColor() {
@@ -397,10 +389,7 @@ class _PerformanceCard extends StatelessWidget {
               color: _getPlatformColor().withOpacity(0.1),
               borderRadius: BorderRadius.circular(RadiusPalette.mini),
             ),
-            child: Icon(
-              _getPlatformIcon(),
-              color: _getPlatformColor(),
-            ),
+            child: Center(child: _getPlatformIconWidget()),
           ),
           SizedBox(width: SpacePalette.base),
           // 情報

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/platform_icon.dart';
 import '../../../auth/presentation/providers/oauth_provider.dart';
 
 class SettingsScreen extends HookConsumerWidget {
@@ -64,7 +65,7 @@ class SettingsScreen extends HookConsumerWidget {
                   children: [
                     // YouTube
                     _ServiceConnectionTile(
-                      icon: Icons.play_circle_outline,
+                      iconWidget: PlatformIcon.youtube(size: 20),
                       iconColor: Colors.red,
                       serviceName: 'YouTube',
                       isConnected: platforms['youtube'] ?? false,
@@ -87,7 +88,7 @@ class SettingsScreen extends HookConsumerWidget {
                     
                     // Instagram
                     _ServiceConnectionTile(
-                      icon: Icons.camera_alt_outlined,
+                      iconWidget: PlatformIcon.instagram(size: 20),
                       iconColor: Colors.purple,
                       serviceName: 'Instagram',
                       isConnected: platforms['instagram'] ?? false,
@@ -110,7 +111,7 @@ class SettingsScreen extends HookConsumerWidget {
                     
                     // TikTok
                     _ServiceConnectionTile(
-                      icon: Icons.music_note_outlined,
+                      iconWidget: PlatformIcon.tiktok(size: 20),
                       iconColor: Colors.black,
                       serviceName: 'TikTok',
                       isConnected: platforms['tiktok'] ?? false,
@@ -155,7 +156,7 @@ class SettingsScreen extends HookConsumerWidget {
                     
                     // Google Calendar
                     _ServiceConnectionTile(
-                      icon: Icons.calendar_today_outlined,
+                      iconWidget: Icon(Icons.calendar_today_outlined, size: 20, color: Color(0xFF4285F4)),
                       iconColor: Color(0xFF4285F4), // Google blue
                       serviceName: 'Google Calendar',
                       description: 'Sync campaign deadlines to your calendar',
@@ -257,7 +258,7 @@ class SettingsScreen extends HookConsumerWidget {
 
 // Service connection tile widget
 class _ServiceConnectionTile extends StatelessWidget {
-  final IconData icon;
+  final Widget iconWidget;
   final Color iconColor;
   final String serviceName;
   final String? description;
@@ -267,7 +268,7 @@ class _ServiceConnectionTile extends StatelessWidget {
   final VoidCallback onDisconnect;
 
   const _ServiceConnectionTile({
-    required this.icon,
+    required this.iconWidget,
     required this.iconColor,
     required this.serviceName,
     this.description,
@@ -300,11 +301,7 @@ class _ServiceConnectionTile extends StatelessWidget {
               color: iconColor.withOpacity(0.1),
               borderRadius: BorderRadius.circular(RadiusPalette.mini),
             ),
-            child: Icon(
-              icon,
-              color: iconColor,
-              size: 20,
-            ),
+            child: Center(child: iconWidget),
           ),
           SizedBox(width: SpacePalette.base),
           

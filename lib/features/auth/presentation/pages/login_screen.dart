@@ -2,8 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
 import '../../../../shared/theme/main_layout.dart';
@@ -91,12 +91,6 @@ class LoginScreen extends HookConsumerWidget {
       );
     }
 
-    Future<void> handleLineLogin() async {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('LINE login coming soon...')),
-      );
-    }
-
     Future<void> handleGoogleLogin() async {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Google login coming soon...')),
@@ -126,31 +120,13 @@ class LoginScreen extends HookConsumerWidget {
                   // Apple
                   _SocialLoginButton(
                     onTap: handleAppleLogin,
-                    child: const FaIcon(
-                      FontAwesomeIcons.apple,
-                      size: 24,
-                      color: ColorPalette.neutral800,
-                    ),
-                  ),
-                  const SizedBox(width: SpacePalette.base),
-                  // LINE
-                  _SocialLoginButton(
-                    onTap: handleLineLogin,
-                    child: const FaIcon(
-                      FontAwesomeIcons.line,
-                      size: 24,
-                      color: ColorPalette.positive500,
-                    ),
+                    child: PlatformIcon.apple(size: 24),
                   ),
                   const SizedBox(width: SpacePalette.base),
                   // Google
                   _SocialLoginButton(
                     onTap: handleGoogleLogin,
-                    child: const FaIcon(
-                      FontAwesomeIcons.google,
-                      size: 20,
-                      color: ColorPalette.neutral800,
-                    ),
+                    child: PlatformIcon.google(size: 20),
                   ),
                 ],
               ),

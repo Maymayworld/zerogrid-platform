@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../providers/participation_service_provider.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
@@ -218,7 +219,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                             runSpacing: SpacePalette.sm,
                             children: _platforms.map((platform) {
                               return CategoryChip(
-                                icon: _getPlatformIcon(platform),
+                                iconWidget: PlatformIcon.fromPlatform(platform, size: CategoryChipSize.iconSize),
                                 label: platform,
                               );
                             }).toList(),
@@ -453,18 +454,6 @@ class ProjectDetailScreen extends HookConsumerWidget {
     );
   }
 
-  IconData _getPlatformIcon(String platform) {
-    switch (platform) {
-      case 'YouTube':
-        return Icons.play_arrow;
-      case 'Instagram':
-        return Icons.camera_alt;
-      case 'TikTok':
-        return Icons.music_note;
-      default:
-        return Icons.video_library;
-    }
-  }
 
   void _showShareSheet(BuildContext context) {
     showModalBottomSheet(

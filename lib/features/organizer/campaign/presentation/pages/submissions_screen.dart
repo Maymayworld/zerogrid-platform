@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/campaign/data/models/submission.dart';
 import '../../../../creator/campaign/presentation/providers/submission_service_provider.dart';
 
@@ -355,21 +356,21 @@ class _SubmissionCard extends StatelessWidget {
               platform: 'YouTube',
               url: submission.youtubeUrl!,
               color: Colors.red,
-              icon: Icons.play_circle_filled,
+              iconWidget: PlatformIcon.youtube(size: 16),
             ),
           if (submission.instagramUrl != null && submission.instagramUrl!.isNotEmpty)
             _LinkRow(
               platform: 'Instagram',
               url: submission.instagramUrl!,
               color: Color(0xFFE1306C),
-              icon: Icons.camera_alt,
+              iconWidget: PlatformIcon.instagram(size: 16),
             ),
           if (submission.tiktokUrl != null && submission.tiktokUrl!.isNotEmpty)
             _LinkRow(
               platform: 'TikTok',
               url: submission.tiktokUrl!,
               color: Colors.black,
-              icon: Icons.music_note,
+              iconWidget: PlatformIcon.tiktok(size: 16),
             ),
 
           // Review comment
@@ -547,13 +548,13 @@ class _LinkRow extends StatelessWidget {
   final String platform;
   final String url;
   final Color color;
-  final IconData icon;
+  final Widget iconWidget;
 
   const _LinkRow({
     required this.platform,
     required this.url,
     required this.color,
-    required this.icon,
+    required this.iconWidget,
   });
 
   @override
@@ -578,7 +579,7 @@ class _LinkRow extends StatelessWidget {
           ),
           child: Row(
             children: [
-              Icon(icon, size: 16, color: color),
+              iconWidget,
               SizedBox(width: SpacePalette.sm),
               Expanded(
                 child: Text(

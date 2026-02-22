@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/approval_request.dart';
 import '../providers/approval_provider.dart';
 
@@ -443,35 +444,27 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen>
     );
   }
 
-  Widget _buildPlatformIcon(String platform) {
-    IconData icon;
-    Color color;
-    
+  Color _getPlatformColor(String platform) {
     switch (platform.toLowerCase()) {
       case 'youtube':
-        icon = Icons.play_circle_filled;
-        color = Colors.red;
-        break;
+        return Colors.red;
       case 'tiktok':
-        icon = Icons.music_note;
-        color = Colors.black;
-        break;
+        return Colors.black;
       case 'instagram':
-        icon = Icons.camera_alt;
-        color = Colors.purple;
-        break;
+        return Colors.purple;
       default:
-        icon = Icons.video_library;
-        color = ColorPalette.neutral500;
+        return ColorPalette.neutral500;
     }
-    
+  }
+
+  Widget _buildPlatformIcon(String platform) {
     return Container(
       padding: EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: _getPlatformColor(platform).withOpacity(0.1),
         borderRadius: BorderRadius.circular(RadiusPalette.base),
       ),
-      child: Icon(icon, color: color, size: 20),
+      child: PlatformIcon.fromPlatform(platform, size: 20),
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/platform_icon.dart';
 
 class AnalyticsScreen extends HookWidget {
   final String projectName;
@@ -290,11 +291,7 @@ class AnalyticsScreen extends HookWidget {
                                 value: 'YouTube',
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.play_circle_outline,
-                                      size: 16,
-                                      color: Colors.red,
-                                    ),
+                                    PlatformIcon.youtube(size: 16),
                                     SizedBox(width: SpacePalette.xs),
                                     Text('YouTube'),
                                   ],
@@ -458,11 +455,7 @@ class AnalyticsScreen extends HookWidget {
                                 value: 'YouTube',
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.play_circle_outline,
-                                      size: 16,
-                                      color: Colors.red,
-                                    ),
+                                    PlatformIcon.youtube(size: 16),
                                     SizedBox(width: SpacePalette.xs),
                                     Text('YouTube'),
                                   ],
@@ -625,11 +618,7 @@ class AnalyticsScreen extends HookWidget {
                                 value: 'YouTube',
                                 child: Row(
                                   children: [
-                                    Icon(
-                                      Icons.play_circle_outline,
-                                      size: 16,
-                                      color: Colors.red,
-                                    ),
+                                    PlatformIcon.youtube(size: 16),
                                     SizedBox(width: SpacePalette.xs),
                                     Text('YouTube'),
                                   ],

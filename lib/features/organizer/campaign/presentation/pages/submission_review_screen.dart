@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/submission/data/services/submission_service.dart';
 
@@ -344,11 +345,7 @@ class _SubmissionCard extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    _getPlatformIcon(submission.platform),
-                    size: 18,
-                    color: _getPlatformColor(submission.platform),
-                  ),
+                  PlatformIcon.fromPlatform(submission.platform, size: 18),
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: Text(
@@ -577,17 +574,8 @@ class _SubmissionCard extends StatelessWidget {
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
 
-  IconData _getPlatformIcon(String platform) {
-    switch (platform.toLowerCase()) {
-      case 'youtube':
-        return Icons.play_arrow;
-      case 'instagram':
-        return Icons.camera_alt;
-      case 'tiktok':
-        return Icons.music_note;
-      default:
-        return Icons.link;
-    }
+  Widget _getPlatformIconWidget(String platform, {double size = 18}) {
+    return PlatformIcon.fromPlatform(platform, size: size);
   }
 
   Color _getPlatformColor(String platform) {

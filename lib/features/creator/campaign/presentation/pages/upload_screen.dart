@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/submission/data/models/social_connection.dart';
 import '../../../../creator/submission/presentation/providers/submission_providers.dart';
@@ -36,9 +37,9 @@ class ProjectUploadScreen extends HookConsumerWidget {
 
     // Platform config
     final platformConfig = {
-      'YouTube': _PlatformInfo(Icons.play_arrow, Colors.red, youtubeController),
-      'Instagram': _PlatformInfo(Icons.camera_alt, Colors.pink, instagramController),
-      'TikTok': _PlatformInfo(Icons.music_note, Colors.black, tiktokController),
+      'YouTube': _PlatformInfo(PlatformIcon.youtube(size: 16), Colors.red, youtubeController),
+      'Instagram': _PlatformInfo(PlatformIcon.instagram(size: 16), Colors.pink, instagramController),
+      'TikTok': _PlatformInfo(PlatformIcon.tiktok(size: 16), Colors.black, tiktokController),
     };
 
     // Load connected accounts and previous submissions
@@ -299,11 +300,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                           color: info.color.withOpacity(0.1),
                                           shape: BoxShape.circle,
                                         ),
-                                        child: Icon(
-                                          info.icon,
-                                          size: 18,
-                                          color: info.color,
-                                        ),
+                                        child: Center(child: info.icon),
                                       ),
                                       SizedBox(width: SpacePalette.sm),
                                       Expanded(
@@ -387,7 +384,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                             return Padding(
                               padding: EdgeInsets.only(bottom: SpacePalette.base),
                               child: _PlatformLinkField(
-                                icon: info.icon,
+                                iconWidget: info.icon,
                                 platformName: platform,
                                 iconColor: info.color,
                                 controller: info.controller,
@@ -552,7 +549,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
 }
 
 class _PlatformInfo {
-  final IconData icon;
+  final Widget icon;
   final Color color;
   final TextEditingController controller;
 
@@ -561,7 +558,7 @@ class _PlatformInfo {
 
 // Platform link field with connection status
 class _PlatformLinkField extends StatelessWidget {
-  final IconData icon;
+  final Widget iconWidget;
   final String platformName;
   final Color iconColor;
   final TextEditingController controller;
@@ -569,7 +566,7 @@ class _PlatformLinkField extends StatelessWidget {
   final bool isConnected;
 
   const _PlatformLinkField({
-    required this.icon,
+    required this.iconWidget,
     required this.platformName,
     required this.iconColor,
     required this.controller,
@@ -597,7 +594,7 @@ class _PlatformLinkField extends StatelessWidget {
                   color: iconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
-                child: Icon(icon, size: 16, color: iconColor),
+                child: iconWidget,
               ),
               SizedBox(width: SpacePalette.sm),
               Text(platformName, style: TextStylePalette.smTitle),
@@ -686,11 +683,7 @@ class _SubmissionStatusCard extends StatelessWidget {
           // Show platform and URL
           Row(
             children: [
-              Icon(
-                _getPlatformIcon(submission.platform),
-                size: 14,
-                color: ColorPalette.neutral500,
-              ),
+              _getPlatformIcon(submission.platform),
               SizedBox(width: SpacePalette.xs),
               Expanded(
                 child: Text(
@@ -734,17 +727,8 @@ class _SubmissionStatusCard extends StatelessWidget {
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
 
-  IconData _getPlatformIcon(String platform) {
-    switch (platform.toLowerCase()) {
-      case 'youtube':
-        return Icons.play_arrow;
-      case 'instagram':
-        return Icons.camera_alt;
-      case 'tiktok':
-        return Icons.music_note;
-      default:
-        return Icons.link;
-    }
+  Widget _getPlatformIcon(String platform, {double size = 14}) {
+    return PlatformIcon.fromPlatform(platform, size: size);
   }
 }
 

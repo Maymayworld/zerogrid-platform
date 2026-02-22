@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../../organizer/campaign/presentation/providers/campaign_service_provider.dart';
 import '../../../campaign/presentation/pages/detail_screen.dart';
@@ -393,11 +394,8 @@ class FindScreen extends HookConsumerWidget {
     );
   }
 
-  IconData _getPlatformIcon(List<String> platforms) {
-    if (platforms.contains('YouTube')) return Icons.play_arrow;
-    if (platforms.contains('Instagram')) return Icons.camera_alt;
-    if (platforms.contains('TikTok')) return Icons.music_note;
-    return Icons.video_library;
+  Widget _getPlatformIcon(List<String> platforms) {
+    return PlatformIcon.fromPlatforms(platforms, size: 12);
   }
 
   String _formatDeadline(DateTime deadline) {

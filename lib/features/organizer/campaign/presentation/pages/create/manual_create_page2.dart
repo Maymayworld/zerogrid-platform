@@ -5,6 +5,7 @@ import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/platform_icon.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page2.dart';
 
 class ManualCreatePage2 extends HookConsumerWidget{
@@ -125,7 +126,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 children: [
                   Expanded(
                     child: PlatformBox(
-                      icon: Icon(Icons.video_call),
+                      icon: PlatformIcon.youtube(size: 24),
                       name: platform[0],
                       isSelected: selectedPlatforms.value.contains(0),
                       onTap: () => togglePlatform(0)
@@ -134,7 +135,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: PlatformBox(
-                      icon: Icon(Icons.camera),
+                      icon: PlatformIcon.instagram(size: 24),
                       name: platform[1],
                       isSelected: selectedPlatforms.value.contains(1),
                       onTap: () => togglePlatform(1)
@@ -143,7 +144,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: PlatformBox(
-                      icon: Icon(Icons.music_note),
+                      icon: PlatformIcon.tiktok(size: 24),
                       name: platform[2],
                       isSelected: selectedPlatforms.value.contains(2),
                       onTap: () => togglePlatform(2)
@@ -254,7 +255,7 @@ class CategoryBox extends StatelessWidget {
 }
 
 class PlatformBox extends StatelessWidget {
-  Icon icon;
+  Widget icon;
   String name;
   bool isSelected;
   VoidCallback onTap;

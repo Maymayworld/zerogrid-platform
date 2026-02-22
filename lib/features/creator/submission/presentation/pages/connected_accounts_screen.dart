@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/social_connection.dart';
 import '../providers/submission_providers.dart';
 import '../../../../auth/presentation/providers/oauth_provider.dart';
@@ -19,21 +20,21 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
       _PlatformConfig(
         name: 'YouTube',
         provider: 'youtube',
-        icon: Icons.play_arrow,
+        iconWidget: PlatformIcon.youtube(size: 22),
         color: Colors.red,
         description: 'Connect your YouTube channel to verify video ownership',
       ),
       _PlatformConfig(
         name: 'Instagram',
         provider: 'instagram',
-        icon: Icons.camera_alt,
+        iconWidget: PlatformIcon.instagram(size: 22),
         color: Colors.pink,
         description: 'Connect your Instagram account to verify reel ownership',
       ),
       _PlatformConfig(
         name: 'TikTok',
         provider: 'tiktok',
-        icon: Icons.music_note,
+        iconWidget: PlatformIcon.tiktok(size: 22),
         color: Colors.black,
         description: 'Connect your TikTok account to verify video ownership',
       ),
@@ -222,11 +223,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                                     color: platform.color.withOpacity(0.1),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: Icon(
-                                    platform.icon,
-                                    size: 22,
-                                    color: platform.color,
-                                  ),
+                                  child: Center(child: platform.iconWidget),
                                 ),
                                 SizedBox(width: SpacePalette.base),
                                 Expanded(
@@ -317,14 +314,14 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
 class _PlatformConfig {
   final String name;
   final String provider;
-  final IconData icon;
+  final Widget iconWidget;
   final Color color;
   final String description;
 
   _PlatformConfig({
     required this.name,
     required this.provider,
-    required this.icon,
+    required this.iconWidget,
     required this.color,
     required this.description,
   });

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../shared/theme/app_theme.dart';
+import '../../../shared/widgets/platform_icon.dart';
 
 class DashboardScreen extends HookWidget {
   const DashboardScreen({Key? key}) : super(key: key);

@@ -294,13 +294,13 @@ class CategoryChipSize {
 /// アイコン + テキストのチップUI（neutral50塗り、neutral200ボーダー、Radius8）
 /// 横幅は中身に合わせて自動調整
 class CategoryChip extends StatelessWidget {
-  final IconData icon;
+  final Widget iconWidget;
   final String label;
   final VoidCallback? onTap;
 
   const CategoryChip({
     Key? key,
-    required this.icon,
+    required this.iconWidget,
     required this.label,
     this.onTap,
   }) : super(key: key);
@@ -323,7 +323,7 @@ class CategoryChip extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: CategoryChipSize.iconSize, color: ColorPalette.neutral800),
+            SizedBox(width: CategoryChipSize.iconSize, height: CategoryChipSize.iconSize, child: iconWidget),
             SizedBox(width: CategoryChipSize.iconTextSpacing),
             Text(label, style: TextStylePalette.smText),
           ],
