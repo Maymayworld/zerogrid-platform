@@ -83,17 +83,20 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
       body: SafeArea(
         child: Column(
           children: [
-            // Top gradient area
-            Container(
+            // Top gradient area - animated color
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    ColorPalette.neutral100,
+                    _isCreator
+                        ? _creatorButtonColor.withOpacity(0.15)
+                        : _organizerButtonColor.withOpacity(0.15),
                     ColorPalette.white,
                   ],
-                  stops: const [0.0, 0.6],
+                  stops: const [0.0, 0.7],
                 ),
               ),
               child: Padding(
@@ -139,40 +142,18 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    // Badge with animation
+                    // Badge - centered, fade only
                     SizedBox(
                       height: 140,
-                      child: AnimatedBuilder(
-                        animation: _animationController,
-                        builder: (context, child) {
-                          return Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              // Creator badge
-                              Transform.translate(
-                                offset: Offset(_slideAnimation.value * -100, 0),
-                                child: Opacity(
-                                  opacity: _slideAnimation.value,
-                                  child: Image.asset(
-                                    'assets/images/welcome_creator_badge.png',
-                                    height: 120,
-                                  ),
-                                ),
-                              ),
-                              // Organizer badge
-                              Transform.translate(
-                                offset: Offset((1 - _slideAnimation.value) * 100, 0),
-                                child: Opacity(
-                                  opacity: 1 - _slideAnimation.value,
-                                  child: Image.asset(
-                                    'assets/images/welcome_organizer_badge.png',
-                                    height: 120,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 300),
+                        child: Image.asset(
+                          _isCreator
+                              ? 'assets/images/welcome_creator_badge.png'
+                              : 'assets/images/welcome_organizer_badge.png',
+                          key: ValueKey('badge_$_isCreator'),
+                          height: 120,
+                        ),
                       ),
                     ),
 
@@ -334,23 +315,22 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
     required Color shadowColor,
     required VoidCallback onPressed,
   }) {
+    const double shadowOffset = 4.0;
+    const double buttonHeight = 52.0;
+    
     return GestureDetector(
       onTap: onPressed,
       child: Container(
         width: double.infinity,
-        height: 56,
-        decoration: BoxDecoration(
-          color: shadowColor,
-          borderRadius: BorderRadius.circular(RadiusPalette.base),
-        ),
+        height: buttonHeight + shadowOffset,
         child: Stack(
           children: [
-            // Shadow layer (bottom)
+            // Shadow layer (4px below)
             Positioned(
               left: 0,
               right: 0,
-              bottom: 0,
-              height: 52,
+              top: shadowOffset,
+              height: buttonHeight,
               child: Container(
                 decoration: BoxDecoration(
                   color: shadowColor,
@@ -363,7 +343,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
               left: 0,
               right: 0,
               top: 0,
-              height: 52,
+              height: buttonHeight,
               child: Container(
                 decoration: BoxDecoration(
                   color: color,
