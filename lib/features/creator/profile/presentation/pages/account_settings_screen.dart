@@ -1,105 +1,193 @@
 // lib/features/creator/profile/presentation/pages/account_settings_screen.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
-import '../../../../../shared/widgets/profile_menu_section.dart';
-import '../../../submission/presentation/pages/connected_accounts_screen.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 
 class AccountSettingsScreen extends ConsumerWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final user = Supabase.instance.client.auth.currentUser;
+    final email = user?.email ?? 'No email';
+
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
-      appBar: AppBar(
-        backgroundColor: ColorPalette.neutral100,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: Text(
-          'Account Settings',
-          style: GoogleFonts.inter(
-            fontSize: FontSizePalette.size16,
-            fontWeight: FontWeight.w600,
-            color: ColorPalette.neutral800,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.all(SpacePalette.base),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Email
-              ProfileMenuSection(
-                header: 'Account',
+        child: Column(
+          children: [
+            // Header with X button
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.base,
+                vertical: SpacePalette.sm,
+              ),
+              child: Row(
                 children: [
-                  ProfileMenuItem(
-                    icon: Icons.email_outlined,
-                    iconBackgroundColor: const Color(0xFFFFF3E0),
-                    iconColor: const Color(0xFFFF9800),
-                    label: 'Email',
-                    onTap: () {
-                      // TODO: Email change screen
-                    },
+                  GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: Container(
+                      width: 32,
+                      height: 32,
+                      decoration: BoxDecoration(
+                        color: ColorPalette.neutral200,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.close,
+                        size: 18,
+                        color: ColorPalette.neutral800,
+                      ),
+                    ),
                   ),
-                  ProfileMenuItem(
-                    icon: Icons.lock_outlined,
-                    iconBackgroundColor: const Color(0xFFE3F2FD),
-                    iconColor: const Color(0xFF2196F3),
-                    label: 'Password',
-                    onTap: () {
-                      // TODO: Password change screen
-                    },
+                  Expanded(
+                    child: Text(
+                      'Account Settings',
+                      style: TextStylePalette.title,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
+                  SizedBox(width: 32), // Balance for X button
                 ],
               ),
-              SizedBox(height: SpacePalette.base),
+            ),
 
-              // Connected Accounts
-              ProfileMenuSection(
-                header: 'Linked Accounts',
-                children: [
-                  ProfileMenuItem(
-                    icon: Icons.link,
-                    iconBackgroundColor: const Color(0xFFE8F5E9),
-                    iconColor: const Color(0xFF4CAF50),
-                    label: 'Connected Accounts',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConnectedAccountsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              SizedBox(height: SpacePalette.base),
+            // Scrollable content
+            Expanded(
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Email display
+                    Text(
+                      email,
+                      style: TextStylePalette.normalText.copyWith(
+                        color: ColorPalette.neutral600,
+                      ),
+                    ),
 
-              // Danger Zone
-              ProfileMenuSection(
-                children: [
-                  ProfileMenuItem(
-                    icon: Icons.delete_outline,
-                    label: 'Delete Account',
-                    isDestructive: true,
-                    showChevron: false,
-                    onTap: () {
-                      _showDeleteConfirmation(context, ref);
-                    },
-                  ),
-                ],
+                    SizedBox(height: 24),
+
+                    // Password Section
+                    Text(
+                      'Password',
+                      style: TextStylePalette.smTitle,
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+                    _DuolingoButton(
+                      text: 'Change Password',
+                      onPressed: () {
+                        // TODO: Change password
+                      },
+                    ),
+
+                    SizedBox(height: 24),
+
+                    // Connected Accounts Section
+                    Text(
+                      'Connected Accounts',
+                      style: TextStylePalette.smTitle,
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+
+                    // YouTube
+                    _PlatformRow(
+                      icon: PlatformIcon.youtube(size: 24),
+                      name: 'YouTube',
+                      onAdd: () {
+                        // TODO: Connect YouTube
+                      },
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+
+                    // Instagram
+                    _PlatformRow(
+                      icon: PlatformIcon.instagram(size: 24),
+                      name: 'Instagram',
+                      onAdd: () {
+                        // TODO: Connect Instagram
+                      },
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+
+                    // Connected accounts indicator (example)
+                    _ConnectedAccountsRow(
+                      connectedCount: 3,
+                      avatarUrls: [], // Would come from real data
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+
+                    // TikTok
+                    _PlatformRow(
+                      icon: PlatformIcon.tiktok(size: 24),
+                      name: 'Tiktok',
+                      onAdd: () {
+                        // TODO: Connect TikTok
+                      },
+                    ),
+
+                    SizedBox(height: 56),
+
+                    // Danger Zone
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.all(SpacePalette.base),
+                      decoration: BoxDecoration(
+                        color: ColorPalette.critical50,
+                        borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                Icons.warning_outlined,
+                                size: 18,
+                                color: ColorPalette.critical500,
+                              ),
+                              SizedBox(width: SpacePalette.xs),
+                              Text(
+                                'Danger Zone',
+                                style: TextStylePalette.smTitle.copyWith(
+                                  color: ColorPalette.critical500,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: SpacePalette.sm),
+                          Text(
+                            'Delete Account',
+                            style: TextStylePalette.miniTitle,
+                          ),
+                          SizedBox(height: SpacePalette.xs),
+                          Text(
+                            'Once you delete your account there is no going back',
+                            style: TextStylePalette.smText.copyWith(
+                              color: ColorPalette.neutral500,
+                            ),
+                          ),
+                          SizedBox(height: SpacePalette.base),
+                          _DuolingoButton(
+                            text: 'Delete Account',
+                            isDestructive: true,
+                            onPressed: () {
+                              _showDeleteConfirmation(context, ref);
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    SizedBox(height: SpacePalette.lg),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -144,6 +232,222 @@ class AccountSettingsScreen extends ConsumerWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Duolingo-style button with full radius
+class _DuolingoButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onPressed;
+  final bool isDestructive;
+
+  const _DuolingoButton({
+    required this.text,
+    required this.onPressed,
+    this.isDestructive = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final surfaceColor = isDestructive
+        ? ColorPalette.white
+        : ColorPalette.white;
+    final shadowColor = isDestructive
+        ? ColorPalette.critical200
+        : ColorPalette.neutral200;
+    final textColor = isDestructive
+        ? ColorPalette.critical500
+        : ColorPalette.neutral800;
+    final borderColor = isDestructive
+        ? ColorPalette.critical200
+        : ColorPalette.neutral200;
+
+    return GestureDetector(
+      onTap: onPressed,
+      child: Container(
+        width: double.infinity,
+        height: 48,
+        decoration: BoxDecoration(
+          color: shadowColor,
+          borderRadius: BorderRadius.circular(100), // full radius
+          border: Border.all(color: borderColor, width: 1),
+        ),
+        child: Stack(
+          children: [
+            // Shadow layer (4px below)
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 4,
+              height: 44,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: shadowColor,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+              ),
+            ),
+            // Surface layer
+            Positioned(
+              left: 0,
+              right: 0,
+              top: 0,
+              height: 44,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: surfaceColor,
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: borderColor, width: 1),
+                ),
+                child: Center(
+                  child: Text(
+                    text,
+                    style: TextStylePalette.miniTitle.copyWith(
+                      color: textColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Platform row with icon and Add button
+class _PlatformRow extends StatelessWidget {
+  final Widget icon;
+  final String name;
+  final VoidCallback onAdd;
+
+  const _PlatformRow({
+    required this.icon,
+    required this.name,
+    required this.onAdd,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 72,
+      padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+      decoration: BoxDecoration(
+        color: ColorPalette.white, // neutral0
+        border: Border.all(color: ColorPalette.neutral200, width: 1),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Row(
+        children: [
+          // Icon background box
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: ColorPalette.neutral100,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Center(child: icon),
+          ),
+          SizedBox(width: SpacePalette.base),
+          // Platform name
+          Expanded(
+            child: Text(
+              name,
+              style: TextStylePalette.listTitle,
+            ),
+          ),
+          // Add button
+          GestureDetector(
+            onTap: onAdd,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.base,
+                vertical: SpacePalette.sm,
+              ),
+              decoration: BoxDecoration(
+                color: ColorPalette.white,
+                border: Border.all(color: ColorPalette.neutral200, width: 1),
+                borderRadius: BorderRadius.circular(100),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.add, size: 16, color: ColorPalette.neutral800),
+                  SizedBox(width: SpacePalette.xs),
+                  Text(
+                    'Add',
+                    style: TextStylePalette.smText.copyWith(
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Connected accounts indicator row
+class _ConnectedAccountsRow extends StatelessWidget {
+  final int connectedCount;
+  final List<String> avatarUrls;
+
+  const _ConnectedAccountsRow({
+    required this.connectedCount,
+    required this.avatarUrls,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        // TODO: Show connected accounts
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: SpacePalette.sm),
+        child: Row(
+          children: [
+            // Stacked avatars
+            SizedBox(
+              width: 60,
+              height: 24,
+              child: Stack(
+                children: [
+                  for (int i = 0; i < 3; i++)
+                    Positioned(
+                      left: i * 16.0,
+                      child: CircleAvatar(
+                        radius: 12,
+                        backgroundColor: ColorPalette.neutral300,
+                        child: Icon(Icons.person, size: 12, color: ColorPalette.neutral500),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(width: SpacePalette.sm),
+            Text(
+              '$connectedCount connected',
+              style: TextStylePalette.smText.copyWith(
+                color: ColorPalette.neutral600,
+              ),
+            ),
+            Spacer(),
+            Icon(
+              Icons.keyboard_arrow_down,
+              size: 20,
+              color: ColorPalette.neutral500,
+            ),
+          ],
+        ),
       ),
     );
   }
