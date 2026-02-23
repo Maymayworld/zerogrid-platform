@@ -2,10 +2,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
+import '../../data/models/campaign_review.dart';
 import '../providers/participation_service_provider.dart';
+import '../providers/review_provider.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
 import '../widgets/share_sheet.dart';
 import 'success_screen.dart';
@@ -84,17 +87,49 @@ class ProjectDetailScreen extends HookConsumerWidget {
     final isJoining = useState(false);
     final isAlreadyJoined = useState(false);
 
+    // Organizer profile state
+    final organizerName = useState<String?>(null);
+    final organizerAvatarUrl = useState<String?>(null);
+
+    // Reviews state
+    final reviews = useState<List<CampaignReview>>([]);
+    final avgRating = useState(0.0);
+    final reviewCountState = useState(0);
+
     // いいね状態
     final likedIds = ref.watch(likedCampaignIdsProvider);
     final isLiked = campaign != null ? likedIds.contains(campaign!.id) : false;
 
-    // 参加状態を確認
+    // 参加状態・organizer情報・レビュー情報を取得
     useEffect(() {
       if (campaign != null) {
         Future.microtask(() async {
           final participationService = ref.read(participationServiceProvider);
-          final joined = await participationService.isParticipating(campaign!.id);
-          isAlreadyJoined.value = joined;
+          final reviewService = ref.read(reviewServiceProvider);
+
+          // 並列で取得
+          final joinedFuture = participationService.isParticipating(campaign!.id);
+          final profileFuture = Supabase.instance.client
+              .from('profiles')
+              .select('display_name, avatar_url')
+              .eq('id', campaign!.organizerId)
+              .maybeSingle();
+          final reviewsFuture = reviewService.getReviews(campaign!.id);
+          final summaryFuture = reviewService.getOrganizerRatingSummary(campaign!.organizerId);
+
+          isAlreadyJoined.value = await joinedFuture;
+
+          final profile = await profileFuture;
+          if (profile != null) {
+            organizerName.value = profile['display_name'] as String?;
+            organizerAvatarUrl.value = profile['avatar_url'] as String?;
+          }
+
+          reviews.value = await reviewsFuture;
+
+          final summary = await summaryFuture;
+          avgRating.value = summary.average;
+          reviewCountState.value = summary.count;
         });
       }
       return null;
@@ -295,28 +330,38 @@ class ProjectDetailScreen extends HookConsumerWidget {
 
                     SizedBox(height: CardSectionSize.spacing),
 
-                    // Company カード
+                    // Company カード（実データ）
                     _CardSection(
                       child: Row(
                         children: [
                           CircleAvatar(
                             radius: 20,
                             backgroundColor: ColorPalette.neutral200,
-                            child: Icon(Icons.business, size: 20, color: ColorPalette.neutral600),
+                            backgroundImage: organizerAvatarUrl.value != null
+                                ? NetworkImage(organizerAvatarUrl.value!)
+                                : null,
+                            child: organizerAvatarUrl.value == null
+                                ? Icon(Icons.business, size: 20, color: ColorPalette.neutral600)
+                                : null,
                           ),
                           SizedBox(width: SpacePalette.sm),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(companyName, style: TextStylePalette.listTitle),
+                                Text(
+                                  organizerName.value ?? companyName,
+                                  style: TextStylePalette.listTitle,
+                                ),
                                 SizedBox(height: SpacePalette.xs),
                                 Row(
                                   children: [
                                     Icon(Icons.star, size: 14, color: Colors.amber),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
-                                      '$rating ($reviewCount reviews)',
+                                      reviewCountState.value > 0
+                                          ? '${avgRating.value.toStringAsFixed(1)} (${reviewCountState.value} reviews)'
+                                          : 'No reviews yet',
                                       style: TextStylePalette.listLeading,
                                     ),
                                   ],
@@ -347,17 +392,25 @@ class ProjectDetailScreen extends HookConsumerWidget {
 
                     // Reviews カード（タップでレビュー一覧へ遷移）
                     GestureDetector(
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                        await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => ReviewScreen(
                               campaign: campaign,
                               showJoinButton: !isAlreadyJoined.value && !showAddReview,
-                              showAddReview: showAddReview,
+                              showAddReview: showAddReview || isAlreadyJoined.value,
                             ),
                           ),
                         );
+                        // レビュー画面から戻った時にデータをリフレッシュ
+                        if (campaign != null) {
+                          final reviewService = ref.read(reviewServiceProvider);
+                          reviews.value = await reviewService.getReviews(campaign!.id);
+                          final summary = await reviewService.getOrganizerRatingSummary(campaign!.organizerId);
+                          avgRating.value = summary.average;
+                          reviewCountState.value = summary.count;
+                        }
                       },
                       child: _CardSection(
                         child: Column(
@@ -370,12 +423,14 @@ class ProjectDetailScreen extends HookConsumerWidget {
                                 Text('Reviews', style: TextStylePalette.title),
                                 Row(
                                   children: [
-                                    Icon(Icons.star, size: 16, color: Colors.amber),
-                                    SizedBox(width: SpacePalette.xs),
-                                    Text('5.0', style: TextStylePalette.listTitle),
-                                    SizedBox(width: SpacePalette.xs),
-                                    Text('(10)', style: TextStylePalette.listLeading),
-                                    SizedBox(width: SpacePalette.xs),
+                                    if (reviewCountState.value > 0) ...[
+                                      Icon(Icons.star, size: 16, color: Colors.amber),
+                                      SizedBox(width: SpacePalette.xs),
+                                      Text(avgRating.value.toStringAsFixed(1), style: TextStylePalette.listTitle),
+                                      SizedBox(width: SpacePalette.xs),
+                                      Text('(${reviewCountState.value})', style: TextStylePalette.listLeading),
+                                      SizedBox(width: SpacePalette.xs),
+                                    ],
                                     Icon(Icons.chevron_right, size: 18, color: ColorPalette.neutral400),
                                   ],
                                 ),
@@ -383,21 +438,18 @@ class ProjectDetailScreen extends HookConsumerWidget {
                             ),
                             SizedBox(height: SpacePalette.base),
 
-                            _ReviewItem(
-                              creatorName: 'Creator Name',
-                              comment: '"Happy to work with you!"',
-                              rating: 5,
-                            ),
-                            _ReviewItem(
-                              creatorName: 'Creator Name',
-                              comment: '"This is a fun project \u{1F3AC} This is a fun project \u{1F3AC} This is a fun project \u{1F3AC} T...',
-                              rating: 5,
-                            ),
-                            _ReviewItem(
-                              creatorName: 'Creator Name',
-                              comment: '"ez 5 stars!!"',
-                              rating: 5,
-                            ),
+                            if (reviews.value.isEmpty)
+                              Padding(
+                                padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                                child: Text('No reviews yet', style: TextStylePalette.smSubText),
+                              )
+                            else
+                              ...reviews.value.take(3).map((review) => _ReviewItem(
+                                creatorName: review.reviewerName ?? 'Anonymous',
+                                comment: review.comment,
+                                rating: review.rating,
+                                avatarUrl: review.reviewerAvatarUrl,
+                              )),
                           ],
                         ),
                       ),
@@ -420,13 +472,32 @@ class ProjectDetailScreen extends HookConsumerWidget {
               width: double.infinity,
               height: ButtonSizePalette.button,
               child: ElevatedButton(
-                onPressed: isJoining.value || isAlreadyJoined.value || showAddReview
-                    ? (showAddReview ? () => _showAddReviewDialog(context) : null)
-                    : handleJoin,
+                onPressed: isJoining.value
+                    ? null
+                    : (isAlreadyJoined.value || showAddReview)
+                        ? () async {
+                            await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ReviewScreen(
+                                  campaign: campaign,
+                                  showJoinButton: false,
+                                  showAddReview: true,
+                                ),
+                              ),
+                            );
+                            // リフレッシュ
+                            if (campaign != null) {
+                              final reviewService = ref.read(reviewServiceProvider);
+                              reviews.value = await reviewService.getReviews(campaign!.id);
+                              final summary = await reviewService.getOrganizerRatingSummary(campaign!.organizerId);
+                              avgRating.value = summary.average;
+                              reviewCountState.value = summary.count;
+                            }
+                          }
+                        : handleJoin,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: isAlreadyJoined.value
-                      ? ColorPalette.neutral400
-                      : ColorPalette.smashedPumpkin600,
+                  backgroundColor: ColorPalette.smashedPumpkin600,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
@@ -441,9 +512,9 @@ class ProjectDetailScreen extends HookConsumerWidget {
                         ),
                       )
                     : Text(
-                        showAddReview
+                        (isAlreadyJoined.value || showAddReview)
                             ? 'Add Review'
-                            : (isAlreadyJoined.value ? 'Already Joined' : 'Join'),
+                            : 'Join',
                         style: TextStylePalette.buttonTextWhite,
                       ),
               ),
@@ -476,14 +547,6 @@ class ProjectDetailScreen extends HookConsumerWidget {
     );
   }
 
-  void _showAddReviewDialog(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Add Review feature coming soon...'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
 }
 
 /// 丸い半透明背景のアイコンボタン（AppBar上で画像の上に表示）
@@ -539,11 +602,13 @@ class _ReviewItem extends StatelessWidget {
   final String creatorName;
   final String comment;
   final int rating;
+  final String? avatarUrl;
 
   const _ReviewItem({
     required this.creatorName,
     required this.comment,
     required this.rating,
+    this.avatarUrl,
   });
 
   @override
@@ -556,14 +621,24 @@ class _ReviewItem extends StatelessWidget {
           CircleAvatar(
             radius: 18,
             backgroundColor: ColorPalette.neutral300,
-            backgroundImage: NetworkImage('https://i.pravatar.cc/150?img=${hashCode % 70}'),
+            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+            child: avatarUrl == null
+                ? Icon(Icons.person, size: 18, color: ColorPalette.neutral500)
+                : null,
           ),
           SizedBox(width: SpacePalette.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(creatorName, style: TextStylePalette.miniTitle),
+                Row(
+                  children: [
+                    Text(creatorName, style: TextStylePalette.miniTitle),
+                    SizedBox(width: SpacePalette.sm),
+                    ...List.generate(rating, (_) =>
+                      Icon(Icons.star, size: 12, color: Colors.amber)),
+                  ],
+                ),
                 SizedBox(height: SpacePalette.xs),
                 Text(
                   comment,

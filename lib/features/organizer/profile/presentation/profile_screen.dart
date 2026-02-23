@@ -295,13 +295,6 @@ class ProfileScreen extends HookConsumerWidget {
                     onTap: () {},
                   ),
                   ProfileMenuItem(
-                    icon: Icons.star_outline,
-                    iconBackgroundColor: const Color(0xFFFFF8E1),
-                    iconColor: const Color(0xFFFFC107),
-                    label: 'Rate in App Store',
-                    onTap: () {},
-                  ),
-                  ProfileMenuItem(
                     icon: Icons.alternate_email,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,

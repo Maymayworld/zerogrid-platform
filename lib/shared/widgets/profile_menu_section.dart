@@ -70,6 +70,7 @@ class ProfileMenuItem extends StatelessWidget {
   final Color? iconBackgroundColor;
   final Color? iconColor;
   final String label;
+  final Widget? trailing;
   final VoidCallback onTap;
   final bool isDestructive;
   final bool showChevron;
@@ -80,6 +81,7 @@ class ProfileMenuItem extends StatelessWidget {
     this.iconBackgroundColor,
     this.iconColor,
     required this.label,
+    this.trailing,
     required this.onTap,
     this.isDestructive = false,
     this.showChevron = true,
@@ -124,6 +126,10 @@ class ProfileMenuItem extends StatelessWidget {
             Expanded(
               child: Text(label, style: effectiveLabelStyle),
             ),
+            if (trailing != null) ...[
+              trailing!,
+              SizedBox(width: SpacePalette.xs),
+            ],
             if (showChevron)
               Icon(
                 Icons.chevron_right,

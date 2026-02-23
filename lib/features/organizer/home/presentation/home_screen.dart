@@ -78,13 +78,9 @@ class _DashboardHeader extends StatelessWidget {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            ColorPalette.smashedPumpkin500,
-            ColorPalette.smashedPumpkin700,
-          ],
+        image: DecorationImage(
+          image: AssetImage('assets/images/dashboard_card.png'),
+          fit: BoxFit.cover,
         ),
       ),
       child: SafeArea(

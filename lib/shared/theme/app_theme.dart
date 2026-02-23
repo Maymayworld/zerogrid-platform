@@ -310,10 +310,9 @@ class CategoryChip extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        height: CategoryChipSize.height,
         padding: EdgeInsets.symmetric(
           horizontal: CategoryChipSize.horizontalPadding,
-          vertical: CategoryChipSize.verticalPadding,
+          vertical: 6,
         ),
         decoration: BoxDecoration(
           color: ColorPalette.neutral50,
@@ -322,6 +321,7 @@ class CategoryChip extends StatelessWidget {
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(width: CategoryChipSize.iconSize, height: CategoryChipSize.iconSize, child: iconWidget),
             SizedBox(width: CategoryChipSize.iconTextSpacing),
