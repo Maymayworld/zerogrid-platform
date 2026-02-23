@@ -61,11 +61,25 @@ class AccountSettingsScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Email display
+                    // Email Section
                     Text(
-                      email,
-                      style: TextStylePalette.normalText.copyWith(
-                        color: ColorPalette.neutral600,
+                      'Email',
+                      style: TextStylePalette.smTitle,
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SpacePalette.base,
+                        vertical: SpacePalette.inner,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorPalette.neutral100,
+                        borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                      ),
+                      child: Text(
+                        email,
+                        style: TextStylePalette.normalText,
                       ),
                     ),
 
@@ -249,13 +263,13 @@ class _DuolingoButton extends StatelessWidget {
         ? ColorPalette.white
         : ColorPalette.white;
     final shadowColor = isDestructive
-        ? ColorPalette.critical200
+        ? ColorPalette.critical500
         : ColorPalette.neutral200;
     final textColor = isDestructive
         ? ColorPalette.critical500
         : ColorPalette.neutral800;
     final borderColor = isDestructive
-        ? ColorPalette.critical200
+        ? ColorPalette.critical500
         : ColorPalette.neutral200;
 
     return GestureDetector(
