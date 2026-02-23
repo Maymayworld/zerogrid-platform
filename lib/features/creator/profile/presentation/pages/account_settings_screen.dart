@@ -8,14 +8,30 @@ import '../../../../../shared/widgets/platform_icon.dart';
 class AccountSettingsScreen extends ConsumerWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
 
+  /// Show as modal bottom sheet (90% height)
+  static void show(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => const AccountSettingsScreen(),
+    );
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = Supabase.instance.client.auth.currentUser;
     final email = user?.email ?? 'No email';
+    final screenHeight = MediaQuery.of(context).size.height;
 
-    return Scaffold(
-      backgroundColor: ColorPalette.neutral100,
-      body: SafeArea(
+    return Container(
+      height: screenHeight * 0.9, // 90% of screen height
+      decoration: BoxDecoration(
+        color: ColorPalette.white,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.xl)),
+      ),
+      child: SafeArea(
+        top: false,
         child: Column(
           children: [
             // Header with X button
@@ -54,6 +70,8 @@ class AccountSettingsScreen extends ConsumerWidget {
               ),
             ),
 
+            SizedBox(height: SpacePalette.base), // Space between header and Email
+
             // Scrollable content
             Expanded(
               child: SingleChildScrollView(
@@ -69,14 +87,14 @@ class AccountSettingsScreen extends ConsumerWidget {
                     SizedBox(height: SpacePalette.sm),
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: SpacePalette.base,
-                        vertical: SpacePalette.inner,
-                      ),
+                      height: 48,
+                      padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
                       decoration: BoxDecoration(
                         color: ColorPalette.neutral100,
-                        borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                        border: Border.all(color: ColorPalette.neutral200),
+                        borderRadius: BorderRadius.circular(12),
                       ),
+                      alignment: Alignment.centerLeft,
                       child: Text(
                         email,
                         style: TextStylePalette.normalText,
