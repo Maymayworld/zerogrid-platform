@@ -113,13 +113,6 @@ class AccountSettingsScreen extends ConsumerWidget {
                     ),
                     SizedBox(height: SpacePalette.sm),
 
-                    // Connected accounts indicator (example)
-                    _ConnectedAccountsRow(
-                      connectedCount: 3,
-                      avatarUrls: [], // Would come from real data
-                    ),
-                    SizedBox(height: SpacePalette.sm),
-
                     // TikTok
                     _PlatformRow(
                       icon: PlatformIcon.tiktok(size: 24),
@@ -136,7 +129,8 @@ class AccountSettingsScreen extends ConsumerWidget {
                       width: double.infinity,
                       padding: EdgeInsets.all(SpacePalette.base),
                       decoration: BoxDecoration(
-                        color: ColorPalette.critical50,
+                        color: ColorPalette.white,
+                        border: Border.all(color: ColorPalette.critical500),
                         borderRadius: BorderRadius.circular(RadiusPalette.lg),
                       ),
                       child: Column(
@@ -390,64 +384,6 @@ class _PlatformRow extends StatelessWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Connected accounts indicator row
-class _ConnectedAccountsRow extends StatelessWidget {
-  final int connectedCount;
-  final List<String> avatarUrls;
-
-  const _ConnectedAccountsRow({
-    required this.connectedCount,
-    required this.avatarUrls,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        // TODO: Show connected accounts
-      },
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: SpacePalette.sm),
-        child: Row(
-          children: [
-            // Stacked avatars
-            SizedBox(
-              width: 60,
-              height: 24,
-              child: Stack(
-                children: [
-                  for (int i = 0; i < 3; i++)
-                    Positioned(
-                      left: i * 16.0,
-                      child: CircleAvatar(
-                        radius: 12,
-                        backgroundColor: ColorPalette.neutral300,
-                        child: Icon(Icons.person, size: 12, color: ColorPalette.neutral500),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(width: SpacePalette.sm),
-            Text(
-              '$connectedCount connected',
-              style: TextStylePalette.smText.copyWith(
-                color: ColorPalette.neutral600,
-              ),
-            ),
-            Spacer(),
-            Icon(
-              Icons.keyboard_arrow_down,
-              size: 20,
-              color: ColorPalette.neutral500,
-            ),
-          ],
-        ),
       ),
     );
   }
