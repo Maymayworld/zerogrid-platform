@@ -8,6 +8,9 @@ import 'package:zero_grid/features/auth/presentation/providers/user_profile_prov
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/campaign_service_provider.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/platform_icon.dart';
+import 'package:zero_grid/shared/theme/main_layout.dart';
+import 'package:zero_grid/features/auth/data/models/user_role.dart';
 
 class PreviewPage extends HookConsumerWidget {
   const PreviewPage({super.key});
@@ -81,8 +84,14 @@ class PreviewPage extends HookConsumerWidget {
               backgroundColor: ColorPalette.positive500,
             ),
           );
-          // ホーム画面に戻る（全てpop）
-          Navigator.of(context).popUntil((route) => route.isFirst);
+          // OrganizerのMainLayoutに戻る（履歴クリア）
+          Navigator.pushAndRemoveUntil(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MainLayout(userRole: UserRole.organizer),
+            ),
+            (route) => false,
+          );
         }
       } catch (e) {
         if (context.mounted) {
@@ -162,14 +171,16 @@ class PreviewPage extends HookConsumerWidget {
                       ),
                       SizedBox(height: SpacePalette.base),
 
-                      // プラットフォームチップ
-                      Row(
-                        children: [
-                          ...project.platforms.map((name) => Padding(
-                                padding: EdgeInsets.only(right: SpacePalette.sm),
-                                child: PlatformChip(platformName: name),
-                              )),
-                        ],
+                      // プラットフォームチップ（Creator側と同じCategoryChip使用）
+                      Wrap(
+                        spacing: SpacePalette.sm,
+                        runSpacing: SpacePalette.sm,
+                        children: project.platforms.map((platform) {
+                          return CategoryChip(
+                            iconWidget: PlatformIcon.fromPlatform(platform, size: CategoryChipSize.iconSize),
+                            label: platform,
+                          );
+                        }).toList(),
                       ),
                       SizedBox(height: SpacePalette.base),
 
@@ -195,24 +206,19 @@ class PreviewPage extends HookConsumerWidget {
 
                       Divider(color: ColorPalette.neutral200, height: 1),
 
-                      // 会社情報
+                      // 会社情報（実データ使用）
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: SpacePalette.base),
                         child: Row(
                           children: [
                             CircleAvatar(
                               radius: 20,
-                              backgroundColor: ColorPalette.neutral800,
+                              backgroundColor: ColorPalette.neutral200,
                               backgroundImage: profile?.avatarUrl != null
                                   ? NetworkImage(profile!.avatarUrl!)
                                   : null,
                               child: profile?.avatarUrl == null
-                                  ? Text(
-                                      profile?.displayName.substring(0, 1).toUpperCase() ?? 'C',
-                                      style: TextStylePalette.smTitle.copyWith(
-                                        color: ColorPalette.white,
-                                      ),
-                                    )
+                                  ? Icon(Icons.business, size: 20, color: ColorPalette.neutral600)
                                   : null,
                             ),
                             SizedBox(width: SpacePalette.sm),
@@ -220,19 +226,13 @@ class PreviewPage extends HookConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  profile?.displayName ?? 'Company Name',
-                                  style: TextStylePalette.smTitle,
+                                  profile?.displayName ?? 'Loading...',
+                                  style: TextStylePalette.listTitle,
                                 ),
                                 SizedBox(height: SpacePalette.xs),
-                                Row(
-                                  children: [
-                                    Icon(Icons.star, size: 14, color: Color(0xFFFBBF24)),
-                                    SizedBox(width: SpacePalette.xs),
-                                    Text(
-                                      '4.9 (131 reviews)',
-                                      style: TextStylePalette.smSubText,
-                                    ),
-                                  ],
+                                Text(
+                                  'Organizer',
+                                  style: TextStylePalette.listLeading,
                                 ),
                               ],
                             ),
@@ -345,24 +345,4 @@ class PreviewPage extends HookConsumerWidget {
   }
 }
 
-class PlatformChip extends StatelessWidget {
-  final String platformName;
-
-  const PlatformChip({super.key, required this.platformName});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: ButtonSizePalette.tag,
-      padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-      decoration: BoxDecoration(
-        color: ColorPalette.neutral100,
-        border: Border.all(color: ColorPalette.neutral200, width: 1),
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
-      ),
-      child: Center(
-        child: Text(platformName, style: TextStylePalette.smText),
-      ),
-    );
-  }
-}
+// PlatformChip removed - using CategoryChip from app_theme.dart instead
