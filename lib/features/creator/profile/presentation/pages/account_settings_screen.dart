@@ -24,13 +24,15 @@ class AccountSettingsScreen extends ConsumerWidget {
     final email = user?.email ?? 'No email';
     final screenHeight = MediaQuery.of(context).size.height;
 
-    return Container(
-      height: screenHeight * 0.9, // 90% of screen height
-      decoration: BoxDecoration(
-        color: ColorPalette.white,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.xl)),
-      ),
-      child: SafeArea(
+    return Material(
+      color: Colors.transparent,
+      child: Container(
+        height: screenHeight * 0.9, // 90% of screen height
+        decoration: BoxDecoration(
+          color: ColorPalette.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.xl)),
+        ),
+        child: SafeArea(
         top: false,
         child: Column(
           children: [
@@ -215,6 +217,7 @@ class AccountSettingsScreen extends ConsumerWidget {
             ),
           ],
         ),
+      ),
       ),
     );
   }
