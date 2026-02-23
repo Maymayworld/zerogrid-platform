@@ -1,11 +1,15 @@
 // lib/features/creator/profile/presentation/pages/account_settings_screen.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
+import '../../../../auth/presentation/providers/oauth_provider.dart';
+import '../../../../creator/submission/presentation/providers/submission_providers.dart';
+import '../../../../creator/submission/data/models/social_connection.dart';
 
-class AccountSettingsScreen extends ConsumerWidget {
+class AccountSettingsScreen extends HookConsumerWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
 
   /// Show as modal bottom sheet (90% height)
@@ -23,6 +27,105 @@ class AccountSettingsScreen extends ConsumerWidget {
     final user = Supabase.instance.client.auth.currentUser;
     final email = user?.email ?? 'No email';
     final screenHeight = MediaQuery.of(context).size.height;
+    
+    // Social connections state
+    final connections = useState<List<SocialConnection>>([]);
+    final isLoading = useState(true);
+
+    // Load connections on mount
+    Future<void> loadConnections() async {
+      isLoading.value = true;
+      try {
+        final service = ref.read(socialConnectionServiceProvider);
+        final conns = await service.getMyConnections();
+        connections.value = conns;
+        ref.read(connectedProvidersProvider.notifier).state =
+            conns.map((c) => c.provider).toSet();
+        ref.read(socialConnectionsProvider.notifier).state = conns;
+      } catch (e) {
+        // Handle error silently
+      } finally {
+        isLoading.value = false;
+      }
+    }
+
+    useEffect(() {
+      loadConnections();
+      return null;
+    }, []);
+
+    // Get connection for a provider
+    SocialConnection? getConnectionFor(String provider) {
+      try {
+        return connections.value.firstWhere(
+          (c) => c.provider == provider && c.isConnected,
+        );
+      } catch (_) {
+        return null;
+      }
+    }
+
+    // Handle OAuth connect
+    Future<void> handleConnect(String provider) async {
+      try {
+        final oauthService = ref.read(oAuthServiceProvider);
+        switch (provider) {
+          case 'youtube':
+            await oauthService.connectYouTube();
+            break;
+          case 'instagram':
+            await oauthService.connectInstagram();
+            break;
+          case 'tiktok':
+            await oauthService.connectTikTok();
+            break;
+        }
+        await loadConnections();
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to connect: $e'), backgroundColor: Colors.red),
+          );
+        }
+      }
+    }
+
+    // Handle disconnect
+    Future<void> handleDisconnect(String connectionId, String providerName) async {
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: Text('Disconnect $providerName?', style: TextStylePalette.title),
+          content: Text('Are you sure you want to disconnect this account?', style: TextStylePalette.normalText),
+          actions: [
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel')),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text('Disconnect', style: TextStyle(color: ColorPalette.critical500)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirmed == true) {
+        try {
+          final service = ref.read(socialConnectionServiceProvider);
+          await service.disconnectProvider(connectionId);
+          await loadConnections();
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('$providerName disconnected')),
+            );
+          }
+        } catch (e) {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('Failed to disconnect: $e'), backgroundColor: Colors.red),
+            );
+          }
+        }
+      }
+    }
 
     return Material(
       color: Colors.transparent,
@@ -128,33 +231,42 @@ class AccountSettingsScreen extends ConsumerWidget {
                     SizedBox(height: SpacePalette.sm),
 
                     // YouTube
-                    _PlatformRow(
-                      icon: PlatformIcon.youtube(size: 24),
-                      name: 'YouTube',
-                      onAdd: () {
-                        // TODO: Connect YouTube
-                      },
-                    ),
+                    Builder(builder: (context) {
+                      final conn = getConnectionFor('youtube');
+                      return _PlatformRow(
+                        icon: PlatformIcon.youtube(size: 24),
+                        name: 'YouTube',
+                        connection: conn,
+                        onAdd: () => handleConnect('youtube'),
+                        onDisconnect: conn != null ? () => handleDisconnect(conn.id, 'YouTube') : null,
+                      );
+                    }),
                     SizedBox(height: SpacePalette.sm),
 
                     // Instagram
-                    _PlatformRow(
-                      icon: PlatformIcon.instagram(size: 24),
-                      name: 'Instagram',
-                      onAdd: () {
-                        // TODO: Connect Instagram
-                      },
-                    ),
+                    Builder(builder: (context) {
+                      final conn = getConnectionFor('instagram');
+                      return _PlatformRow(
+                        icon: PlatformIcon.instagram(size: 24),
+                        name: 'Instagram',
+                        connection: conn,
+                        onAdd: () => handleConnect('instagram'),
+                        onDisconnect: conn != null ? () => handleDisconnect(conn.id, 'Instagram') : null,
+                      );
+                    }),
                     SizedBox(height: SpacePalette.sm),
 
                     // TikTok
-                    _PlatformRow(
-                      icon: PlatformIcon.tiktok(size: 24),
-                      name: 'Tiktok',
-                      onAdd: () {
-                        // TODO: Connect TikTok
-                      },
-                    ),
+                    Builder(builder: (context) {
+                      final conn = getConnectionFor('tiktok');
+                      return _PlatformRow(
+                        icon: PlatformIcon.tiktok(size: 24),
+                        name: 'TikTok',
+                        connection: conn,
+                        onAdd: () => handleConnect('tiktok'),
+                        onDisconnect: conn != null ? () => handleDisconnect(conn.id, 'TikTok') : null,
+                      );
+                    }),
 
                     SizedBox(height: 56),
 
@@ -348,17 +460,23 @@ class _DuolingoButton extends StatelessWidget {
   }
 }
 
-/// Platform row with icon and Add button
+/// Platform row with icon and Add/Connected button
 class _PlatformRow extends StatelessWidget {
   final Widget icon;
   final String name;
+  final SocialConnection? connection;
   final VoidCallback onAdd;
+  final VoidCallback? onDisconnect;
 
   const _PlatformRow({
     required this.icon,
     required this.name,
     required this.onAdd,
+    this.connection,
+    this.onDisconnect,
   });
+
+  bool get isConnected => connection != null && connection!.isConnected;
 
   @override
   Widget build(BuildContext context) {
@@ -366,7 +484,7 @@ class _PlatformRow extends StatelessWidget {
       height: 72,
       padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
       decoration: BoxDecoration(
-        color: ColorPalette.white, // neutral0
+        color: ColorPalette.white,
         border: Border.all(color: ColorPalette.neutral200, width: 1),
         borderRadius: BorderRadius.circular(16),
       ),
@@ -383,70 +501,123 @@ class _PlatformRow extends StatelessWidget {
             child: Center(child: icon),
           ),
           SizedBox(width: SpacePalette.base),
-          // Platform name
+          // Platform name + connected account
           Expanded(
-            child: Text(
-              name,
-              style: TextStylePalette.listTitle,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, style: TextStylePalette.listTitle),
+                if (isConnected && connection!.providerAccountName != null)
+                  Text(
+                    '@${connection!.providerAccountName}',
+                    style: TextStylePalette.smSubText,
+                  ),
+              ],
             ),
           ),
-          // Add button (Duolingo solid shadow style)
-          GestureDetector(
-            onTap: onAdd,
-            child: Container(
-              width: 72,
-              height: 36,
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral200,
-                borderRadius: BorderRadius.circular(100),
-                border: Border.all(color: ColorPalette.neutral200, width: 1),
-              ),
-              child: Stack(
-                children: [
-                  // Shadow layer (3px below)
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 3,
-                    height: 32,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorPalette.neutral200,
-                        borderRadius: BorderRadius.circular(100),
+          // Add/Connected button (Duolingo solid shadow style)
+          if (isConnected)
+            GestureDetector(
+              onTap: onDisconnect,
+              child: Container(
+                width: 100,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: ColorPalette.positive500,
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: Stack(
+                  children: [
+                    // Shadow layer
+                    Positioned(
+                      left: 0, right: 0, top: 3, height: 32,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorPalette.positive600,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
                       ),
                     ),
-                  ),
-                  // Surface layer
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    height: 32,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorPalette.white,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(color: ColorPalette.neutral200, width: 1),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.add, size: 14, color: ColorPalette.neutral800),
-                          SizedBox(width: SpacePalette.xs),
-                          Text(
-                            'Add',
-                            style: TextStylePalette.smText.copyWith(
-                              fontWeight: FontWeight.w600,
+                    // Surface layer
+                    Positioned(
+                      left: 0, right: 0, top: 0, height: 32,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorPalette.positive500,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.check, size: 14, color: ColorPalette.white),
+                            SizedBox(width: SpacePalette.xs),
+                            Text(
+                              'Connected',
+                              style: TextStylePalette.smText.copyWith(
+                                fontWeight: FontWeight.w600,
+                                color: ColorPalette.white,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
+              ),
+            )
+          else
+            GestureDetector(
+              onTap: onAdd,
+              child: Container(
+                width: 72,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: ColorPalette.neutral200,
+                  borderRadius: BorderRadius.circular(100),
+                  border: Border.all(color: ColorPalette.neutral200, width: 1),
+                ),
+                child: Stack(
+                  children: [
+                    // Shadow layer (3px below)
+                    Positioned(
+                      left: 0, right: 0, top: 3, height: 32,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorPalette.neutral200,
+                          borderRadius: BorderRadius.circular(100),
+                        ),
+                      ),
+                    ),
+                    // Surface layer
+                    Positioned(
+                      left: 0, right: 0, top: 0, height: 32,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: ColorPalette.white,
+                          borderRadius: BorderRadius.circular(100),
+                          border: Border.all(color: ColorPalette.neutral200, width: 1),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, size: 14, color: ColorPalette.neutral800),
+                            SizedBox(width: SpacePalette.xs),
+                            Text(
+                              'Add',
+                              style: TextStylePalette.smText.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
