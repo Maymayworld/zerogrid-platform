@@ -355,28 +355,57 @@ class _PlatformRow extends StatelessWidget {
               style: TextStylePalette.listTitle,
             ),
           ),
-          // Add button
+          // Add button (Duolingo solid shadow style)
           GestureDetector(
             onTap: onAdd,
             child: Container(
-              padding: EdgeInsets.symmetric(
-                horizontal: SpacePalette.base,
-                vertical: SpacePalette.sm,
-              ),
+              width: 72,
+              height: 36,
               decoration: BoxDecoration(
-                color: ColorPalette.white,
-                border: Border.all(color: ColorPalette.neutral200, width: 1),
+                color: ColorPalette.neutral200,
                 borderRadius: BorderRadius.circular(100),
+                border: Border.all(color: ColorPalette.neutral200, width: 1),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Stack(
                 children: [
-                  Icon(Icons.add, size: 16, color: ColorPalette.neutral800),
-                  SizedBox(width: SpacePalette.xs),
-                  Text(
-                    'Add',
-                    style: TextStylePalette.smText.copyWith(
-                      fontWeight: FontWeight.w600,
+                  // Shadow layer (3px below)
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 3,
+                    height: 32,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: ColorPalette.neutral200,
+                        borderRadius: BorderRadius.circular(100),
+                      ),
+                    ),
+                  ),
+                  // Surface layer
+                  Positioned(
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    height: 32,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: ColorPalette.white,
+                        borderRadius: BorderRadius.circular(100),
+                        border: Border.all(color: ColorPalette.neutral200, width: 1),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add, size: 14, color: ColorPalette.neutral800),
+                          SizedBox(width: SpacePalette.xs),
+                          Text(
+                            'Add',
+                            style: TextStylePalette.smText.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],
