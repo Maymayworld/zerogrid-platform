@@ -50,7 +50,7 @@ class ProjectCard extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
             color: ColorPalette.neutral800.withOpacity(0.08),
@@ -60,7 +60,7 @@ class ProjectCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
+        borderRadius: BorderRadius.circular(18),
         child: Stack(
           fit: StackFit.expand,
           children: [

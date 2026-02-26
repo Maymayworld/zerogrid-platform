@@ -36,7 +36,7 @@ class OrganizerCampaignCard extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
+        borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
             color: ColorPalette.neutral800.withOpacity(0.08),
@@ -46,7 +46,7 @@ class OrganizerCampaignCard extends StatelessWidget {
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
+        borderRadius: BorderRadius.circular(18),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -109,25 +109,85 @@ class OrganizerCampaignCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: SpacePalette.sm),
-                    // Editボタン（フル幅）
-                    GestureDetector(
-                      onTap: onEdit,
-                      child: Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: ColorPalette.neutral800,
-                          borderRadius: BorderRadius.circular(RadiusPalette.base),
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Edit',
-                            style: TextStylePalette.buttonTextWhite,
-                          ),
+                    // Editボタン（Duolingoスタイル・押下アニメーション付き）
+                    SizedBox(
+                      height: 44,
+                      child: _CardDuolingoButton(
+                        onPressed: onEdit,
+                        child: Text(
+                          'Edit',
+                          style: TextStylePalette.buttonTextBlack,
                         ),
                       ),
                     ),
                   ],
                 ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Editボタン（角丸full、白Duolingoスタイル・押下アニメーション付き）
+class _CardDuolingoButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final Widget child;
+
+  const _CardDuolingoButton({
+    required this.onPressed,
+    required this.child,
+  });
+
+  @override
+  State<_CardDuolingoButton> createState() => _CardDuolingoButtonState();
+}
+
+class _CardDuolingoButtonState extends State<_CardDuolingoButton> {
+  bool _isPressed = false;
+
+  static const double shadowOffset = 4.0;
+  static const double buttonHeight = 40.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onPressed();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: SizedBox(
+        height: buttonHeight + shadowOffset,
+        child: Stack(
+          children: [
+            // シャドウ
+            Positioned(
+              left: 0, right: 0, bottom: 0,
+              child: Container(
+                height: buttonHeight,
+                decoration: BoxDecoration(
+                  color: ColorPalette.neutral200,
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                ),
+              ),
+            ),
+            // サーフェス（押下時に下にずれて影が隠れる）
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 50),
+              left: 0, right: 0,
+              top: _isPressed ? shadowOffset : 0,
+              child: Container(
+                height: buttonHeight,
+                decoration: BoxDecoration(
+                  color: ColorPalette.white,
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  border: Border.all(color: ColorPalette.neutral200),
+                ),
+                child: Center(child: widget.child),
               ),
             ),
           ],

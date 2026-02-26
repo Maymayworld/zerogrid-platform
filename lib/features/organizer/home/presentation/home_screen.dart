@@ -609,8 +609,7 @@ class _ProjectListItem extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => AnalyticsScreen(
-              projectName: projectName.replaceAll('\n', ' '),
-              budget: budget,
+              campaignId: campaignId,
             ),
           ),
         );

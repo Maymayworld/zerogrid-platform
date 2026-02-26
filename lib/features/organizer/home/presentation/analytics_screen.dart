@@ -1,847 +1,546 @@
-// lib/screens/organizer/home/analytics_screen.dart
+// lib/features/organizer/home/presentation/analytics_screen.dart
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
+import '../data/services/organizer_stats_service.dart';
+import 'providers/organizer_stats_provider.dart';
 
-class AnalyticsScreen extends HookWidget {
-  final String projectName;
-  final String budget;
+class AnalyticsScreen extends HookConsumerWidget {
+  final String campaignId;
 
   const AnalyticsScreen({
     Key? key,
-    required this.projectName,
-    required this.budget,
+    required this.campaignId,
   }) : super(key: key);
 
+  String _formatNumber(int num) {
+    return num.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (Match m) => '${m[1]},',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final service = ref.read(organizerStatsServiceProvider);
+
+    // State
+    final campaign = useState<CampaignStats?>(null);
+    final submissions = useState<List<SubmissionAnalytics>>([]);
+    final userRankings = useState<List<UserRanking>>([]);
+    final platformBreakdown = useState<Map<String, int>>({});
+    final isLoading = useState(true);
+
+    // Filters
+    final viewsPlatform = useState('All');
+    final rankingPlatform = useState('All');
+
+    // Load campaign data
+    Future<void> loadData() async {
+      isLoading.value = true;
+      final details = await service.getCampaignDetails(campaignId);
+      campaign.value = details;
+
+      final subs = await service.getCampaignSubmissions(
+        campaignId: campaignId,
+        platform: viewsPlatform.value,
+      );
+      submissions.value = subs;
+
+      final breakdown = await service.getCampaignViewsByPlatform(campaignId);
+      platformBreakdown.value = breakdown;
+
+      final rankings = await service.getCampaignUserRanking(
+        campaignId: campaignId,
+        platform: rankingPlatform.value,
+      );
+      userRankings.value = rankings;
+
+      isLoading.value = false;
+    }
+
+    useEffect(() {
+      loadData();
+      return null;
+    }, []);
+
+    // Reload views when platform filter changes
+    Future<void> reloadViews() async {
+      final subs = await service.getCampaignSubmissions(
+        campaignId: campaignId,
+        platform: viewsPlatform.value,
+      );
+      submissions.value = subs;
+    }
+
+    // Reload rankings when filter changes
+    Future<void> reloadRankings() async {
+      final rankings = await service.getCampaignUserRanking(
+        campaignId: campaignId,
+        platform: rankingPlatform.value,
+      );
+      userRankings.value = rankings;
+    }
+
+    final totalFilteredViews = submissions.value.fold<int>(
+      0,
+      (sum, s) => sum + s.viewCount,
+    );
+
+    return Scaffold(
+      backgroundColor: ColorPalette.neutral100,
+      body: isLoading.value
+          ? Center(child: CircularProgressIndicator())
+          : CustomScrollView(
+              slivers: [
+                // Header with dashboard background
+                SliverToBoxAdapter(
+                  child: _AnalyticsHeader(
+                    campaignName: campaign.value?.name ?? '',
+                    totalViews: campaign.value?.totalViews ?? 0,
+                    targetViews: campaign.value?.targetViews ?? 0,
+                    progressPercentage: campaign.value?.progressPercentage ?? 0,
+                    formatNumber: _formatNumber,
+                  ),
+                ),
+
+                // Content
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.all(SpacePalette.base),
+                    child: Column(
+                      children: [
+                        // Views Analysis Card
+                        _ViewsAnalysisCard(
+                          totalViews: totalFilteredViews,
+                          platformBreakdown: platformBreakdown.value,
+                          selectedPlatform: viewsPlatform.value,
+                          onPlatformChanged: (p) {
+                            viewsPlatform.value = p;
+                            reloadViews();
+                          },
+                          formatNumber: _formatNumber,
+                        ),
+
+                        SizedBox(height: SpacePalette.base),
+
+                        // User Ranking Card
+                        _UserRankingCard(
+                          rankings: userRankings.value,
+                          selectedPlatform: rankingPlatform.value,
+                          onPlatformChanged: (p) {
+                            rankingPlatform.value = p;
+                            reloadRankings();
+                          },
+                          formatNumber: _formatNumber,
+                        ),
+
+                        SizedBox(height: 100),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
+  }
+}
+
+// Header
+class _AnalyticsHeader extends StatelessWidget {
+  final String campaignName;
+  final int totalViews;
+  final int targetViews;
+  final double progressPercentage;
+  final String Function(int) formatNumber;
+
+  const _AnalyticsHeader({
+    required this.campaignName,
+    required this.totalViews,
+    required this.targetViews,
+    required this.progressPercentage,
+    required this.formatNumber,
+  });
+
   @override
   Widget build(BuildContext context) {
-    final selectedPeriod = useState('Today');
-    final selectedPlatform = useState('YouTube');
-    
-    return Scaffold(
-      backgroundColor: ColorPalette.white,
-      appBar: AppBar(
-        backgroundColor: ColorPalette.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
-          onPressed: () => Navigator.pop(context),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/images/dashboard_card.png'),
+          fit: BoxFit.cover,
         ),
-        title: Text(
-          projectName,
-          style: TextStylePalette.title,
-        ),
-        centerTitle: true,
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            // Total Spent Section
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(SpacePalette.base),
-              color: ColorPalette.neutral800,
-              child: Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: SpacePalette.base),
-                    Text(
-                      'Total Spent',
-                      style: TextStylePalette.normalText.copyWith(
-                        color: ColorPalette.neutral100
-                      )
-                    ),
-                    SizedBox(height: SpacePalette.sm),
-                    Text(
-                      '¥40,000',
-                      style: TextStylePalette.header.copyWith(color: ColorPalette.neutral100),
-                    ),
-                    SizedBox(height: SpacePalette.base),
-                  ],
+      child: SafeArea(
+        bottom: false,
+        child: Padding(
+          padding: EdgeInsets.all(SpacePalette.base),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Back button
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: ColorPalette.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(RadiusPalette.base),
+                  ),
+                  child: Icon(Icons.arrow_back, color: ColorPalette.white, size: 20),
                 ),
               ),
-            ),
-            
-            SizedBox(height: SpacePalette.base),
-            
-            // Views Analysis Section
-            Padding(
-              padding: EdgeInsets.all(SpacePalette.base),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              SizedBox(height: SpacePalette.base),
+
+              Text(
+                campaignName,
+                style: TextStylePalette.smallHeader.copyWith(
+                  color: ColorPalette.white,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              SizedBox(height: SpacePalette.lg),
+
+              Text(
+                'Total Views',
+                style: TextStylePalette.normalText.copyWith(
+                  color: ColorPalette.white.withOpacity(0.9),
+                ),
+              ),
+              SizedBox(height: SpacePalette.xs),
+              Text(
+                formatNumber(totalViews),
+                style: TextStylePalette.header.copyWith(
+                  color: ColorPalette.white,
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: SpacePalette.base),
+
+              // Progress bar
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Views Analysis',
-                        style: TextStylePalette.title,
-                      ),
-                      Spacer(),
-                      Container(
-                        padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: ColorPalette.neutral200),
-                          borderRadius: BorderRadius.circular(RadiusPalette.mini),
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: (progressPercentage / 100).clamp(0.0, 1.0),
+                        backgroundColor: ColorPalette.white.withOpacity(0.2),
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          progressPercentage >= 100
+                              ? ColorPalette.positive500
+                              : ColorPalette.white,
                         ),
-                        child: Row(
-                          children: [
-                            Text(
-                              'Today',
-                              style: TextStylePalette.smText,
-                            ),
-                            SizedBox(width: SpacePalette.xs),
-                            Icon(Icons.keyboard_arrow_down, size: 16, color: ColorPalette.neutral800),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.lg),
-                  
-                  Text(
-                    'Total Views',
-                    style: TextStylePalette.smSubTitle,
-                  ),
-                  
-                  SizedBox(height: SpacePalette.sm),
-                  
-                  Row(
-                    children: [
-                      Text(
-                        '96,513',
-                        style: TextStylePalette.title,
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Text(
-                        '+18%',
-                        style: TextStylePalette.guide.copyWith(
-                          color: ColorPalette.positive500,
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // グラフ
-                  SizedBox(
-                    height: 150,
-                    child: LineChart(
-                      LineChartData(
-                        gridData: FlGridData(show: false),
-                        titlesData: FlTitlesData(
-                          leftTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              reservedSize: 40,
-                              getTitlesWidget: (value, meta) {
-                                return Text(
-                                  '${(value / 1000).toInt()}k',
-                                  style: TextStylePalette.smSubText.copyWith(fontSize: 10),
-                                );
-                              },
-                            ),
-                          ),
-                          bottomTitles: AxisTitles(
-                            sideTitles: SideTitles(
-                              showTitles: true,
-                              getTitlesWidget: (value, meta) {
-                                const times = ['12:00 AM', '10:00 AM', '08:00 PM'];
-                                if (value.toInt() >= 0 && value.toInt() < times.length) {
-                                  return Padding(
-                                    padding: EdgeInsets.only(top: SpacePalette.xs),
-                                    child: Text(
-                                      times[value.toInt()],
-                                      style: TextStylePalette.smSubText.copyWith(fontSize: 10),
-                                    ),
-                                  );
-                                }
-                                return Text('');
-                              },
-                            ),
-                          ),
-                          rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                          topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                        ),
-                        borderData: FlBorderData(show: false),
-                        lineBarsData: [
-                          LineChartBarData(
-                            spots: [
-                              FlSpot(0, 30000),
-                              FlSpot(0.5, 50000),
-                              FlSpot(1, 35000),
-                              FlSpot(1.5, 75000),
-                              FlSpot(2, 85000),
-                            ],
-                            isCurved: true,
-                            color: ColorPalette.positive500,
-                            barWidth: 3,
-                            isStrokeCapRound: true,
-                            dotData: FlDotData(show: false),
-                            belowBarData: BarAreaData(
-                              show: true,
-                              color: ColorPalette.positive500.withOpacity(0.3),
-                            ),
-                          ),
-                        ],
-                        minY: 0,
-                        maxY: 100000,
+                        minHeight: 6,
                       ),
                     ),
                   ),
-                  
-                  SizedBox(height: SpacePalette.lg),
-                  
-                  Divider(color: ColorPalette.neutral200, height: 1),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // View Ranking Section
+                  SizedBox(width: SpacePalette.sm),
                   Text(
-                    'View Ranking',
-                    style: TextStylePalette.title,
+                    '${progressPercentage.toStringAsFixed(0)}%',
+                    style: TextStylePalette.smTitle.copyWith(
+                      color: ColorPalette.white,
+                    ),
                   ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: ButtonSizePalette.filter,
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: DropdownButton<String>(
-                            value: selectedPeriod.value,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: ColorPalette.neutral800,
-                            ),
-                            style: TextStylePalette.smText,
-                            onChanged: (value) {
-                              if (value != null) {
-                                selectedPeriod.value = value;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'Today',
-                                child: Text('Daily'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Yesterday',
-                                child: Text('Yesterday'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Week',
-                                child: Text('This Week'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Month',
-                                child: Text('This Month'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Year',
-                                child: Text('This Year'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'All Time',
-                                child: Text('All Time'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Expanded(
-                        child: Container(
-                          height: ButtonSizePalette.filter,
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: DropdownButton<String>(
-                            value: selectedPlatform.value,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: ColorPalette.neutral800,
-                            ),
-                            style: TextStylePalette.smText,
-                            onChanged: (value) {
-                              if (value != null) {
-                                selectedPlatform.value = value;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'YouTube',
-                                child: Row(
-                                  children: [
-                                    PlatformIcon.youtube(size: 16),
-                                    SizedBox(width: SpacePalette.xs),
-                                    Text('YouTube'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'TikTok',
-                                child: Text('TikTok'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Instagram',
-                                child: Text('Instagram'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Facebook',
-                                child: Text('Facebook'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Other',
-                                child: Text('Other'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // Ranking Header
-                  Row(
-                    children: [
-                      SizedBox(width: 30),
-                      Text(
-                        'User',
-                        style: TextStylePalette.smSubTitle,
-                      ),
-                      Spacer(),
-                      Text(
-                        'Views',
-                        style: TextStylePalette.smSubTitle,
-                      ),
-                      SizedBox(width: 40),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // Ranking List
-                  _RankingItem(
-                    rank: 1,
-                    username: 'youtube.com/zenitsu',
-                    views: '10,230,781',
-                  ),
-                  _RankingItem(
-                    rank: 2,
-                    username: 'youtube.com/nagumoyoichi',
-                    views: '741,995',
-                  ),
-                  _RankingItem(
-                    rank: 3,
-                    username: 'youtube.com/turbogramy',
-                    views: '230,781',
-                  ),
-                  
-                  SizedBox(height: SpacePalette.lg),
-                  
-                  Divider(color: ColorPalette.neutral200, height: 1),
-                  
-                  SizedBox(height: SpacePalette.lg),
-                  
-                  // User Ranking Section
-                  Text(
-                    'User Ranking',
-                    style: TextStylePalette.title,
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: ButtonSizePalette.filter,
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: DropdownButton<String>(
-                            value: selectedPeriod.value,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: ColorPalette.neutral800,
-                            ),
-                            style: TextStylePalette.smText,
-                            onChanged: (value) {
-                              if (value != null) {
-                                selectedPeriod.value = value;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'Today',
-                                child: Text('Daily'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Yesterday',
-                                child: Text('Yesterday'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Week',
-                                child: Text('This Week'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Month',
-                                child: Text('This Month'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Year',
-                                child: Text('This Year'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'All Time',
-                                child: Text('All Time'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Expanded(
-                        child: Container(
-                          height: ButtonSizePalette.filter,
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: DropdownButton<String>(
-                            value: selectedPlatform.value,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: ColorPalette.neutral800,
-                            ),
-                            style: TextStylePalette.smText,
-                            onChanged: (value) {
-                              if (value != null) {
-                                selectedPlatform.value = value;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'YouTube',
-                                child: Row(
-                                  children: [
-                                    PlatformIcon.youtube(size: 16),
-                                    SizedBox(width: SpacePalette.xs),
-                                    Text('YouTube'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'TikTok',
-                                child: Text('TikTok'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Instagram',
-                                child: Text('Instagram'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Facebook',
-                                child: Text('Facebook'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Other',
-                                child: Text('Other'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // User Ranking Header
-                  Row(
-                    children: [
-                      SizedBox(width: 30),
-                      Text(
-                        'User',
-                        style: TextStylePalette.smSubTitle,
-                      ),
-                      Spacer(),
-                      Text(
-                        'Views',
-                        style: TextStylePalette.smSubTitle,
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // User Ranking List
-                  _UserRankingItem(
-                    rank: 1,
-                    username: '@Qmxnzkqxmqx',
-                    views: '10,230,781',
-                  ),
-                  _UserRankingItem(
-                    rank: 2,
-                    username: '@Lkwqnzkxqmx',
-                    views: '9,741,995',
-                  ),
-                  _UserRankingItem(
-                    rank: 3,
-                    username: '@Bmxznkxqxmx',
-                    views: '8,230,781',
-                  ),
-                  
-                  SizedBox(height: SpacePalette.lg),
-                  
-                  Divider(color: ColorPalette.neutral200, height: 1),
-                  
-                  SizedBox(height: SpacePalette.lg),
-                  
-                  // Most Viral Video Section
-                  Text(
-                    'Most Viral Video',
-                    style: TextStylePalette.title,
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Container(
-                          height: ButtonSizePalette.filter,
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: DropdownButton<String>(
-                            value: selectedPeriod.value,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: ColorPalette.neutral800,
-                            ),
-                            style: TextStylePalette.smText,
-                            onChanged: (value) {
-                              if (value != null) {
-                                selectedPeriod.value = value;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'Today',
-                                child: Text('Daily'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Yesterday',
-                                child: Text('Yesterday'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Week',
-                                child: Text('This Week'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Month',
-                                child: Text('This Month'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'This Year',
-                                child: Text('This Year'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'All Time',
-                                child: Text('All Time'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Expanded(
-                        child: Container(
-                          height: ButtonSizePalette.filter,
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: ColorPalette.neutral200),
-                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
-                          ),
-                          child: DropdownButton<String>(
-                            value: selectedPlatform.value,
-                            isExpanded: true,
-                            underline: SizedBox(),
-                            icon: Icon(
-                              Icons.keyboard_arrow_down,
-                              size: 16,
-                              color: ColorPalette.neutral800,
-                            ),
-                            style: TextStylePalette.smText,
-                            onChanged: (value) {
-                              if (value != null) {
-                                selectedPlatform.value = value;
-                              }
-                            },
-                            items: [
-                              DropdownMenuItem(
-                                value: 'YouTube',
-                                child: Row(
-                                  children: [
-                                    PlatformIcon.youtube(size: 16),
-                                    SizedBox(width: SpacePalette.xs),
-                                    Text('YouTube'),
-                                  ],
-                                ),
-                              ),
-                              DropdownMenuItem(
-                                value: 'TikTok',
-                                child: Text('TikTok'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Instagram',
-                                child: Text('Instagram'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Facebook',
-                                child: Text('Facebook'),
-                              ),
-                              DropdownMenuItem(
-                                value: 'Other',
-                                child: Text('Other'),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: SpacePalette.base),
-                  
-                  // Stats Row
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Total Views',
-                              style: TextStylePalette.smSubTitle,
-                            ),
-                            SizedBox(height: SpacePalette.sm),
-                            Row(
-                              children: [
-                                Text(
-                                  '64,912',
-                                  style: TextStylePalette.title,
-                                ),
-                                SizedBox(width: SpacePalette.sm),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.arrow_upward,
-                                      size: 12,
-                                      color: ColorPalette.positive500,
-                                    ),
-                                    Text(
-                                      '+21.9%',
-                                      style: TextStylePalette.guide.copyWith(
-                                        color: ColorPalette.positive500,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(width: SpacePalette.base),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Total Earnings',
-                              style: TextStylePalette.smSubTitle,
-                            ),
-                            SizedBox(height: SpacePalette.sm),
-                            Text(
-                              '¥300,000',
-                              style: TextStylePalette.title,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  
-                  SizedBox(height: 80),
                 ],
               ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-  
-  void _showPeriodMenu(BuildContext context, ValueNotifier<String> selectedPeriod) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: ColorPalette.white,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
-      ),
-      builder: (context) => Container(
-        padding: EdgeInsets.all(SpacePalette.base),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _PeriodMenuItem(
-              label: 'Daily',
-              isSelected: selectedPeriod.value == 'Daily',
-              onTap: () {
-                selectedPeriod.value = 'Daily';
-                Navigator.pop(context);
-              },
-            ),
-            _PeriodMenuItem(
-              label: 'Weekly',
-              isSelected: selectedPeriod.value == 'Weekly',
-              onTap: () {
-                selectedPeriod.value = 'Weekly';
-                Navigator.pop(context);
-              },
-            ),
-            _PeriodMenuItem(
-              label: 'Monthly',
-              isSelected: selectedPeriod.value == 'Monthly',
-              onTap: () {
-                selectedPeriod.value = 'Monthly';
-                Navigator.pop(context);
-              },
-            ),
-          ],
+              SizedBox(height: SpacePalette.xs),
+              Text(
+                'Target: ${formatNumber(targetViews)} views',
+                style: TextStylePalette.smText.copyWith(
+                  color: ColorPalette.white.withOpacity(0.7),
+                ),
+              ),
+              SizedBox(height: SpacePalette.base),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-class _RankingItem extends StatelessWidget {
-  final int rank;
-  final String username;
-  final String views;
+// Views Analysis Card
+class _ViewsAnalysisCard extends StatelessWidget {
+  final int totalViews;
+  final Map<String, int> platformBreakdown;
+  final String selectedPlatform;
+  final void Function(String) onPlatformChanged;
+  final String Function(int) formatNumber;
 
-  const _RankingItem({
-    required this.rank,
-    required this.username,
-    required this.views,
+  const _ViewsAnalysisCard({
+    required this.totalViews,
+    required this.platformBreakdown,
+    required this.selectedPlatform,
+    required this.onPlatformChanged,
+    required this.formatNumber,
   });
+
+  Color _getPlatformColor(String platform) {
+    switch (platform.toLowerCase()) {
+      case 'youtube':
+        return Colors.red;
+      case 'tiktok':
+        return ColorPalette.neutral800;
+      case 'instagram':
+        return Colors.purple;
+      default:
+        return ColorPalette.neutral400;
+    }
+  }
+
+  String _capitalize(String s) {
+    if (s.isEmpty) return s;
+    return s[0].toUpperCase() + s.substring(1);
+  }
 
   @override
   Widget build(BuildContext context) {
+    final grandTotal = platformBreakdown.values.fold<int>(0, (a, b) => a + b);
+
     return Container(
-      padding: EdgeInsets.symmetric(vertical: SpacePalette.inner),
+      padding: EdgeInsets.all(SpacePalette.base),
       decoration: BoxDecoration(
-        border: Border(
-          bottom: BorderSide(color: ColorPalette.neutral200, width: 1),
-        ),
+        color: ColorPalette.white,
+        borderRadius: BorderRadius.circular(RadiusPalette.lg),
+        boxShadow: [
+          BoxShadow(
+            color: ColorPalette.neutral800.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral200,
-              shape: BoxShape.circle,
+          // Header with filter
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('Views Analysis', style: TextStylePalette.title),
+              _PlatformDropdown(
+                value: selectedPlatform,
+                onChanged: onPlatformChanged,
+              ),
+            ],
+          ),
+
+          SizedBox(height: SpacePalette.lg),
+
+          // Total Views
+          Text(
+            'Filtered Views',
+            style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500),
+          ),
+          SizedBox(height: SpacePalette.xs),
+          Text(
+            formatNumber(totalViews),
+            style: TextStylePalette.header.copyWith(fontWeight: FontWeight.bold),
+          ),
+
+          SizedBox(height: SpacePalette.lg),
+
+          // Platform breakdown bars
+          if (platformBreakdown.isNotEmpty) ...[
+            Text(
+              'By Platform',
+              style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500),
             ),
-            child: Center(
-              child: Text(
-                '$rank',
-                style: TextStylePalette.miniTitle.copyWith(
-                  color: ColorPalette.neutral800,
-                  fontSize: 10,
+            SizedBox(height: SpacePalette.base),
+            ...platformBreakdown.entries.map((entry) {
+              final percentage = grandTotal > 0 ? entry.value / grandTotal : 0.0;
+              return Padding(
+                padding: EdgeInsets.only(bottom: SpacePalette.sm),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      child: Row(
+                        children: [
+                          PlatformIcon.fromPlatform(entry.key, size: 16),
+                          SizedBox(width: SpacePalette.xs),
+                          Text(
+                            _capitalize(entry.key),
+                            style: TextStylePalette.smText,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(width: SpacePalette.sm),
+                    Expanded(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4),
+                        child: LinearProgressIndicator(
+                          value: percentage,
+                          backgroundColor: ColorPalette.neutral100,
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            _getPlatformColor(entry.key),
+                          ),
+                          minHeight: 8,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: SpacePalette.sm),
+                    SizedBox(
+                      width: 70,
+                      child: Text(
+                        formatNumber(entry.value),
+                        style: TextStylePalette.smTitle,
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+          ] else
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: SpacePalette.lg),
+              child: Center(
+                child: Text(
+                  'No approved submissions yet',
+                  style: TextStylePalette.normalText.copyWith(
+                    color: ColorPalette.neutral500,
+                  ),
                 ),
               ),
             ),
-          ),
-          SizedBox(width: SpacePalette.sm),
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral200,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.person, color: ColorPalette.neutral400, size: 20),
-          ),
-          SizedBox(width: SpacePalette.inner),
-          Expanded(
-            child: Text(
-              username,
-              style: TextStylePalette.normalText,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          SizedBox(width: SpacePalette.sm),
-          Text(
-            views,
-            style: TextStylePalette.smTitle,
-          ),
         ],
       ),
     );
   }
 }
 
-class _UserRankingItem extends StatelessWidget {
-  final int rank;
-  final String username;
-  final String views;
+// User Ranking Card
+class _UserRankingCard extends StatelessWidget {
+  final List<UserRanking> rankings;
+  final String selectedPlatform;
+  final void Function(String) onPlatformChanged;
+  final String Function(int) formatNumber;
 
-  const _UserRankingItem({
-    required this.rank,
-    required this.username,
-    required this.views,
+  const _UserRankingCard({
+    required this.rankings,
+    required this.selectedPlatform,
+    required this.onPlatformChanged,
+    required this.formatNumber,
   });
 
   @override
   Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(SpacePalette.base),
+      decoration: BoxDecoration(
+        color: ColorPalette.white,
+        borderRadius: BorderRadius.circular(RadiusPalette.lg),
+        boxShadow: [
+          BoxShadow(
+            color: ColorPalette.neutral800.withOpacity(0.05),
+            blurRadius: 10,
+            offset: Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with filter
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text('User Ranking', style: TextStylePalette.title),
+              _PlatformDropdown(
+                value: selectedPlatform,
+                onChanged: onPlatformChanged,
+              ),
+            ],
+          ),
+
+          SizedBox(height: SpacePalette.base),
+
+          // Table header
+          Row(
+            children: [
+              SizedBox(width: 30),
+              Expanded(
+                child: Text('User', style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500)),
+              ),
+              Text('Videos', style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500)),
+              SizedBox(width: SpacePalette.base),
+              SizedBox(
+                width: 80,
+                child: Text(
+                  'Views',
+                  style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500),
+                  textAlign: TextAlign.right,
+                ),
+              ),
+            ],
+          ),
+
+          SizedBox(height: SpacePalette.sm),
+          Divider(color: ColorPalette.neutral200, height: 1),
+
+          if (rankings.isEmpty)
+            Padding(
+              padding: EdgeInsets.symmetric(vertical: SpacePalette.lg),
+              child: Center(
+                child: Text(
+                  'No participants yet',
+                  style: TextStylePalette.normalText.copyWith(
+                    color: ColorPalette.neutral500,
+                  ),
+                ),
+              ),
+            )
+          else
+            ...rankings.asMap().entries.map((entry) {
+              final rank = entry.key + 1;
+              final user = entry.value;
+              return _UserRankingRow(
+                rank: rank,
+                displayName: user.displayName,
+                avatarUrl: user.avatarUrl,
+                submissionCount: user.submissionCount,
+                totalViews: user.formattedViews,
+              );
+            }),
+        ],
+      ),
+    );
+  }
+}
+
+// User ranking row
+class _UserRankingRow extends StatelessWidget {
+  final int rank;
+  final String displayName;
+  final String? avatarUrl;
+  final int submissionCount;
+  final String totalViews;
+
+  const _UserRankingRow({
+    required this.rank,
+    required this.displayName,
+    this.avatarUrl,
+    required this.submissionCount,
+    required this.totalViews,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    Color? rankColor;
+    if (rank == 1) rankColor = Color(0xFFFFD700);
+    if (rank == 2) rankColor = Color(0xFFC0C0C0);
+    if (rank == 3) rankColor = Color(0xFFCD7F32);
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: SpacePalette.inner),
       decoration: BoxDecoration(
@@ -851,36 +550,74 @@ class _UserRankingItem extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // Rank
           SizedBox(
             width: 24,
-            child: Text(
-              '$rank',
-              style: TextStylePalette.smSubTitle,
-              textAlign: TextAlign.center,
-            ),
+            child: rank <= 3
+                ? Container(
+                    width: 24,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: rankColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$rank',
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          color: ColorPalette.white,
+                        ),
+                      ),
+                    ),
+                  )
+                : Text(
+                    '$rank',
+                    style: TextStylePalette.smSubTitle,
+                    textAlign: TextAlign.center,
+                  ),
           ),
           SizedBox(width: SpacePalette.sm),
-          Container(
-            width: 32,
-            height: 32,
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral200,
-              shape: BoxShape.circle,
-            ),
-            child: Icon(Icons.person, color: ColorPalette.neutral400, size: 20),
+
+          // Avatar
+          CircleAvatar(
+            radius: 16,
+            backgroundColor: ColorPalette.neutral200,
+            backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+            child: avatarUrl == null
+                ? Text(
+                    displayName.isNotEmpty ? displayName[0].toUpperCase() : '?',
+                    style: TextStyle(fontSize: 12, color: ColorPalette.neutral500),
+                  )
+                : null,
           ),
-          SizedBox(width: SpacePalette.inner),
+          SizedBox(width: SpacePalette.sm),
+
+          // Name
           Expanded(
             child: Text(
-              username,
+              displayName,
               style: TextStylePalette.normalText,
               overflow: TextOverflow.ellipsis,
             ),
           ),
-          SizedBox(width: SpacePalette.sm),
+
+          // Submission count
           Text(
-            views,
-            style: TextStylePalette.smTitle,
+            '$submissionCount',
+            style: TextStylePalette.smText.copyWith(color: ColorPalette.neutral500),
+          ),
+          SizedBox(width: SpacePalette.base),
+
+          // Views
+          SizedBox(
+            width: 80,
+            child: Text(
+              totalViews,
+              style: TextStylePalette.smTitle,
+              textAlign: TextAlign.right,
+            ),
           ),
         ],
       ),
@@ -888,36 +625,70 @@ class _UserRankingItem extends StatelessWidget {
   }
 }
 
-class _PeriodMenuItem extends StatelessWidget {
-  final String label;
-  final bool isSelected;
-  final VoidCallback onTap;
+// Shared platform dropdown
+class _PlatformDropdown extends StatelessWidget {
+  final String value;
+  final void Function(String) onChanged;
 
-  const _PeriodMenuItem({
-    required this.label,
-    required this.isSelected,
-    required this.onTap,
+  const _PlatformDropdown({
+    required this.value,
+    required this.onChanged,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: SpacePalette.inner),
-        child: Row(
-          children: [
-            Text(
-              label,
-              style: TextStylePalette.listTitle.copyWith(
-                color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral500,
-              ),
+    return Container(
+      height: 32,
+      padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
+      decoration: BoxDecoration(
+        border: Border.all(color: ColorPalette.neutral200),
+        borderRadius: BorderRadius.circular(RadiusPalette.base),
+      ),
+      child: DropdownButton<String>(
+        value: value,
+        underline: SizedBox(),
+        isDense: true,
+        icon: Icon(Icons.keyboard_arrow_down, size: 16, color: ColorPalette.neutral800),
+        style: TextStylePalette.smText,
+        onChanged: (v) {
+          if (v != null) onChanged(v);
+        },
+        items: [
+          DropdownMenuItem(value: 'All', child: Text('All')),
+          DropdownMenuItem(
+            value: 'YouTube',
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PlatformIcon.youtube(size: 14),
+                SizedBox(width: 4),
+                Text('YouTube'),
+              ],
             ),
-            Spacer(),
-            if (isSelected)
-              Icon(Icons.check, color: ColorPalette.neutral800, size: 20),
-          ],
-        ),
+          ),
+          DropdownMenuItem(
+            value: 'TikTok',
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PlatformIcon.tiktok(size: 14),
+                SizedBox(width: 4),
+                Text('TikTok'),
+              ],
+            ),
+          ),
+          DropdownMenuItem(
+            value: 'Instagram',
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                PlatformIcon.instagram(size: 14),
+                SizedBox(width: 4),
+                Text('Instagram'),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
