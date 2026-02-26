@@ -9,6 +9,7 @@ import '../../auth/presentation/providers/auth_provider.dart';
 import '../../auth/presentation/providers/user_profile_provider.dart';
 import '../../auth/presentation/pages/select_role_screen.dart';
 import 'presentation/pages/account_settings_screen.dart';
+import 'presentation/pages/profile_detail_screen.dart';
 import 'data/models/bank_account.dart';
 import 'presentation/providers/bank_account_provider.dart';
 import 'presentation/pages/bank_account_screen.dart';
@@ -61,39 +62,81 @@ class ProfileScreen extends HookConsumerWidget {
           padding: EdgeInsets.all(SpacePalette.base),
           child: Column(
             children: [
-              SizedBox(height: SpacePalette.lg),
-
-              // Profile avatar
-              CircleAvatar(
-                radius: 50,
-                backgroundColor: ColorPalette.neutral400,
-                backgroundImage: profile?.avatarUrl != null
-                    ? NetworkImage(profile!.avatarUrl!)
-                    : null,
-                child: profile?.avatarUrl == null
-                    ? Text(
-                        profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
-                        style: TextStylePalette.header.copyWith(
-                          color: ColorPalette.white,
-                        ),
-                      )
-                    : null,
-              ),
-              SizedBox(height: SpacePalette.lg),
-
-              // Name
-              Text(
-                profile?.displayName ?? 'Loading...',
-                style: TextStylePalette.smallHeader,
-              ),
               SizedBox(height: SpacePalette.sm),
 
-              // Role badge
-              Text(
-                'Creator',
-                style: TextStylePalette.subText,
+              // Profile card tile
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const ProfileDetailScreen(),
+                    ),
+                  );
+                },
+                behavior: HitTestBehavior.opaque,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: ColorPalette.white,
+                    borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorPalette.neutral800.withOpacity(0.05),
+                        blurRadius: 8,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SpacePalette.base,
+                    vertical: SpacePalette.inner,
+                  ),
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 22,
+                        backgroundColor: ColorPalette.neutral400,
+                        backgroundImage: profile?.avatarUrl != null
+                            ? NetworkImage(profile!.avatarUrl!)
+                            : null,
+                        child: profile?.avatarUrl == null
+                            ? Text(
+                                profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
+                                style: TextStylePalette.smTitle.copyWith(
+                                  color: ColorPalette.white,
+                                ),
+                              )
+                            : null,
+                      ),
+                      SizedBox(width: SpacePalette.inner),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              profile?.displayName ?? 'Loading...',
+                              style: TextStylePalette.bigText.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 2),
+                            Text(
+                              'View Profile',
+                              style: TextStylePalette.smSubText,
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.chevron_right,
+                        size: 20,
+                        color: ColorPalette.neutral400,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              SizedBox(height: SpacePalette.lg),
+              SizedBox(height: SpacePalette.base),
 
               // Bank Account Card
               _buildBankAccountCard(context, bankAccount),

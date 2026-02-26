@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
-import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../../organizer/campaign/presentation/providers/campaign_service_provider.dart';
 import '../../../campaign/presentation/pages/detail_screen.dart';
 import '../../../campaign/presentation/widgets/project_card.dart';
-import '../../../../../shared/widgets/common_search_bar.dart';
 import '../widgets/notification_sheet.dart';
 import '../widgets/filter_chip_widget.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
 import '../../../../../shared/presentation/providers/notification_provider.dart';
+import '../../../../auth/presentation/providers/user_profile_provider.dart';
 
 class FindScreen extends HookConsumerWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -29,6 +28,8 @@ class FindScreen extends HookConsumerWidget {
 
     final likedIds = ref.watch(likedCampaignIdsProvider);
     final showLikedOnly = useState(false);
+    final profileState = ref.watch(userProfileProvider);
+    final avatarUrl = profileState.profile?.avatarUrl;
 
     final filterCategories = ['All', 'Business', 'Entertainment', 'Music', 'Podcast'];
 
@@ -48,14 +49,14 @@ class FindScreen extends HookConsumerWidget {
       try {
         final campaignService = ref.read(campaignServiceProvider);
         List<Campaign> result;
-        
+
         if (selectedFilterIndex.value == 0) {
           result = await campaignService.getAllActiveCampaigns();
         } else {
           final category = filterCategories[selectedFilterIndex.value];
           result = await campaignService.getCampaignsByCategory(category);
         }
-        
+
         campaigns.value = result;
       } catch (e) {
         error.value = e.toString();
@@ -67,15 +68,15 @@ class FindScreen extends HookConsumerWidget {
     Future<void> toggleLike(String campaignId) async {
       final likeService = ref.read(likeServiceProvider);
       final currentLiked = ref.read(likedCampaignIdsProvider);
-      
+
       try {
         if (currentLiked.contains(campaignId)) {
           await likeService.unlikeCampaign(campaignId);
-          ref.read(likedCampaignIdsProvider.notifier).state = 
+          ref.read(likedCampaignIdsProvider.notifier).state =
               {...currentLiked}..remove(campaignId);
         } else {
           await likeService.likeCampaign(campaignId);
-          ref.read(likedCampaignIdsProvider.notifier).state = 
+          ref.read(likedCampaignIdsProvider.notifier).state =
               {...currentLiked, campaignId};
         }
       } catch (e) {
@@ -96,6 +97,8 @@ class FindScreen extends HookConsumerWidget {
       return null;
     }, [selectedFilterIndex.value]);
 
+    final unreadCount = ref.watch(unreadNotificationCountProvider);
+
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       body: SafeArea(
@@ -105,7 +108,7 @@ class FindScreen extends HookConsumerWidget {
               padding: const EdgeInsets.all(SpacePalette.base),
               child: Row(
                 children: [
-                  // アバターアイコン
+                  // アバターアイコン（実際のプロフィール画像）
                   Container(
                     width: 40,
                     height: 40,
@@ -113,84 +116,96 @@ class FindScreen extends HookConsumerWidget {
                       color: ColorPalette.neutral200,
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
-                      Icons.person,
-                      size: 22,
-                      color: ColorPalette.neutral400,
-                    ),
+                    child: avatarUrl != null && avatarUrl.isNotEmpty
+                        ? ClipOval(
+                            child: Image.network(
+                              avatarUrl,
+                              width: 40,
+                              height: 40,
+                              fit: BoxFit.cover,
+                              errorBuilder: (_, __, ___) => Icon(
+                                Icons.person,
+                                size: 22,
+                                color: ColorPalette.neutral400,
+                              ),
+                            ),
+                          )
+                        : Icon(
+                            Icons.person,
+                            size: 22,
+                            color: ColorPalette.neutral400,
+                          ),
+                  ),
+                  Spacer(),
+                  // 検索ガラスボタン
+                  _buildGlassButton(
+                    icon: Icons.search,
+                    onTap: () {},
                   ),
                   SizedBox(width: SpacePalette.sm),
-                  Expanded(child: CommonSearchBar()),
-                  SizedBox(width: SpacePalette.sm),
-                  // ハートボタン → Like済みフィルタートグル
-                  GestureDetector(
+                  // いいねフィルターガラスボタン
+                  _buildGlassButton(
+                    icon: showLikedOnly.value
+                        ? Icons.favorite
+                        : Icons.favorite_border,
+                    iconColor: showLikedOnly.value
+                        ? ColorPalette.critical500
+                        : ColorPalette.neutral800,
                     onTap: () {
                       showLikedOnly.value = !showLikedOnly.value;
                     },
-                    child: Icon(
-                      showLikedOnly.value
-                          ? Icons.favorite
-                          : Icons.favorite_border,
-                      size: 24,
-                      color: showLikedOnly.value
-                          ? ColorPalette.critical500
-                          : ColorPalette.neutral800,
-                    ),
                   ),
-                  SizedBox(width: SpacePalette.inner),
-                  // 通知ベル
-                  GestureDetector(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        builder: (context) => NotificationSheet(),
-                      );
-                    },
-                    child: Stack(
-                      clipBehavior: Clip.none,
-                      children: [
-                        Icon(
-                          Icons.notifications_outlined,
-                          size: 24,
-                          color: ColorPalette.neutral800,
-                        ),
-                        if (ref.watch(unreadNotificationCountProvider) > 0)
-                          Positioned(
-                            right: -4,
-                            top: -4,
-                            child: Container(
-                              width: 16,
-                              height: 16,
-                              decoration: BoxDecoration(
-                                color: ColorPalette.critical500,
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: ColorPalette.neutral100,
-                                  width: 2,
-                                ),
+                  SizedBox(width: SpacePalette.sm),
+                  // 通知ガラスボタン（バッジ付き）
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      _buildGlassButton(
+                        icon: Icons.notifications_outlined,
+                        onTap: () {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) => NotificationSheet(),
+                          );
+                        },
+                      ),
+                      if (unreadCount > 0)
+                        Positioned(
+                          right: -2,
+                          top: -2,
+                          child: Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: ColorPalette.critical500,
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: ColorPalette.neutral100,
+                                width: 2,
                               ),
-                              child: Center(
-                                child: Text(
-                                  ref.watch(unreadNotificationCountProvider) > 9
-                                      ? '9+'
-                                      : ref.watch(unreadNotificationCountProvider).toString(),
-                                  style: TextStyle(
-                                    color: ColorPalette.white,
-                                    fontSize: 8,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                unreadCount > 9
+                                    ? '9+'
+                                    : unreadCount.toString(),
+                                style: TextStyle(
+                                  color: ColorPalette.white,
+                                  fontSize: 8,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ),
                           ),
-                      ],
-                    ),
+                        ),
+                    ],
                   ),
                 ],
               ),
             ),
 
+            // Ad Banner（neutral200背景、テキストなし）
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: SpacePalette.base),
               child: SizedBox(
@@ -205,17 +220,8 @@ class FindScreen extends HookConsumerWidget {
                         return Container(
                           margin: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            color: ColorPalette.white,
+                            color: ColorPalette.neutral200,
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Ad Banner ${index + 1}',
-                              style: TextStyle(
-                                color: Colors.grey[600],
-                                fontSize: FontSizePalette.size16,
-                              ),
-                            ),
                           ),
                         );
                       },
@@ -301,6 +307,43 @@ class FindScreen extends HookConsumerWidget {
     );
   }
 
+  /// 円形ガラスボタン（width 40）
+  Widget _buildGlassButton({
+    required IconData icon,
+    Color? iconColor,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          color: ColorPalette.white.withOpacity(0.8),
+          shape: BoxShape.circle,
+          border: Border.all(
+            color: ColorPalette.neutral200,
+            width: 1,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: ColorPalette.neutral800.withOpacity(0.04),
+              blurRadius: 4,
+              offset: Offset(0, 1),
+            ),
+          ],
+        ),
+        child: Center(
+          child: Icon(
+            icon,
+            size: 20,
+            color: iconColor ?? ColorPalette.neutral800,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCampaignList(
     BuildContext context,
     WidgetRef ref, {
@@ -368,7 +411,7 @@ class FindScreen extends HookConsumerWidget {
               width: cardWidth,
               height: cardHeight,
               imageUrl: campaign.thumbnailUrl,
-              platformIcon: _getPlatformIcon(campaign.platforms),
+              platforms: campaign.platforms,
               currentAmount: campaign.budget.toDouble() * 0.25,
               totalAmount: campaign.budget.toDouble(),
               pricePerView: campaign.pricePerThousand,
@@ -380,7 +423,7 @@ class FindScreen extends HookConsumerWidget {
                   context,
                   MaterialPageRoute(
                     builder: (context) => ProjectDetailScreen(
-                      campaign: campaign,  // ← campaignオブジェクトを渡す
+                      campaign: campaign,
                     ),
                   ),
                 );
@@ -392,17 +435,5 @@ class FindScreen extends HookConsumerWidget {
         childCount: campaigns.length,
       ),
     );
-  }
-
-  Widget _getPlatformIcon(List<String> platforms) {
-    return PlatformIcon.fromPlatforms(platforms, size: 12);
-  }
-
-  String _formatDeadline(DateTime deadline) {
-    final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return '${months[deadline.month - 1]} ${deadline.day}, ${deadline.year}';
   }
 }

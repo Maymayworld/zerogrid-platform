@@ -1,18 +1,19 @@
 // lib/features/creator/campaign/presentation/widgets/project_card.dart
 import 'package:flutter/material.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/platform_icon.dart';
 
 class ProjectCard extends StatelessWidget {
   final double width;
   final double height;
   final String? imageUrl;
-  final Widget platformIcon;
+  final List<String> platforms;
   final double currentAmount;
   final double totalAmount;
   final double pricePerView;
   final int viewCount;
   final int participants;
-  final bool isLiked;  // ← 追加
+  final bool isLiked;
   final VoidCallback onTap;
   final VoidCallback onLike;
 
@@ -21,13 +22,13 @@ class ProjectCard extends StatelessWidget {
     required this.width,
     required this.height,
     this.imageUrl,
-    required this.platformIcon,
+    required this.platforms,
     required this.currentAmount,
     required this.totalAmount,
     required this.pricePerView,
     required this.viewCount,
     required this.participants,
-    this.isLiked = false,  // ← デフォルトfalse
+    this.isLiked = false,
     required this.onTap,
     required this.onLike,
   }) : super(key: key);
@@ -93,14 +94,7 @@ class ProjectCard extends StatelessWidget {
             Positioned(
               top: SpacePalette.sm,
               left: SpacePalette.sm,
-              child: Container(
-                padding: EdgeInsets.all(SpacePalette.sm),
-                decoration: BoxDecoration(
-                  color: ColorPalette.neutral800.withOpacity(0.6),
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                child: platformIcon,
-              ),
+              child: _buildPlatformIcons(),
             ),
             // 下部情報
             Positioned(
@@ -155,7 +149,7 @@ class ProjectCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: 6),
-                    // プログレスバー
+                    // プログレスバー（パンプキンオレンジ）
                     Stack(
                       children: [
                         Container(
@@ -170,7 +164,7 @@ class ProjectCard extends StatelessWidget {
                           child: Container(
                             height: 4,
                             decoration: BoxDecoration(
-                              color: ColorPalette.positive500,
+                              color: ColorPalette.smashedPumpkin600,
                               borderRadius: BorderRadius.circular(3),
                             ),
                           ),
@@ -178,58 +172,229 @@ class ProjectCard extends StatelessWidget {
                       ],
                     ),
                     SizedBox(height: SpacePalette.sm),
-                    // ボタン
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: onTap,
-                            child: Container(
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: ColorPalette.neutral100,
-                                borderRadius: BorderRadius.circular(RadiusPalette.base),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  '¥${pricePerView.toStringAsFixed(1)} / 1000 views',
-                                  style: TextStylePalette.buttonTextBlack
-                                ),
+                    // ボタン（Duolingoスタイル・押下アニメーション付き）
+                    SizedBox(
+                      height: 44,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: _CardDuolingoButton(
+                              onPressed: onTap,
+                              child: Text(
+                                '¥${pricePerView.toStringAsFixed(1)} / 1000 views',
+                                style: TextStylePalette.buttonTextBlack,
                               ),
                             ),
                           ),
-                        ),
-                        SizedBox(width: SpacePalette.sm),
-                        // いいねボタン（状態で色変更）
-                        GestureDetector(
-                          onTap: onLike,
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: isLiked 
-                                  ? ColorPalette.critical500.withOpacity(0.2) 
-                                  : Colors.transparent,
-                              border: Border.all(
-                                color: isLiked 
-                                    ? ColorPalette.critical500 
-                                    : ColorPalette.neutral100, 
-                                width: 2
-                              ),
-                              borderRadius: BorderRadius.circular(RadiusPalette.base),
-                            ),
-                            child: Icon(
-                              isLiked ? Icons.favorite : Icons.favorite_border,
-                              color: isLiked 
-                                  ? ColorPalette.critical500 
-                                  : ColorPalette.neutral100,
-                              size: 20,
-                            ),
+                          SizedBox(width: SpacePalette.sm),
+                          _CardDuolingoCircleButton(
+                            onPressed: onLike,
+                            icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                            iconColor: isLiked ? ColorPalette.critical500 : ColorPalette.neutral800,
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// プラットフォームアイコンを放射状グラデーション背景で表示
+  /// 複数プラットフォームの場合は重なって表示（左が上）
+  Widget _buildPlatformIcons() {
+    if (platforms.isEmpty) {
+      return _buildSinglePlatformIcon(
+        Icon(Icons.video_library, size: 14, color: ColorPalette.neutral800),
+      );
+    }
+
+    if (platforms.length == 1) {
+      return _buildSinglePlatformIcon(
+        PlatformIcon.fromPlatform(platforms[0], size: 14),
+      );
+    }
+
+    // 複数プラットフォーム：16px間隔で重なって表示
+    final iconSize = 24.0;
+    final spacing = 16.0;
+    final totalWidth = iconSize + (platforms.length - 1) * spacing;
+
+    return SizedBox(
+      width: totalWidth,
+      height: iconSize,
+      child: Stack(
+        children: [
+          // 右から左の順に描画（左のアイコンが上に来る）
+          for (int i = platforms.length - 1; i >= 0; i--)
+            Positioned(
+              left: i * spacing,
+              child: _buildSinglePlatformIcon(
+                PlatformIcon.fromPlatform(platforms[i], size: 14),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSinglePlatformIcon(Widget icon) {
+    return Container(
+      width: 24,
+      height: 24,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            Color(0xFFFFFFFF),
+            Color(0xFFD4D4D4),
+          ],
+          stops: [0.5, 1.0],
+        ),
+      ),
+      child: Center(child: icon),
+    );
+  }
+}
+
+/// viewsボタン（角丸full、白Duolingoスタイル・押下アニメーション付き）
+class _CardDuolingoButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final Widget child;
+
+  const _CardDuolingoButton({
+    required this.onPressed,
+    required this.child,
+  });
+
+  @override
+  State<_CardDuolingoButton> createState() => _CardDuolingoButtonState();
+}
+
+class _CardDuolingoButtonState extends State<_CardDuolingoButton> {
+  bool _isPressed = false;
+
+  static const double shadowOffset = 4.0;
+  static const double buttonHeight = 40.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onPressed();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: SizedBox(
+        height: buttonHeight + shadowOffset,
+        child: Stack(
+          children: [
+            // シャドウ
+            Positioned(
+              left: 0, right: 0, bottom: 0,
+              child: Container(
+                height: buttonHeight,
+                decoration: BoxDecoration(
+                  color: ColorPalette.neutral200,
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                ),
+              ),
+            ),
+            // サーフェス（押下時に下にずれて影が隠れる）
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 50),
+              left: 0, right: 0,
+              top: _isPressed ? shadowOffset : 0,
+              child: Container(
+                height: buttonHeight,
+                decoration: BoxDecoration(
+                  color: ColorPalette.white,
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  border: Border.all(color: ColorPalette.neutral200),
+                ),
+                child: Center(child: widget.child),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// いいねボタン（円形Duolingoスタイル・押下アニメーション付き）
+class _CardDuolingoCircleButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final IconData icon;
+  final Color iconColor;
+
+  const _CardDuolingoCircleButton({
+    required this.onPressed,
+    required this.icon,
+    required this.iconColor,
+  });
+
+  @override
+  State<_CardDuolingoCircleButton> createState() => _CardDuolingoCircleButtonState();
+}
+
+class _CardDuolingoCircleButtonState extends State<_CardDuolingoCircleButton> {
+  bool _isPressed = false;
+
+  static const double shadowOffset = 4.0;
+  static const double buttonSize = 40.0;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) {
+        setState(() => _isPressed = false);
+        widget.onPressed();
+      },
+      onTapCancel: () => setState(() => _isPressed = false),
+      child: SizedBox(
+        width: buttonSize,
+        height: buttonSize + shadowOffset,
+        child: Stack(
+          children: [
+            // シャドウ
+            Positioned(
+              bottom: 0, left: 0, right: 0,
+              child: Container(
+                width: buttonSize,
+                height: buttonSize,
+                decoration: BoxDecoration(
+                  color: ColorPalette.neutral200,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+            // サーフェス（押下時に下にずれて影が隠れる）
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 50),
+              left: 0, right: 0,
+              top: _isPressed ? shadowOffset : 0,
+              child: Container(
+                width: buttonSize,
+                height: buttonSize,
+                decoration: BoxDecoration(
+                  color: ColorPalette.white,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: ColorPalette.neutral200),
+                ),
+                child: Center(
+                  child: Icon(
+                    widget.icon,
+                    color: widget.iconColor,
+                    size: 20,
+                  ),
                 ),
               ),
             ),

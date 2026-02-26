@@ -4,7 +4,6 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
-import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../../shared/widgets/common_search_bar.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../campaign/presentation/widgets/project_card.dart';
@@ -228,7 +227,7 @@ class LikesScreen extends HookConsumerWidget {
               width: cardWidth,
               height: cardHeight,
               imageUrl: campaign.thumbnailUrl,
-              platformIcon: _getPlatformIcon(campaign.platforms),
+              platforms: campaign.platforms,
               currentAmount: campaign.budget.toDouble() * 0.25,
               totalAmount: campaign.budget.toDouble(),
               pricePerView: campaign.pricePerThousand,
@@ -253,17 +252,6 @@ class LikesScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _getPlatformIcon(List<String> platforms) {
-    return PlatformIcon.fromPlatforms(platforms, size: 12);
-  }
-
-  String _formatDeadline(DateTime deadline) {
-    final months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'
-    ];
-    return '${months[deadline.month - 1]} ${deadline.day}, ${deadline.year}';
-  }
 }
 
 class _CategoryChip extends StatelessWidget {
