@@ -121,7 +121,7 @@ class ProfileScreen extends HookConsumerWidget {
 
               // Name
               Text(
-                profile?.displayName ?? 'Loading...',
+                profile?.displayName ?? '-',
                 style: TextStylePalette.smallHeader,
               ),
               SizedBox(height: SpacePalette.sm),

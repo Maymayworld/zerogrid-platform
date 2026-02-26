@@ -101,6 +101,10 @@ class NotificationListTile extends StatelessWidget {
         return Icons.cancel_outlined;
       case 'new_message':
         return Icons.chat_bubble_outline;
+      case 'news':
+        return Icons.campaign_outlined;
+      case 'reward_received':
+        return Icons.payments_outlined;
       default:
         return Icons.notifications_outlined;
     }
@@ -118,6 +122,10 @@ class NotificationListTile extends StatelessWidget {
         return ColorPalette.critical500;
       case 'new_message':
         return ColorPalette.neutral800;
+      case 'news':
+        return ColorPalette.smashedPumpkin600;
+      case 'reward_received':
+        return ColorPalette.positive500;
       default:
         return ColorPalette.neutral500;
     }

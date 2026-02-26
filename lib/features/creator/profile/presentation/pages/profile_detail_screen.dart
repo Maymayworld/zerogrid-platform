@@ -5,8 +5,12 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/utils/youtube_utils.dart';
 import '../../../../auth/presentation/providers/auth_provider.dart';
 import '../../../../auth/presentation/providers/user_profile_provider.dart';
+import '../../../../creator/submission/data/models/submission.dart';
+import '../../../../creator/feed/presentation/providers/feed_provider.dart';
+import '../../../../creator/feed/presentation/pages/feed_screen.dart';
 
 class ProfileDetailScreen extends HookConsumerWidget {
   const ProfileDetailScreen({Key? key}) : super(key: key);
@@ -16,79 +20,224 @@ class ProfileDetailScreen extends HookConsumerWidget {
     final profileState = ref.watch(userProfileProvider);
     final profile = profileState.profile;
 
-    return Scaffold(
-      backgroundColor: ColorPalette.neutral100,
-      appBar: AppBar(
-        title: Text('Profile'),
+    final myPosts = useState<List<Submission>>([]);
+    final likedPosts = useState<List<Submission>>([]);
+    final isLoadingPosts = useState(true);
+    final isLoadingLiked = useState(true);
+
+    Future<void> loadMyPosts() async {
+      if (profile == null) {
+        isLoadingPosts.value = false;
+        return;
+      }
+      isLoadingPosts.value = true;
+      try {
+        final feedService = ref.read(feedServiceProvider);
+        myPosts.value = await feedService.getUserYouTubeSubmissions(profile.id);
+      } catch (e) {
+        debugPrint('Failed to load my posts: $e');
+      } finally {
+        isLoadingPosts.value = false;
+      }
+    }
+
+    Future<void> loadLikedPosts() async {
+      isLoadingLiked.value = true;
+      try {
+        final feedService = ref.read(feedServiceProvider);
+        likedPosts.value = await feedService.getLikedYouTubeSubmissions();
+      } catch (e) {
+        debugPrint('Failed to load liked posts: $e');
+      } finally {
+        isLoadingLiked.value = false;
+      }
+    }
+
+    useEffect(() {
+      loadMyPosts();
+      loadLikedPosts();
+      return null;
+    }, [profile?.id]);
+
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
         backgroundColor: ColorPalette.neutral100,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.edit_outlined, size: 22),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const _ProfileEditScreen(),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(SpacePalette.base),
-        child: Column(
+        appBar: AppBar(
+          title: Text('Profile'),
+          backgroundColor: ColorPalette.neutral100,
+          actions: [
+            IconButton(
+              icon: Icon(Icons.edit_outlined, size: 22),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const _ProfileEditScreen(),
+                  ),
+                );
+              },
+            ),
+          ],
+        ),
+        body: Column(
           children: [
-            SizedBox(height: SpacePalette.lg),
-            // Avatar
-            CircleAvatar(
-              radius: 50,
-              backgroundColor: ColorPalette.neutral400,
-              backgroundImage: profile?.avatarUrl != null
-                  ? NetworkImage(profile!.avatarUrl!)
-                  : null,
-              child: profile?.avatarUrl == null
-                  ? Text(
-                      profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
-                      style: TextStylePalette.header.copyWith(
-                        color: ColorPalette.white,
-                      ),
-                    )
-                  : null,
+            // プロフィールヘッダー
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
+              child: Column(
+                children: [
+                  SizedBox(height: SpacePalette.base),
+                  CircleAvatar(
+                    radius: 40,
+                    backgroundColor: ColorPalette.neutral400,
+                    backgroundImage: profile?.avatarUrl != null
+                        ? NetworkImage(profile!.avatarUrl!)
+                        : null,
+                    child: profile?.avatarUrl == null
+                        ? Text(
+                            profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
+                            style: TextStylePalette.smallHeader.copyWith(
+                              color: ColorPalette.white,
+                            ),
+                          )
+                        : null,
+                  ),
+                  SizedBox(height: SpacePalette.sm),
+                  Text(
+                    profile?.displayName ?? '-',
+                    style: TextStylePalette.smallHeader,
+                  ),
+                  SizedBox(height: SpacePalette.xs),
+                  Text(
+                    '@${profile?.username ?? ''}',
+                    style: TextStylePalette.subText,
+                  ),
+                  SizedBox(height: SpacePalette.base),
+                ],
+              ),
             ),
-            SizedBox(height: SpacePalette.base),
-            // Display name
-            Text(
-              profile?.displayName ?? 'Loading...',
-              style: TextStylePalette.smallHeader,
+            // タブバー
+            Container(
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(color: ColorPalette.neutral200, width: 1),
+                ),
+              ),
+              child: TabBar(
+                labelColor: ColorPalette.neutral800,
+                unselectedLabelColor: ColorPalette.neutral400,
+                indicatorColor: ColorPalette.neutral800,
+                indicatorWeight: 2,
+                labelStyle: TextStylePalette.smTitle,
+                unselectedLabelStyle: TextStylePalette.smText,
+                tabs: [
+                  Tab(icon: Icon(Icons.grid_on, size: 20)),
+                  Tab(icon: Icon(Icons.favorite_border, size: 20)),
+                ],
+              ),
             ),
-            SizedBox(height: SpacePalette.xs),
-            // Username
-            Text(
-              '@${profile?.username ?? ''}',
-              style: TextStylePalette.subText,
-            ),
-            SizedBox(height: SpacePalette.xs),
-            // Role
-            Text(
-              'Creator',
-              style: TextStylePalette.smSubText,
-            ),
-            SizedBox(height: 40),
-            // Placeholder for future content (posts, liked content)
-            Icon(
-              Icons.grid_on_outlined,
-              size: 48,
-              color: ColorPalette.neutral300,
-            ),
-            SizedBox(height: SpacePalette.sm),
-            Text(
-              'No posts yet',
-              style: TextStylePalette.subText,
+            // タブコンテンツ
+            Expanded(
+              child: TabBarView(
+                children: [
+                  // タブ1: 自分の投稿
+                  _buildVideoGrid(
+                    context,
+                    submissions: myPosts.value,
+                    isLoading: isLoadingPosts.value,
+                    emptyIcon: Icons.videocam_off_outlined,
+                    emptyText: 'No posts yet',
+                  ),
+                  // タブ2: いいねした動画
+                  _buildVideoGrid(
+                    context,
+                    submissions: likedPosts.value,
+                    isLoading: isLoadingLiked.value,
+                    emptyIcon: Icons.favorite_border,
+                    emptyText: 'No liked videos yet',
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildVideoGrid(
+    BuildContext context, {
+    required List<Submission> submissions,
+    required bool isLoading,
+    required IconData emptyIcon,
+    required String emptyText,
+  }) {
+    if (isLoading) {
+      return Center(
+        child: CircularProgressIndicator(color: ColorPalette.neutral800),
+      );
+    }
+
+    if (submissions.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(emptyIcon, size: 48, color: ColorPalette.neutral300),
+            SizedBox(height: SpacePalette.sm),
+            Text(emptyText, style: TextStylePalette.subText),
+          ],
+        ),
+      );
+    }
+
+    return GridView.builder(
+      padding: EdgeInsets.all(1),
+      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 1,
+        mainAxisSpacing: 1,
+      ),
+      itemCount: submissions.length,
+      itemBuilder: (context, index) {
+        final submission = submissions[index];
+        final videoId = extractYoutubeVideoId(submission.videoUrl);
+        final thumbnailUrl = videoId != null
+            ? getYoutubeThumbnailUrl(videoId)
+            : null;
+
+        return GestureDetector(
+          onTap: () {
+            // フィードをこの動画から開始
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FeedScreen(
+                  initialSubmissions: submissions,
+                  initialIndex: index,
+                ),
+              ),
+            );
+          },
+          child: Container(
+            color: ColorPalette.neutral200,
+            child: thumbnailUrl != null
+                ? Image.network(
+                    thumbnailUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => _thumbnailPlaceholder(),
+                  )
+                : _thumbnailPlaceholder(),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _thumbnailPlaceholder() {
+    return Center(
+      child: Icon(Icons.play_circle_outline, color: ColorPalette.neutral400, size: 32),
     );
   }
 }
@@ -112,7 +261,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
     final picker = ImagePicker();
 
     Future<void> pickImage(ImageSource source) async {
-      Navigator.pop(context); // close bottom sheet
+      Navigator.pop(context);
       try {
         final XFile? pickedFile = await picker.pickImage(
           source: source,
@@ -180,7 +329,6 @@ class _ProfileEditScreen extends HookConsumerWidget {
       try {
         String? newAvatarUrl;
 
-        // Upload new avatar if selected
         if (selectedImageBytes.value != null && selectedImageName.value != null) {
           final authService = ref.read(authServiceProvider);
           newAvatarUrl = await authService.uploadAvatarBytes(
@@ -208,7 +356,6 @@ class _ProfileEditScreen extends HookConsumerWidget {
       }
     }
 
-    // Determine displayed image
     final hasNewImage = selectedImageBytes.value != null;
     final hasExistingImage = profile?.avatarUrl != null;
 
@@ -244,7 +391,6 @@ class _ProfileEditScreen extends HookConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(height: SpacePalette.lg),
-            // Avatar with edit overlay
             Center(
               child: GestureDetector(
                 onTap: showImagePicker,
@@ -293,7 +439,6 @@ class _ProfileEditScreen extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: 32),
-            // Display Name
             Text('Display Name', style: TextStylePalette.smTitle),
             SizedBox(height: SpacePalette.sm),
             TextField(

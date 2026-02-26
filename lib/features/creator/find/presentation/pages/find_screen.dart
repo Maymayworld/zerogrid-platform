@@ -12,6 +12,7 @@ import '../widgets/filter_chip_widget.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
 import '../../../../../shared/presentation/providers/notification_provider.dart';
 import '../../../../auth/presentation/providers/user_profile_provider.dart';
+import '../../../profile/presentation/pages/profile_detail_screen.dart';
 
 class FindScreen extends HookConsumerWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -108,33 +109,43 @@ class FindScreen extends HookConsumerWidget {
               padding: const EdgeInsets.all(SpacePalette.base),
               child: Row(
                 children: [
-                  // アバターアイコン（実際のプロフィール画像）
-                  Container(
-                    width: 40,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: ColorPalette.neutral200,
-                      shape: BoxShape.circle,
-                    ),
-                    child: avatarUrl != null && avatarUrl.isNotEmpty
-                        ? ClipOval(
-                            child: Image.network(
-                              avatarUrl,
-                              width: 40,
-                              height: 40,
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => Icon(
-                                Icons.person,
-                                size: 22,
-                                color: ColorPalette.neutral400,
+                  // アバターアイコン（タップでプロフィールへ遷移）
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const ProfileDetailScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: ColorPalette.neutral200,
+                        shape: BoxShape.circle,
+                      ),
+                      child: avatarUrl != null && avatarUrl.isNotEmpty
+                          ? ClipOval(
+                              child: Image.network(
+                                avatarUrl,
+                                width: 40,
+                                height: 40,
+                                fit: BoxFit.cover,
+                                errorBuilder: (_, __, ___) => Icon(
+                                  Icons.person,
+                                  size: 22,
+                                  color: ColorPalette.neutral400,
+                                ),
                               ),
+                            )
+                          : Icon(
+                              Icons.person,
+                              size: 22,
+                              color: ColorPalette.neutral400,
                             ),
-                          )
-                        : Icon(
-                            Icons.person,
-                            size: 22,
-                            color: ColorPalette.neutral400,
-                          ),
+                    ),
                   ),
                   Spacer(),
                   // 検索ガラスボタン

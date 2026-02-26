@@ -10,6 +10,7 @@ import '../../auth/presentation/providers/user_profile_provider.dart';
 import '../../auth/presentation/pages/select_role_screen.dart';
 import 'presentation/pages/account_settings_screen.dart';
 import 'presentation/pages/profile_detail_screen.dart';
+import 'presentation/widgets/notification_settings_sheet.dart';
 import 'data/models/bank_account.dart';
 import 'presentation/providers/bank_account_provider.dart';
 import 'presentation/pages/bank_account_screen.dart';
@@ -114,7 +115,7 @@ class ProfileScreen extends HookConsumerWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              profile?.displayName ?? 'Loading...',
+                              profile?.displayName ?? '-',
                               style: TextStylePalette.bigText.copyWith(
                                 fontWeight: FontWeight.w600,
                               ),
@@ -200,7 +201,14 @@ class ProfileScreen extends HookConsumerWidget {
                     iconBackgroundColor: const Color(0xFFFFF3E0),
                     iconColor: const Color(0xFFFF9800),
                     label: 'Notifications',
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const NotificationSettingsSheet(),
+                      );
+                    },
                   ),
                   ProfileMenuItem(
                     icon: Icons.verified_user_outlined,

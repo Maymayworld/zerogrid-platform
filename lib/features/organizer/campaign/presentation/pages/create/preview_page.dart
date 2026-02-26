@@ -226,7 +226,7 @@ class PreviewPage extends HookConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  profile?.displayName ?? 'Loading...',
+                                  profile?.displayName ?? '-',
                                   style: TextStylePalette.listTitle,
                                 ),
                                 SizedBox(height: SpacePalette.xs),

@@ -9,7 +9,9 @@
       "mcp__supabase__deploy_edge_function",
       "mcp__supabase__list_tables",
       "mcp__supabase__apply_migration",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(find /c/Users/4817m/zero_grid/supabase/migrations -type f -name \"*.sql\" | xargs grep -l \"notification\" 2>/dev/null)",
+      "Bash(head:*)"
     ]
   },
   "enabledMcpjsonServers": [
