@@ -10,13 +10,20 @@
 
 ```
 クリエイター
-    ↓ 動画ファイルをアップロード
+    ↓ 動画ファイルをアップロード（元サイズ）
 ZeroGrid
-    ↓ 圧縮 & 保存（Feed表示用）
-    ↓ 各SNSに自動投稿
+    ↓ 一時保存（元サイズ）
+    ↓ 各SNSに元サイズで自動投稿（高画質維持）
     ↓ 投稿URL取得 & 保存
+    ↓ 元動画を削除
+    ↓ 圧縮版を保存（Feed表示用のみ）
     ↓ 視聴回数を定期取得
 ```
+
+**ポイント:**
+- SNSには元サイズ（高画質）で投稿
+- ストレージには圧縮版のみ保存（コスト削減）
+- 元動画は投稿完了後に削除
 
 ---
 
@@ -69,23 +76,33 @@ dependencies:
   video_compress: ^3.1.0  # 圧縮用
 ```
 
-#### 1.3 動画圧縮 & アップロード
+#### 1.3 動画アップロード & 処理
 
-**新規 Edge Function:** `supabase/functions/compress-upload-video/index.ts`
+**新規 Edge Function:** `supabase/functions/process-video-upload/index.ts`
 
 **処理フロー:**
-1. クライアントから動画を受信
-2. FFmpeg で圧縮（720p, H.264, 30fps）
-3. Supabase Storage（または Cloudflare R2）に保存
-4. `local_video_url` を返却
+1. クライアントから動画を受信（元サイズ）
+2. 一時ストレージに保存
+3. 各SNSに元サイズで投稿（Phase 2で実装）
+4. 投稿完了後、FFmpeg で圧縮版を作成
+5. 圧縮版を本ストレージに保存
+6. 元動画を削除
+7. `local_video_url`（圧縮版）を返却
 
-**圧縮設定:**
+**圧縮設定（Feed表示用）:**
 ```
 解像度: 720p (1280x720)
 コーデック: H.264
 ビットレート: 2Mbps
 フォーマット: MP4
 目標サイズ: 元の 10-15%
+```
+
+**ストレージ構成:**
+```
+/temp/          # 一時保存（元サイズ、投稿後削除）
+/videos/        # 本保存（圧縮版、Feed表示用）
+/thumbnails/    # サムネイル
 ```
 
 #### 1.4 Feed表示改修
@@ -200,8 +217,8 @@ lib/
 
 supabase/
 ├── functions/
-│   ├── compress-upload-video/
-│   │   └── index.ts    # 新規
+│   ├── process-video-upload/
+│   │   └── index.ts    # 新規（アップロード→SNS投稿→圧縮→保存）
 │   ├── youtube-upload/
 │   │   └── index.ts    # 新規
 │   ├── tiktok-upload/
