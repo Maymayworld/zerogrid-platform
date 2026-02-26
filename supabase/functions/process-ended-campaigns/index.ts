@@ -46,7 +46,7 @@ serve(async (req) => {
 
     // 目標達成済みのキャンペーンをフィルタ
     const achievedCampaigns = (activeCampaigns || []).filter(c => {
-      return c.total_views >= c.target_views
+      return (c.total_views || 0) >= c.target_views && c.target_views > 0
     })
 
     // 処理するキャンペーン一覧

@@ -11,7 +11,15 @@
       "mcp__supabase__apply_migration",
       "Bash(findstr:*)",
       "Bash(find /c/Users/4817m/zero_grid/supabase/migrations -type f -name \"*.sql\" | xargs grep -l \"notification\" 2>/dev/null)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "mcp__stripe__get_stripe_account_info",
+      "mcp__stripe__search_stripe_documentation",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-connect-onboarding --no-verify-jwt 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-connect-status --no-verify-jwt 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-withdrawal --no-verify-jwt 2>&1)",
+      "Bash(grep:*)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy process-ended-campaigns --no-verify-jwt 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy stripe-withdrawal --no-verify-jwt 2>&1)"
     ]
   },
   "enabledMcpjsonServers": [

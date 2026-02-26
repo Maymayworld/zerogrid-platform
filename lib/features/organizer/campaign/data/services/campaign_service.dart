@@ -8,13 +8,27 @@ import '../models/campaign.dart';
 class CampaignService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // 案件を登録
+  // 案件を登録（残高チェック + 予算差し引き）
   Future<Map<String, dynamic>> createCampaign({
     required Project project,
     String? thumbnailUrl,
   }) async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) throw Exception('User not logged in');
+
+    // 残高チェック
+    final profileRes = await _supabase
+        .from('profiles')
+        .select('balance')
+        .eq('id', userId)
+        .single();
+    final currentBalance = (profileRes['balance'] as num?)?.toInt() ?? 0;
+
+    if (project.budget > currentBalance) {
+      throw Exception(
+        'Insufficient balance. Available: ¥${currentBalance}, Required: ¥${project.budget}',
+      );
+    }
 
     final deadlineParts = project.endDate.split('/');
     final deadline = DateTime(
@@ -23,6 +37,7 @@ class CampaignService {
       int.parse(deadlineParts[2]),
     );
 
+    // キャンペーン作成
     final response = await _supabase.from('campaigns').insert({
       'organizer_id': userId,
       'name': project.projectName,
@@ -36,6 +51,24 @@ class CampaignService {
       'resources': project.links,
       'status': 'active',
     }).select().single();
+
+    // 残高から予算を差し引き
+    final newBalance = currentBalance - project.budget;
+    await _supabase
+        .from('profiles')
+        .update({'balance': newBalance})
+        .eq('id', userId);
+
+    // トランザクション記録
+    await _supabase.from('transactions').insert({
+      'user_id': userId,
+      'type': 'campaign_charge',
+      'amount': -project.budget,
+      'balance_after': newBalance,
+      'campaign_id': response['id'],
+      'description': 'Campaign budget: ${project.projectName}',
+      'status': 'completed',
+    });
 
     return response;
   }

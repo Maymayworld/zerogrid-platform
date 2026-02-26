@@ -8,6 +8,7 @@ import '../../../../../shared/presentation/providers/reward_provider.dart';
 import '../../../../../shared/presentation/providers/view_count_provider.dart';
 import '../../../../../shared/data/services/reward_service.dart';
 import '../../../../../shared/data/services/view_count_service.dart';
+import 'withdrawal_screen.dart';
 
 class EarningsScreen extends HookConsumerWidget {
   const EarningsScreen({Key? key}) : super(key: key);
@@ -89,11 +90,43 @@ class EarningsScreen extends HookConsumerWidget {
                           ),
                         ),
                         SizedBox(height: SpacePalette.xs),
-                        Text(
-                          'Available Balance',
-                          style: TextStylePalette.normalText.copyWith(
-                            color: ColorPalette.neutral400,
-                          ),
+                        Row(
+                          children: [
+                            Text(
+                              'Available Balance',
+                              style: TextStylePalette.normalText.copyWith(
+                                color: ColorPalette.neutral400,
+                              ),
+                            ),
+                            Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                final balance = balanceAsync.whenOrNull(data: (b) => b) ?? 0;
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WithdrawalScreen(currentBalance: balance),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: SpacePalette.base,
+                                  vertical: SpacePalette.sm,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: ColorPalette.white,
+                                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                                ),
+                                child: Text(
+                                  'Withdraw',
+                                  style: TextStylePalette.smTitle.copyWith(
+                                    color: ColorPalette.neutral800,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

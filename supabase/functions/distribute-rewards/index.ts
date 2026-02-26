@@ -97,7 +97,7 @@ serve(async (req) => {
 
     // 分配計算
     // 目標達成率を計算
-    const achievementRate = Math.min(totalViews / targetViews, 1) // 最大100%
+    const achievementRate = targetViews > 0 ? Math.min(totalViews / targetViews, 1) : 0 // 最大100%
     const distributableAmount = Math.floor(budget * achievementRate)
     const refundAmount = budget - distributableAmount
 
@@ -148,21 +148,29 @@ serve(async (req) => {
           created_at: now,
         })
 
-      // 通知を送信
-      await supabase
-        .from('notifications')
-        .insert({
-          user_id: share.creatorId,
-          type: 'reward_received',
-          title: 'Reward Received! 🎉',
-          body: `You earned ¥${share.rewardAmount.toLocaleString()} from "${campaign.name}"`,
-          data: { 
-            campaign_id, 
-            amount: share.rewardAmount,
-            view_count: share.viewCount
-          },
-          created_at: now,
-        })
+      // 通知設定を確認してから送信
+      const { data: notifPref } = await supabase
+        .from('notification_preferences')
+        .select('earnings')
+        .eq('user_id', share.creatorId)
+        .maybeSingle()
+
+      if (!notifPref || notifPref.earnings !== false) {
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: share.creatorId,
+            type: 'reward_received',
+            title: 'Reward Received! 🎉',
+            body: `You earned ¥${share.rewardAmount.toLocaleString()} from "${campaign.name}"`,
+            data: {
+              campaign_id,
+              amount: share.rewardAmount,
+              view_count: share.viewCount
+            },
+            created_at: now,
+          })
+      }
     }
 
     // 2. 残額を企業に返金（refundAmount > 0 の場合）
