@@ -19,7 +19,8 @@
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-withdrawal --no-verify-jwt 2>&1)",
       "Bash(grep:*)",
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy process-ended-campaigns --no-verify-jwt 2>&1)",
-      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy stripe-withdrawal --no-verify-jwt 2>&1)"
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy stripe-withdrawal --no-verify-jwt 2>&1)",
+      "Bash(cd \"C:/Users/4817m/zero_grid\" && npx supabase functions deploy process-ended-campaigns --project-ref gfzpegwatwyzbbbkcuvu 2>&1)"
     ]
   },
   "enabledMcpjsonServers": [

@@ -11,10 +11,9 @@ import '../../auth/presentation/pages/select_role_screen.dart';
 import 'presentation/pages/account_settings_screen.dart';
 import 'presentation/pages/profile_detail_screen.dart';
 import 'presentation/widgets/notification_settings_sheet.dart';
-import 'data/models/bank_account.dart';
-import 'presentation/providers/bank_account_provider.dart';
-import 'presentation/pages/bank_account_screen.dart';
+import '../earnings/data/services/payout_service.dart';
 import '../earnings/presentation/pages/earnings_screen.dart';
+import '../earnings/presentation/pages/withdrawal_screen.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -23,16 +22,18 @@ class ProfileScreen extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(userProfileProvider);
     final profile = profileState.profile;
-    final bankAccount = ref.watch(bankAccountProvider);
+    final connectStatus = useState<ConnectStatus?>(null);
+    final connectLoading = useState(true);
 
-    // Load bank account on mount
+    // Load Stripe Connect status on mount
     useEffect(() {
       Future.microtask(() async {
         try {
-          final service = ref.read(bankAccountServiceProvider);
-          final account = await service.getBankAccount();
-          ref.read(bankAccountProvider.notifier).state = account;
+          final service = PayoutService();
+          final status = await service.getConnectStatus();
+          connectStatus.value = status;
         } catch (_) {}
+        connectLoading.value = false;
       });
       return null;
     }, []);
@@ -139,8 +140,8 @@ class ProfileScreen extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.base),
 
-              // Bank Account Card
-              _buildBankAccountCard(context, bankAccount),
+              // Payout Account Card
+              _buildPayoutCard(context, connectStatus.value, connectLoading.value),
               SizedBox(height: SpacePalette.lg),
 
               // Account section
@@ -156,20 +157,6 @@ class ProfileScreen extends HookConsumerWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => const AccountSettingsScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                  ProfileMenuItem(
-                    icon: Icons.account_balance_outlined,
-                    iconBackgroundColor: const Color(0xFFE3F2FD),
-                    iconColor: const Color(0xFF2196F3),
-                    label: 'Bank Account',
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const BankAccountScreen(),
                         ),
                       );
                     },
@@ -209,13 +196,6 @@ class ProfileScreen extends HookConsumerWidget {
                         builder: (context) => const NotificationSettingsSheet(),
                       );
                     },
-                  ),
-                  ProfileMenuItem(
-                    icon: Icons.verified_user_outlined,
-                    iconBackgroundColor: const Color(0xFFE3F2FD),
-                    iconColor: const Color(0xFF2196F3),
-                    label: 'Permissions',
-                    onTap: () {},
                   ),
                 ],
               ),
@@ -269,8 +249,8 @@ class ProfileScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildBankAccountCard(BuildContext context, BankAccount? bankAccount) {
-    if (bankAccount != null) {
+  Widget _buildPayoutCard(BuildContext context, ConnectStatus? status, bool isLoading) {
+    if (isLoading) {
       return Container(
         width: double.infinity,
         padding: EdgeInsets.all(SpacePalette.base),
@@ -278,63 +258,146 @@ class ProfileScreen extends HookConsumerWidget {
           color: ColorPalette.neutral800,
           borderRadius: BorderRadius.circular(RadiusPalette.base),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Row(
           children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.account_balance,
-                  size: 16,
-                  color: ColorPalette.neutral100,
-                ),
-                SizedBox(width: SpacePalette.xs),
-                Text(
-                  'Bank Account',
-                  style: TextStylePalette.smText.copyWith(
-                    color: ColorPalette.neutral100,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: SpacePalette.base),
+            Icon(Icons.account_balance_outlined, size: 24, color: ColorPalette.white),
+            SizedBox(width: SpacePalette.inner),
             Text(
-              bankAccount.accountHolder,
-              style: TextStylePalette.smallHeader.copyWith(
-                color: ColorPalette.neutral100,
-              ),
+              'Payout Account',
+              style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
             ),
-            SizedBox(height: SpacePalette.sm),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '${bankAccount.bankName} - ${bankAccount.branchName}',
-                  style: TextStylePalette.smText.copyWith(
-                    color: ColorPalette.neutral100.withOpacity(0.7),
-                  ),
-                ),
-                Text(
-                  bankAccount.maskedAccountNumber,
-                  style: TextStylePalette.normalText.copyWith(
-                    color: ColorPalette.neutral100,
-                  ),
-                ),
-              ],
+            Spacer(),
+            SizedBox(
+              width: 16, height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2, color: ColorPalette.white),
             ),
           ],
         ),
       );
     }
 
-    // Empty state - prompt to add bank account
+    final isConnected = status?.hasConnect == true && status?.payoutsEnabled == true;
+    final isPending = status?.hasConnect == true && status?.payoutsEnabled != true;
+
+    if (isConnected) {
+      return Container(
+        width: double.infinity,
+        padding: EdgeInsets.all(SpacePalette.base),
+        decoration: BoxDecoration(
+          color: ColorPalette.neutral800,
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.account_balance, size: 24, color: ColorPalette.white),
+            SizedBox(width: SpacePalette.inner),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Payout Account',
+                    style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
+                  ),
+                  SizedBox(height: SpacePalette.xs),
+                  Text(
+                    'Ready for withdrawals',
+                    style: TextStylePalette.smText.copyWith(
+                      color: ColorPalette.neutral100.withOpacity(0.7),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
+              decoration: BoxDecoration(
+                color: ColorPalette.positive500.withOpacity(0.2),
+                borderRadius: BorderRadius.circular(RadiusPalette.full),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.check_circle, size: 14, color: ColorPalette.positive500),
+                  SizedBox(width: 4),
+                  Text(
+                    'Connected',
+                    style: TextStylePalette.smText.copyWith(
+                      color: ColorPalette.positive500,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (isPending) {
+      return GestureDetector(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => WithdrawalScreen(currentBalance: 0)),
+          );
+        },
+        child: Container(
+          width: double.infinity,
+          padding: EdgeInsets.all(SpacePalette.base),
+          decoration: BoxDecoration(
+            color: ColorPalette.neutral800,
+            borderRadius: BorderRadius.circular(RadiusPalette.base),
+          ),
+          child: Row(
+            children: [
+              Icon(Icons.account_balance_outlined, size: 24, color: ColorPalette.white),
+              SizedBox(width: SpacePalette.inner),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Payout Account',
+                      style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
+                    ),
+                    SizedBox(height: SpacePalette.xs),
+                    Text(
+                      'Verification in progress',
+                      style: TextStylePalette.smText.copyWith(
+                        color: ColorPalette.neutral100.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
+                decoration: BoxDecoration(
+                  color: Colors.orange.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                ),
+                child: Text(
+                  'Pending',
+                  style: TextStylePalette.smText.copyWith(
+                    color: Colors.orange,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Not connected - prompt to set up
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(
-            builder: (context) => const BankAccountScreen(),
-          ),
+          MaterialPageRoute(builder: (context) => WithdrawalScreen(currentBalance: 0)),
         );
       },
       child: Container(
@@ -346,25 +409,19 @@ class ProfileScreen extends HookConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.account_balance_outlined,
-              size: 24,
-              color: ColorPalette.white,
-            ),
+            Icon(Icons.account_balance_outlined, size: 24, color: ColorPalette.white),
             SizedBox(width: SpacePalette.inner),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Bank Account',
-                    style: TextStylePalette.smallHeader.copyWith(
-                      color: ColorPalette.white,
-                    ),
+                    'Payout Account',
+                    style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
                   ),
                   SizedBox(height: SpacePalette.xs),
                   Text(
-                    'Add your bank account for payouts',
+                    'Set up your payout account to withdraw earnings',
                     style: TextStylePalette.smText.copyWith(
                       color: ColorPalette.neutral100.withOpacity(0.7),
                     ),
@@ -372,11 +429,7 @@ class ProfileScreen extends HookConsumerWidget {
                 ],
               ),
             ),
-            Icon(
-              Icons.add_circle_outline,
-              size: 20,
-              color: ColorPalette.white,
-            ),
+            Icon(Icons.arrow_forward_ios, size: 16, color: ColorPalette.white),
           ],
         ),
       ),

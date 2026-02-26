@@ -4,6 +4,8 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/presentation/providers/notification_provider.dart';
+import '../../../creator/find/presentation/widgets/notification_sheet.dart';
 import 'analytics_screen.dart';
 import '../../deposit/presentation/pages/select_amount_screen.dart';
 import '../../payment/presentation/providers/payment_provider.dart';
@@ -13,6 +15,7 @@ class HomeScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final balance = ref.watch(walletBalanceProvider);
+    final unreadCount = ref.watch(unreadNotificationCountProvider);
 
     // Load balance on mount
     useEffect(() {
@@ -33,7 +36,11 @@ class HomeScreen extends HookConsumerWidget {
         child: Column(
           children: [
             // ヘッダー（青いグラデーション）
-            _DashboardHeader(statusBarHeight: statusBarHeight, balance: balance),
+            _DashboardHeader(
+              statusBarHeight: statusBarHeight,
+              balance: balance,
+              unreadCount: unreadCount,
+            ),
 
             // コンテンツエリア
             Padding(
@@ -63,8 +70,13 @@ class HomeScreen extends HookConsumerWidget {
 class _DashboardHeader extends StatelessWidget {
   final double statusBarHeight;
   final int balance;
+  final int unreadCount;
 
-  const _DashboardHeader({required this.statusBarHeight, required this.balance});
+  const _DashboardHeader({
+    required this.statusBarHeight,
+    required this.balance,
+    this.unreadCount = 0,
+  });
 
   String _formatCurrency(int amount) {
     return '¥${amount.toString().replaceAllMapped(
@@ -91,11 +103,68 @@ class _DashboardHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: SpacePalette.sm),
-              Text(
-                'Dashboard',
-                style: TextStylePalette.header.copyWith(
-                  color: ColorPalette.white,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Dashboard',
+                    style: TextStylePalette.header.copyWith(
+                      color: ColorPalette.white,
+                    ),
+                  ),
+                  // Notification bell
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (context) => NotificationSheet(),
+                      );
+                    },
+                    child: Stack(
+                      clipBehavior: Clip.none,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: ColorPalette.white.withOpacity(0.2),
+                            borderRadius: BorderRadius.circular(RadiusPalette.base),
+                          ),
+                          child: Icon(
+                            Icons.notifications_outlined,
+                            color: ColorPalette.white,
+                            size: 22,
+                          ),
+                        ),
+                        if (unreadCount > 0)
+                          Positioned(
+                            right: -2,
+                            top: -2,
+                            child: Container(
+                              width: 18,
+                              height: 18,
+                              decoration: BoxDecoration(
+                                color: ColorPalette.critical500,
+                                shape: BoxShape.circle,
+                                border: Border.all(color: ColorPalette.white, width: 2),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  unreadCount > 9 ? '9+' : unreadCount.toString(),
+                                  style: TextStyle(
+                                    color: ColorPalette.white,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: SpacePalette.lg),
 

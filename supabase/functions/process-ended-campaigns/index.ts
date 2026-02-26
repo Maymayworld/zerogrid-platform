@@ -91,22 +91,30 @@ serve(async (req) => {
           ...result,
         })
 
-        // 企業に通知
-        await supabase
-          .from('notifications')
-          .insert({
-            user_id: campaign.organizer_id,
-            type: 'campaign_completed',
-            title: 'Campaign Completed',
-            body: campaign.reason === 'achieved'
-              ? `"${campaign.name}" has reached its target views! Rewards have been distributed.`
-              : `"${campaign.name}" has reached its deadline. Rewards have been distributed based on achieved views.`,
-            data: { 
-              campaign_id: campaign.id,
-              reason: campaign.reason
-            },
-            created_at: now,
-          })
+        // 通知設定を確認してから企業に通知
+        const { data: notifPref } = await supabase
+          .from('notification_preferences')
+          .select('campaign')
+          .eq('user_id', campaign.organizer_id)
+          .maybeSingle()
+
+        if (!notifPref || notifPref.campaign !== false) {
+          await supabase
+            .from('notifications')
+            .insert({
+              user_id: campaign.organizer_id,
+              type: 'campaign_completed',
+              title: 'Campaign Completed',
+              body: campaign.reason === 'achieved'
+                ? `"${campaign.name}" has reached its target views! Rewards have been distributed.`
+                : `"${campaign.name}" has reached its deadline. Rewards have been distributed based on achieved views.`,
+              data: {
+                campaign_id: campaign.id,
+                reason: campaign.reason
+              },
+              created_at: now,
+            })
+        }
       } catch (error) {
         results.push({
           campaign_id: campaign.id,

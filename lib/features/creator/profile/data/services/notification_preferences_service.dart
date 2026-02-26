@@ -6,12 +6,14 @@ class NotificationPreferences {
   final bool chat;
   final bool earnings;
   final bool news;
+  final bool campaign;
 
   const NotificationPreferences({
     this.allNotifications = true,
     this.chat = true,
     this.earnings = true,
     this.news = true,
+    this.campaign = true,
   });
 
   factory NotificationPreferences.fromMap(Map<String, dynamic> map) {
@@ -20,6 +22,7 @@ class NotificationPreferences {
       chat: map['chat'] as bool? ?? true,
       earnings: map['earnings'] as bool? ?? true,
       news: map['news'] as bool? ?? true,
+      campaign: map['campaign'] as bool? ?? true,
     );
   }
 }

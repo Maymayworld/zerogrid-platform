@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/profile_menu_section.dart';
@@ -11,6 +12,8 @@ import '../../../auth/presentation/pages/select_role_screen.dart';
 import '../../deposit/presentation/pages/select_amount_screen.dart';
 import '../../payment/presentation/pages/payment_methods_screen.dart';
 import '../../payment/presentation/providers/payment_provider.dart';
+import 'pages/account_settings_screen.dart';
+import 'widgets/notification_settings_sheet.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -91,11 +94,7 @@ class ProfileScreen extends HookConsumerWidget {
                     bottom: 0,
                     right: 0,
                     child: GestureDetector(
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Edit profile image...')),
-                        );
-                      },
+                      onTap: () => _pickAndUploadAvatar(context, ref),
                       child: Container(
                         width: 32,
                         height: 32,
@@ -242,7 +241,14 @@ class ProfileScreen extends HookConsumerWidget {
                     iconBackgroundColor: ColorPalette.smashedPumpkin100,
                     iconColor: ColorPalette.smashedPumpkin600,
                     label: 'Account Settings',
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const OrganizerAccountSettingsScreen(),
+                      );
+                    },
                   ),
                   ProfileMenuItem(
                     icon: Icons.payment_outlined,
@@ -271,14 +277,14 @@ class ProfileScreen extends HookConsumerWidget {
                     iconBackgroundColor: const Color(0xFFFFF3E0),
                     iconColor: const Color(0xFFFF9800),
                     label: 'Notifications',
-                    onTap: () {},
-                  ),
-                  ProfileMenuItem(
-                    icon: Icons.verified_user_outlined,
-                    iconBackgroundColor: const Color(0xFFE3F2FD),
-                    iconColor: const Color(0xFF2196F3),
-                    label: 'Permissions',
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const OrganizerNotificationSettingsSheet(),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -330,5 +336,72 @@ class ProfileScreen extends HookConsumerWidget {
         ),
       ),
     );
+  }
+
+  Future<void> _pickAndUploadAvatar(BuildContext context, WidgetRef ref) async {
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      backgroundColor: ColorPalette.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
+      ),
+      builder: (ctx) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(SpacePalette.base),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                leading: Icon(Icons.photo_library),
+                title: Text('Choose from Library', style: TextStylePalette.normalText),
+                onTap: () => Navigator.pop(ctx, ImageSource.gallery),
+              ),
+              ListTile(
+                leading: Icon(Icons.camera_alt),
+                title: Text('Take Photo', style: TextStylePalette.normalText),
+                onTap: () => Navigator.pop(ctx, ImageSource.camera),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (source == null) return;
+
+    try {
+      final picker = ImagePicker();
+      final picked = await picker.pickImage(source: source, maxWidth: 512, maxHeight: 512);
+      if (picked == null) return;
+
+      final bytes = await picked.readAsBytes();
+      final fileName = picked.name;
+
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Uploading...')),
+      );
+
+      final authService = ref.read(authServiceProvider);
+      final imageUrl = await authService.uploadAvatarBytes(bytes, fileName);
+      await authService.updateProfile(avatarUrl: imageUrl);
+
+      // Refresh profile
+      await ref.read(userProfileProvider.notifier).loadProfile();
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Profile image updated!')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed to update image: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
   }
 }

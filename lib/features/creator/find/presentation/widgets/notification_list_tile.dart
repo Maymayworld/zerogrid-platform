@@ -105,6 +105,12 @@ class NotificationListTile extends StatelessWidget {
         return Icons.campaign_outlined;
       case 'reward_received':
         return Icons.payments_outlined;
+      case 'new_participation':
+        return Icons.person_add_outlined;
+      case 'new_submission':
+        return Icons.video_library_outlined;
+      case 'campaign_completed':
+        return Icons.flag_outlined;
       default:
         return Icons.notifications_outlined;
     }
@@ -125,6 +131,12 @@ class NotificationListTile extends StatelessWidget {
       case 'news':
         return ColorPalette.smashedPumpkin600;
       case 'reward_received':
+        return ColorPalette.positive500;
+      case 'new_participation':
+        return ColorPalette.smashedPumpkin600;
+      case 'new_submission':
+        return ColorPalette.neutral800;
+      case 'campaign_completed':
         return ColorPalette.positive500;
       default:
         return ColorPalette.neutral500;
