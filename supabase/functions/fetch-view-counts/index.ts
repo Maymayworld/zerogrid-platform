@@ -1,6 +1,7 @@
 // supabase/functions/fetch-view-counts/index.ts
 // 視聴回数取得 Edge Function
 // YouTube, TikTok, Instagram の動画視聴回数を取得
+// platform_post_url を優先的に参照し、なければ video_url にフォールバック
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
@@ -63,7 +64,7 @@ async function getYouTubeViewCount(videoId: string): Promise<number | null> {
       `https://www.googleapis.com/youtube/v3/videos?part=statistics&id=${videoId}&key=${apiKey}`
     )
     const data = await response.json()
-    
+
     if (data.items && data.items.length > 0) {
       return parseInt(data.items[0].statistics.viewCount, 10)
     }
@@ -74,9 +75,8 @@ async function getYouTubeViewCount(videoId: string): Promise<number | null> {
   }
 }
 
-// TikTok視聴回数取得（公式APIまたはスクレイピング代替）
+// TikTok視聴回数取得
 async function getTikTokViewCount(videoId: string, accessToken?: string): Promise<number | null> {
-  // TikTok公式APIを使用（accessTokenが必要）
   if (accessToken) {
     try {
       const response = await fetch(
@@ -100,8 +100,7 @@ async function getTikTokViewCount(videoId: string, accessToken?: string): Promis
       console.error('TikTok API error:', error)
     }
   }
-  
-  // フォールバック: nullを返す（手動入力または別の方法が必要）
+
   return null
 }
 
@@ -112,12 +111,11 @@ async function getInstagramViewCount(postId: string, accessToken?: string): Prom
   }
 
   try {
-    // Instagram Graph API (ビジネスアカウント用)
     const response = await fetch(
       `https://graph.instagram.com/${postId}?fields=video_view_count&access_token=${accessToken}`
     )
     const data = await response.json()
-    
+
     if (data.video_view_count !== undefined) {
       return data.video_view_count
     }
@@ -129,7 +127,6 @@ async function getInstagramViewCount(postId: string, accessToken?: string): Prom
 }
 
 serve(async (req) => {
-  // CORS
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders })
   }
@@ -140,6 +137,29 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const { submission_id, video_url, platform, user_id } = await req.json()
+
+    // platform_post_url を優先的に取得
+    let effectiveUrl = video_url
+    if (submission_id) {
+      const { data: sub } = await supabase
+        .from('submission_requests')
+        .select('platform_post_url, video_url')
+        .eq('id', submission_id)
+        .single()
+
+      if (sub?.platform_post_url) {
+        effectiveUrl = sub.platform_post_url
+      } else if (sub?.video_url) {
+        effectiveUrl = sub.video_url
+      }
+    }
+
+    if (!effectiveUrl) {
+      return new Response(
+        JSON.stringify({ success: false, message: 'No video URL available for view count tracking' }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
     let viewCount: number | null = null
     let accessToken: string | undefined
@@ -152,28 +172,28 @@ serve(async (req) => {
         .eq('user_id', user_id)
         .eq('platform', platform)
         .single()
-      
+
       accessToken = connection?.access_token
     }
 
     // プラットフォームごとに視聴回数を取得
     switch (platform.toLowerCase()) {
       case 'youtube': {
-        const videoId = extractYouTubeVideoId(video_url)
+        const videoId = extractYouTubeVideoId(effectiveUrl)
         if (videoId) {
           viewCount = await getYouTubeViewCount(videoId)
         }
         break
       }
       case 'tiktok': {
-        const videoId = extractTikTokVideoId(video_url)
+        const videoId = extractTikTokVideoId(effectiveUrl)
         if (videoId) {
           viewCount = await getTikTokViewCount(videoId, accessToken)
         }
         break
       }
       case 'instagram': {
-        const postId = extractInstagramPostId(video_url)
+        const postId = extractInstagramPostId(effectiveUrl)
         if (postId) {
           viewCount = await getInstagramViewCount(postId, accessToken)
         }
@@ -185,7 +205,7 @@ serve(async (req) => {
     if (submission_id && viewCount !== null) {
       await supabase
         .from('submission_requests')
-        .update({ 
+        .update({
           view_count: viewCount,
           updated_at: new Date().toISOString()
         })
@@ -193,8 +213,8 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         view_count: viewCount,
         platform,
         submission_id

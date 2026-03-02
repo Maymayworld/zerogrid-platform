@@ -33,7 +33,7 @@ serve(async (req) => {
       )
     }
 
-    const scope = 'https://www.googleapis.com/auth/youtube.readonly'
+    const scope = 'https://www.googleapis.com/auth/youtube.readonly https://www.googleapis.com/auth/youtube.upload'
     const state = btoa(JSON.stringify({ user_id, platform: 'youtube' }))
 
     const url = new URL('https://accounts.google.com/o/oauth2/v2/auth')

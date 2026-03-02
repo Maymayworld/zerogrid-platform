@@ -1,6 +1,33 @@
 // supabase/functions/oauth-callback/index.ts
+// OAuth コールバック処理（YouTube, TikTok, Instagram）
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+
+const successHtml = `<html>
+  <head><meta charset="utf-8"></head>
+  <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+    <div style="text-align: center;">
+      <div style="font-size: 48px; margin-bottom: 16px;">&#x2713;</div>
+      <h2 style="margin: 0 0 8px 0;">Connected!</h2>
+      <p style="color: #666; margin: 0;">You can close this window</p>
+    </div>
+  </body>
+  <script>setTimeout(() => { window.close(); }, 2000);</script>
+</html>`
+
+function errorHtml(message: string) {
+  return `<html>
+    <head><meta charset="utf-8"></head>
+    <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
+      <div style="text-align: center;">
+        <div style="font-size: 48px; margin-bottom: 16px;">&#x2717;</div>
+        <h2 style="margin: 0 0 8px 0;">Connection Failed</h2>
+        <p style="color: #666; margin: 0;">${message}</p>
+      </div>
+    </body>
+    <script>setTimeout(() => { window.close(); }, 3000);</script>
+  </html>`
+}
 
 serve(async (req) => {
   const url = new URL(req.url)
@@ -9,21 +36,15 @@ serve(async (req) => {
   const error = url.searchParams.get('error')
 
   if (error) {
-    return new Response(
-      `<html><body><script>window.close();</script>Error: ${error}</body></html>`,
-      { headers: { 'Content-Type': 'text/html' } }
-    )
+    return new Response(errorHtml(error), { headers: { 'Content-Type': 'text/html' } })
   }
 
   if (!code || !state) {
-    return new Response(
-      '<html><body><script>window.close();</script>Missing code or state</body></html>',
-      { headers: { 'Content-Type': 'text/html' } }
-    )
+    return new Response(errorHtml('Missing code or state'), { headers: { 'Content-Type': 'text/html' } })
   }
 
   try {
-    // Parse state - handle TikTok's format (csrfState|actualState)
+    // Parse state - TikTok uses csrfState|actualState format
     let stateData: { user_id: string; platform: string }
     if (state.includes('|')) {
       const [, actualState] = state.split('|')
@@ -34,57 +55,89 @@ serve(async (req) => {
 
     const { user_id, platform } = stateData
 
-    // Initialize Supabase client
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     let accessToken: string
     let refreshToken: string = ''
-    let platformUserId: string
+    let platformUserId: string = ''
     let platformUsername: string | undefined
 
     if (platform === 'instagram') {
-      // Exchange code for access token
-      const clientId = Deno.env.get('INSTAGRAM_CLIENT_ID')!
-      const clientSecret = Deno.env.get('INSTAGRAM_CLIENT_SECRET')!
-      const redirectUri = Deno.env.get('INSTAGRAM_REDIRECT_URI') || 
+      // ========================================
+      // Instagram Graph API (via Facebook Login)
+      // ========================================
+      const appId = Deno.env.get('INSTAGRAM_CLIENT_ID')!
+      const appSecret = Deno.env.get('INSTAGRAM_CLIENT_SECRET')!
+      const redirectUri = Deno.env.get('INSTAGRAM_REDIRECT_URI') ||
         `${supabaseUrl}/functions/v1/oauth-callback`
 
-      const tokenResponse = await fetch('https://api.instagram.com/oauth/access_token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: new URLSearchParams({
-          client_id: clientId,
-          client_secret: clientSecret,
-          grant_type: 'authorization_code',
-          redirect_uri: redirectUri,
-          code: code,
-        }),
-      })
-
+      // 1. Exchange code for short-lived Facebook token
+      const tokenResponse = await fetch(
+        `https://graph.facebook.com/v21.0/oauth/access_token?` +
+        `client_id=${appId}&client_secret=${appSecret}&redirect_uri=${encodeURIComponent(redirectUri)}&code=${code}`
+      )
       const tokenData = await tokenResponse.json()
-      
+
       if (tokenData.error) {
-        throw new Error(tokenData.error_message || tokenData.error)
+        throw new Error(tokenData.error.message || 'Failed to get Facebook token')
       }
 
-      accessToken = tokenData.access_token
-      refreshToken = tokenData.refresh_token || ''
-      platformUserId = tokenData.user_id.toString()
+      const shortLivedToken = tokenData.access_token
 
-      // Get username
-      const userResponse = await fetch(
-        `https://graph.instagram.com/me?fields=id,username&access_token=${accessToken}`
+      // 2. Exchange for long-lived token (60 days)
+      const longTokenResponse = await fetch(
+        `https://graph.facebook.com/v21.0/oauth/access_token?` +
+        `grant_type=fb_exchange_token&client_id=${appId}&client_secret=${appSecret}&fb_exchange_token=${shortLivedToken}`
       )
-      const userData = await userResponse.json()
-      platformUsername = userData.username
+      const longTokenData = await longTokenResponse.json()
+      accessToken = longTokenData.access_token || shortLivedToken
+
+      // 3. Get user's Facebook Pages
+      const pagesResponse = await fetch(
+        `https://graph.facebook.com/v21.0/me/accounts?access_token=${accessToken}`
+      )
+      const pagesData = await pagesResponse.json()
+
+      if (!pagesData.data || pagesData.data.length === 0) {
+        throw new Error('No Facebook Pages found. Instagram Business account requires a linked Facebook Page.')
+      }
+
+      // Use the first page's access token (long-lived page token)
+      const page = pagesData.data[0]
+      const pageAccessToken = page.access_token
+
+      // 4. Get Instagram Business Account linked to the page
+      const igResponse = await fetch(
+        `https://graph.facebook.com/v21.0/${page.id}?fields=instagram_business_account&access_token=${pageAccessToken}`
+      )
+      const igData = await igResponse.json()
+
+      if (!igData.instagram_business_account) {
+        throw new Error('No Instagram Business account linked to this Facebook Page. Please convert to a Business or Creator account.')
+      }
+
+      const igUserId = igData.instagram_business_account.id
+
+      // 5. Get Instagram username
+      const igProfileResponse = await fetch(
+        `https://graph.facebook.com/v21.0/${igUserId}?fields=username,name&access_token=${pageAccessToken}`
+      )
+      const igProfile = await igProfileResponse.json()
+
+      platformUserId = igUserId
+      platformUsername = igProfile.username || igProfile.name
+      accessToken = pageAccessToken // Use page token for Instagram API calls
+      refreshToken = '' // Page tokens are long-lived, no refresh needed
 
     } else if (platform === 'tiktok') {
-      // Exchange code for access token
+      // ========================================
+      // TikTok v2 API
+      // ========================================
       const clientKey = Deno.env.get('TIKTOK_CLIENT_KEY')!
       const clientSecret = Deno.env.get('TIKTOK_CLIENT_SECRET')!
-      const redirectUri = Deno.env.get('TIKTOK_REDIRECT_URI') || 
+      const redirectUri = Deno.env.get('TIKTOK_REDIRECT_URI') ||
         `${supabaseUrl}/functions/v1/oauth-callback`
 
       const tokenResponse = await fetch('https://open.tiktokapis.com/v2/oauth/token/', {
@@ -100,7 +153,7 @@ serve(async (req) => {
       })
 
       const tokenData = await tokenResponse.json()
-      
+
       if (tokenData.error) {
         throw new Error(tokenData.error_description || tokenData.error)
       }
@@ -112,15 +165,15 @@ serve(async (req) => {
       // Get user info
       const userResponse = await fetch(
         'https://open.tiktokapis.com/v2/user/info/?fields=open_id,display_name,avatar_url',
-        {
-          headers: { 'Authorization': `Bearer ${accessToken}` },
-        }
+        { headers: { 'Authorization': `Bearer ${accessToken}` } }
       )
       const userData = await userResponse.json()
       platformUsername = userData.data?.user?.display_name
 
     } else if (platform === 'youtube') {
-      // Exchange code for access token via Google OAuth
+      // ========================================
+      // Google / YouTube OAuth
+      // ========================================
       const clientId = Deno.env.get('GOOGLE_CLIENT_ID')!
       const clientSecret = Deno.env.get('GOOGLE_CLIENT_SECRET')!
       const redirectUri = Deno.env.get('GOOGLE_REDIRECT_URI') ||
@@ -150,9 +203,7 @@ serve(async (req) => {
       // Get YouTube channel info
       const channelResponse = await fetch(
         'https://www.googleapis.com/youtube/v3/channels?part=snippet&mine=true',
-        {
-          headers: { 'Authorization': `Bearer ${accessToken}` },
-        }
+        { headers: { 'Authorization': `Bearer ${accessToken}` } }
       )
       const channelData = await channelResponse.json()
       const channel = channelData.items?.[0]
@@ -163,7 +214,7 @@ serve(async (req) => {
       throw new Error(`Unknown platform: ${platform}`)
     }
 
-    // Save to database - check existing then insert or update
+    // Save to database
     const { data: existing } = await supabase
       .from('social_connections')
       .select('id')
@@ -200,39 +251,11 @@ serve(async (req) => {
       throw new Error(`Database error: ${dbError.message}`)
     }
 
-    // Return success page that closes the window
-    return new Response(
-      `<html>
-        <head><meta charset="utf-8"></head>
-        <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
-          <div style="text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">&#x2713;</div>
-            <h2 style="margin: 0 0 8px 0;">Connected!</h2>
-            <p style="color: #666; margin: 0;">You can close this window</p>
-          </div>
-        </body>
-        <script>
-          setTimeout(() => { window.close(); }, 2000);
-        </script>
-      </html>`,
-      { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
-    )
+    return new Response(successHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
   } catch (error) {
     console.error('OAuth callback error:', error)
     return new Response(
-      `<html>
-        <head><meta charset="utf-8"></head>
-        <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
-          <div style="text-align: center;">
-            <div style="font-size: 48px; margin-bottom: 16px;">&#x2717;</div>
-            <h2 style="margin: 0 0 8px 0;">Connection Failed</h2>
-            <p style="color: #666; margin: 0;">${error.message}</p>
-          </div>
-        </body>
-        <script>
-          setTimeout(() => { window.close(); }, 3000);
-        </script>
-      </html>`,
+      errorHtml(error.message),
       { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
     )
   }

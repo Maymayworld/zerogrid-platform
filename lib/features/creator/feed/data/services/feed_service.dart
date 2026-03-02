@@ -7,7 +7,8 @@ class FeedService {
 
   String? get _userId => _supabase.auth.currentUser?.id;
 
-  /// 承認済みYouTube動画を全件取得（フィード用）
+  /// 承認済み動画を全件取得（フィード用）
+  /// local_video_url がある動画と YouTube URL の動画両方を表示
   Future<List<Submission>> getFeedSubmissions() async {
     final response = await _supabase
         .from('submission_requests')
@@ -16,7 +17,6 @@ class FeedService {
           profiles:creator_id (display_name, avatar_url),
           campaigns:campaign_id (name)
         ''')
-        .eq('platform', 'youtube')
         .eq('status', 'approved')
         .order('submitted_at', ascending: false);
 
@@ -74,7 +74,27 @@ class FeedService {
     }
   }
 
-  /// 特定ユーザーのYouTube投稿一覧（プロフィール用）
+  /// 特定ユーザーの投稿一覧（プロフィール用）
+  Future<List<Submission>> getUserSubmissions(String userId) async {
+    final response = await _supabase
+        .from('submission_requests')
+        .select('''
+          *,
+          campaigns:campaign_id (name)
+        ''')
+        .eq('creator_id', userId)
+        .eq('status', 'approved')
+        .order('submitted_at', ascending: false);
+
+    return (response as List).map((map) {
+      return Submission.fromMap({
+        ...map,
+        'campaign_name': map['campaigns']?['name'],
+      });
+    }).toList();
+  }
+
+  /// 特定ユーザーのYouTube投稿一覧（後方互換性）
   Future<List<Submission>> getUserYouTubeSubmissions(String userId) async {
     final response = await _supabase
         .from('submission_requests')
@@ -95,8 +115,8 @@ class FeedService {
     }).toList();
   }
 
-  /// いいねしたYouTube動画一覧（プロフィール用）
-  Future<List<Submission>> getLikedYouTubeSubmissions() async {
+  /// いいねした動画一覧（プロフィール用）
+  Future<List<Submission>> getLikedSubmissions() async {
     if (_userId == null) return [];
 
     final likeResponse = await _supabase
@@ -119,7 +139,6 @@ class FeedService {
           campaigns:campaign_id (name)
         ''')
         .inFilter('id', likedIds)
-        .eq('platform', 'youtube')
         .eq('status', 'approved');
 
     return (response as List).map((map) {
@@ -130,5 +149,10 @@ class FeedService {
         'campaign_name': map['campaigns']?['name'],
       });
     }).toList();
+  }
+
+  /// いいねしたYouTube動画一覧（後方互換性）
+  Future<List<Submission>> getLikedYouTubeSubmissions() async {
+    return getLikedSubmissions();
   }
 }

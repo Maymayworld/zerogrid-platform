@@ -202,10 +202,14 @@ class ProfileDetailScreen extends HookConsumerWidget {
       itemCount: submissions.length,
       itemBuilder: (context, index) {
         final submission = submissions[index];
-        final videoId = extractYoutubeVideoId(submission.videoUrl);
-        final thumbnailUrl = videoId != null
-            ? getYoutubeThumbnailUrl(videoId)
-            : null;
+        // local video has its own thumbnail, YouTube has generated thumbnail
+        String? thumbnailUrl;
+        if (submission.videoThumbnailUrl != null && submission.videoThumbnailUrl!.isNotEmpty) {
+          thumbnailUrl = submission.videoThumbnailUrl;
+        } else {
+          final videoId = extractYoutubeVideoId(submission.videoUrl);
+          thumbnailUrl = videoId != null ? getYoutubeThumbnailUrl(videoId) : null;
+        }
 
         return GestureDetector(
           onTap: () {

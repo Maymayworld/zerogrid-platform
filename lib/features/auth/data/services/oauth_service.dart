@@ -18,7 +18,7 @@ class OAuthService {
     try {
       final response = await _client
           .from('social_connections')
-          .select('platform, platform_username')
+          .select('provider, provider_account_name')
           .eq('user_id', userId);
 
       final connected = <String, dynamic>{
@@ -29,8 +29,8 @@ class OAuthService {
       };
 
       for (final row in response as List) {
-        final platform = row['platform'] as String?;
-        final username = row['platform_username'] as String?;
+        final platform = row['provider'] as String?;
+        final username = row['provider_account_name'] as String?;
         if (platform != null) {
           connected[platform] = true;
           if (username != null) {
@@ -150,7 +150,7 @@ class OAuthService {
         .from('social_connections')
         .delete()
         .eq('user_id', userId)
-        .eq('platform', platform);
+        .eq('provider', platform);
   }
 
   // Get platform stats (views, etc.)
@@ -161,9 +161,9 @@ class OAuthService {
     try {
       final response = await _client
           .from('social_connections')
-          .select('access_token, platform_user_id, platform_username')
+          .select('access_token, provider_account_id, provider_account_name')
           .eq('user_id', userId)
-          .eq('platform', platform)
+          .eq('provider', platform)
           .single();
 
       return response;

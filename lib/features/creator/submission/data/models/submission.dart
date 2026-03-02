@@ -24,6 +24,14 @@ class Submission {
   final DateTime createdAt;
   final DateTime updatedAt;
 
+  // Video upload fields
+  final String? localVideoUrl;
+  final int? videoFileSize;
+  final int? videoDuration;
+  final String? uploadStatus;
+  final String? platformPostId;
+  final String? platformPostUrl;
+
   // Joined data
   final String? campaignName;
   final String? creatorName;
@@ -45,6 +53,12 @@ class Submission {
     this.reviewNote,
     required this.createdAt,
     required this.updatedAt,
+    this.localVideoUrl,
+    this.videoFileSize,
+    this.videoDuration,
+    this.uploadStatus,
+    this.platformPostId,
+    this.platformPostUrl,
     this.campaignName,
     this.creatorName,
     this.creatorAvatarUrl,
@@ -56,7 +70,7 @@ class Submission {
       campaignId: map['campaign_id'] as String,
       creatorId: map['creator_id'] as String,
       organizerId: map['organizer_id'] as String,
-      videoUrl: map['video_url'] as String,
+      videoUrl: map['video_url'] as String? ?? '',
       platform: map['platform'] as String? ?? 'youtube',
       videoTitle: map['video_title'] as String?,
       videoThumbnailUrl: map['video_thumbnail_url'] as String?,
@@ -72,6 +86,12 @@ class Submission {
       reviewNote: map['review_note'] as String?,
       createdAt: DateTime.parse(map['created_at'] as String),
       updatedAt: DateTime.parse(map['updated_at'] as String),
+      localVideoUrl: map['local_video_url'] as String?,
+      videoFileSize: (map['video_file_size'] as num?)?.toInt(),
+      videoDuration: (map['video_duration'] as num?)?.toInt(),
+      uploadStatus: map['upload_status'] as String?,
+      platformPostId: map['platform_post_id'] as String?,
+      platformPostUrl: map['platform_post_url'] as String?,
       campaignName: map['campaign_name'] as String?,
       creatorName: map['creator_name'] as String?,
       creatorAvatarUrl: map['creator_avatar_url'] as String?,
@@ -84,7 +104,7 @@ class Submission {
       'campaign_id': campaignId,
       'creator_id': creatorId,
       'organizer_id': organizerId,
-      'video_url': videoUrl,
+      'video_url': videoUrl.isEmpty ? null : videoUrl,
       'platform': platform,
       'video_title': videoTitle,
       'video_thumbnail_url': videoThumbnailUrl,
@@ -95,6 +115,12 @@ class Submission {
       'review_note': reviewNote,
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
+      'local_video_url': localVideoUrl,
+      'video_file_size': videoFileSize,
+      'video_duration': videoDuration,
+      'upload_status': uploadStatus,
+      'platform_post_id': platformPostId,
+      'platform_post_url': platformPostUrl,
     };
   }
 
@@ -114,6 +140,12 @@ class Submission {
     String? reviewNote,
     DateTime? createdAt,
     DateTime? updatedAt,
+    String? localVideoUrl,
+    int? videoFileSize,
+    int? videoDuration,
+    String? uploadStatus,
+    String? platformPostId,
+    String? platformPostUrl,
     String? campaignName,
     String? creatorName,
     String? creatorAvatarUrl,
@@ -134,11 +166,26 @@ class Submission {
       reviewNote: reviewNote ?? this.reviewNote,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      localVideoUrl: localVideoUrl ?? this.localVideoUrl,
+      videoFileSize: videoFileSize ?? this.videoFileSize,
+      videoDuration: videoDuration ?? this.videoDuration,
+      uploadStatus: uploadStatus ?? this.uploadStatus,
+      platformPostId: platformPostId ?? this.platformPostId,
+      platformPostUrl: platformPostUrl ?? this.platformPostUrl,
       campaignName: campaignName ?? this.campaignName,
       creatorName: creatorName ?? this.creatorName,
       creatorAvatarUrl: creatorAvatarUrl ?? this.creatorAvatarUrl,
     );
   }
+
+  /// The best available video URL for playback
+  String? get playableUrl => localVideoUrl ?? platformPostUrl ?? (videoUrl.isNotEmpty ? videoUrl : null);
+
+  /// Whether this submission has a locally uploaded video
+  bool get hasLocalVideo => localVideoUrl != null && localVideoUrl!.isNotEmpty;
+
+  /// Whether this is a YouTube URL submission
+  bool get isYouTubeUrl => platform == 'youtube' && videoUrl.isNotEmpty && !hasLocalVideo;
 
   /// Get platform display name
   String get platformDisplayName {
@@ -182,5 +229,23 @@ class Submission {
       return '${(viewCount / 1000).toStringAsFixed(1)}K';
     }
     return viewCount.toString();
+  }
+
+  /// Format file size for display
+  String get formattedFileSize {
+    if (videoFileSize == null) return '';
+    final mb = videoFileSize! / (1024 * 1024);
+    if (mb >= 1000) {
+      return '${(mb / 1024).toStringAsFixed(1)} GB';
+    }
+    return '${mb.toStringAsFixed(1)} MB';
+  }
+
+  /// Format duration for display
+  String get formattedDuration {
+    if (videoDuration == null) return '';
+    final minutes = videoDuration! ~/ 60;
+    final seconds = videoDuration! % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 }

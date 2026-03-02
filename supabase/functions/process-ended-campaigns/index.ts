@@ -1,6 +1,7 @@
 // supabase/functions/process-ended-campaigns/index.ts
 // 終了したキャンペーンの自動処理（締め切り到達 or 目標達成）
 // 定期実行（例: 1時間ごと）で呼び出す
+// 修正: キャンペーンをprocessing状態にしてから処理し、重複通知を防止
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
@@ -57,14 +58,21 @@ serve(async (req) => {
 
     if (campaignsToProcess.length === 0) {
       return new Response(
-        JSON.stringify({ 
-          success: true, 
+        JSON.stringify({
+          success: true,
           message: 'No campaigns to process',
           processed: 0
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
+
+    // 3. 全対象キャンペーンを先にprocessing状態にする（重複処理防止）
+    const campaignIds = campaignsToProcess.map(c => c.id)
+    await supabase
+      .from('campaigns')
+      .update({ status: 'processing', updated_at: now })
+      .in('id', campaignIds)
 
     const results = []
 
@@ -91,7 +99,20 @@ serve(async (req) => {
           ...result,
         })
 
-        // 通知設定を確認してから企業に通知
+        // 通知設定を確認してから企業に通知（重複チェック付き）
+        const { data: existingNotif } = await supabase
+          .from('notifications')
+          .select('id')
+          .eq('user_id', campaign.organizer_id)
+          .eq('type', 'campaign_completed')
+          .eq('data->>campaign_id', campaign.id)
+          .maybeSingle()
+
+        if (existingNotif) {
+          // 既に通知済み → スキップ
+          continue
+        }
+
         const { data: notifPref } = await supabase
           .from('notification_preferences')
           .select('campaign')
@@ -116,6 +137,13 @@ serve(async (req) => {
             })
         }
       } catch (error) {
+        // 処理失敗した場合、そのキャンペーンだけactiveに戻す
+        await supabase
+          .from('campaigns')
+          .update({ status: 'active', updated_at: now })
+          .eq('id', campaign.id)
+          .eq('status', 'processing')
+
         results.push({
           campaign_id: campaign.id,
           campaign_name: campaign.name,
@@ -125,7 +153,7 @@ serve(async (req) => {
     }
 
     return new Response(
-      JSON.stringify({ 
+      JSON.stringify({
         success: true,
         processed: campaignsToProcess.length,
         results,

@@ -1,8 +1,8 @@
 // lib/features/organizer/campaign/presentation/pages/submissions_screen.dart
+// 20260303
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
@@ -275,6 +275,12 @@ class _SubmissionCard extends StatelessWidget {
     required this.onReview,
   });
 
+  static final _months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  String _formatDateTime(DateTime dt) {
+    return '${_months[dt.month - 1]} ${dt.day}, ${dt.year} \u2022 ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -310,8 +316,7 @@ class _SubmissionCard extends StatelessWidget {
                       style: TextStylePalette.smTitle,
                     ),
                     Text(
-                      DateFormat('MMM d, yyyy • HH:mm')
-                          .format(submission.createdAt),
+                      _formatDateTime(submission.createdAt),
                       style: TextStylePalette.subText.copyWith(fontSize: 11),
                     ),
                   ],
@@ -340,7 +345,7 @@ class _SubmissionCard extends StatelessWidget {
                   Icon(Icons.schedule, size: 14, color: ColorPalette.neutral600),
                   SizedBox(width: 4),
                   Text(
-                    'Scheduled: ${DateFormat('MMM d, yyyy • HH:mm').format(submission.scheduledPostDate!)}',
+                    'Scheduled: ${_formatDateTime(submission.scheduledPostDate!)}',
                     style: TextStyle(
                       fontSize: 12,
                       color: ColorPalette.neutral600,

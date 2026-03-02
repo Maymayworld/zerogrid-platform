@@ -1,4 +1,5 @@
 // lib/features/creator/submission/data/services/submission_service.dart
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/submission.dart';
 import '../../../../../shared/data/services/notification_service.dart';
@@ -8,7 +9,7 @@ class SubmissionService {
 
   String? get _userId => _supabase.auth.currentUser?.id;
 
-  /// Create a new submission request for a campaign
+  /// Create a new submission request for a campaign (URL-based, legacy)
   /// Each platform URL creates a separate submission request
   Future<List<Submission>> createSubmission({
     required String campaignId,
@@ -41,6 +42,105 @@ class SubmissionService {
 
     // Organizerに提出通知を送る
     if (submissions.isNotEmpty) {
+      await _sendSubmissionNotification(campaignId, organizerId);
+    }
+
+    return submissions;
+  }
+
+  /// Create a file-based submission (video upload)
+  Future<Submission> createFileSubmission({
+    required String campaignId,
+    required String organizerId,
+    required Uint8List videoBytes,
+    required String fileName,
+    required List<String> targetPlatforms,
+    Uint8List? thumbnailBytes,
+    String? caption,
+    int? videoDuration,
+    void Function(double progress)? onProgress,
+  }) async {
+    if (_userId == null) throw Exception('User not logged in');
+
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final ext = fileName.split('.').last.toLowerCase();
+    final videoPath = '$_userId/${timestamp}_video.$ext';
+
+    // 1. Upload video to Supabase Storage
+    onProgress?.call(0.1);
+
+    await _supabase.storage.from('videos').uploadBinary(
+      videoPath,
+      videoBytes,
+      fileOptions: FileOptions(
+        contentType: _getVideoContentType(ext),
+        upsert: true,
+      ),
+    );
+
+    onProgress?.call(0.6);
+
+    final videoUrl = _supabase.storage.from('videos').getPublicUrl(videoPath);
+
+    // 2. Upload thumbnail if provided
+    String? thumbnailUrl;
+    if (thumbnailBytes != null) {
+      final thumbPath = '$_userId/${timestamp}_thumb.jpg';
+      await _supabase.storage.from('thumbnails').uploadBinary(
+        thumbPath,
+        thumbnailBytes,
+        fileOptions: FileOptions(
+          contentType: 'image/jpeg',
+          upsert: true,
+        ),
+      );
+      thumbnailUrl = _supabase.storage.from('thumbnails').getPublicUrl(thumbPath);
+    }
+
+    onProgress?.call(0.8);
+
+    // 3. Create submission record(s) for each target platform
+    final primaryPlatform = targetPlatforms.isNotEmpty
+        ? targetPlatforms.first.toLowerCase()
+        : 'youtube';
+
+    final response = await _supabase.from('submission_requests').insert({
+      'campaign_id': campaignId,
+      'creator_id': _userId,
+      'organizer_id': organizerId,
+      'platform': primaryPlatform,
+      'video_title': caption ?? '',
+      'video_thumbnail_url': thumbnailUrl,
+      'local_video_url': videoUrl,
+      'video_file_size': videoBytes.length,
+      'video_duration': videoDuration,
+      'upload_status': 'completed',
+      'status': 'pending',
+    }).select().single();
+
+    onProgress?.call(1.0);
+
+    // Organizerに通知
+    await _sendSubmissionNotification(campaignId, organizerId);
+
+    return Submission.fromMap(response);
+  }
+
+  String _getVideoContentType(String ext) {
+    switch (ext) {
+      case 'mp4':
+        return 'video/mp4';
+      case 'mov':
+        return 'video/quicktime';
+      case 'webm':
+        return 'video/webm';
+      default:
+        return 'video/mp4';
+    }
+  }
+
+  Future<void> _sendSubmissionNotification(String campaignId, String organizerId) async {
+    try {
       final campaignResponse = await _supabase
           .from('campaigns')
           .select('name')
@@ -66,9 +166,7 @@ class SubmissionService {
         body: '$creatorName submitted content for "$campaignName"',
         data: {'campaign_id': campaignId, 'campaign_name': campaignName},
       );
-    }
-
-    return submissions;
+    } catch (_) {}
   }
 
   /// Get the current user's submissions for a specific campaign
@@ -173,6 +271,7 @@ class SubmissionService {
   }
 
   /// Update submission status (approve/reject)
+  /// If approved and submission has a local video, triggers auto-posting to SNS
   Future<void> updateSubmissionStatus({
     required String submissionId,
     required String status,
@@ -183,6 +282,68 @@ class SubmissionService {
       'reviewed_at': DateTime.now().toUtc().toIso8601String(),
       if (reviewNote != null) 'review_note': reviewNote,
     }).eq('id', submissionId);
+
+    // Auto-post to SNS when approved
+    if (status == 'approved') {
+      await _triggerAutoPost(submissionId);
+    }
+  }
+
+  /// Trigger auto-posting to the target SNS platform
+  Future<void> _triggerAutoPost(String submissionId) async {
+    try {
+      // Get the submission to check if it has a local video
+      final response = await _supabase
+          .from('submission_requests')
+          .select('platform, local_video_url, upload_status')
+          .eq('id', submissionId)
+          .single();
+
+      final localVideoUrl = response['local_video_url'] as String?;
+      final platform = response['platform'] as String?;
+      final uploadStatus = response['upload_status'] as String?;
+
+      // Only auto-post if there's a local video and it hasn't been posted yet
+      if (localVideoUrl == null || localVideoUrl.isEmpty) return;
+      if (uploadStatus == 'posted' || uploadStatus == 'posting') return;
+
+      // Determine which Edge Function to call
+      String? functionName;
+      switch (platform) {
+        case 'youtube':
+          functionName = 'youtube-upload';
+          break;
+        case 'tiktok':
+          functionName = 'tiktok-upload';
+          break;
+        case 'instagram':
+          functionName = 'instagram-upload';
+          break;
+      }
+
+      if (functionName == null) return;
+
+      // Mark as posting
+      await _supabase.from('submission_requests').update({
+        'upload_status': 'posting',
+      }).eq('id', submissionId);
+
+      // Trigger the upload Edge Function (fire-and-forget)
+      _supabase.functions.invoke(
+        functionName,
+        body: {'submission_id': submissionId},
+      ).then((_) {
+        // Success - Edge Function updates the record itself
+      }).catchError((e) {
+        // Mark as failed if Edge Function call fails
+        _supabase.from('submission_requests').update({
+          'upload_status': 'failed',
+        }).eq('id', submissionId);
+      });
+    } catch (e) {
+      // Don't throw - auto-posting failure shouldn't block approval
+      print('Auto-post trigger failed: $e');
+    }
   }
 
   /// Update view count for a submission (called periodically)

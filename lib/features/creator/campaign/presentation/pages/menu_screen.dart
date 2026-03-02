@@ -246,12 +246,15 @@ class ProjectMenuScreen extends HookWidget {
                       _ActionSection(
                         icon: Icons.download,
                         title: 'Download Project Files',
-                        subtitle: '${campaign?.resources.length ?? 6} items',
+                        subtitle: '${campaign?.resources.length ?? 0} items',
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => ProjectDownloadScreen(),
+                              builder: (context) => ProjectDownloadScreen(
+                                resources: campaign?.resources ?? [],
+                                campaignName: _projectName,
+                              ),
                             ),
                           );
                         },

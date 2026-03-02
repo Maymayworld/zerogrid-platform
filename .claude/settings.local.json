@@ -20,7 +20,18 @@
       "Bash(grep:*)",
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy process-ended-campaigns --no-verify-jwt 2>&1)",
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1 && npx supabase functions deploy stripe-withdrawal --no-verify-jwt 2>&1)",
-      "Bash(cd \"C:/Users/4817m/zero_grid\" && npx supabase functions deploy process-ended-campaigns --project-ref gfzpegwatwyzbbbkcuvu 2>&1)"
+      "Bash(cd \"C:/Users/4817m/zero_grid\" && npx supabase functions deploy process-ended-campaigns --project-ref gfzpegwatwyzbbbkcuvu 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --project-ref gfzpegwatwyzbbbkcuvu 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase db push --project-ref gfzpegwatwyzbbbkcuvu 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase db push --linked 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy youtube-upload --project-ref gfzpegwatwyzbbbkcuvu 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy fetch-view-counts --project-ref gfzpegwatwyzbbbkcuvu 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy update-all-view-counts --project-ref gfzpegwatwyzbbbkcuvu 2>&1)",
+      "Bash(tail:*)",
+      "Bash(grep error -:*)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy youtube-upload --no-verify-jwt 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy process-ended-campaigns --no-verify-jwt 2>&1)",
+      "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy distribute-rewards --no-verify-jwt 2>&1)"
     ]
   },
   "enabledMcpjsonServers": [

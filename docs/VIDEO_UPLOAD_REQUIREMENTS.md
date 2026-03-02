@@ -1,5 +1,9 @@
 # 動画アップロード & 自動投稿 要件定義書
 
+メモ
+最新動画の切り抜きのみ
+
+
 ## 📌 概要
 
 クリエイターが動画ファイルをZeroGridにアップロードし、Feed表示 & 各SNSへの自動投稿 & 視聴回数集計を実現する。
@@ -191,125 +195,6 @@ https://www.googleapis.com/auth/youtube.upload
 **既存 Edge Function:** `supabase/functions/update-all-view-counts/index.ts`
 
 - 変更なし（`fetch-view-counts` を呼ぶだけ）
-
----
-
-## 📁 ファイル構成
-
-```
-lib/
-├── features/
-│   └── creator/
-│       ├── campaign/
-│       │   └── presentation/
-│       │       └── pages/
-│       │           └── upload_screen.dart  # 改修
-│       ├── feed/
-│       │   └── presentation/
-│       │       └── pages/
-│       │           └── feed_screen.dart    # 改修
-│       └── submission/
-│           └── data/
-│               ├── models/
-│               │   └── submission.dart     # フィールド追加
-│               └── services/
-│                   └── upload_service.dart # 新規
-
-supabase/
-├── functions/
-│   ├── process-video-upload/
-│   │   └── index.ts    # 新規（アップロード→SNS投稿→圧縮→保存）
-│   ├── youtube-upload/
-│   │   └── index.ts    # 新規
-│   ├── tiktok-upload/
-│   │   └── index.ts    # 新規（審査後）
-│   ├── instagram-upload/
-│   │   └── index.ts    # 新規（審査後）
-│   └── fetch-view-counts/
-│       └── index.ts    # 改修
-└── migrations/
-    └── YYYYMMDD_add_video_upload_fields.sql  # 新規
-```
-
----
-
-## 🔑 必要な環境変数
-
-```env
-# 既存
-YOUTUBE_API_KEY=xxx
-GOOGLE_CLIENT_ID=xxx
-GOOGLE_CLIENT_SECRET=xxx
-
-# 追加（YouTube Upload用）
-# → 既存のGoogle認証に youtube.upload スコープを追加するだけ
-
-# TikTok（審査後）
-TIKTOK_CLIENT_KEY=xxx
-TIKTOK_CLIENT_SECRET=xxx
-
-# Instagram（審査後）
-INSTAGRAM_CLIENT_ID=xxx
-INSTAGRAM_CLIENT_SECRET=xxx
-```
-
----
-
-## 📱 UI/UX フロー
-
-### アップロード画面
-
-```
-┌─────────────────────────────────┐
-│  Submit Video                   │
-├─────────────────────────────────┤
-│                                 │
-│  ┌─────────────────────────┐   │
-│  │                         │   │
-│  │   📹 Tap to select     │   │
-│  │      video file         │   │
-│  │                         │   │
-│  └─────────────────────────┘   │
-│                                 │
-│  Caption:                       │
-│  ┌─────────────────────────┐   │
-│  │ Write a caption...      │   │
-│  └─────────────────────────┘   │
-│                                 │
-│  Post to:                       │
-│  ☑️ YouTube  ☑️ TikTok  ☑️ IG   │
-│                                 │
-│  ┌─────────────────────────┐   │
-│  │       Submit            │   │
-│  └─────────────────────────┘   │
-└─────────────────────────────────┘
-```
-
-### アップロード中
-
-```
-┌─────────────────────────────────┐
-│  Uploading...                   │
-├─────────────────────────────────┤
-│                                 │
-│  ████████████░░░░░░  60%        │
-│                                 │
-│  Compressing video...           │
-│                                 │
-└─────────────────────────────────┘
-```
-
----
-
-## ⏱️ 実装優先度
-
-1. **高:** 動画アップロード & 保存 & Feed表示
-2. **高:** YouTube 自動投稿
-3. **中:** TikTok 審査申請 & 実装
-4. **中:** Instagram 審査申請 & 実装
-5. **低:** 動画圧縮最適化
-
----
 
 ## 📝 補足
 

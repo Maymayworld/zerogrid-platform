@@ -44,7 +44,7 @@ serve(async (req) => {
       throw new Error('Campaign not found')
     }
 
-    // 既に分配済みかチェック
+    // 既に分配済みかチェック（completed = 分配済み、processing以外のactive等も通す）
     if (campaign.status === 'completed' && !force) {
       return new Response(
         JSON.stringify({ 
@@ -97,16 +97,19 @@ serve(async (req) => {
 
     // 分配計算
     // 目標達成率を計算
+    const PLATFORM_FEE_RATE = 0.10 // 10% プラットフォーム手数料
     const achievementRate = targetViews > 0 ? Math.min(totalViews / targetViews, 1) : 0 // 最大100%
     const distributableAmount = Math.floor(budget * achievementRate)
+    const platformFee = Math.floor(distributableAmount * PLATFORM_FEE_RATE)
+    const creatorPool = distributableAmount - platformFee
     const refundAmount = budget - distributableAmount
 
-    // クリエイター別の分配額を計算
+    // クリエイター別の分配額を計算（手数料控除後の原資から按分）
     const creatorShares: CreatorShare[] = []
     for (const [creatorId, viewCount] of creatorViews) {
       const sharePercentage = totalViews > 0 ? viewCount / totalViews : 0
-      const rewardAmount = Math.floor(distributableAmount * sharePercentage)
-      
+      const rewardAmount = Math.floor(creatorPool * sharePercentage)
+
       creatorShares.push({
         creatorId,
         viewCount,
@@ -173,7 +176,21 @@ serve(async (req) => {
       }
     }
 
-    // 2. 残額を企業に返金（refundAmount > 0 の場合）
+    // 2. プラットフォーム手数料をトランザクションに記録
+    if (platformFee > 0) {
+      await supabase
+        .from('transactions')
+        .insert({
+          user_id: campaign.organizer_id,
+          type: 'platform_fee',
+          amount: platformFee,
+          description: `Platform fee (10%) for campaign: ${campaign.name}`,
+          reference_id: campaign_id,
+          created_at: now,
+        })
+    }
+
+    // 3. 残額を企業に返金（refundAmount > 0 の場合）
     if (refundAmount > 0) {
       const { data: organizerProfile } = await supabase
         .from('profiles')
@@ -201,7 +218,7 @@ serve(async (req) => {
         })
     }
 
-    // 3. キャンペーンを完了状態に更新
+    // 4. キャンペーンを完了状態に更新
     await supabase
       .from('campaigns')
       .update({ 
@@ -219,6 +236,8 @@ serve(async (req) => {
         target_views: targetViews,
         achievement_rate: achievementRate * 100,
         distributed: distributableAmount,
+        platform_fee: platformFee,
+        creator_pool: creatorPool,
         refunded: refundAmount,
         creator_shares: creatorShares,
       }),

@@ -34,7 +34,7 @@ serve(async (req) => {
     }
 
     // TikTok Login Kit OAuth URL
-    const scope = 'user.info.basic,video.list'
+    const scope = 'user.info.basic,video.list,video.upload'
     const state = btoa(JSON.stringify({ user_id, platform: 'tiktok' }))
     
     // Generate CSRF token

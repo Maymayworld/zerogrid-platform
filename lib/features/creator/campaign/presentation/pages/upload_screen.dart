@@ -1,7 +1,10 @@
 // lib/features/creator/campaign/presentation/pages/upload_screen.dart
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:video_compress/video_compress.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/submission/data/models/submission.dart';
@@ -25,22 +28,20 @@ class ProjectUploadScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final youtubeController = useTextEditingController();
-    final instagramController = useTextEditingController();
-    final tiktokController = useTextEditingController();
     final captionController = useTextEditingController();
     final isSubmitting = useState(false);
-    final scheduledDate = useState<DateTime?>(null);
+    final uploadProgress = useState(0.0);
     final connections = useState<List<SocialConnection>>([]);
     final previousSubmissions = useState<List<Submission>>([]);
     final isLoadingData = useState(true);
 
-    // Platform config
-    final platformConfig = {
-      'YouTube': _PlatformInfo(PlatformIcon.youtube(size: 16), Colors.red, youtubeController),
-      'Instagram': _PlatformInfo(PlatformIcon.instagram(size: 16), Colors.pink, instagramController),
-      'TikTok': _PlatformInfo(PlatformIcon.tiktok(size: 16), Colors.black, tiktokController),
-    };
+    // Video file state
+    final selectedVideoPath = useState<String?>(null);
+    final selectedVideoName = useState<String?>(null);
+    final selectedVideoSize = useState<int?>(null);
+    final videoDuration = useState<int?>(null);
+    final videoThumbnailBytes = useState<Uint8List?>(null);
+    final selectedPlatforms = useState<Set<String>>({'YouTube'});
 
     // Load connected accounts and previous submissions
     useEffect(() {
@@ -52,7 +53,6 @@ class ProjectUploadScreen extends HookConsumerWidget {
           final conns = await socialService.getMyConnections();
           connections.value = conns;
 
-          // Update global connected providers state
           ref.read(connectedProvidersProvider.notifier).state =
               conns.map((c) => c.provider).toSet();
 
@@ -61,7 +61,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
             previousSubmissions.value = subs;
           }
         } catch (e) {
-          // Silently handle - connections may not be set up yet
+          // Silently handle
         } finally {
           isLoadingData.value = false;
         }
@@ -76,17 +76,6 @@ class ProjectUploadScreen extends HookConsumerWidget {
       return connections.value.any(
         (c) => c.provider == platform.toLowerCase() && c.isConnected,
       );
-    }
-
-    // Get connection for a platform
-    SocialConnection? getConnectionFor(String platform) {
-      try {
-        return connections.value.firstWhere(
-          (c) => c.provider == platform.toLowerCase() && c.isConnected,
-        );
-      } catch (_) {
-        return null;
-      }
     }
 
     // Handle OAuth connection
@@ -104,6 +93,12 @@ class ProjectUploadScreen extends HookConsumerWidget {
             await oauthService.connectTikTok();
             break;
         }
+        // Reload connections
+        final socialService = ref.read(socialConnectionServiceProvider);
+        final conns = await socialService.getMyConnections();
+        connections.value = conns;
+        ref.read(connectedProvidersProvider.notifier).state =
+            conns.map((c) => c.provider).toSet();
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -116,63 +111,127 @@ class ProjectUploadScreen extends HookConsumerWidget {
       }
     }
 
-    // Handle submission
-    Future<void> handleSubmit() async {
-      final videoUrls = <String, String>{};
+    // Pick video file
+    Future<void> pickVideo() async {
+      try {
+        final picker = ImagePicker();
+        final video = await picker.pickVideo(
+          source: ImageSource.gallery,
+          maxDuration: const Duration(minutes: 10),
+        );
 
-      for (final platform in platforms) {
-        final info = platformConfig[platform];
-        if (info != null && info.controller.text.trim().isNotEmpty) {
-          videoUrls[platform.toLowerCase()] = info.controller.text.trim();
+        if (video == null) return;
+
+        selectedVideoPath.value = video.path;
+        selectedVideoName.value = video.name;
+        final bytes = await video.readAsBytes();
+        selectedVideoSize.value = bytes.length;
+
+        // Generate thumbnail
+        try {
+          final thumbFile = await VideoCompress.getFileThumbnail(
+            video.path,
+            quality: 50,
+            position: 1000, // 1 second
+          );
+          videoThumbnailBytes.value = await thumbFile.readAsBytes();
+        } catch (_) {
+          // Thumbnail generation failed (may not be supported on this platform)
+        }
+
+        // Get duration
+        try {
+          final info = await VideoCompress.getMediaInfo(video.path);
+          if (info.duration != null) {
+            videoDuration.value = (info.duration! / 1000).round();
+          }
+        } catch (_) {
+          // Duration extraction failed
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to pick video: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
         }
       }
+    }
 
-      if (videoUrls.isEmpty) {
+    // Handle submission
+    Future<void> handleSubmit() async {
+      if (selectedVideoPath.value == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please paste at least one video link')),
+          SnackBar(content: Text('Please select a video file')),
         );
         return;
       }
 
-      // Validate URLs belong to connected accounts
-      final socialService = ref.read(socialConnectionServiceProvider);
-      for (final entry in videoUrls.entries) {
-        final conn = getConnectionFor(entry.key);
-        if (conn != null) {
-          final isValid = socialService.validateUrlOwnership(
-            url: entry.value,
-            provider: entry.key,
-            providerAccountId: conn.providerAccountId,
-            providerAccountName: conn.providerAccountName,
-          );
-          if (!isValid) {
-            if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('The ${entry.key} URL doesn\'t match your connected account'),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-            return;
-          }
-        }
+      // Size check (max 500MB)
+      if (selectedVideoSize.value != null && selectedVideoSize.value! > 500 * 1024 * 1024) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Video must be under 500MB'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
       }
 
       isSubmitting.value = true;
+      uploadProgress.value = 0.0;
 
       try {
+        // Compress video
+        Uint8List videoBytes;
+        uploadProgress.value = 0.05;
+
+        try {
+          final info = await VideoCompress.compressVideo(
+            selectedVideoPath.value!,
+            quality: VideoQuality.MediumQuality,
+            deleteOrigin: false,
+            includeAudio: true,
+          );
+
+          if (info?.file != null) {
+            videoBytes = await info!.file!.readAsBytes();
+          } else {
+            // Compression failed, use original
+            final file = XFile(selectedVideoPath.value!);
+            videoBytes = await file.readAsBytes();
+          }
+        } catch (_) {
+          // Compression not supported on this platform, use original
+          final file = XFile(selectedVideoPath.value!);
+          videoBytes = await file.readAsBytes();
+        }
+
+        uploadProgress.value = 0.3;
+
         final submissionService = ref.read(submissionServiceProvider);
-        await submissionService.createSubmission(
+        await submissionService.createFileSubmission(
           campaignId: campaignId,
           organizerId: organizerId,
-          videoUrls: videoUrls,
+          videoBytes: videoBytes,
+          fileName: selectedVideoName.value ?? 'video.mp4',
+          targetPlatforms: selectedPlatforms.value.toList(),
+          thumbnailBytes: videoThumbnailBytes.value,
+          caption: captionController.text.trim().isNotEmpty
+              ? captionController.text.trim()
+              : null,
+          videoDuration: videoDuration.value,
+          onProgress: (p) {
+            uploadProgress.value = 0.3 + (p * 0.7);
+          },
         );
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Video submitted successfully!'),
+              content: Text('Video uploaded successfully!'),
               backgroundColor: ColorPalette.positive500,
             ),
           );
@@ -182,39 +241,28 @@ class ProjectUploadScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to submit: $e'),
+              content: Text('Failed to upload: $e'),
               backgroundColor: Colors.red,
             ),
           );
         }
       } finally {
         isSubmitting.value = false;
+        uploadProgress.value = 0.0;
       }
     }
 
-    // Pick schedule date
-    Future<void> pickScheduleDate() async {
-      final date = await showDatePicker(
-        context: context,
-        initialDate: scheduledDate.value ?? DateTime.now().add(Duration(days: 1)),
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(Duration(days: 365)),
-      );
+    // Format bytes to readable size
+    String formatBytes(int bytes) {
+      final mb = bytes / (1024 * 1024);
+      if (mb >= 1000) return '${(mb / 1024).toStringAsFixed(1)} GB';
+      return '${mb.toStringAsFixed(1)} MB';
+    }
 
-      if (date != null && context.mounted) {
-        final time = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay(hour: 12, minute: 0),
-        );
-
-        if (time != null) {
-          scheduledDate.value = DateTime(
-            date.year, date.month, date.day, time.hour, time.minute,
-          );
-        } else {
-          scheduledDate.value = date;
-        }
-      }
+    String formatDuration(int seconds) {
+      final m = seconds ~/ 60;
+      final s = seconds % 60;
+      return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
     }
 
     return Scaffold(
@@ -261,11 +309,283 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                 SizedBox(width: SpacePalette.sm),
                                 Expanded(
                                   child: Text(
-                                    'Connect your accounts and submit your video links. Connected accounts help verify video ownership.',
+                                    'Upload your video file. It will be compressed and stored for feed display. Max 500MB, 10 min.',
                                     style: TextStylePalette.subText,
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                          SizedBox(height: SpacePalette.lg),
+
+                          // Video Selection
+                          Text('Video File', style: TextStylePalette.miniTitle),
+                          SizedBox(height: SpacePalette.sm),
+                          GestureDetector(
+                            onTap: isSubmitting.value ? null : pickVideo,
+                            child: Container(
+                              width: double.infinity,
+                              height: selectedVideoPath.value != null ? null : 180,
+                              padding: EdgeInsets.all(SpacePalette.base),
+                              decoration: BoxDecoration(
+                                color: ColorPalette.white,
+                                borderRadius: BorderRadius.circular(RadiusPalette.base),
+                                border: Border.all(
+                                  color: selectedVideoPath.value != null
+                                      ? ColorPalette.positive500
+                                      : ColorPalette.neutral200,
+                                  width: selectedVideoPath.value != null ? 2 : 1,
+                                ),
+                              ),
+                              child: selectedVideoPath.value == null
+                                  ? Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Container(
+                                          width: 56,
+                                          height: 56,
+                                          decoration: BoxDecoration(
+                                            color: ColorPalette.neutral100,
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: Icon(
+                                            Icons.video_library_outlined,
+                                            size: 28,
+                                            color: ColorPalette.neutral500,
+                                          ),
+                                        ),
+                                        SizedBox(height: SpacePalette.sm),
+                                        Text(
+                                          'Tap to select video',
+                                          style: TextStylePalette.listTitle,
+                                        ),
+                                        SizedBox(height: SpacePalette.xs),
+                                        Text(
+                                          'MP4, MOV, WebM supported',
+                                          style: TextStylePalette.smSubText,
+                                        ),
+                                      ],
+                                    )
+                                  : Column(
+                                      children: [
+                                        // Thumbnail preview
+                                        if (videoThumbnailBytes.value != null)
+                                          ClipRRect(
+                                            borderRadius: BorderRadius.circular(RadiusPalette.base),
+                                            child: Image.memory(
+                                              videoThumbnailBytes.value!,
+                                              width: double.infinity,
+                                              height: 180,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          )
+                                        else
+                                          Container(
+                                            width: double.infinity,
+                                            height: 180,
+                                            decoration: BoxDecoration(
+                                              color: ColorPalette.neutral200,
+                                              borderRadius: BorderRadius.circular(RadiusPalette.base),
+                                            ),
+                                            child: Center(
+                                              child: Icon(
+                                                Icons.play_circle_outline,
+                                                size: 48,
+                                                color: ColorPalette.neutral400,
+                                              ),
+                                            ),
+                                          ),
+                                        SizedBox(height: SpacePalette.sm),
+                                        // File info
+                                        Row(
+                                          children: [
+                                            Icon(Icons.check_circle,
+                                                size: 18, color: ColorPalette.positive500),
+                                            SizedBox(width: SpacePalette.xs),
+                                            Expanded(
+                                              child: Text(
+                                                selectedVideoName.value ?? 'Video selected',
+                                                style: TextStylePalette.listTitle,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                            GestureDetector(
+                                              onTap: () {
+                                                selectedVideoPath.value = null;
+                                                selectedVideoName.value = null;
+                                                selectedVideoSize.value = null;
+                                                videoDuration.value = null;
+                                                videoThumbnailBytes.value = null;
+                                              },
+                                              child: Icon(Icons.close,
+                                                  size: 18, color: ColorPalette.neutral400),
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: SpacePalette.xs),
+                                        Row(
+                                          children: [
+                                            if (selectedVideoSize.value != null) ...[
+                                              Icon(Icons.storage,
+                                                  size: 14, color: ColorPalette.neutral400),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                formatBytes(selectedVideoSize.value!),
+                                                style: TextStylePalette.smSubText,
+                                              ),
+                                              SizedBox(width: SpacePalette.base),
+                                            ],
+                                            if (videoDuration.value != null) ...[
+                                              Icon(Icons.timer_outlined,
+                                                  size: 14, color: ColorPalette.neutral400),
+                                              SizedBox(width: 4),
+                                              Text(
+                                                formatDuration(videoDuration.value!),
+                                                style: TextStylePalette.smSubText,
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                        SizedBox(height: SpacePalette.sm),
+                                        // Change video button
+                                        SizedBox(
+                                          width: double.infinity,
+                                          child: OutlinedButton.icon(
+                                            onPressed: isSubmitting.value ? null : pickVideo,
+                                            icon: Icon(Icons.refresh, size: 16),
+                                            label: Text('Change Video'),
+                                            style: OutlinedButton.styleFrom(
+                                              foregroundColor: ColorPalette.neutral600,
+                                              side: BorderSide(color: ColorPalette.neutral200),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(RadiusPalette.base),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                            ),
+                          ),
+                          SizedBox(height: SpacePalette.lg),
+
+                          // Upload progress
+                          if (isSubmitting.value) ...[
+                            Container(
+                              padding: EdgeInsets.all(SpacePalette.base),
+                              decoration: BoxDecoration(
+                                color: ColorPalette.white,
+                                borderRadius: BorderRadius.circular(RadiusPalette.base),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text('Uploading...', style: TextStylePalette.listTitle),
+                                      Text(
+                                        '${(uploadProgress.value * 100).toInt()}%',
+                                        style: TextStylePalette.smTitle,
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: SpacePalette.sm),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(4),
+                                    child: LinearProgressIndicator(
+                                      value: uploadProgress.value,
+                                      backgroundColor: ColorPalette.neutral200,
+                                      color: ColorPalette.smashedPumpkin600,
+                                      minHeight: 6,
+                                    ),
+                                  ),
+                                  SizedBox(height: SpacePalette.xs),
+                                  Text(
+                                    uploadProgress.value < 0.3
+                                        ? 'Compressing video...'
+                                        : uploadProgress.value < 0.8
+                                            ? 'Uploading to server...'
+                                            : 'Finalizing...',
+                                    style: TextStylePalette.smSubText,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: SpacePalette.lg),
+                          ],
+
+                          // Target Platforms
+                          Text('Target Platform', style: TextStylePalette.miniTitle),
+                          SizedBox(height: SpacePalette.sm),
+                          Container(
+                            padding: EdgeInsets.all(SpacePalette.base),
+                            decoration: BoxDecoration(
+                              color: ColorPalette.white,
+                              borderRadius: BorderRadius.circular(RadiusPalette.base),
+                            ),
+                            child: Column(
+                              children: platforms.map((platform) {
+                                final isSelected = selectedPlatforms.value.contains(platform);
+                                final platformColors = {
+                                  'YouTube': Colors.red,
+                                  'Instagram': Colors.pink,
+                                  'TikTok': Colors.black,
+                                };
+
+                                return Padding(
+                                  padding: EdgeInsets.only(
+                                    bottom: platform != platforms.last ? SpacePalette.sm : 0,
+                                  ),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      // Single selection (one platform per submission)
+                                      selectedPlatforms.value = {platform};
+                                    },
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: SpacePalette.sm,
+                                        vertical: SpacePalette.sm,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: isSelected
+                                            ? platformColors[platform]!.withOpacity(0.05)
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(RadiusPalette.base),
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? platformColors[platform]!.withOpacity(0.3)
+                                              : ColorPalette.neutral200,
+                                          width: isSelected ? 1.5 : 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          PlatformIcon.fromPlatform(
+                                              platform.toLowerCase(),
+                                              size: 18),
+                                          SizedBox(width: SpacePalette.sm),
+                                          Expanded(
+                                            child: Text(platform,
+                                                style: TextStylePalette.listTitle),
+                                          ),
+                                          Icon(
+                                            isSelected
+                                                ? Icons.radio_button_checked
+                                                : Icons.radio_button_off,
+                                            size: 20,
+                                            color: isSelected
+                                                ? platformColors[platform]
+                                                : ColorPalette.neutral300,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
                           SizedBox(height: SpacePalette.lg),
@@ -281,34 +601,34 @@ class ProjectUploadScreen extends HookConsumerWidget {
                             ),
                             child: Column(
                               children: platforms.map((platform) {
-                                final info = platformConfig[platform]!;
                                 final connected = isConnected(platform);
-                                final conn = getConnectionFor(platform);
+                                final conn = connections.value.cast<SocialConnection?>().firstWhere(
+                                  (c) =>
+                                      c != null &&
+                                      c.provider == platform.toLowerCase() &&
+                                      c.isConnected,
+                                  orElse: () => null,
+                                );
 
                                 return Padding(
                                   padding: EdgeInsets.only(
-                                    bottom: platform != platforms.last
-                                        ? SpacePalette.sm
-                                        : 0,
+                                    bottom:
+                                        platform != platforms.last ? SpacePalette.sm : 0,
                                   ),
                                   child: Row(
                                     children: [
-                                      Container(
-                                        width: 32,
-                                        height: 32,
-                                        decoration: BoxDecoration(
-                                          color: info.color.withOpacity(0.1),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(child: info.icon),
-                                      ),
+                                      PlatformIcon.fromPlatform(
+                                          platform.toLowerCase(),
+                                          size: 16),
                                       SizedBox(width: SpacePalette.sm),
                                       Expanded(
                                         child: Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(platform, style: TextStylePalette.listTitle),
-                                            if (connected && conn?.providerAccountName != null)
+                                            Text(platform,
+                                                style: TextStylePalette.listTitle),
+                                            if (connected &&
+                                                conn?.providerAccountName != null)
                                               Text(
                                                 '@${conn!.providerAccountName}',
                                                 style: TextStylePalette.smSubText,
@@ -323,17 +643,17 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                             vertical: SpacePalette.xs,
                                           ),
                                           decoration: BoxDecoration(
-                                            color: ColorPalette.positive500.withOpacity(0.1),
-                                            borderRadius: BorderRadius.circular(RadiusPalette.mini),
+                                            color: ColorPalette.positive500
+                                                .withOpacity(0.1),
+                                            borderRadius:
+                                                BorderRadius.circular(RadiusPalette.mini),
                                           ),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
-                                              Icon(
-                                                Icons.check_circle,
-                                                size: 14,
-                                                color: ColorPalette.positive500,
-                                              ),
+                                              Icon(Icons.check_circle,
+                                                  size: 14,
+                                                  color: ColorPalette.positive500),
                                               SizedBox(width: 4),
                                               Text(
                                                 'Connected',
@@ -356,7 +676,8 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                             ),
                                             decoration: BoxDecoration(
                                               color: ColorPalette.neutral800,
-                                              borderRadius: BorderRadius.circular(RadiusPalette.mini),
+                                              borderRadius:
+                                                  BorderRadius.circular(RadiusPalette.mini),
                                             ),
                                             child: Text(
                                               'Connect',
@@ -376,24 +697,6 @@ class ProjectUploadScreen extends HookConsumerWidget {
                           ),
                           SizedBox(height: SpacePalette.lg),
 
-                          // Video Links Section
-                          Text('Video Links', style: TextStylePalette.miniTitle),
-                          SizedBox(height: SpacePalette.sm),
-                          ...platforms.map((platform) {
-                            final info = platformConfig[platform]!;
-                            return Padding(
-                              padding: EdgeInsets.only(bottom: SpacePalette.base),
-                              child: _PlatformLinkField(
-                                iconWidget: info.icon,
-                                platformName: platform,
-                                iconColor: info.color,
-                                controller: info.controller,
-                                hintText: 'Paste your $platform video link...',
-                                isConnected: isConnected(platform),
-                              ),
-                            );
-                          }),
-
                           // Caption (optional)
                           Text('Caption (optional)', style: TextStylePalette.miniTitle),
                           SizedBox(height: SpacePalette.sm),
@@ -407,57 +710,14 @@ class ProjectUploadScreen extends HookConsumerWidget {
                               maxLines: 3,
                               style: TextStylePalette.normalText,
                               decoration: InputDecoration(
-                                hintText: 'Add a note about your submission...',
+                                hintText: 'Add a caption for your video...',
                                 hintStyle: TextStylePalette.hintText,
                                 border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(RadiusPalette.base),
+                                  borderRadius:
+                                      BorderRadius.circular(RadiusPalette.base),
                                   borderSide: BorderSide.none,
                                 ),
                                 contentPadding: EdgeInsets.all(SpacePalette.base),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: SpacePalette.base),
-
-                          // Schedule Date
-                          Text('Schedule Date (optional)', style: TextStylePalette.miniTitle),
-                          SizedBox(height: SpacePalette.sm),
-                          GestureDetector(
-                            onTap: pickScheduleDate,
-                            child: Container(
-                              padding: EdgeInsets.all(SpacePalette.base),
-                              decoration: BoxDecoration(
-                                color: ColorPalette.white,
-                                borderRadius: BorderRadius.circular(RadiusPalette.base),
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(
-                                    Icons.calendar_today,
-                                    size: 20,
-                                    color: ColorPalette.neutral500,
-                                  ),
-                                  SizedBox(width: SpacePalette.sm),
-                                  Expanded(
-                                    child: Text(
-                                      scheduledDate.value != null
-                                          ? _formatDateTime(scheduledDate.value!)
-                                          : 'Select posting date & time',
-                                      style: scheduledDate.value != null
-                                          ? TextStylePalette.normalText
-                                          : TextStylePalette.hintText,
-                                    ),
-                                  ),
-                                  if (scheduledDate.value != null)
-                                    GestureDetector(
-                                      onTap: () => scheduledDate.value = null,
-                                      child: Icon(
-                                        Icons.close,
-                                        size: 18,
-                                        color: ColorPalette.neutral400,
-                                      ),
-                                    ),
-                                ],
                               ),
                             ),
                           ),
@@ -465,7 +725,8 @@ class ProjectUploadScreen extends HookConsumerWidget {
 
                           // Previous Submissions
                           if (previousSubmissions.value.isNotEmpty) ...[
-                            Text('Previous Submissions', style: TextStylePalette.miniTitle),
+                            Text('Previous Submissions',
+                                style: TextStylePalette.miniTitle),
                             SizedBox(height: SpacePalette.sm),
                             ...previousSubmissions.value.map((sub) {
                               return Padding(
@@ -496,7 +757,9 @@ class ProjectUploadScreen extends HookConsumerWidget {
                 width: double.infinity,
                 height: ButtonSizePalette.button,
                 child: ElevatedButton(
-                  onPressed: isSubmitting.value ? null : handleSubmit,
+                  onPressed: isSubmitting.value || selectedVideoPath.value == null
+                      ? null
+                      : handleSubmit,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.neutral800,
                     shape: RoundedRectangleBorder(
@@ -517,13 +780,13 @@ class ProjectUploadScreen extends HookConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Icon(
-                              Icons.send,
+                              Icons.cloud_upload_outlined,
                               color: ColorPalette.neutral100,
                               size: 20,
                             ),
                             SizedBox(width: SpacePalette.sm),
                             Text(
-                              'Submit',
+                              'Upload & Submit',
                               style: TextStylePalette.buttonTextWhite,
                             ),
                           ],
@@ -533,119 +796,6 @@ class ProjectUploadScreen extends HookConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  String _formatDateTime(DateTime dt) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
-    ];
-    final hour = dt.hour.toString().padLeft(2, '0');
-    final minute = dt.minute.toString().padLeft(2, '0');
-    return '${months[dt.month - 1]} ${dt.day}, ${dt.year} at $hour:$minute';
-  }
-}
-
-class _PlatformInfo {
-  final Widget icon;
-  final Color color;
-  final TextEditingController controller;
-
-  _PlatformInfo(this.icon, this.color, this.controller);
-}
-
-// Platform link field with connection status
-class _PlatformLinkField extends StatelessWidget {
-  final Widget iconWidget;
-  final String platformName;
-  final Color iconColor;
-  final TextEditingController controller;
-  final String hintText;
-  final bool isConnected;
-
-  const _PlatformLinkField({
-    required this.iconWidget,
-    required this.platformName,
-    required this.iconColor,
-    required this.controller,
-    required this.hintText,
-    this.isConnected = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(SpacePalette.base),
-      decoration: BoxDecoration(
-        color: ColorPalette.white,
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 28,
-                height: 28,
-                decoration: BoxDecoration(
-                  color: iconColor.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: iconWidget,
-              ),
-              SizedBox(width: SpacePalette.sm),
-              Text(platformName, style: TextStylePalette.smTitle),
-              Spacer(),
-              if (isConnected)
-                Icon(
-                  Icons.verified,
-                  size: 16,
-                  color: ColorPalette.positive500,
-                ),
-            ],
-          ),
-          SizedBox(height: SpacePalette.sm),
-          Container(
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral100,
-              borderRadius: BorderRadius.circular(RadiusPalette.base),
-              border: Border.all(
-                color: ColorPalette.neutral200,
-                width: 1,
-              ),
-            ),
-            child: Row(
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: SpacePalette.sm),
-                  child: Icon(
-                    Icons.link,
-                    size: 16,
-                    color: ColorPalette.neutral400,
-                  ),
-                ),
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    style: TextStylePalette.normalText,
-                    decoration: InputDecoration(
-                      hintText: hintText,
-                      hintStyle: TextStylePalette.hintText,
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(
-                        horizontal: SpacePalette.sm,
-                        vertical: SpacePalette.base,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -680,14 +830,15 @@ class _SubmissionStatusCard extends StatelessWidget {
             ],
           ),
           SizedBox(height: SpacePalette.sm),
-          // Show platform and URL
           Row(
             children: [
-              _getPlatformIcon(submission.platform),
+              PlatformIcon.fromPlatform(submission.platform, size: 14),
               SizedBox(width: SpacePalette.xs),
               Expanded(
                 child: Text(
-                  submission.videoUrl,
+                  submission.hasLocalVideo
+                      ? 'Video uploaded'
+                      : submission.videoUrl,
                   style: TextStyle(
                     fontSize: 12,
                     color: ColorPalette.neutral500,
@@ -725,10 +876,6 @@ class _SubmissionStatusCard extends StatelessWidget {
       'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
     ];
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
-  }
-
-  Widget _getPlatformIcon(String platform, {double size = 14}) {
-    return PlatformIcon.fromPlatform(platform, size: size);
   }
 }
 

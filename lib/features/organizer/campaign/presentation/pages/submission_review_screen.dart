@@ -334,7 +334,7 @@ class _SubmissionCard extends StatelessWidget {
           GestureDetector(
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('URL: ${submission.videoUrl}')),
+                SnackBar(content: Text('URL: ${submission.playableUrl ?? 'No URL'}')),
               );
             },
             child: Container(
@@ -349,11 +349,13 @@ class _SubmissionCard extends StatelessWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: Text(
-                      submission.videoUrl,
+                      submission.hasLocalVideo
+                          ? 'Uploaded video'
+                          : submission.videoUrl,
                       style: TextStyle(
                         fontSize: 13,
-                        color: Colors.blue[700],
-                        decoration: TextDecoration.underline,
+                        color: submission.hasLocalVideo ? ColorPalette.neutral600 : Colors.blue[700],
+                        decoration: submission.hasLocalVideo ? null : TextDecoration.underline,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -369,6 +371,100 @@ class _SubmissionCard extends StatelessWidget {
             ),
           ),
           SizedBox(height: SpacePalette.sm),
+
+          // Upload / posting status
+          if (submission.hasLocalVideo &&
+              submission.uploadStatus != null &&
+              submission.uploadStatus != 'completed') ...[
+            Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.sm,
+                vertical: SpacePalette.xs,
+              ),
+              decoration: BoxDecoration(
+                color: submission.uploadStatus == 'posted'
+                    ? ColorPalette.positive500.withValues(alpha: 0.1)
+                    : submission.uploadStatus == 'failed'
+                        ? Colors.red.withValues(alpha: 0.1)
+                        : Colors.blue.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(RadiusPalette.mini),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    submission.uploadStatus == 'posted'
+                        ? Icons.check_circle
+                        : submission.uploadStatus == 'failed'
+                            ? Icons.error
+                            : Icons.upload,
+                    size: 14,
+                    color: submission.uploadStatus == 'posted'
+                        ? ColorPalette.positive500
+                        : submission.uploadStatus == 'failed'
+                            ? Colors.red
+                            : Colors.blue,
+                  ),
+                  SizedBox(width: 4),
+                  Text(
+                    submission.uploadStatus == 'posted'
+                        ? 'Posted to ${submission.platformDisplayName}'
+                        : submission.uploadStatus == 'failed'
+                            ? 'SNS posting failed'
+                            : 'Posting to ${submission.platformDisplayName}...',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w500,
+                      color: submission.uploadStatus == 'posted'
+                          ? ColorPalette.positive500
+                          : submission.uploadStatus == 'failed'
+                              ? Colors.red
+                              : Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: SpacePalette.sm),
+          ],
+
+          // Platform post URL (if posted)
+          if (submission.platformPostUrl != null &&
+              submission.platformPostUrl!.isNotEmpty) ...[
+            GestureDetector(
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(submission.platformPostUrl!)),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.all(SpacePalette.xs),
+                decoration: BoxDecoration(
+                  color: ColorPalette.positive500.withValues(alpha: 0.05),
+                  borderRadius: BorderRadius.circular(RadiusPalette.mini),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.link, size: 14, color: ColorPalette.positive500),
+                    SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        submission.platformPostUrl!,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: Colors.blue[700],
+                          decoration: TextDecoration.underline,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: SpacePalette.sm),
+          ],
 
           // Video title
           if (submission.videoTitle != null &&
@@ -542,7 +638,7 @@ class _SubmissionCard extends StatelessWidget {
             SnackBar(
               content: Text(
                 status == 'approved'
-                    ? 'Submission approved!'
+                    ? 'Submission approved! Auto-posting to SNS...'
                     : 'Submission rejected',
               ),
               backgroundColor: status == 'approved'
@@ -574,22 +670,6 @@ class _SubmissionCard extends StatelessWidget {
     return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
   }
 
-  Widget _getPlatformIconWidget(String platform, {double size = 18}) {
-    return PlatformIcon.fromPlatform(platform, size: size);
-  }
-
-  Color _getPlatformColor(String platform) {
-    switch (platform.toLowerCase()) {
-      case 'youtube':
-        return Colors.red;
-      case 'instagram':
-        return Colors.pink;
-      case 'tiktok':
-        return Colors.black;
-      default:
-        return ColorPalette.neutral500;
-    }
-  }
 }
 
 class _StatusBadge extends StatelessWidget {

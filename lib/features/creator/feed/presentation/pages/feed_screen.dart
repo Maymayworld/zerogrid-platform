@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:video_player/video_player.dart';
 import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/utils/youtube_utils.dart';
@@ -12,7 +13,6 @@ import '../../../../organizer/campaign/presentation/providers/campaign_service_p
 import '../providers/feed_provider.dart';
 
 class FeedScreen extends HookConsumerWidget {
-  /// プロフィールグリッドから開く場合に使用
   final List<Submission>? initialSubmissions;
   final int initialIndex;
 
@@ -30,8 +30,10 @@ class FeedScreen extends HookConsumerWidget {
     final likedIds = ref.watch(feedLikedIdsProvider);
     final pageController = usePageController(initialPage: initialIndex);
 
-    // YouTube コントローラーの管理
-    final controllers = useState<Map<int, YoutubePlayerController>>({});
+    // YouTube controllers
+    final ytControllers = useState<Map<int, YoutubePlayerController>>({});
+    // VideoPlayer controllers (for local videos)
+    final vpControllers = useState<Map<int, VideoPlayerController>>({});
 
     Future<void> loadFeed() async {
       if (initialSubmissions != null) return;
@@ -76,9 +78,9 @@ class FeedScreen extends HookConsumerWidget {
       }
     }
 
-    YoutubePlayerController getOrCreateController(int index) {
-      if (controllers.value.containsKey(index)) {
-        return controllers.value[index]!;
+    YoutubePlayerController getOrCreateYtController(int index) {
+      if (ytControllers.value.containsKey(index)) {
+        return ytControllers.value[index]!;
       }
       final submission = submissions.value[index];
       final videoId = extractYoutubeVideoId(submission.videoUrl);
@@ -95,33 +97,64 @@ class FeedScreen extends HookConsumerWidget {
           playsInline: true,
         ),
       );
-      controllers.value = {...controllers.value, index: controller};
+      ytControllers.value = {...ytControllers.value, index: controller};
+      return controller;
+    }
+
+    Future<VideoPlayerController> getOrCreateVpController(int index) async {
+      if (vpControllers.value.containsKey(index)) {
+        return vpControllers.value[index]!;
+      }
+      final submission = submissions.value[index];
+      final controller = VideoPlayerController.networkUrl(
+        Uri.parse(submission.localVideoUrl!),
+      );
+      await controller.initialize();
+      controller.setLooping(true);
+      if (index == currentIndex.value) {
+        controller.play();
+      }
+      vpControllers.value = {...vpControllers.value, index: controller};
       return controller;
     }
 
     void onPageChanged(int index) {
-      // 前のページを一時停止
-      controllers.value[currentIndex.value]?.pauseVideo();
+      final prevSubmission = submissions.value[currentIndex.value];
+
+      // Pause previous
+      if (prevSubmission.hasLocalVideo) {
+        vpControllers.value[currentIndex.value]?.pause();
+      } else {
+        ytControllers.value[currentIndex.value]?.pauseVideo();
+      }
+
       currentIndex.value = index;
-      // 新しいページを再生
-      try {
-        final controller = getOrCreateController(index);
-        controller.playVideo();
-      } catch (_) {}
+
+      // Play new
+      final newSubmission = submissions.value[index];
+      if (newSubmission.hasLocalVideo) {
+        getOrCreateVpController(index).then((c) => c.play());
+      } else {
+        try {
+          final controller = getOrCreateYtController(index);
+          controller.playVideo();
+        } catch (_) {}
+      }
     }
 
     useEffect(() {
       loadFeed();
       loadLikedIds();
       return () {
-        // 全コントローラーをdispose
-        for (final c in controllers.value.values) {
+        for (final c in ytControllers.value.values) {
           c.close();
+        }
+        for (final c in vpControllers.value.values) {
+          c.dispose();
         }
       };
     }, []);
 
-    // ステータスバーを暗くする
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle.light,
       child: Scaffold(
@@ -141,19 +174,35 @@ class FeedScreen extends HookConsumerWidget {
                     itemCount: submissions.value.length,
                     itemBuilder: (context, index) {
                       final submission = submissions.value[index];
-                      final videoId = extractYoutubeVideoId(submission.videoUrl);
                       final isActive = currentIndex.value == index;
                       final isLiked = likedIds.contains(submission.id);
 
-                      return _FeedVideoPage(
-                        submission: submission,
-                        videoId: videoId,
-                        isActive: isActive,
-                        isLiked: isLiked,
-                        getOrCreateController: () => getOrCreateController(index),
-                        onLike: () => toggleLike(submission.id),
-                        onJoin: () => _navigateToCampaign(context, ref, submission.campaignId),
-                      );
+                      if (submission.hasLocalVideo) {
+                        return _LocalVideoPage(
+                          submission: submission,
+                          isActive: isActive,
+                          isLiked: isLiked,
+                          getOrCreateController: () =>
+                              getOrCreateVpController(index),
+                          onLike: () => toggleLike(submission.id),
+                          onJoin: () => _navigateToCampaign(
+                              context, ref, submission.campaignId),
+                        );
+                      } else {
+                        final videoId =
+                            extractYoutubeVideoId(submission.videoUrl);
+                        return _YouTubeVideoPage(
+                          submission: submission,
+                          videoId: videoId,
+                          isActive: isActive,
+                          isLiked: isLiked,
+                          getOrCreateController: () =>
+                              getOrCreateYtController(index),
+                          onLike: () => toggleLike(submission.id),
+                          onJoin: () => _navigateToCampaign(
+                              context, ref, submission.campaignId),
+                        );
+                      }
                     },
                   ),
       ),
@@ -165,23 +214,27 @@ class FeedScreen extends HookConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.play_circle_outline, size: 64, color: ColorPalette.neutral400),
+          Icon(Icons.play_circle_outline,
+              size: 64, color: ColorPalette.neutral400),
           SizedBox(height: SpacePalette.base),
           Text(
             'No videos yet',
-            style: TextStylePalette.header.copyWith(color: ColorPalette.neutral400),
+            style: TextStylePalette.header
+                .copyWith(color: ColorPalette.neutral400),
           ),
           SizedBox(height: SpacePalette.sm),
           Text(
             'Approved videos will appear here',
-            style: TextStylePalette.subText.copyWith(color: ColorPalette.neutral500),
+            style: TextStylePalette.subText
+                .copyWith(color: ColorPalette.neutral500),
           ),
         ],
       ),
     );
   }
 
-  void _navigateToCampaign(BuildContext context, WidgetRef ref, String campaignId) async {
+  void _navigateToCampaign(
+      BuildContext context, WidgetRef ref, String campaignId) async {
     try {
       final campaignService = ref.read(campaignServiceProvider);
       final campaign = await campaignService.getCampaign(campaignId);
@@ -196,26 +249,26 @@ class FeedScreen extends HookConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to load campaign'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Failed to load campaign'),
+              backgroundColor: Colors.red),
         );
       }
     }
   }
 }
 
-/// フィードの1ページ分（動画 + オーバーレイUI）
-class _FeedVideoPage extends StatelessWidget {
+/// ローカル動画ページ（video_player使用）
+class _LocalVideoPage extends HookWidget {
   final Submission submission;
-  final String? videoId;
   final bool isActive;
   final bool isLiked;
-  final YoutubePlayerController Function() getOrCreateController;
+  final Future<VideoPlayerController> Function() getOrCreateController;
   final VoidCallback onLike;
   final VoidCallback onJoin;
 
-  const _FeedVideoPage({
+  const _LocalVideoPage({
     required this.submission,
-    required this.videoId,
     required this.isActive,
     required this.isLiked,
     required this.getOrCreateController,
@@ -225,38 +278,56 @@ class _FeedVideoPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final thumbnailUrl = videoId != null
-        ? getYoutubeThumbnailUrl(videoId!)
-        : null;
+    final controllerFuture = useMemoized(
+      () => isActive ? getOrCreateController() : null,
+      [isActive],
+    );
 
     return Stack(
       fit: StackFit.expand,
       children: [
-        // 黒背景
         Container(color: Colors.black),
-        // サムネイル（常に表示、プレイヤーの下に）
-        if (thumbnailUrl != null)
+        // Thumbnail fallback
+        if (submission.videoThumbnailUrl != null)
           Center(
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                thumbnailUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: Colors.black),
-              ),
+            child: Image.network(
+              submission.videoThumbnailUrl!,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(color: Colors.black),
             ),
           ),
-        // YouTube プレイヤー（アクティブ時のみ）
-        if (isActive && videoId != null)
-          Center(
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: YoutubePlayer(
-                controller: getOrCreateController(),
-              ),
-            ),
+        // Video player
+        if (isActive && controllerFuture != null)
+          FutureBuilder<VideoPlayerController>(
+            future: controllerFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done &&
+                  snapshot.hasData) {
+                final controller = snapshot.data!;
+                return GestureDetector(
+                  onTap: () {
+                    if (controller.value.isPlaying) {
+                      controller.pause();
+                    } else {
+                      controller.play();
+                    }
+                  },
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: controller.value.aspectRatio,
+                      child: VideoPlayer(controller),
+                    ),
+                  ),
+                );
+              }
+              return Center(
+                child: CircularProgressIndicator(
+                  color: ColorPalette.white,
+                  strokeWidth: 2,
+                ),
+              );
+            },
           ),
-        // オーバーレイUI
         _buildOverlay(context),
       ],
     );
@@ -269,7 +340,6 @@ class _FeedVideoPage extends StatelessWidget {
       child: SafeArea(
         child: Stack(
           children: [
-            // 左下: クリエイター情報 + キャンペーン名
             Positioned(
               left: SpacePalette.base,
               right: 80,
@@ -278,7 +348,6 @@ class _FeedVideoPage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // クリエイター
                   Row(
                     children: [
                       CircleAvatar(
@@ -288,16 +357,165 @@ class _FeedVideoPage extends StatelessWidget {
                             ? NetworkImage(submission.creatorAvatarUrl!)
                             : null,
                         child: submission.creatorAvatarUrl == null
-                            ? Icon(Icons.person, size: 16, color: ColorPalette.white)
+                            ? Icon(Icons.person,
+                                size: 16, color: ColorPalette.white)
                             : null,
                       ),
                       SizedBox(width: SpacePalette.sm),
                       Flexible(
                         child: Text(
                           submission.creatorName ?? 'Creator',
-                          style: TextStylePalette.smTitle.copyWith(
-                            color: ColorPalette.white,
-                          ),
+                          style: TextStylePalette.smTitle
+                              .copyWith(color: ColorPalette.white),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (submission.campaignName != null) ...[
+                    SizedBox(height: SpacePalette.sm),
+                    Text(
+                      submission.campaignName!,
+                      style: TextStylePalette.smText
+                          .copyWith(color: ColorPalette.white.withOpacity(0.8)),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                  if (submission.videoTitle != null &&
+                      submission.videoTitle!.isNotEmpty) ...[
+                    SizedBox(height: SpacePalette.xs),
+                    Text(
+                      submission.videoTitle!,
+                      style: TextStylePalette.smSubText.copyWith(
+                          color: ColorPalette.white.withOpacity(0.6)),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Positioned(
+              right: SpacePalette.base,
+              bottom: bottomPadding + 80,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _ActionButton(
+                    icon:
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: isLiked
+                        ? ColorPalette.critical500
+                        : ColorPalette.white,
+                    onTap: onLike,
+                  ),
+                  SizedBox(height: SpacePalette.lg),
+                  _ActionButton(
+                    icon: Icons.arrow_forward_ios,
+                    label: 'JOIN',
+                    color: ColorPalette.white,
+                    onTap: onJoin,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// YouTube動画ページ（youtube_player_iframe使用、後方互換）
+class _YouTubeVideoPage extends StatelessWidget {
+  final Submission submission;
+  final String? videoId;
+  final bool isActive;
+  final bool isLiked;
+  final YoutubePlayerController Function() getOrCreateController;
+  final VoidCallback onLike;
+  final VoidCallback onJoin;
+
+  const _YouTubeVideoPage({
+    required this.submission,
+    required this.videoId,
+    required this.isActive,
+    required this.isLiked,
+    required this.getOrCreateController,
+    required this.onLike,
+    required this.onJoin,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final thumbnailUrl =
+        videoId != null ? getYoutubeThumbnailUrl(videoId!) : null;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        Container(color: Colors.black),
+        if (thumbnailUrl != null)
+          Center(
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: Image.network(
+                thumbnailUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(color: Colors.black),
+              ),
+            ),
+          ),
+        if (isActive && videoId != null)
+          Center(
+            child: AspectRatio(
+              aspectRatio: 16 / 9,
+              child: YoutubePlayer(
+                controller: getOrCreateController(),
+              ),
+            ),
+          ),
+        _buildOverlay(context),
+      ],
+    );
+  }
+
+  Widget _buildOverlay(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+
+    return Positioned.fill(
+      child: SafeArea(
+        child: Stack(
+          children: [
+            Positioned(
+              left: SpacePalette.base,
+              right: 80,
+              bottom: bottomPadding + 80,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundColor: ColorPalette.neutral400,
+                        backgroundImage: submission.creatorAvatarUrl != null
+                            ? NetworkImage(submission.creatorAvatarUrl!)
+                            : null,
+                        child: submission.creatorAvatarUrl == null
+                            ? Icon(Icons.person,
+                                size: 16, color: ColorPalette.white)
+                            : null,
+                      ),
+                      SizedBox(width: SpacePalette.sm),
+                      Flexible(
+                        child: Text(
+                          submission.creatorName ?? 'Creator',
+                          style: TextStylePalette.smTitle
+                              .copyWith(color: ColorPalette.white),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -309,19 +527,18 @@ class _FeedVideoPage extends StatelessWidget {
                     Text(
                       submission.campaignName!,
                       style: TextStylePalette.smText.copyWith(
-                        color: ColorPalette.white.withOpacity(0.8),
-                      ),
+                          color: ColorPalette.white.withOpacity(0.8)),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
                   ],
-                  if (submission.videoTitle != null && submission.videoTitle!.isNotEmpty) ...[
+                  if (submission.videoTitle != null &&
+                      submission.videoTitle!.isNotEmpty) ...[
                     SizedBox(height: SpacePalette.xs),
                     Text(
                       submission.videoTitle!,
                       style: TextStylePalette.smSubText.copyWith(
-                        color: ColorPalette.white.withOpacity(0.6),
-                      ),
+                          color: ColorPalette.white.withOpacity(0.6)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -329,21 +546,21 @@ class _FeedVideoPage extends StatelessWidget {
                 ],
               ),
             ),
-            // 右下: いいね + JOINボタン
             Positioned(
               right: SpacePalette.base,
               bottom: bottomPadding + 80,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  // いいねボタン
                   _ActionButton(
-                    icon: isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: isLiked ? ColorPalette.critical500 : ColorPalette.white,
+                    icon:
+                        isLiked ? Icons.favorite : Icons.favorite_border,
+                    color: isLiked
+                        ? ColorPalette.critical500
+                        : ColorPalette.white,
                     onTap: onLike,
                   ),
                   SizedBox(height: SpacePalette.lg),
-                  // JOINボタン
                   _ActionButton(
                     icon: Icons.arrow_forward_ios,
                     label: 'JOIN',
