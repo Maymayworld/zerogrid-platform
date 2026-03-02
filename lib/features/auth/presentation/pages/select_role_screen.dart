@@ -81,15 +81,15 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
     return Scaffold(
       backgroundColor: ColorPalette.white,
       body: SafeArea(
-        child: Column(
-          children: [
-            // Top gradient area - animated color, height = width * 9/16
-            Builder(
-              builder: (context) {
-                final width = MediaQuery.of(context).size.width;
-                return AnimatedContainer(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 480),
+            child: Column(
+              children: [
+                // Top gradient area
+                AnimatedContainer(
                   duration: const Duration(milliseconds: 300),
-                  height: width * 9 / 16,
+                  width: double.infinity,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
@@ -138,102 +138,102 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                       ],
                     ),
                   ),
-                );
-              },
-            ),
-
-            // Main content
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: SpacePalette.lg),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Badge - centered, fade only
-                    SizedBox(
-                      height: 140,
-                      child: AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: Image.asset(
-                          _isCreator
-                              ? 'assets/images/welcome_creator_badge.png'
-                              : 'assets/images/welcome_organizer_badge.png',
-                          key: ValueKey('badge_$_isCreator'),
-                          height: 120,
-                        ),
-                      ),
-                    ),
-
-                    SizedBox(height: SpacePalette.base),
-
-                    // Description text
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: Text(
-                        _isCreator
-                            ? 'Content-makers and storytelling pros'
-                            : 'Brands, teams, and campaign owners',
-                        key: ValueKey(_isCreator),
-                        style: TextStylePalette.normalText.copyWith(
-                          color: ColorPalette.neutral500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-
-                    SizedBox(height: SpacePalette.lg*3),
-
-                    // Role selector slider
-                    _buildRoleSelector(),
-
-                    SizedBox(height: SpacePalette.lg*3),
-
-                    // Stats text
-                    AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 200),
-                      child: Text(
-                        _isCreator
-                            ? '¥500,000 paid to creators every month'
-                            : '500+ talented creators',
-                        key: ValueKey('stats_$_isCreator'),
-                        style: TextStylePalette.smText.copyWith(
-                          color: ColorPalette.neutral400,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
                 ),
-              ),
-            ),
 
-            // Bottom button
-            Padding(
-              padding: const EdgeInsets.all(SpacePalette.base),
-              child: AnimatedBuilder(
-                animation: _animationController,
-                builder: (context, child) {
-                  return _buildDuolingoButton(
-                    text: 'Count Me In!',
-                    color: _buttonColorAnimation.value ?? _creatorButtonColor,
-                    shadowColor: _buttonShadowAnimation.value ?? _creatorShadowColor,
-                    onPressed: _onContinue,
-                  );
-                },
-              ),
-            ),
+                // Main content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: SpacePalette.lg),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Badge - centered, fade only
+                        SizedBox(
+                          height: 140,
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            child: Image.asset(
+                              _isCreator
+                                  ? 'assets/images/welcome_creator_badge.png'
+                                  : 'assets/images/welcome_organizer_badge.png',
+                              key: ValueKey('badge_$_isCreator'),
+                              height: 120,
+                            ),
+                          ),
+                        ),
 
-            // Home indicator area
-            Container(
-              width: 134,
-              height: 5,
-              margin: const EdgeInsets.only(bottom: SpacePalette.sm),
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral800,
-                borderRadius: BorderRadius.circular(100),
-              ),
+                        SizedBox(height: SpacePalette.base),
+
+                        // Description text
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Text(
+                            _isCreator
+                                ? 'Content-makers and storytelling pros'
+                                : 'Brands, teams, and campaign owners',
+                            key: ValueKey(_isCreator),
+                            style: TextStylePalette.normalText.copyWith(
+                              color: ColorPalette.neutral500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+
+                        SizedBox(height: SpacePalette.lg * 3),
+
+                        // Role selector slider
+                        _buildRoleSelector(),
+
+                        SizedBox(height: SpacePalette.lg * 3),
+
+                        // Stats text
+                        AnimatedSwitcher(
+                          duration: const Duration(milliseconds: 200),
+                          child: Text(
+                            _isCreator
+                                ? '¥500,000 paid to creators every month'
+                                : '500+ talented creators',
+                            key: ValueKey('stats_$_isCreator'),
+                            style: TextStylePalette.smText.copyWith(
+                              color: ColorPalette.neutral400,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // Bottom button
+                Padding(
+                  padding: const EdgeInsets.all(SpacePalette.base),
+                  child: AnimatedBuilder(
+                    animation: _animationController,
+                    builder: (context, child) {
+                      return _buildDuolingoButton(
+                        text: 'Count Me In!',
+                        color: _buttonColorAnimation.value ?? _creatorButtonColor,
+                        shadowColor: _buttonShadowAnimation.value ?? _creatorShadowColor,
+                        onPressed: _onContinue,
+                      );
+                    },
+                  ),
+                ),
+
+                // Home indicator area
+                Container(
+                  width: 134,
+                  height: 5,
+                  margin: const EdgeInsets.only(bottom: SpacePalette.sm),
+                  decoration: BoxDecoration(
+                    color: ColorPalette.neutral800,
+                    borderRadius: BorderRadius.circular(100),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
@@ -253,20 +253,22 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
             duration: const Duration(milliseconds: 250),
             curve: Curves.easeInOut,
             alignment: _isCreator ? Alignment.centerRight : Alignment.centerLeft,
-            child: Container(
-              width: MediaQuery.of(context).size.width / 2 - SpacePalette.lg - 4,
-              height: 48,
-              margin: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: ColorPalette.white,
-                borderRadius: BorderRadius.circular(RadiusPalette.base),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorPalette.neutral800.withOpacity(0.1),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
+            child: FractionallySizedBox(
+              widthFactor: 0.5,
+              child: Container(
+                height: 48,
+                margin: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: ColorPalette.white,
+                  borderRadius: BorderRadius.circular(RadiusPalette.base),
+                  boxShadow: [
+                    BoxShadow(
+                      color: ColorPalette.neutral800.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

@@ -1,12 +1,11 @@
-// lib/screens/organizer/deposit/presentation/pages/select_amount_screen.dart
+// lib/features/organizer/deposit/presentation/pages/select_amount_screen.dart
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
-import 'deposit_success_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../payment/presentation/providers/payment_provider.dart';
-import '../../../payment/presentation/pages/payment_methods_screen.dart';
 
 class SelectAmountScreen extends HookConsumerWidget {
   @override
@@ -28,7 +27,7 @@ class SelectAmountScreen extends HookConsumerWidget {
     }, []);
 
     String formatCurrency(int amount) {
-      return '¥${amount.toString().replaceAllMapped(
+      return '\u00A5${amount.toString().replaceAllMapped(
         RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
         (Match m) => '${m[1]},',
       )}';
@@ -53,74 +52,26 @@ class SelectAmountScreen extends HookConsumerWidget {
         isProcessing.value = true;
         final paymentService = ref.read(paymentServiceProvider);
 
-        // Check if user has payment methods
-        final methods = await paymentService.listPaymentMethods();
-        if (methods.isEmpty) {
-          if (!context.mounted) return;
-          final shouldAdd = await showDialog<bool>(
-            context: context,
-            builder: (ctx) => AlertDialog(
-              title: Text('No Payment Method'),
-              content: Text('Please add a payment method first.'),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, false),
-                  child: Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(ctx, true),
-                  child: Text('Add Card'),
-                ),
-              ],
-            ),
-          );
-          if (shouldAdd == true && context.mounted) {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (_) => const PaymentMethodsScreen()),
-            );
-          }
-          return;
-        }
+        // Build return URLs from current web app origin
+        final baseUrl = kIsWeb ? Uri.base.origin : 'https://zerogrid.app';
+        final successUrl = baseUrl;
+        final cancelUrl = baseUrl;
 
-        // Create PaymentIntent
-        final result = await paymentService.createPaymentIntent(calculateTotal());
-        final clientSecret = result['client_secret']!;
-        final paymentIntentId = result['payment_intent_id']!;
-
-        // Present payment sheet
-        await Stripe.instance.initPaymentSheet(
-          paymentSheetParameters: SetupPaymentSheetParameters(
-            paymentIntentClientSecret: clientSecret,
-            customerId: result['customer_id']!,
-            customerEphemeralKeySecret: result['ephemeral_key_secret']!,
-            merchantDisplayName: 'Zero Grid',
-            style: ThemeMode.light,
-          ),
+        // Create Checkout Session
+        final result = await paymentService.createCheckoutSession(
+          amount: calculateTotal(),
+          successUrl: successUrl,
+          cancelUrl: cancelUrl,
         );
-        await Stripe.instance.presentPaymentSheet();
 
-        // Confirm deposit on server
-        final newBalance = await paymentService.confirmDeposit(paymentIntentId);
-        ref.read(walletBalanceProvider.notifier).state = newBalance;
+        final checkoutUrl = result['checkout_url']!;
 
-        if (!context.mounted) return;
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => DepositSuccessScreen(
-              amount: calculateTotal(),
-            ),
-          ),
-        );
-      } on StripeException catch (e) {
-        if (e.error.code == FailureCode.Canceled) return;
-        if (!context.mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Payment failed: ${e.error.localizedMessage}'),
-            backgroundColor: ColorPalette.critical500,
-          ),
+        // Open Stripe Checkout (same tab on web)
+        final uri = Uri.parse(checkoutUrl);
+        await launchUrl(
+          uri,
+          mode: LaunchMode.platformDefault,
+          webOnlyWindowName: '_self',
         );
       } catch (e) {
         if (!context.mounted) return;

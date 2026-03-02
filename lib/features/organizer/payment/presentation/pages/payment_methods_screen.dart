@@ -1,14 +1,15 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/payment_method.dart';
 import '../providers/payment_provider.dart';
 
 class PaymentMethodsScreen extends HookConsumerWidget {
-  const PaymentMethodsScreen({Key? key}) : super(key: key);
+  const PaymentMethodsScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,44 +42,20 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         isAdding.value = true;
         final service = ref.read(paymentServiceProvider);
 
-        // Create SetupIntent on server
-        final result = await service.createSetupIntent();
+        final baseUrl = kIsWeb ? Uri.base.origin : 'https://zerogrid.app';
 
-        // Initialize payment sheet for card setup
-        await Stripe.instance.initPaymentSheet(
-          paymentSheetParameters: SetupPaymentSheetParameters(
-            setupIntentClientSecret: result['client_secret']!,
-            customerId: result['customer_id']!,
-            customerEphemeralKeySecret: result['ephemeral_key_secret']!,
-            merchantDisplayName: 'Zero Grid',
-            style: ThemeMode.light,
-          ),
+        final checkoutUrl = await service.createSetupCheckoutSession(
+          successUrl: baseUrl,
+          cancelUrl: baseUrl,
         );
 
-        // Present payment sheet
-        await Stripe.instance.presentPaymentSheet();
-
-        // Reload payment methods
-        await loadPaymentMethods();
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Card added successfully'),
-              backgroundColor: ColorPalette.positive500,
-            ),
-          );
-        }
-      } on StripeException catch (e) {
-        if (e.error.code == FailureCode.Canceled) return;
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Failed to add card: ${e.error.localizedMessage}'),
-              backgroundColor: ColorPalette.critical500,
-            ),
-          );
-        }
+        // Open Stripe Checkout setup page (same tab on web)
+        final uri = Uri.parse(checkoutUrl);
+        await launchUrl(
+          uri,
+          mode: LaunchMode.platformDefault,
+          webOnlyWindowName: '_self',
+        );
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

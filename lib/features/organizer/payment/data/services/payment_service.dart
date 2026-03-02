@@ -20,21 +20,49 @@ class PaymentService {
     return response.data['customer_id'] as String;
   }
 
-  /// Create a SetupIntent to save a new card
-  Future<Map<String, String>> createSetupIntent() async {
+  /// Create a Stripe Checkout Session for deposit
+  Future<Map<String, String>> createCheckoutSession({
+    required int amount,
+    required String successUrl,
+    required String cancelUrl,
+  }) async {
     final response = await _supabase.functions.invoke(
-      'stripe-setup-intent',
-      body: {},
+      'stripe-checkout-session',
+      body: {
+        'mode': 'payment',
+        'amount': amount,
+        'success_url': successUrl,
+        'cancel_url': cancelUrl,
+      },
     );
     if (response.status != 200) {
       final error = response.data is Map ? response.data['error'] : 'Unknown error';
-      throw Exception('Failed to create setup intent: $error');
+      throw Exception('Failed to create checkout session: $error');
     }
     return {
-      'client_secret': response.data['client_secret'] as String,
-      'customer_id': response.data['customer_id'] as String,
-      'ephemeral_key_secret': response.data['ephemeral_key_secret'] as String,
+      'checkout_url': response.data['checkout_url'] as String,
+      'session_id': response.data['session_id'] as String,
     };
+  }
+
+  /// Create a Stripe Checkout Session for saving a card (setup mode)
+  Future<String> createSetupCheckoutSession({
+    required String successUrl,
+    required String cancelUrl,
+  }) async {
+    final response = await _supabase.functions.invoke(
+      'stripe-checkout-session',
+      body: {
+        'mode': 'setup',
+        'success_url': successUrl,
+        'cancel_url': cancelUrl,
+      },
+    );
+    if (response.status != 200) {
+      final error = response.data is Map ? response.data['error'] : 'Unknown error';
+      throw Exception('Failed to create setup session: $error');
+    }
+    return response.data['checkout_url'] as String;
   }
 
   /// List saved payment methods
@@ -77,29 +105,24 @@ class PaymentService {
     }
   }
 
-  /// Create a PaymentIntent for deposit
-  Future<Map<String, String>> createPaymentIntent(int amountJpy) async {
-    final response = await _supabase.functions.invoke(
-      'stripe-payment-intent',
-      body: {'amount': amountJpy},
-    );
-    if (response.status != 200) {
-      final error = response.data is Map ? response.data['error'] : 'Unknown error';
-      throw Exception('Failed to create payment intent: $error');
-    }
-    return {
-      'client_secret': response.data['client_secret'] as String,
-      'payment_intent_id': response.data['payment_intent_id'] as String,
-      'customer_id': response.data['customer_id'] as String,
-      'ephemeral_key_secret': response.data['ephemeral_key_secret'] as String,
-    };
-  }
-
-  /// Confirm deposit server-side after client payment succeeds
+  /// Confirm deposit server-side (supports both payment_intent_id and checkout_session_id)
   Future<int> confirmDeposit(String paymentIntentId) async {
     final response = await _supabase.functions.invoke(
       'stripe-confirm-deposit',
       body: {'payment_intent_id': paymentIntentId},
+    );
+    if (response.status != 200) {
+      final error = response.data is Map ? response.data['error'] : 'Unknown error';
+      throw Exception('Failed to confirm deposit: $error');
+    }
+    return (response.data['new_balance'] as num).toInt();
+  }
+
+  /// Confirm deposit via Checkout Session ID (after redirect back)
+  Future<int> confirmCheckoutDeposit(String checkoutSessionId) async {
+    final response = await _supabase.functions.invoke(
+      'stripe-confirm-deposit',
+      body: {'checkout_session_id': checkoutSessionId},
     );
     if (response.status != 200) {
       final error = response.data is Map ? response.data['error'] : 'Unknown error';
