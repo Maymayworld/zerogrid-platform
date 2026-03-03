@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/features/organizer/campaign/data/services/campaign_service.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page5.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
@@ -14,6 +15,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
   Widget build(BuildContext context, WidgetRef ref) {
 
     final budgetController = useTextEditingController();
+    final isChecking = useState(false);
 
     return Scaffold(
       backgroundColor: ColorPalette.white,
@@ -99,14 +101,43 @@ class ManualCreatePage4 extends HookConsumerWidget{
                   ],
                 ),
                 child: ElevatedButton(
-                  onPressed: () {
-                    ref.read(projectProvider.notifier).setBudget(int.parse(budgetController.text));
-                    Navigator.push(
-                      context, (MaterialPageRoute(
-                        builder: (context) => ManualCreatePage5()
-                        )
-                      )
-                    );
+                  onPressed: isChecking.value ? null : () async {
+                    final budgetText = budgetController.text.trim();
+                    if (budgetText.isEmpty) return;
+                    final budget = int.tryParse(budgetText);
+                    if (budget == null || budget <= 0) return;
+
+                    isChecking.value = true;
+                    try {
+                      final available = await CampaignService().getAvailableBudget();
+                      if (!context.mounted) return;
+
+                      if (budget > available) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Insufficient balance. Available: ¥$available',
+                            ),
+                          ),
+                        );
+                        return;
+                      }
+
+                      ref.read(projectProvider.notifier).setBudget(budget);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => ManualCreatePage5(),
+                        ),
+                      );
+                    } catch (e) {
+                      if (!context.mounted) return;
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error: $e')),
+                      );
+                    } finally {
+                      isChecking.value = false;
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: ColorPalette.smashedPumpkin600,

@@ -7,7 +7,7 @@ import '../../../../../shared/data/services/notification_service.dart';
 class ApprovalService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
-  // 未処理のリクエストを取得（local_video_urlありのもののみ = ファイルアップロード方式）
+  // 未処理のリクエストを全件取得（動画・URL両方）
   Future<List<ApprovalRequest>> getPendingRequests() async {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) return [];
@@ -21,7 +21,6 @@ class ApprovalService {
         ''')
         .eq('organizer_id', userId)
         .eq('status', 'pending')
-        .not('local_video_url', 'is', null)
         .order('submitted_at', ascending: false);
 
     return (response as List).map((json) {
