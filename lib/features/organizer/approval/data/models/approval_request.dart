@@ -15,6 +15,7 @@ class ApprovalRequest {
   final String creatorName;
   final String creatorAvatarUrl;
   final String videoUrl;
+  final String? localVideoUrl;
   final String platform; // youtube, tiktok, instagram
   final String videoTitle;
   final String? videoThumbnailUrl;
@@ -31,6 +32,7 @@ class ApprovalRequest {
     required this.creatorName,
     required this.creatorAvatarUrl,
     required this.videoUrl,
+    this.localVideoUrl,
     required this.platform,
     required this.videoTitle,
     this.videoThumbnailUrl,
@@ -48,7 +50,8 @@ class ApprovalRequest {
       creatorId: json['creator_id'] as String,
       creatorName: json['creator_name'] as String? ?? 'Unknown',
       creatorAvatarUrl: json['creator_avatar_url'] as String? ?? '',
-      videoUrl: json['video_url'] as String,
+      videoUrl: json['video_url'] as String? ?? '',
+      localVideoUrl: json['local_video_url'] as String?,
       platform: json['platform'] as String? ?? 'youtube',
       videoTitle: json['video_title'] as String? ?? '',
       videoThumbnailUrl: json['video_thumbnail_url'] as String?,
@@ -73,6 +76,7 @@ class ApprovalRequest {
       'creator_name': creatorName,
       'creator_avatar_url': creatorAvatarUrl,
       'video_url': videoUrl,
+      'local_video_url': localVideoUrl,
       'platform': platform,
       'video_title': videoTitle,
       'video_thumbnail_url': videoThumbnailUrl,
@@ -91,6 +95,7 @@ class ApprovalRequest {
     String? creatorName,
     String? creatorAvatarUrl,
     String? videoUrl,
+    String? localVideoUrl,
     String? platform,
     String? videoTitle,
     String? videoThumbnailUrl,
@@ -107,6 +112,7 @@ class ApprovalRequest {
       creatorName: creatorName ?? this.creatorName,
       creatorAvatarUrl: creatorAvatarUrl ?? this.creatorAvatarUrl,
       videoUrl: videoUrl ?? this.videoUrl,
+      localVideoUrl: localVideoUrl ?? this.localVideoUrl,
       platform: platform ?? this.platform,
       videoTitle: videoTitle ?? this.videoTitle,
       videoThumbnailUrl: videoThumbnailUrl ?? this.videoThumbnailUrl,
@@ -116,4 +122,6 @@ class ApprovalRequest {
       reviewedAt: reviewedAt ?? this.reviewedAt,
     );
   }
+
+  bool get hasLocalVideo => localVideoUrl != null && localVideoUrl!.isNotEmpty;
 }

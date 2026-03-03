@@ -116,60 +116,7 @@ class _CampaignSelectorSheet extends HookWidget {
         try {
           final service = ref.read(participationServiceProvider);
           final result = await service.getParticipatingCampaigns();
-          // NOTE: 後で削除するダミーキャンペーン（UI確認用）
-          final dummyCampaigns = [
-            Campaign(
-              id: 'dummy-1',
-              organizerId: 'dummy-organizer',
-              name: 'Dummy Campaign 1',
-              description: 'This is a temporary dummy campaign for UI testing.',
-              thumbnailUrl: null,
-              budget: 100000,
-              targetViews: 50000,
-              category: 'Dummy',
-              platforms: ['YouTube', 'Instagram'],
-              deadline: DateTime.now().add(Duration(days: 30)),
-              resources: const [],
-              status: 'active',
-              createdAt: DateTime.now().subtract(Duration(days: 10)),
-              updatedAt: DateTime.now().subtract(Duration(days: 1)),
-            ),
-            Campaign(
-              id: 'dummy-2',
-              organizerId: 'dummy-organizer',
-              name: 'Dummy Campaign 2',
-              description: 'This is a temporary dummy campaign for UI testing.',
-              thumbnailUrl: null,
-              budget: 200000,
-              targetViews: 80000,
-              category: 'Dummy',
-              platforms: ['TikTok'],
-              deadline: DateTime.now().add(Duration(days: 45)),
-              resources: const [],
-              status: 'active',
-              createdAt: DateTime.now().subtract(Duration(days: 5)),
-              updatedAt: DateTime.now().subtract(Duration(days: 1)),
-            ),
-            Campaign(
-              id: 'dummy-3',
-              organizerId: 'dummy-organizer',
-              name: 'Dummy Campaign 3',
-              description: 'This is a temporary dummy campaign for UI testing.',
-              thumbnailUrl: null,
-              budget: 150000,
-              targetViews: 60000,
-              category: 'Dummy',
-              platforms: ['YouTube Shorts'],
-              deadline: DateTime.now().add(Duration(days: 60)),
-              resources: const [],
-              status: 'active',
-              createdAt: DateTime.now().subtract(Duration(days: 3)),
-              updatedAt: DateTime.now().subtract(Duration(days: 1)),
-            ),
-          ];
-
-          // 本番データがない場合のみダミーを表示
-          campaigns.value = result.isEmpty ? dummyCampaigns : result;
+          campaigns.value = result;
         } catch (e) {
           debugPrint('Failed to load campaigns: $e');
         } finally {
