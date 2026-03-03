@@ -8,11 +8,9 @@ class ProjectCard extends StatelessWidget {
   final double height;
   final String? imageUrl;
   final List<String> platforms;
-  final double currentAmount;
-  final double totalAmount;
+  final int currentViews;
+  final int targetViews;
   final double pricePerView;
-  final int viewCount;
-  final int participants;
   final bool isLiked;
   final VoidCallback onTap;
   final VoidCallback onLike;
@@ -23,11 +21,9 @@ class ProjectCard extends StatelessWidget {
     required this.height,
     this.imageUrl,
     required this.platforms,
-    required this.currentAmount,
-    required this.totalAmount,
+    required this.currentViews,
+    required this.targetViews,
     required this.pricePerView,
-    required this.viewCount,
-    required this.participants,
     this.isLiked = false,
     required this.onTap,
     required this.onLike,
@@ -42,9 +38,16 @@ class ProjectCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = currentAmount / totalAmount;
+    final progress = targetViews > 0 ? currentViews / targetViews : 0.0;
     final percentage = (progress * 100).toInt();
     final displayImageUrl = _getImageUrl();
+
+    String formatNumber(int n) {
+      return n.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+    }
 
     return Container(
       width: width,
@@ -107,46 +110,12 @@ class ProjectCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // 金額と参加者
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          '¥${currentAmount.toInt()} / ¥${totalAmount.toInt()} ($percentage%)',
-                          style: TextStylePalette.miniTitle.copyWith(
-                            color: ColorPalette.neutral100
-                          )
-                        ),
-                        SizedBox(
-                          width: participants.clamp(0, 3) * 14.0 + 6,
-                          height: 20,
-                          child: Stack(
-                            children: List.generate(
-                              participants.clamp(0, 3),
-                              (index) => Positioned(
-                                left: index * 14.0,
-                                child: Container(
-                                  width: 20,
-                                  height: 20,
-                                  decoration: BoxDecoration(
-                                    color: ColorPalette.neutral400,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: ColorPalette.neutral100,
-                                      width: 2,
-                                    ),
-                                  ),
-                                  child: Icon(
-                                    Icons.person,
-                                    size: 10,
-                                    color: ColorPalette.neutral100,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
+                    // 視聴回数
+                    Text(
+                      '${formatNumber(currentViews)} / ${formatNumber(targetViews)} views ($percentage%)',
+                      style: TextStylePalette.miniTitle.copyWith(
+                        color: ColorPalette.neutral100,
+                      ),
                     ),
                     SizedBox(height: 6),
                     // プログレスバー（パンプキンオレンジ）

@@ -17,10 +17,9 @@ class ProjectMenuScreen extends HookWidget {
   final String? imageUrl;
   final String projectName;
   final int creatorCount;
-  final double currentAmount;
-  final double totalAmount;
+  final int currentViews;
+  final int targetViews;
   final double pricePerView;
-  final int viewCount;
 
   const ProjectMenuScreen({
     Key? key,
@@ -28,17 +27,16 @@ class ProjectMenuScreen extends HookWidget {
     this.imageUrl,
     this.projectName = 'Project Name',
     this.creatorCount = 16,
-    this.currentAmount = 1000,
-    this.totalAmount = 4000,
+    this.currentViews = 0,
+    this.targetViews = 0,
     this.pricePerView = 1,
-    this.viewCount = 400,
   }) : super(key: key);
 
   // 実際に使う値を取得
   String get _projectName => campaign?.name ?? projectName;
   String? get _imageUrl => campaign?.thumbnailUrl ?? imageUrl;
-  double get _totalAmount => campaign?.budget.toDouble() ?? totalAmount;
-  double get _currentAmount => _totalAmount * 0.25;
+  int get _targetViews => campaign?.targetViews ?? targetViews;
+  int get _currentViews => campaign?.totalViews ?? currentViews;
   double get _pricePerView => campaign?.pricePerThousand ?? pricePerView;
 
   String _getImageUrl() {
@@ -50,8 +48,15 @@ class ProjectMenuScreen extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = _currentAmount / _totalAmount;
+    final progress = _targetViews > 0 ? _currentViews / _targetViews : 0.0;
     final percentage = (progress * 100).toInt();
+
+    String formatNumber(int n) {
+      return n.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+    }
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -130,9 +135,8 @@ class ProjectMenuScreen extends HookWidget {
                                 imageUrl: _getImageUrl(),
                                 projectName: _projectName,
                                 pricePerView: _pricePerView,
-                                viewCount: viewCount,
-                                currentAmount: _currentAmount,
-                                totalAmount: _totalAmount,
+                                currentViews: _currentViews,
+                                targetViews: _targetViews,
                                 showAddReview: true,
                               ),
                             ),
@@ -164,7 +168,7 @@ class ProjectMenuScreen extends HookWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            '¥${_currentAmount.toInt()} / ¥${_totalAmount.toInt()}',
+                            '${formatNumber(_currentViews)} / ${formatNumber(_targetViews)} views',
                             style: TextStylePalette.miniTitle,
                           ),
                           Text('$percentage%', style: TextStylePalette.normalText),

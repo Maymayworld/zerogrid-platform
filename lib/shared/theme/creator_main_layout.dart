@@ -274,11 +274,10 @@ class _CampaignTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final totalAmount = campaign.budget.toDouble();
-    // TODO: 本番で進捗金額フィールドが取得できるようになったら差し替える
-    final currentAmount = totalAmount * 0.25;
+    final targetViews = campaign.targetViews;
+    final currentViews = campaign.totalViews;
     final percentage =
-        ((totalAmount == 0 ? 0.0 : (currentAmount / totalAmount)) * 100)
+        (targetViews == 0 ? 0 : (currentViews / targetViews * 100))
             .round()
             .clamp(0, 100);
     final displayedPlatforms = campaign.platforms.take(2).toList();
@@ -363,7 +362,7 @@ class _CampaignTile extends StatelessWidget {
                             ),
                             SizedBox(height: SpacePalette.xs),
                             Text(
-                              '\$${_formatAmount(currentAmount)} / \$${_formatAmount(totalAmount)} ($percentage%)',
+                              '${_formatAmount(currentViews.toDouble())} / ${_formatAmount(targetViews.toDouble())} views ($percentage%)',
                               style: TextStylePalette.smSubText.copyWith(
                                 color: ColorPalette.white,
                               ),

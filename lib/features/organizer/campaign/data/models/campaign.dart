@@ -9,6 +9,7 @@ class Campaign {
   final String? thumbnailUrl;
   final int budget;
   final int targetViews;
+  final int totalViews;
   final String category;
   final List<String> platforms;
   final DateTime deadline;
@@ -25,6 +26,7 @@ class Campaign {
     this.thumbnailUrl,
     required this.budget,
     required this.targetViews,
+    this.totalViews = 0,
     required this.category,
     required this.platforms,
     required this.deadline,
@@ -67,6 +69,7 @@ class Campaign {
       thumbnailUrl: map['thumbnail_url'] as String?,
       budget: (map['budget'] as num).toInt(),
       targetViews: map['target_views'] as int,
+      totalViews: (map['total_views'] as num?)?.toInt() ?? 0,
       category: map['category'] as String,
       platforms: platforms,
       deadline: DateTime.parse(map['deadline'] as String),

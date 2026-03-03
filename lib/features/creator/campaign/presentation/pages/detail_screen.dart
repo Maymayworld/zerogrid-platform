@@ -20,9 +20,8 @@ class ProjectDetailScreen extends HookConsumerWidget {
   final String? imageUrl;
   final String projectName;
   final double pricePerView;
-  final int viewCount;
-  final double currentAmount;
-  final double totalAmount;
+  final int currentViews;
+  final int targetViews;
   final String campaignPeriod;
   final String companyName;
   final double rating;
@@ -35,9 +34,8 @@ class ProjectDetailScreen extends HookConsumerWidget {
     this.imageUrl,
     this.projectName = 'Project Name',
     this.pricePerView = 300,
-    this.viewCount = 1000,
-    this.currentAmount = 1000,
-    this.totalAmount = 4000,
+    this.currentViews = 0,
+    this.targetViews = 0,
     this.campaignPeriod = 'November 1-30, 2025',
     this.companyName = 'Company Name',
     this.rating = 4.9,
@@ -49,8 +47,8 @@ class ProjectDetailScreen extends HookConsumerWidget {
   String get _projectName => campaign?.name ?? projectName;
   String? get _imageUrl => campaign?.thumbnailUrl ?? imageUrl;
   double get _pricePerView => campaign?.pricePerThousand ?? pricePerView;
-  double get _totalAmount => campaign?.budget.toDouble() ?? totalAmount;
-  double get _currentAmount => _totalAmount * 0.25; // TODO: 実際の消費額
+  int get _targetViews => campaign?.targetViews ?? targetViews;
+  int get _currentViews => campaign?.totalViews ?? currentViews;
   List<String> get _platforms => campaign?.platforms ?? ['YouTube', 'Instagram', 'TikTok'];
   String get _description => campaign?.description ?? '';
   DateTime? get _deadline => campaign?.deadline;
@@ -78,8 +76,15 @@ class ProjectDetailScreen extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final progress = _currentAmount / _totalAmount;
+    final progress = _targetViews > 0 ? _currentViews / _targetViews : 0.0;
     final percentage = (progress * 100).toInt();
+
+    String formatNumber(int n) {
+      return n.toString().replaceAllMapped(
+        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+        (Match m) => '${m[1]},',
+      );
+    }
     final screenWidth = MediaQuery.of(context).size.width;
     final imageHeight = screenWidth * 9 / 16;
     final daysLeft = _daysLeft(_deadline);
@@ -296,12 +301,12 @@ class ProjectDetailScreen extends HookConsumerWidget {
                           ),
                           SizedBox(height: SpacePalette.base),
 
-                          // 金額とプログレスバー
+                          // 視聴回数とプログレスバー
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                '¥${_currentAmount.toInt()} / ¥${_totalAmount.toInt()}',
+                                '${formatNumber(_currentViews)} / ${formatNumber(_targetViews)} views',
                                 style: TextStylePalette.bigText,
                               ),
                               Text('$percentage%', style: TextStylePalette.bigSubText),
@@ -535,7 +540,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
         projectName: _projectName,
         imageUrl: _getImageUrl(),
         pricePerView: _pricePerView,
-        viewCount: viewCount,
+        viewCount: _targetViews,
       ),
     );
   }

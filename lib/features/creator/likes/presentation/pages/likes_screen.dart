@@ -228,11 +228,9 @@ class LikesScreen extends HookConsumerWidget {
               height: cardHeight,
               imageUrl: campaign.thumbnailUrl,
               platforms: campaign.platforms,
-              currentAmount: campaign.budget.toDouble() * 0.25,
-              totalAmount: campaign.budget.toDouble(),
+              currentViews: campaign.totalViews,
+              targetViews: campaign.targetViews,
               pricePerView: campaign.pricePerThousand,
-              viewCount: 1000,
-              participants: 3,
               isLiked: true,
               onTap: () {
                 Navigator.push(
