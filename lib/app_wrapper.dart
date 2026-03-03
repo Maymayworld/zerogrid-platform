@@ -13,6 +13,7 @@ import 'features/auth/presentation/providers/user_profile_provider.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/auth/data/models/user_role.dart';
 import 'features/organizer/payment/data/services/payment_service.dart';
+import 'features/organizer/payment/presentation/providers/payment_provider.dart';
 import 'shared/theme/main_layout.dart';
 import 'shared/theme/app_theme.dart';
 
@@ -160,31 +161,58 @@ class _LoggedInWrapper extends HookConsumerWidget {
 }
 
 /// Handles Stripe Checkout return (processes pending checkout_session_id)
-class _CheckoutReturnHandler extends StatefulWidget {
+/// This is a fallback for when the app is restarted after Stripe payment.
+/// The primary flow is handled in SelectAmountScreen.
+class _CheckoutReturnHandler extends ConsumerStatefulWidget {
   final Widget child;
   const _CheckoutReturnHandler({required this.child});
 
   @override
-  State<_CheckoutReturnHandler> createState() => _CheckoutReturnHandlerState();
+  ConsumerState<_CheckoutReturnHandler> createState() =>
+      _CheckoutReturnHandlerState();
 }
 
-class _CheckoutReturnHandlerState extends State<_CheckoutReturnHandler> {
+class _CheckoutReturnHandlerState extends ConsumerState<_CheckoutReturnHandler>
+    with WidgetsBindingObserver {
+  bool _isProcessing = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _handleCheckoutReturn();
   }
 
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _handleCheckoutReturn();
+    }
+  }
+
   Future<void> _handleCheckoutReturn() async {
+    if (_isProcessing) return;
     final prefs = await SharedPreferences.getInstance();
 
     // Handle deposit confirmation
     final sessionId = prefs.getString('pending_checkout_session_id');
     if (sessionId != null) {
+      _isProcessing = true;
       await prefs.remove('pending_checkout_session_id');
       try {
         final paymentService = PaymentService();
-        final newBalance = await paymentService.confirmCheckoutDeposit(sessionId);
+        final newBalance =
+            await paymentService.confirmCheckoutDeposit(sessionId);
+
+        // Update balance provider so Dashboard reflects the new balance
+        ref.read(walletBalanceProvider.notifier).state = newBalance;
+
         if (mounted) {
           _showSuccessDialog(
             'Deposit Successful',
@@ -200,6 +228,8 @@ class _CheckoutReturnHandlerState extends State<_CheckoutReturnHandler> {
             ),
           );
         }
+      } finally {
+        _isProcessing = false;
       }
     }
 
@@ -220,9 +250,9 @@ class _CheckoutReturnHandlerState extends State<_CheckoutReturnHandler> {
 
   String _formatNumber(int amount) {
     return amount.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]},',
-    );
+          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+          (Match m) => '${m[1]},',
+        );
   }
 
   void _showSuccessDialog(String title, String message) {

@@ -1,6 +1,7 @@
 // lib/features/organizer/deposit/presentation/pages/select_amount_screen.dart
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,6 +14,7 @@ class SelectAmountScreen extends HookConsumerWidget {
     final selectedAmount = useState<int>(10000);
     final isProcessing = useState(false);
     final balance = ref.watch(walletBalanceProvider);
+    final pendingSessionId = useState<String?>(null);
 
     // Load balance on mount
     useEffect(() {
@@ -47,6 +49,65 @@ class SelectAmountScreen extends HookConsumerWidget {
       return selectedAmount.value;
     }
 
+    Future<void> confirmPayment() async {
+      final sessionId = pendingSessionId.value;
+      if (sessionId == null || isProcessing.value) return;
+
+      isProcessing.value = true;
+      try {
+        final paymentService = ref.read(paymentServiceProvider);
+        final newBalance =
+            await paymentService.confirmCheckoutDeposit(sessionId);
+
+        // Clear pending session
+        pendingSessionId.value = null;
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.remove('pending_checkout_session_id');
+
+        // Update balance provider
+        ref.read(walletBalanceProvider.notifier).state = newBalance;
+
+        if (!context.mounted) return;
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (ctx) => AlertDialog(
+            title: Row(
+              children: [
+                Icon(Icons.check_circle, color: ColorPalette.positive500),
+                SizedBox(width: SpacePalette.sm),
+                Text('Deposit Successful'),
+              ],
+            ),
+            content: Text(
+              'Your deposit has been processed.\nNew balance: ${formatCurrency(newBalance)}',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(ctx);
+                  Navigator.pop(context);
+                },
+                child: Text('OK'),
+              ),
+            ],
+          ),
+        );
+      } catch (e) {
+        if (!context.mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Payment not yet confirmed. Please complete payment in the browser and try again.',
+            ),
+            backgroundColor: ColorPalette.critical500,
+          ),
+        );
+      } finally {
+        isProcessing.value = false;
+      }
+    }
+
     Future<void> handleDeposit() async {
       try {
         isProcessing.value = true;
@@ -66,7 +127,17 @@ class SelectAmountScreen extends HookConsumerWidget {
 
         final checkoutUrl = result['checkout_url']!;
 
-        // Open Stripe Checkout (same tab on web)
+        // Save session_id for return handling
+        if (!kIsWeb) {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setString(
+            'pending_checkout_session_id',
+            result['session_id']!,
+          );
+          pendingSessionId.value = result['session_id'];
+        }
+
+        // Open Stripe Checkout (same tab on web, external browser on others)
         final uri = Uri.parse(checkoutUrl);
         await launchUrl(
           uri,
@@ -86,6 +157,114 @@ class SelectAmountScreen extends HookConsumerWidget {
       }
     }
 
+    void cancelPending() async {
+      pendingSessionId.value = null;
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('pending_checkout_session_id');
+    }
+
+    // --- Waiting for payment screen ---
+    if (pendingSessionId.value != null) {
+      return Scaffold(
+        backgroundColor: ColorPalette.white,
+        appBar: AppBar(
+          backgroundColor: ColorPalette.white,
+          elevation: 0,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+            onPressed: () {
+              cancelPending();
+            },
+          ),
+          title: Text('Deposit', style: TextStylePalette.title.copyWith(
+            color: ColorPalette.neutral800,
+          )),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(SpacePalette.base),
+            child: Column(
+              children: [
+                Spacer(),
+                Icon(
+                  Icons.open_in_browser,
+                  size: 64,
+                  color: ColorPalette.smashedPumpkin600,
+                ),
+                SizedBox(height: SpacePalette.lg),
+                Text(
+                  'Complete your payment\nin the browser',
+                  style: TextStylePalette.smallHeader,
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: SpacePalette.base),
+                Text(
+                  'After completing the payment, close the browser\nand tap the button below.',
+                  style: TextStylePalette.subText,
+                  textAlign: TextAlign.center,
+                ),
+                Spacer(),
+                Container(
+                  width: double.infinity,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(RadiusPalette.full),
+                    boxShadow: [
+                      BoxShadow(
+                        color: ColorPalette.smashedPumpkin800,
+                        offset: Offset(0, 4),
+                        blurRadius: 0,
+                        spreadRadius: 0,
+                      ),
+                    ],
+                  ),
+                  child: ElevatedButton(
+                    onPressed: isProcessing.value ? null : confirmPayment,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: ColorPalette.smashedPumpkin600,
+                      foregroundColor: ColorPalette.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(RadiusPalette.full),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: isProcessing.value
+                        ? SizedBox(
+                            width: 24,
+                            height: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: ColorPalette.white,
+                            ),
+                          )
+                        : Text(
+                            'Check Payment Status',
+                            style: TextStylePalette.buttonTextWhite.copyWith(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                  ),
+                ),
+                SizedBox(height: SpacePalette.base),
+                TextButton(
+                  onPressed: cancelPending,
+                  child: Text(
+                    'Cancel',
+                    style: TextStylePalette.normalText.copyWith(
+                      color: ColorPalette.neutral600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    // --- Normal deposit amount selection screen ---
     return Scaffold(
       backgroundColor: ColorPalette.white,
       appBar: AppBar(
