@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'app_theme.dart';
+import '../widgets/common_search_bar.dart';
+import '../widgets/platform_icon.dart';
 import '../../features/creator/find/presentation/pages/find_screen.dart';
 import '../../features/creator/feed/presentation/pages/feed_screen.dart';
 import '../../features/creator/dashboard/dashboard_screen.dart';
@@ -11,15 +13,13 @@ import '../../features/creator/campaign/presentation/pages/campaign_screen.dart'
 import '../../features/creator/campaign/presentation/pages/upload_screen.dart';
 import '../../features/creator/campaign/presentation/providers/participation_service_provider.dart';
 import '../../features/creator/profile/profile_screen.dart';
+import '../../features/auth/presentation/widgets/duolingo_form_components.dart';
 import '../../features/organizer/campaign/data/models/campaign.dart';
 
 class CreatorMainLayout extends HookConsumerWidget {
   final int initialIndex;
 
-  const CreatorMainLayout({
-    Key? key,
-    this.initialIndex = 0,
-  }) : super(key: key);
+  const CreatorMainLayout({Key? key, this.initialIndex = 0}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -39,10 +39,7 @@ class CreatorMainLayout extends HookConsumerWidget {
         children: [
           // メインコンテンツ
           Positioned.fill(
-            child: IndexedStack(
-              index: currentIndex.value,
-              children: screens,
-            ),
+            child: IndexedStack(index: currentIndex.value, children: screens),
           ),
           // FAB（プラスボタン）
           Positioned(
@@ -66,11 +63,7 @@ class CreatorMainLayout extends HookConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Icon(
-                    Icons.add,
-                    color: ColorPalette.white,
-                    size: 28,
-                  ),
+                  child: Icon(Icons.add, color: ColorPalette.white, size: 28),
                 ),
               ),
             ),
@@ -115,130 +108,212 @@ class _CampaignSelectorSheet extends HookWidget {
   Widget build(BuildContext context) {
     final campaigns = useState<List<Campaign>>([]);
     final isLoading = useState(true);
+    final searchQuery = useState('');
+    final searchController = useTextEditingController();
 
     useEffect(() {
       Future<void> load() async {
         try {
           final service = ref.read(participationServiceProvider);
           final result = await service.getParticipatingCampaigns();
-          campaigns.value = result;
+          // NOTE: 後で削除するダミーキャンペーン（UI確認用）
+          final dummyCampaigns = [
+            Campaign(
+              id: 'dummy-1',
+              organizerId: 'dummy-organizer',
+              name: 'Dummy Campaign 1',
+              description: 'This is a temporary dummy campaign for UI testing.',
+              thumbnailUrl: null,
+              budget: 100000,
+              targetViews: 50000,
+              category: 'Dummy',
+              platforms: ['YouTube', 'Instagram'],
+              deadline: DateTime.now().add(Duration(days: 30)),
+              resources: const [],
+              status: 'active',
+              createdAt: DateTime.now().subtract(Duration(days: 10)),
+              updatedAt: DateTime.now().subtract(Duration(days: 1)),
+            ),
+            Campaign(
+              id: 'dummy-2',
+              organizerId: 'dummy-organizer',
+              name: 'Dummy Campaign 2',
+              description: 'This is a temporary dummy campaign for UI testing.',
+              thumbnailUrl: null,
+              budget: 200000,
+              targetViews: 80000,
+              category: 'Dummy',
+              platforms: ['TikTok'],
+              deadline: DateTime.now().add(Duration(days: 45)),
+              resources: const [],
+              status: 'active',
+              createdAt: DateTime.now().subtract(Duration(days: 5)),
+              updatedAt: DateTime.now().subtract(Duration(days: 1)),
+            ),
+            Campaign(
+              id: 'dummy-3',
+              organizerId: 'dummy-organizer',
+              name: 'Dummy Campaign 3',
+              description: 'This is a temporary dummy campaign for UI testing.',
+              thumbnailUrl: null,
+              budget: 150000,
+              targetViews: 60000,
+              category: 'Dummy',
+              platforms: ['YouTube Shorts'],
+              deadline: DateTime.now().add(Duration(days: 60)),
+              resources: const [],
+              status: 'active',
+              createdAt: DateTime.now().subtract(Duration(days: 3)),
+              updatedAt: DateTime.now().subtract(Duration(days: 1)),
+            ),
+          ];
+
+          // 本番データがない場合のみダミーを表示
+          campaigns.value = result.isEmpty ? dummyCampaigns : result;
         } catch (e) {
           debugPrint('Failed to load campaigns: $e');
         } finally {
           isLoading.value = false;
         }
       }
+
       load();
       return null;
     }, []);
 
-    return Container(
-      constraints: BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.6,
-      ),
-      decoration: BoxDecoration(
-        color: ColorPalette.white,
-        borderRadius: BorderRadius.vertical(
-          top: Radius.circular(RadiusPalette.lg),
+    final filteredCampaigns = campaigns.value.where((campaign) {
+      if (searchQuery.value.trim().isEmpty) return true;
+      final q = searchQuery.value.toLowerCase();
+      return campaign.name.toLowerCase().contains(q) ||
+          campaign.description.toLowerCase().contains(q) ||
+          campaign.platforms.join(' ').toLowerCase().contains(q);
+    }).toList();
+
+    return SafeArea(
+      top: false,
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.94,
+        decoration: BoxDecoration(
+          color: ColorPalette.white,
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(RadiusPalette.lg),
+          ),
         ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // ハンドル
-          Padding(
-            padding: EdgeInsets.only(top: SpacePalette.sm),
-            child: Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: ColorPalette.neutral300,
-                borderRadius: BorderRadius.circular(2),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // ハンドル
+            Padding(
+              padding: EdgeInsets.only(top: SpacePalette.sm),
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: ColorPalette.neutral300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
               ),
             ),
-          ),
-          // タイトル
-          Padding(
-            padding: EdgeInsets.all(SpacePalette.base),
-            child: Row(
-              children: [
-                Icon(Icons.upload, color: ColorPalette.neutral800, size: 24),
-                SizedBox(width: SpacePalette.sm),
-                Text('Submit Video', style: TextStylePalette.header),
-              ],
+            // タイトル
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                SpacePalette.base,
+                SpacePalette.base,
+                SpacePalette.base,
+                SpacePalette.sm,
+              ),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Select Campaign',
+                  style: TextStylePalette.smallHeader,
+                ),
+              ),
             ),
-          ),
-          Divider(height: 1, color: ColorPalette.neutral200),
-          // コンテンツ
-          Flexible(
-            child: isLoading.value
-                ? Padding(
-                    padding: EdgeInsets.all(SpacePalette.lg),
-                    child: Center(
-                      child: CircularProgressIndicator(
-                        color: ColorPalette.neutral800,
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                SpacePalette.base,
+                0,
+                SpacePalette.base,
+                SpacePalette.base,
+              ),
+              child: CommonSearchBar(
+                controller: searchController,
+                onChanged: (value) => searchQuery.value = value,
+                hintText: 'Search',
+              ),
+            ),
+            Divider(height: 1, color: ColorPalette.neutral200),
+            // コンテンツ
+            Flexible(
+              child: isLoading.value
+                  ? Padding(
+                      padding: EdgeInsets.all(SpacePalette.lg),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          color: ColorPalette.neutral800,
+                        ),
                       ),
-                    ),
-                  )
-                : campaigns.value.isEmpty
-                    ? Padding(
-                        padding: EdgeInsets.all(SpacePalette.lg),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.campaign_outlined,
-                              size: 48,
-                              color: ColorPalette.neutral400,
-                            ),
-                            SizedBox(height: SpacePalette.base),
-                            Text(
-                              'No campaigns yet',
-                              style: TextStylePalette.subText,
-                            ),
-                            SizedBox(height: SpacePalette.xs),
-                            Text(
-                              'Join campaigns from the Find tab!',
-                              style: TextStylePalette.smSubText,
-                            ),
-                          ],
-                        ),
-                      )
-                    : ListView.separated(
-                        shrinkWrap: true,
-                        padding: EdgeInsets.symmetric(
-                          vertical: SpacePalette.sm,
-                        ),
-                        itemCount: campaigns.value.length,
-                        separatorBuilder: (_, __) => Divider(
-                          height: 1,
-                          indent: SpacePalette.base + 48 + SpacePalette.sm,
-                          color: ColorPalette.neutral200,
-                        ),
-                        itemBuilder: (context, index) {
-                          final campaign = campaigns.value[index];
-                          return _CampaignTile(
-                            campaign: campaign,
-                            onTap: () {
-                              Navigator.pop(context);
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ProjectUploadScreen(
-                                    campaignId: campaign.id,
-                                    campaignName: campaign.name,
-                                    organizerId: campaign.organizerId,
-                                    platforms: campaign.platforms,
-                                  ),
+                    )
+                  : filteredCampaigns.isEmpty
+                  ? Padding(
+                      padding: EdgeInsets.all(SpacePalette.lg),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.campaign_outlined,
+                            size: 48,
+                            color: ColorPalette.neutral400,
+                          ),
+                          SizedBox(height: SpacePalette.base),
+                          Text(
+                            searchQuery.value.trim().isEmpty
+                                ? 'No campaigns yet'
+                                : 'No matching campaigns',
+                            style: TextStylePalette.subText,
+                          ),
+                          SizedBox(height: SpacePalette.xs),
+                          Text(
+                            searchQuery.value.trim().isEmpty
+                                ? 'Join campaigns from the Find tab!'
+                                : 'Try a different keyword.',
+                            style: TextStylePalette.smSubText,
+                          ),
+                        ],
+                      ),
+                    )
+                  : ListView.separated(
+                      shrinkWrap: true,
+                      padding: EdgeInsets.all(SpacePalette.base),
+                      itemCount: filteredCampaigns.length,
+                      separatorBuilder: (_, __) =>
+                          SizedBox(height: SpacePalette.sm),
+                      itemBuilder: (context, index) {
+                        final campaign = filteredCampaigns[index];
+                        return _CampaignTile(
+                          campaign: campaign,
+                          onTap: () {
+                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => ProjectUploadScreen(
+                                  campaignId: campaign.id,
+                                  campaignName: campaign.name,
+                                  organizerId: campaign.organizerId,
+                                  platforms: campaign.platforms,
                                 ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-          ),
-          SizedBox(height: MediaQuery.of(context).padding.bottom),
-        ],
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+            ),
+            SizedBox(height: MediaQuery.of(context).padding.bottom),
+          ],
+        ),
       ),
     );
   }
@@ -252,66 +327,183 @@ class _CampaignTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: SpacePalette.base,
-          vertical: SpacePalette.sm,
+    final totalAmount = campaign.budget.toDouble();
+    // TODO: 本番で進捗金額フィールドが取得できるようになったら差し替える
+    final currentAmount = totalAmount * 0.25;
+    final percentage =
+        ((totalAmount == 0 ? 0.0 : (currentAmount / totalAmount)) * 100)
+            .round()
+            .clamp(0, 100);
+    final displayedPlatforms = campaign.platforms.take(2).toList();
+    final extraPlatformCount =
+        campaign.platforms.length - displayedPlatforms.length;
+    final imageUrl =
+        (campaign.thumbnailUrl != null && campaign.thumbnailUrl!.isNotEmpty)
+        ? campaign.thumbnailUrl!
+        : 'https://picsum.photos/seed/${campaign.id}/684/400';
+
+    return Padding(
+      padding: EdgeInsets.only(bottom: SpacePalette.sm),
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorPalette.white,
+          borderRadius: BorderRadius.circular(RadiusPalette.lg),
+          border: Border.all(color: ColorPalette.neutral200),
         ),
-        child: Row(
-          children: [
-            // サムネイル
-            ClipRRect(
-              borderRadius: BorderRadius.circular(RadiusPalette.base),
-              child: Container(
-                width: 48,
-                height: 48,
-                color: ColorPalette.neutral200,
-                child: campaign.thumbnailUrl != null &&
-                        campaign.thumbnailUrl!.isNotEmpty
-                    ? Image.network(
-                        campaign.thumbnailUrl!,
+        child: Padding(
+          padding: EdgeInsets.all(SpacePalette.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ClipRRect(
+                borderRadius: BorderRadius.circular(RadiusPalette.base),
+                child: AspectRatio(
+                  aspectRatio: 342 / 200,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.network(
+                        imageUrl,
                         fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => Icon(
-                          Icons.campaign,
-                          color: ColorPalette.neutral400,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: ColorPalette.neutral200,
+                          child: Icon(
+                            Icons.campaign,
+                            size: 36,
+                            color: ColorPalette.neutral400,
+                          ),
                         ),
-                      )
-                    : Icon(
-                        Icons.campaign,
-                        color: ColorPalette.neutral400,
                       ),
-              ),
-            ),
-            SizedBox(width: SpacePalette.sm),
-            // キャンペーン情報
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    campaign.name,
-                    style: TextStylePalette.listTitle,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                      Container(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.15),
+                              Colors.black.withOpacity(0.75),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: SpacePalette.sm,
+                        left: SpacePalette.sm,
+                        child: _buildPlatformBadges(
+                          displayedPlatforms,
+                          extraPlatformCount,
+                        ),
+                      ),
+                      Positioned(
+                        right: SpacePalette.sm,
+                        bottom: SpacePalette.sm,
+                        child: _buildUserBadge(),
+                      ),
+                      Positioned(
+                        left: SpacePalette.base,
+                        right: SpacePalette.base,
+                        bottom: SpacePalette.base,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              campaign.name,
+                              style: TextStylePalette.title.copyWith(
+                                color: ColorPalette.white,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            SizedBox(height: SpacePalette.xs),
+                            Text(
+                              '\$${_formatAmount(currentAmount)} / \$${_formatAmount(totalAmount)} ($percentage%)',
+                              style: TextStylePalette.smSubText.copyWith(
+                                color: ColorPalette.white,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 2),
-                  Text(
-                    campaign.platforms.join(' · '),
-                    style: TextStylePalette.smSubText,
-                  ),
-                ],
+                ),
               ),
-            ),
-            Icon(
-              Icons.arrow_forward_ios,
-              size: 16,
-              color: ColorPalette.neutral400,
-            ),
-          ],
+              SizedBox(height: SpacePalette.sm),
+              SizedBox(
+                width: double.infinity,
+                height: ButtonSizePalette.button + 4,
+                child: DuolingoButton(
+                  onPressed: onTap,
+                  isEnabled: true,
+                  text:
+                      '¥${campaign.pricePerThousand.toStringAsFixed(0)} / 1000 再生',
+                ),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  String _formatAmount(double amount) {
+    final value = amount.toInt().toString();
+    return value.replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (match) => '${match[1]},',
+    );
+  }
+
+  Widget _buildPlatformBadges(List<String> platforms, int extraCount) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.black.withOpacity(0.35),
+        borderRadius: BorderRadius.circular(RadiusPalette.full),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ...platforms.map(
+            (platform) => Padding(
+              padding: EdgeInsets.only(right: SpacePalette.xs),
+              child: Container(
+                width: 22,
+                height: 22,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.9),
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: PlatformIcon.fromPlatform(platform, size: 12),
+                ),
+              ),
+            ),
+          ),
+          if (extraCount > 0)
+            Text(
+              '+$extraCount',
+              style: TextStylePalette.smSubText.copyWith(
+                color: ColorPalette.white,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserBadge() {
+    return Container(
+      width: 26,
+      height: 26,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(0.9),
+        shape: BoxShape.circle,
+        border: Border.all(color: ColorPalette.white, width: 1.5),
+      ),
+      child: Icon(Icons.person, size: 14, color: ColorPalette.neutral800),
     );
   }
 }
@@ -320,10 +512,7 @@ class _LiquidGlassNavBar extends StatelessWidget {
   final int currentIndex;
   final Function(int) onTap;
 
-  const _LiquidGlassNavBar({
-    required this.currentIndex,
-    required this.onTap,
-  });
+  const _LiquidGlassNavBar({required this.currentIndex, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -489,7 +678,9 @@ class _GlassNavItem extends StatelessWidget {
                   duration: Duration(milliseconds: 200),
                   style: TextStyle(
                     fontSize: 10,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: isSelected
                         ? ColorPalette.neutral800
                         : ColorPalette.neutral400,
@@ -510,10 +701,7 @@ class _CenterBlackButton extends StatelessWidget {
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _CenterBlackButton({
-    required this.isSelected,
-    required this.onTap,
-  });
+  const _CenterBlackButton({required this.isSelected, required this.onTap});
 
   @override
   Widget build(BuildContext context) {

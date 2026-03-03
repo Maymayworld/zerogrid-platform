@@ -1,14 +1,15 @@
 // lib/features/auth/presentation/providers/auth_provider.dart
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../data/models/user_profile.dart';
 
 class AuthService {
   final SupabaseClient _supabase = Supabase.instance.client;
-  
+
   User? get currentUser => _supabase.auth.currentUser;
-  
+
   // セッション状態を監視するStream
   Stream<AuthState> get authStateChanges => _supabase.auth.onAuthStateChange;
 
@@ -43,10 +44,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    return await _supabase.auth.signUp(
-      email: email,
-      password: password,
-    );
+    return await _supabase.auth.signUp(email: email, password: password);
   }
 
   // ユーザーネーム重複チェック
@@ -79,10 +77,7 @@ class AuthService {
   }
 
   // プロフィール更新
-  Future<void> updateProfile({
-    String? displayName,
-    String? avatarUrl,
-  }) async {
+  Future<void> updateProfile({String? displayName, String? avatarUrl}) async {
     final userId = currentUser?.id;
     if (userId == null) throw Exception('User not logged in');
 
@@ -96,18 +91,23 @@ class AuthService {
   }
 
   // アバター画像アップロード（Web対応）
-  Future<String> uploadAvatarBytes(Uint8List imageBytes, String fileName) async {
+  Future<String> uploadAvatarBytes(
+    Uint8List imageBytes,
+    String fileName,
+  ) async {
     final userId = currentUser?.id;
     if (userId == null) throw Exception('User not logged in');
 
     final fileExt = fileName.split('.').last;
     final filePath = '$userId/avatar.$fileExt';
 
-    await _supabase.storage.from('avatars').uploadBinary(
-      filePath,
-      imageBytes,
-      fileOptions: FileOptions(upsert: true, contentType: 'image/$fileExt'),
-    );
+    await _supabase.storage
+        .from('avatars')
+        .uploadBinary(
+          filePath,
+          imageBytes,
+          fileOptions: FileOptions(upsert: true, contentType: 'image/$fileExt'),
+        );
 
     final imageUrl = _supabase.storage.from('avatars').getPublicUrl(filePath);
     return imageUrl;
@@ -130,7 +130,53 @@ class AuthService {
 
   // パスワードリセット
   Future<void> resetPassword(String email) async {
-    await _supabase.auth.resetPasswordForEmail(email);
+    final redirectTo = kIsWeb
+        ? '${Uri.base.origin}/auth/reset-password'
+        : 'io.zerogrid.app://reset-password';
+    await _supabase.auth.resetPasswordForEmail(email, redirectTo: redirectTo);
+  }
+
+  // 6桁コード方式: リセットコード送信
+  Future<void> requestPasswordReset(String email) async {
+    await _supabase.functions.invoke(
+      'password-reset-request',
+      body: {'email': email},
+    );
+  }
+
+  // 6桁コード方式: コード検証（リセット用トークンを取得）
+  Future<String> verifyResetCode({
+    required String email,
+    required String code,
+  }) async {
+    final response = await _supabase.functions.invoke(
+      'password-reset-verify-code',
+      body: {
+        'email': email,
+        'code': code,
+      },
+    );
+
+    final data = response.data;
+    if (data is Map && data['token'] is String) {
+      return data['token'] as String;
+    }
+
+    throw Exception('Invalid response from password-reset-verify-code');
+  }
+
+  // 6桁コード方式: 新しいパスワードを確定
+  Future<void> confirmResetPassword({
+    required String resetToken,
+    required String newPassword,
+  }) async {
+    await _supabase.functions.invoke(
+      'password-reset-confirm',
+      body: {
+        'token': resetToken,
+        'newPassword': newPassword,
+      },
+    );
   }
 }
 

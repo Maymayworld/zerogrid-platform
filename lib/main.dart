@@ -13,7 +13,8 @@ void main() async {
 
   await Supabase.initialize(
     url: 'https://gfzpegwatwyzbbbkcuvu.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmenBlZ3dhdHd5emJiYmtjdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNzk0MjQsImV4cCI6MjA3OTk1NTQyNH0.qlORhEgzNvH2kPxQznyaGNvtXJjjpDCpMdZfSvZr6E8',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmenBlZ3dhdHd5emJiYmtjdXZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjQzNzk0MjQsImV4cCI6MjA3OTk1NTQyNH0.qlORhEgzNvH2kPxQznyaGNvtXJjjpDCpMdZfSvZr6E8',
   );
 
   // Handle Stripe Checkout return URL (web only)
@@ -33,11 +34,7 @@ void main() async {
     }
   }
 
-  runApp(
-    ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  runApp(ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

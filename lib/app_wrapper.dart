@@ -1,8 +1,12 @@
 // lib/app_wrapper.dart
+import 'dart:async';
+import 'package:app_links/app_links.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'features/auth/presentation/pages/reset_password_screen.dart';
 import 'features/auth/presentation/pages/select_role_screen.dart';
 import 'features/auth/presentation/pages/signup_screen2.dart';
 import 'features/auth/presentation/providers/user_profile_provider.dart';
@@ -12,11 +16,93 @@ import 'features/organizer/payment/data/services/payment_service.dart';
 import 'shared/theme/main_layout.dart';
 import 'shared/theme/app_theme.dart';
 
-class AppWrapper extends StatelessWidget {
+class AppWrapper extends ConsumerStatefulWidget {
   const AppWrapper({Key? key}) : super(key: key);
 
   @override
+  ConsumerState<AppWrapper> createState() => _AppWrapperState();
+}
+
+class _AppWrapperState extends ConsumerState<AppWrapper> {
+  bool _showResetPassword = false;
+  StreamSubscription<AuthState>? _authStateSub;
+  StreamSubscription<Uri>? _deepLinkSub;
+  AppLinks? _appLinks;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeRecoveryHandlers();
+  }
+
+  @override
+  void dispose() {
+    _authStateSub?.cancel();
+    _deepLinkSub?.cancel();
+    super.dispose();
+  }
+
+  Map<String, String> _fragmentParams(String fragment) {
+    if (fragment.isEmpty) return const {};
+    return Uri.splitQueryString(fragment);
+  }
+
+  bool _isRecoveryUri(Uri uri) {
+    final queryType = uri.queryParameters['type'];
+    final fragmentType = _fragmentParams(uri.fragment)['type'];
+    final isResetHost =
+        uri.scheme == 'io.zerogrid.app' && uri.host == 'reset-password';
+    final isResetWebPath = uri.path == '/auth/reset-password';
+    return isResetHost ||
+        isResetWebPath ||
+        queryType == 'recovery' ||
+        fragmentType == 'recovery';
+  }
+
+  void _handleRecoveryUri(Uri? uri) {
+    if (uri == null || !_isRecoveryUri(uri) || !mounted) return;
+    setState(() => _showResetPassword = true);
+  }
+
+  Future<void> _initializeRecoveryHandlers() async {
+    _authStateSub = Supabase.instance.client.auth.onAuthStateChange.listen((
+      data,
+    ) {
+      if (data.event == AuthChangeEvent.passwordRecovery && mounted) {
+        setState(() => _showResetPassword = true);
+      }
+    });
+
+    if (kIsWeb) {
+      _handleRecoveryUri(Uri.base);
+      return;
+    }
+
+    _appLinks = AppLinks();
+    try {
+      final initialUri = await _appLinks!.getInitialLink();
+      _handleRecoveryUri(initialUri);
+    } catch (_) {
+      // Ignore malformed deep links and continue normal flow.
+    }
+
+    _deepLinkSub = _appLinks!.uriLinkStream.listen(
+      _handleRecoveryUri,
+      onError: (_) {},
+    );
+  }
+
+  void _completeRecoveryFlow() {
+    if (!mounted) return;
+    setState(() => _showResetPassword = false);
+  }
+
+  @override
   Widget build(BuildContext context) {
+    if (_showResetPassword) {
+      return ResetPasswordScreen(onCompleted: _completeRecoveryFlow);
+    }
+
     final session = Supabase.instance.client.auth.currentSession;
 
     if (session == null) {

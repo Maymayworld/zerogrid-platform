@@ -96,7 +96,10 @@ class ProfileDetailScreen extends HookConsumerWidget {
                         : null,
                     child: profile?.avatarUrl == null
                         ? Text(
-                            profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
+                            profile?.displayName
+                                    .substring(0, 2)
+                                    .toUpperCase() ??
+                                'CR',
                             style: TextStylePalette.smallHeader.copyWith(
                               color: ColorPalette.white,
                             ),
@@ -204,11 +207,14 @@ class ProfileDetailScreen extends HookConsumerWidget {
         final submission = submissions[index];
         // local video has its own thumbnail, YouTube has generated thumbnail
         String? thumbnailUrl;
-        if (submission.videoThumbnailUrl != null && submission.videoThumbnailUrl!.isNotEmpty) {
+        if (submission.videoThumbnailUrl != null &&
+            submission.videoThumbnailUrl!.isNotEmpty) {
           thumbnailUrl = submission.videoThumbnailUrl;
         } else {
           final videoId = extractYoutubeVideoId(submission.videoUrl);
-          thumbnailUrl = videoId != null ? getYoutubeThumbnailUrl(videoId) : null;
+          thumbnailUrl = videoId != null
+              ? getYoutubeThumbnailUrl(videoId)
+              : null;
         }
 
         return GestureDetector(
@@ -241,7 +247,11 @@ class ProfileDetailScreen extends HookConsumerWidget {
 
   Widget _thumbnailPlaceholder() {
     return Center(
-      child: Icon(Icons.play_circle_outline, color: ColorPalette.neutral400, size: 32),
+      child: Icon(
+        Icons.play_circle_outline,
+        color: ColorPalette.neutral400,
+        size: 32,
+      ),
     );
   }
 }
@@ -281,7 +291,10 @@ class _ProfileEditScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to pick image: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text('Failed to pick image: $e'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -291,7 +304,9 @@ class _ProfileEditScreen extends HookConsumerWidget {
       showModalBottomSheet(
         context: context,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(RadiusPalette.lg),
+          ),
         ),
         builder: (ctx) => Container(
           padding: EdgeInsets.all(SpacePalette.base),
@@ -308,13 +323,22 @@ class _ProfileEditScreen extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.lg),
               ListTile(
-                leading: Icon(Icons.image_outlined, color: ColorPalette.neutral800),
-                title: Text('Choose From Library', style: TextStylePalette.normalText),
+                leading: Icon(
+                  Icons.image_outlined,
+                  color: ColorPalette.neutral800,
+                ),
+                title: Text(
+                  'Choose From Library',
+                  style: TextStylePalette.normalText,
+                ),
                 onTap: () => pickImage(ImageSource.gallery),
               ),
               Divider(color: ColorPalette.neutral200),
               ListTile(
-                leading: Icon(Icons.camera_alt_outlined, color: ColorPalette.neutral800),
+                leading: Icon(
+                  Icons.camera_alt_outlined,
+                  color: ColorPalette.neutral800,
+                ),
                 title: Text('Take Photo', style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.camera),
               ),
@@ -333,7 +357,8 @@ class _ProfileEditScreen extends HookConsumerWidget {
       try {
         String? newAvatarUrl;
 
-        if (selectedImageBytes.value != null && selectedImageName.value != null) {
+        if (selectedImageBytes.value != null &&
+            selectedImageName.value != null) {
           final authService = ref.read(authServiceProvider);
           newAvatarUrl = await authService.uploadAvatarBytes(
             selectedImageBytes.value!,
@@ -341,10 +366,9 @@ class _ProfileEditScreen extends HookConsumerWidget {
           );
         }
 
-        await ref.read(userProfileProvider.notifier).updateProfile(
-          displayName: newName,
-          avatarUrl: newAvatarUrl,
-        );
+        await ref
+            .read(userProfileProvider.notifier)
+            .updateProfile(displayName: newName, avatarUrl: newAvatarUrl);
 
         if (context.mounted) {
           Navigator.pop(context);
@@ -352,7 +376,10 @@ class _ProfileEditScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to save: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text('Failed to save: $e'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       } finally {
@@ -406,11 +433,14 @@ class _ProfileEditScreen extends HookConsumerWidget {
                       backgroundImage: hasNewImage
                           ? MemoryImage(selectedImageBytes.value!)
                           : (hasExistingImage
-                              ? NetworkImage(profile!.avatarUrl!)
-                              : null),
+                                ? NetworkImage(profile!.avatarUrl!)
+                                : null),
                       child: (!hasNewImage && !hasExistingImage)
                           ? Text(
-                              profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
+                              profile?.displayName
+                                      .substring(0, 2)
+                                      .toUpperCase() ??
+                                  'CR',
                               style: TextStylePalette.header.copyWith(
                                 color: ColorPalette.white,
                               ),
@@ -448,9 +478,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
             TextField(
               controller: nameController,
               style: TextStylePalette.normalText,
-              decoration: InputDecoration(
-                hintText: 'Enter your display name',
-              ),
+              decoration: InputDecoration(hintText: 'Enter your display name'),
             ),
             SizedBox(height: SpacePalette.lg),
           ],

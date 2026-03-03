@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/features/auth/presentation/widgets/duolingo_form_components.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
@@ -101,7 +102,9 @@ class SignUpScreen2 extends HookConsumerWidget {
                   value: 1 / 3,
                   minHeight: 4,
                   backgroundColor: ColorPalette.neutral200,
-                  valueColor: AlwaysStoppedAnimation<Color>(ColorPalette.neutral800),
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    ColorPalette.neutral800,
+                  ),
                 ),
               ),
               SizedBox(height: SpacePalette.lg),
@@ -134,7 +137,10 @@ class SignUpScreen2 extends HookConsumerWidget {
                               ),
                             ),
                           ),
-                          prefixIconConstraints: BoxConstraints(minWidth: 0, minHeight: 0),
+                          prefixIconConstraints: BoxConstraints(
+                            minWidth: 0,
+                            minHeight: 0,
+                          ),
                           border: InputBorder.none,
                           enabledBorder: InputBorder.none,
                           focusedBorder: InputBorder.none,
@@ -142,7 +148,10 @@ class SignUpScreen2 extends HookConsumerWidget {
                             horizontal: SpacePalette.base,
                             vertical: SpacePalette.inner,
                           ),
-                          suffixIcon: _buildSuffixIcon(usernameStatus.value, usernameController),
+                          suffixIcon: _buildSuffixIcon(
+                            usernameStatus.value,
+                            usernameController,
+                          ),
                         ),
                       ),
                     ),
@@ -155,7 +164,11 @@ class SignUpScreen2 extends HookConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.close, size: 14, color: ColorPalette.critical500),
+                          Icon(
+                            Icons.close,
+                            size: 14,
+                            color: ColorPalette.critical500,
+                          ),
                           SizedBox(width: SpacePalette.xs),
                           Text(
                             'This username is already taken',
@@ -169,7 +182,11 @@ class SignUpScreen2 extends HookConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.check, size: 14, color: ColorPalette.positive500),
+                          Icon(
+                            Icons.check,
+                            size: 14,
+                            color: ColorPalette.positive500,
+                          ),
                           SizedBox(width: SpacePalette.xs),
                           Text(
                             'Username is available ',
@@ -200,7 +217,10 @@ class SignUpScreen2 extends HookConsumerWidget {
     );
   }
 
-  Widget? _buildSuffixIcon(UsernameStatus status, TextEditingController controller) {
+  Widget? _buildSuffixIcon(
+    UsernameStatus status,
+    TextEditingController controller,
+  ) {
     switch (status) {
       case UsernameStatus.checking:
         return Padding(

@@ -10,6 +10,7 @@ import '../../auth/presentation/providers/user_profile_provider.dart';
 import '../../auth/presentation/pages/select_role_screen.dart';
 import 'presentation/pages/account_settings_screen.dart';
 import 'presentation/pages/profile_detail_screen.dart';
+import 'presentation/pages/contact_support_screens.dart';
 import 'presentation/widgets/notification_settings_sheet.dart';
 import '../earnings/data/services/payout_service.dart';
 import '../earnings/presentation/pages/earnings_screen.dart';
@@ -210,7 +211,14 @@ class ProfileScreen extends HookConsumerWidget {
                     iconBackgroundColor: const Color(0xFFF3E5F5),
                     iconColor: const Color(0xFF9C27B0),
                     label: 'Contact Support',
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const ContactSupportHomeScreen(),
+                      );
+                    },
                   ),
                   ProfileMenuItem(
                     icon: Icons.alternate_email,

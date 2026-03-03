@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
+import '../../../../auth/presentation/widgets/duolingo_form_components.dart';
 import '../../data/models/social_connection.dart';
 import '../providers/submission_providers.dart';
 import '../../../../auth/presentation/providers/oauth_provider.dart';
@@ -22,21 +23,18 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
         provider: 'youtube',
         iconWidget: PlatformIcon.youtube(size: 22),
         color: Colors.red,
-        description: 'Connect your YouTube channel to verify video ownership',
       ),
       _PlatformConfig(
         name: 'Instagram',
         provider: 'instagram',
         iconWidget: PlatformIcon.instagram(size: 22),
         color: Colors.pink,
-        description: 'Connect your Instagram account to verify reel ownership',
       ),
       _PlatformConfig(
         name: 'TikTok',
         provider: 'tiktok',
         iconWidget: PlatformIcon.tiktok(size: 22),
         color: Colors.black,
-        description: 'Connect your TikTok account to verify video ownership',
       ),
     ];
 
@@ -48,8 +46,9 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
         connections.value = conns;
 
         // Update global state
-        ref.read(connectedProvidersProvider.notifier).state =
-            conns.map((c) => c.provider).toSet();
+        ref.read(connectedProvidersProvider.notifier).state = conns
+            .map((c) => c.provider)
+            .toSet();
         ref.read(socialConnectionsProvider.notifier).state = conns;
       } catch (e) {
         // Handle error
@@ -154,157 +153,171 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
       }
     }
 
+    final connectedCount = platforms
+        .where((p) => getConnectionFor(p.provider) != null)
+        .length;
+
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        backgroundColor: ColorPalette.white,
+        backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Connected Accounts', style: TextStylePalette.title),
+        title: Text('Link Account', style: TextStylePalette.title),
         centerTitle: true,
       ),
       body: isLoading.value
           ? Center(
               child: CircularProgressIndicator(color: ColorPalette.neutral800),
             )
-          : SingleChildScrollView(
-              padding: EdgeInsets.all(SpacePalette.base),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Info banner
-                  Container(
-                    padding: EdgeInsets.all(SpacePalette.base),
-                    decoration: BoxDecoration(
-                      color: Color(0xFFEFF6FF),
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
+          : SafeArea(
+              child: Padding(
+                padding: EdgeInsets.all(SpacePalette.base),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SpacePalette.sm,
+                        vertical: SpacePalette.xs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorPalette.white,
+                        borderRadius: BorderRadius.circular(RadiusPalette.full),
+                        border: Border.all(color: ColorPalette.neutral200),
+                      ),
+                      child: Text(
+                        '$connectedCount connected',
+                        style: TextStylePalette.smTitle,
+                      ),
                     ),
-                    child: Row(
-                      children: [
-                        Icon(Icons.shield_outlined, size: 20,
-                            color: Colors.blue),
-                        SizedBox(width: SpacePalette.sm),
-                        Expanded(
-                          child: Text(
-                            'Connect your social accounts to verify ownership when submitting videos to campaigns.',
-                            style: TextStylePalette.subText,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: SpacePalette.lg),
+                    SizedBox(height: SpacePalette.base),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: ColorPalette.white,
+                        borderRadius: BorderRadius.circular(RadiusPalette.base),
+                        border: Border.all(color: ColorPalette.neutral200),
+                      ),
+                      child: Column(
+                        children: platforms.map((platform) {
+                          final conn = getConnectionFor(platform.provider);
+                          final isConnected = conn != null;
 
-                  // Platform cards
-                  ...platforms.map((platform) {
-                    final conn = getConnectionFor(platform.provider);
-                    final isConnected = conn != null;
-
-                    return Padding(
-                      padding: EdgeInsets.only(bottom: SpacePalette.base),
-                      child: Container(
-                        padding: EdgeInsets.all(SpacePalette.base),
-                        decoration: BoxDecoration(
-                          color: ColorPalette.white,
-                          borderRadius: BorderRadius.circular(RadiusPalette.base),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                    color: platform.color.withOpacity(0.1),
-                                    shape: BoxShape.circle,
+                          return Column(
+                            children: [
+                              InkWell(
+                                onTap: isConnected
+                                    ? () => handleDisconnect(conn.id)
+                                    : () => handleConnect(platform.provider),
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: SpacePalette.base,
+                                    vertical: SpacePalette.base,
                                   ),
-                                  child: Center(child: platform.iconWidget),
-                                ),
-                                SizedBox(width: SpacePalette.base),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                  child: Row(
                                     children: [
-                                      Text(platform.name,
-                                          style: TextStylePalette.listTitle),
-                                      if (isConnected &&
-                                          conn.providerAccountName != null)
-                                        Text(
-                                          '@${conn.providerAccountName}',
-                                          style: TextStylePalette.smSubText,
-                                        )
-                                      else
-                                        Text(
-                                          'Not connected',
-                                          style: TextStyle(
-                                            fontSize: 12,
-                                            color: ColorPalette.neutral400,
+                                      Container(
+                                        width: 36,
+                                        height: 36,
+                                        decoration: BoxDecoration(
+                                          color: platform.color.withOpacity(0.1),
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: Center(child: platform.iconWidget),
+                                      ),
+                                      SizedBox(width: SpacePalette.sm),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              platform.name,
+                                              style: TextStylePalette.bigText,
+                                            ),
+                                            if (isConnected &&
+                                                conn.providerAccountName != null &&
+                                                conn.providerAccountName!
+                                                    .isNotEmpty)
+                                              Text(
+                                                '@${conn.providerAccountName}',
+                                                style: TextStylePalette.smSubText,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: SpacePalette.sm,
+                                          vertical: 6,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: isConnected
+                                              ? ColorPalette.positive100
+                                              : ColorPalette.neutral100,
+                                          borderRadius: BorderRadius.circular(
+                                            RadiusPalette.full,
+                                          ),
+                                          border: Border.all(
+                                            color: isConnected
+                                                ? ColorPalette.positive300
+                                                : ColorPalette.neutral300,
                                           ),
                                         ),
+                                        child: Text(
+                                          isConnected ? 'Connected' : 'Add',
+                                          style: TextStylePalette.smTitle.copyWith(
+                                            color: isConnected
+                                                ? ColorPalette.positive700
+                                                : ColorPalette.neutral700,
+                                          ),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                 ),
-                                if (isConnected)
-                                  Icon(
-                                    Icons.check_circle,
-                                    color: ColorPalette.positive500,
-                                    size: 24,
-                                  ),
-                              ],
-                            ),
-                            SizedBox(height: SpacePalette.sm),
-                            Text(
-                              platform.description,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: ColorPalette.neutral500,
                               ),
-                            ),
-                            SizedBox(height: SpacePalette.base),
-                            SizedBox(
-                              width: double.infinity,
-                              height: 40,
-                              child: isConnected
-                                  ? OutlinedButton(
-                                      onPressed: () =>
-                                          handleDisconnect(conn.id),
-                                      style: OutlinedButton.styleFrom(
-                                        foregroundColor: Colors.red,
-                                        side: BorderSide(
-                                          color: Colors.red.withOpacity(0.3),
-                                        ),
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              RadiusPalette.base),
-                                        ),
-                                      ),
-                                      child: Text('Disconnect'),
-                                    )
-                                  : ElevatedButton(
-                                      onPressed: () =>
-                                          handleConnect(platform.provider),
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: ColorPalette.neutral800,
-                                        foregroundColor: ColorPalette.white,
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(
-                                              RadiusPalette.base),
-                                        ),
-                                      ),
-                                      child: Text('Connect ${platform.name}'),
-                                    ),
-                            ),
-                          ],
+                              if (platform != platforms.last)
+                                Divider(
+                                  height: 1,
+                                  indent: SpacePalette.base,
+                                  endIndent: SpacePalette.base,
+                                  color: ColorPalette.neutral200,
+                                ),
+                            ],
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                    SizedBox(height: SpacePalette.base),
+                    Text(
+                      'Only posting permissions are requested. You can disconnect anytime.',
+                      style: TextStylePalette.smSubText,
+                    ),
+                    Spacer(),
+                    Text(
+                      'You can connect more platforms anytime',
+                      style: TextStylePalette.smSubText,
+                    ),
+                    SizedBox(height: SpacePalette.sm),
+                    IgnorePointer(
+                      ignoring: connectedCount == 0,
+                      child: Opacity(
+                        opacity: connectedCount == 0 ? 0.5 : 1,
+                        child: DuolingoButton(
+                          onPressed: () => Navigator.pop(context, true),
+                          isEnabled: true,
+                          text: 'Start Creating Post',
                         ),
                       ),
-                    );
-                  }),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
     );
@@ -316,13 +329,11 @@ class _PlatformConfig {
   final String provider;
   final Widget iconWidget;
   final Color color;
-  final String description;
 
   _PlatformConfig({
     required this.name,
     required this.provider,
     required this.iconWidget,
     required this.color,
-    required this.description,
   });
 }

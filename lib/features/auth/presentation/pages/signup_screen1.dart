@@ -100,182 +100,205 @@ class SignUpScreen1 extends HookConsumerWidget {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(SpacePalette.base),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // タイトル
-              Text(
-                'Create Your Account',
-                style: TextStylePalette.header,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final keyboardInset = MediaQuery.of(context).viewInsets.bottom;
+            return SingleChildScrollView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.only(
+                left: SpacePalette.base,
+                right: SpacePalette.base,
+                top: SpacePalette.base,
+                bottom: keyboardInset + SpacePalette.base,
               ),
-              SizedBox(height: SpacePalette.sm),
-              Text(
-                'Start by setting up your login details',
-                style: TextStylePalette.subText,
-              ),
-              SizedBox(height: SpacePalette.lg),
-
-              // Email
-              Text('Email', style: TextStylePalette.smTitle),
-              SizedBox(height: SpacePalette.sm),
-              SizedBox(
-                height: ButtonSizePalette.button,
-                child: TextField(
-                  controller: emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  decoration: InputDecoration(
-                    hintText: 'mail@gmail.com',
-                    hintStyle: TextStylePalette.hintText,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: SpacePalette.base,
-                      vertical: SpacePalette.inner,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: SpacePalette.base),
-
-              // Password
-              Text('Password', style: TextStylePalette.smTitle),
-              SizedBox(height: SpacePalette.sm),
-              SizedBox(
-                height: ButtonSizePalette.button,
-                child: TextField(
-                  controller: passwordController,
-                  obscureText: !isPasswordVisible.value,
-                  decoration: InputDecoration(
-                    hintText: '\u2022\u2022\u2022\u2022\u2022\u2022',
-                    hintStyle: TextStyle(color: ColorPalette.neutral400),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        isPasswordVisible.value
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: ColorPalette.neutral500,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        isPasswordVisible.value = !isPasswordVisible.value;
-                      },
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: SpacePalette.base,
-                      vertical: SpacePalette.inner,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: SpacePalette.base),
-
-              // Confirm Password
-              Text('Confirm Password', style: TextStylePalette.smTitle),
-              SizedBox(height: SpacePalette.sm),
-              SizedBox(
-                height: ButtonSizePalette.button,
-                child: TextField(
-                  controller: confirmPasswordController,
-                  obscureText: !isConfirmPasswordVisible.value,
-                  decoration: InputDecoration(
-                    hintText: '\u2022\u2022\u2022\u2022\u2022\u2022',
-                    hintStyle: TextStyle(color: ColorPalette.neutral400),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        isConfirmPasswordVisible.value
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                        color: ColorPalette.neutral500,
-                        size: 20,
-                      ),
-                      onPressed: () {
-                        isConfirmPasswordVisible.value = !isConfirmPasswordVisible.value;
-                      },
-                    ),
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: SpacePalette.base,
-                      vertical: SpacePalette.inner,
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: SpacePalette.lg),
-
-              // Continue Button
-              SizedBox(
-                width: double.infinity,
-                height: ButtonSizePalette.button,
-                child: ElevatedButton(
-                  onPressed: handleContinue,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.neutral800,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.full),
-                    ),
-                  ),
-                  child: Text('Continue', style: TextStylePalette.buttonTextWhite),
-                ),
-              ),
-              SizedBox(height: SpacePalette.lg),
-
-              // or divider
-              Row(
-                children: [
-                  Expanded(child: Divider(color: ColorPalette.neutral200)),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
-                    child: Text('or', style: TextStylePalette.dividerText),
-                  ),
-                  Expanded(child: Divider(color: ColorPalette.neutral200)),
-                ],
-              ),
-              SizedBox(height: SpacePalette.lg),
-
-              // Social Login Buttons（Apple / Google）
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _SocialSignUpButton(
-                    onTap: handleAppleSignUp,
-                    child: PlatformIcon.apple(size: 24),
-                  ),
-                  SizedBox(width: SpacePalette.base),
-                  _SocialSignUpButton(
-                    onTap: handleGoogleSignUp,
-                    child: PlatformIcon.google(size: 20),
-                  ),
-                ],
-              ),
-
-              Spacer(),
-
-              // Have an account? Sign In
-              Center(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Have an account? ', style: TextStylePalette.subGuide),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pushReplacement(
-                          MaterialPageRoute(
-                            builder: (context) => LoginScreen(role: role),
-                          ),
-                        );
-                      },
-                      style: TextButton.styleFrom(
-                        padding: EdgeInsets.zero,
-                        minimumSize: Size(0, 0),
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Text('Sign In', style: TextStylePalette.guide),
+                    // タイトル
+                    Text(
+                      'Create Your Account',
+                      style: TextStylePalette.header,
                     ),
+                    SizedBox(height: SpacePalette.sm),
+                    Text(
+                      'Start by setting up your login details',
+                      style: TextStylePalette.subText,
+                    ),
+                    SizedBox(height: SpacePalette.lg),
+
+                    // Email
+                    Text('Email', style: TextStylePalette.smTitle),
+                    SizedBox(height: SpacePalette.sm),
+                    SizedBox(
+                      height: ButtonSizePalette.button,
+                      child: TextField(
+                        controller: emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        decoration: InputDecoration(
+                          hintText: 'mail@gmail.com',
+                          hintStyle: TextStylePalette.hintText,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: SpacePalette.base,
+                            vertical: SpacePalette.inner,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: SpacePalette.base),
+
+                    // Password
+                    Text('Password', style: TextStylePalette.smTitle),
+                    SizedBox(height: SpacePalette.sm),
+                    SizedBox(
+                      height: ButtonSizePalette.button,
+                      child: TextField(
+                        controller: passwordController,
+                        obscureText: !isPasswordVisible.value,
+                        decoration: InputDecoration(
+                          hintText: '\u2022\u2022\u2022\u2022\u2022\u2022',
+                          hintStyle: TextStyle(color: ColorPalette.neutral400),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isPasswordVisible.value
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: ColorPalette.neutral500,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              isPasswordVisible.value = !isPasswordVisible.value;
+                            },
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: SpacePalette.base,
+                            vertical: SpacePalette.inner,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: SpacePalette.base),
+
+                    // Confirm Password
+                    Text('Confirm Password', style: TextStylePalette.smTitle),
+                    SizedBox(height: SpacePalette.sm),
+                    SizedBox(
+                      height: ButtonSizePalette.button,
+                      child: TextField(
+                        controller: confirmPasswordController,
+                        obscureText: !isConfirmPasswordVisible.value,
+                        decoration: InputDecoration(
+                          hintText: '\u2022\u2022\u2022\u2022\u2022\u2022',
+                          hintStyle: TextStyle(color: ColorPalette.neutral400),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              isConfirmPasswordVisible.value
+                                  ? Icons.visibility_outlined
+                                  : Icons.visibility_off_outlined,
+                              color: ColorPalette.neutral500,
+                              size: 20,
+                            ),
+                            onPressed: () {
+                              isConfirmPasswordVisible.value =
+                                  !isConfirmPasswordVisible.value;
+                            },
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: SpacePalette.base,
+                            vertical: SpacePalette.inner,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: SpacePalette.lg),
+
+                    // Continue Button
+                    SizedBox(
+                      width: double.infinity,
+                      height: ButtonSizePalette.button,
+                      child: ElevatedButton(
+                        onPressed: handleContinue,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: ColorPalette.neutral800,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              RadiusPalette.full,
+                            ),
+                          ),
+                        ),
+                        child: Text(
+                          'Continue',
+                          style: TextStylePalette.buttonTextWhite,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: SpacePalette.lg),
+
+                    // or divider
+                    Row(
+                      children: [
+                        Expanded(child: Divider(color: ColorPalette.neutral200)),
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: SpacePalette.base,
+                          ),
+                          child: Text('or', style: TextStylePalette.dividerText),
+                        ),
+                        Expanded(child: Divider(color: ColorPalette.neutral200)),
+                      ],
+                    ),
+                    SizedBox(height: SpacePalette.lg),
+
+                    // Social Login Buttons（Apple / Google）
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _SocialSignUpButton(
+                          onTap: handleAppleSignUp,
+                          child: PlatformIcon.apple(size: 24),
+                        ),
+                        SizedBox(width: SpacePalette.base),
+                        _SocialSignUpButton(
+                          onTap: handleGoogleSignUp,
+                          child: PlatformIcon.google(size: 20),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: SpacePalette.lg * 2),
+
+                    // Have an account? Sign In
+                    Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text('Have an account? ', style: TextStylePalette.subGuide),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => LoginScreen(role: role),
+                                ),
+                              );
+                            },
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size(0, 0),
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text('Sign In', style: TextStylePalette.guide),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: SpacePalette.base),
                   ],
                 ),
               ),
-              SizedBox(height: SpacePalette.base),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
