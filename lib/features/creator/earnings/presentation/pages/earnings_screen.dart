@@ -14,10 +14,7 @@ class EarningsScreen extends HookConsumerWidget {
   const EarningsScreen({Key? key}) : super(key: key);
 
   String _formatCurrency(int amount) {
-    return '¥${amount.toString().replaceAllMapped(
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-      (Match m) => '${m[1]},',
-    )}';
+    return '¥${amount.toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}';
   }
 
   @override
@@ -38,6 +35,10 @@ class EarningsScreen extends HookConsumerWidget {
           SliverAppBar(
             expandedHeight: 200,
             pinned: true,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back, color: Colors.white),
+              onPressed: () => Navigator.pop(context),
+            ),
             backgroundColor: ColorPalette.neutral800,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
@@ -45,10 +46,7 @@ class EarningsScreen extends HookConsumerWidget {
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
-                    colors: [
-                      ColorPalette.neutral800,
-                      ColorPalette.neutral900,
-                    ],
+                    colors: [ColorPalette.neutral800, ColorPalette.neutral900],
                   ),
                 ),
                 child: SafeArea(
@@ -101,11 +99,15 @@ class EarningsScreen extends HookConsumerWidget {
                             Spacer(),
                             GestureDetector(
                               onTap: () {
-                                final balance = balanceAsync.whenOrNull(data: (b) => b) ?? 0;
+                                final balance =
+                                    balanceAsync.whenOrNull(data: (b) => b) ??
+                                    0;
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => WithdrawalScreen(currentBalance: balance),
+                                    builder: (context) => WithdrawalScreen(
+                                      currentBalance: balance,
+                                    ),
                                   ),
                                 );
                               },
@@ -116,7 +118,9 @@ class EarningsScreen extends HookConsumerWidget {
                                 ),
                                 decoration: BoxDecoration(
                                   color: ColorPalette.white,
-                                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                                  borderRadius: BorderRadius.circular(
+                                    RadiusPalette.full,
+                                  ),
                                 ),
                                 child: Text(
                                   'Withdraw',
@@ -261,7 +265,8 @@ class EarningsScreen extends HookConsumerWidget {
                 }
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
-                    (context, index) => _EarningHistoryCard(earning: earnings[index]),
+                    (context, index) =>
+                        _EarningHistoryCard(earning: earnings[index]),
                     childCount: earnings.length,
                   ),
                 );
@@ -319,9 +324,7 @@ class _StatCard extends StatelessWidget {
           valueAsync.when(
             data: (value) => Text(
               formatValue(value),
-              style: TextStylePalette.miniTitle.copyWith(
-                fontSize: 18,
-              ),
+              style: TextStylePalette.miniTitle.copyWith(fontSize: 18),
             ),
             loading: () => Text('---', style: TextStylePalette.miniTitle),
             error: (_, __) => Text('-', style: TextStylePalette.miniTitle),
@@ -439,7 +442,11 @@ class _PerformanceCard extends StatelessWidget {
                 SizedBox(height: SpacePalette.xs),
                 Row(
                   children: [
-                    Icon(Icons.visibility, size: 14, color: ColorPalette.neutral500),
+                    Icon(
+                      Icons.visibility,
+                      size: 14,
+                      color: ColorPalette.neutral500,
+                    ),
                     SizedBox(width: 4),
                     Text(
                       '${_formatNumber(stat.viewCount)} views',
@@ -456,14 +463,9 @@ class _PerformanceCard extends StatelessWidget {
             children: [
               Text(
                 '¥${stat.estimatedEarnings}',
-                style: TextStylePalette.miniTitle.copyWith(
-                  color: Colors.green,
-                ),
+                style: TextStylePalette.miniTitle.copyWith(color: Colors.green),
               ),
-              Text(
-                'estimated',
-                style: TextStylePalette.subGuide,
-              ),
+              Text('estimated', style: TextStylePalette.subGuide),
             ],
           ),
         ],
@@ -538,9 +540,7 @@ class _EarningHistoryCard extends StatelessWidget {
           // 金額
           Text(
             earning.formattedAmount,
-            style: TextStylePalette.miniTitle.copyWith(
-              color: Colors.green,
-            ),
+            style: TextStylePalette.miniTitle.copyWith(color: Colors.green),
           ),
         ],
       ),

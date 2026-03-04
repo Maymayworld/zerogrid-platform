@@ -53,6 +53,7 @@ class CampaignScreen extends HookConsumerWidget {
         elevation: 0,
         title: Text('Campaign', style: TextStylePalette.header),
         centerTitle: false,
+        automaticallyImplyLeading: false,
         actions: [
           IconButton(
             icon: Icon(Icons.history, color: ColorPalette.neutral800),
@@ -100,7 +101,9 @@ class CampaignScreen extends HookConsumerWidget {
                     size: 20,
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(vertical: SpacePalette.sm),
+                  contentPadding: EdgeInsets.symmetric(
+                    vertical: SpacePalette.sm,
+                  ),
                 ),
               ),
             ),
@@ -148,10 +151,7 @@ class CampaignScreen extends HookConsumerWidget {
             SizedBox(height: SpacePalette.base),
             Text('Failed to load campaigns', style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
-            ElevatedButton(
-              onPressed: onRefresh,
-              child: Text('Retry'),
-            ),
+            ElevatedButton(onPressed: onRefresh, child: Text('Retry')),
           ],
         ),
       );
@@ -163,11 +163,18 @@ class CampaignScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.campaign_outlined, size: 48, color: ColorPalette.neutral400),
+            Icon(
+              Icons.campaign_outlined,
+              size: 48,
+              color: ColorPalette.neutral400,
+            ),
             SizedBox(height: SpacePalette.base),
             Text('No campaigns yet', style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),
-            Text('Create your first campaign!', style: TextStylePalette.smSubText),
+            Text(
+              'Create your first campaign!',
+              style: TextStylePalette.smSubText,
+            ),
           ],
         ),
       );
@@ -203,9 +210,8 @@ class CampaignScreen extends HookConsumerWidget {
                 final result = await Navigator.push<bool>(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditCampaignScreen(
-                      campaignId: campaign.id,
-                    ),
+                    builder: (context) =>
+                        EditCampaignScreen(campaignId: campaign.id),
                   ),
                 );
 

@@ -67,6 +67,7 @@ class ChatListScreen extends HookConsumerWidget {
         elevation: 0,
         title: Text('Chat', style: TextStylePalette.header),
         centerTitle: false,
+        automaticallyImplyLeading: false,
       ),
       body: Column(
         children: [
@@ -98,52 +99,52 @@ class ChatListScreen extends HookConsumerWidget {
             child: isLoading.value
                 ? Center(child: CircularProgressIndicator())
                 : filteredCampaigns.isEmpty
-                    ? Center(
-                        child: Text(
-                          'No campaigns yet.\nCreate a campaign to start chatting!',
-                          style: TextStylePalette.listLeading,
-                          textAlign: TextAlign.center,
-                        ),
-                      )
-                    : ListView.builder(
-                        padding: EdgeInsets.zero,
-                        itemCount: filteredCampaigns.length,
-                        itemBuilder: (context, index) {
-                          final campaign = filteredCampaigns[index];
-                          final color = colors[index % colors.length];
+                ? Center(
+                    child: Text(
+                      'No campaigns yet.\nCreate a campaign to start chatting!',
+                      style: TextStylePalette.listLeading,
+                      textAlign: TextAlign.center,
+                    ),
+                  )
+                : ListView.builder(
+                    padding: EdgeInsets.zero,
+                    itemCount: filteredCampaigns.length,
+                    itemBuilder: (context, index) {
+                      final campaign = filteredCampaigns[index];
+                      final color = colors[index % colors.length];
 
-                          return _ProjectChatItem(
-                            campaign: campaign,
-                            projectColor: color,
-                            chatService: chatService,
-                            onGroupTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => GroupChatScreen(
-                                    campaignId: campaign.id,
-                                    projectName: campaign.name,
-                                    memberCount: 0, // 後でロード
-                                    onlineCount: 0,
-                                    projectColor: color,
-                                  ),
-                                ),
-                              );
-                            },
-                            onPersonalTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => PersonalChatListScreen(
-                                    campaignId: campaign.id,
-                                    projectName: campaign.name,
-                                  ),
-                                ),
-                              );
-                            },
+                      return _ProjectChatItem(
+                        campaign: campaign,
+                        projectColor: color,
+                        chatService: chatService,
+                        onGroupTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => GroupChatScreen(
+                                campaignId: campaign.id,
+                                projectName: campaign.name,
+                                memberCount: 0, // 後でロード
+                                onlineCount: 0,
+                                projectColor: color,
+                              ),
+                            ),
                           );
                         },
-                      ),
+                        onPersonalTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => PersonalChatListScreen(
+                                campaignId: campaign.id,
+                                projectName: campaign.name,
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
           ),
         ],
       ),
@@ -197,10 +198,7 @@ class _ProjectChatItem extends HookWidget {
       ),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: ColorPalette.neutral200,
-            width: 1,
-          ),
+          bottom: BorderSide(color: ColorPalette.neutral200, width: 1),
         ),
       ),
       child: Row(

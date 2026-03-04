@@ -78,6 +78,7 @@ class CampaignScreen extends HookConsumerWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
+                        useSafeArea: true,
                         builder: (context) => NotificationSheet(),
                       );
                     },

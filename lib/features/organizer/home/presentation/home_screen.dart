@@ -118,6 +118,7 @@ class _DashboardHeader extends StatelessWidget {
                       showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
+                        useSafeArea: true,
                         builder: (context) => NotificationSheet(),
                       );
                     },

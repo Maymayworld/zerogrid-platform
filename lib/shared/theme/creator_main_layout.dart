@@ -35,6 +35,7 @@ class CreatorMainLayout extends HookConsumerWidget {
 
     return Scaffold(
       backgroundColor: ColorPalette.white,
+      extendBody: true,
       body: Stack(
         children: [
           // メインコンテンツ
@@ -53,11 +54,16 @@ class CreatorMainLayout extends HookConsumerWidget {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    color: ColorPalette.smashedPumpkin600,
                     shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      center: Alignment(0, 1.15),
+                      radius: 1.2,
+                      colors: [Color(0xFF525252), Color(0xFF0A0A0A)],
+                      stops: [0.0, 0.78],
+                    ),
                     boxShadow: [
                       BoxShadow(
-                        color: ColorPalette.smashedPumpkin600.withOpacity(0.4),
+                        color: ColorPalette.neutral800.withOpacity(0.35),
                         blurRadius: 16,
                         offset: Offset(0, 6),
                       ),
@@ -70,16 +76,18 @@ class CreatorMainLayout extends HookConsumerWidget {
           ),
           // Liquid Glass ボトムナビゲーション（浮かせて配置）
           Positioned(
-            left: SpacePalette.base,
-            right: SpacePalette.base,
+            left: 0,
+            right: 0,
             bottom: 0,
             child: SafeArea(
               top: false,
               child: Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.sm),
-                child: _LiquidGlassNavBar(
-                  currentIndex: currentIndex.value,
-                  onTap: (index) => currentIndex.value = index,
+                child: Center(
+                  child: _LiquidGlassNavBar(
+                    currentIndex: currentIndex.value,
+                    onTap: (index) => currentIndex.value = index,
+                  ),
                 ),
               ),
             ),
@@ -462,59 +470,72 @@ class _LiquidGlassNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(RadiusPalette.full),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          height: 80,
-          decoration: BoxDecoration(
-            color: ColorPalette.white.withOpacity(0.75),
+    return SizedBox(
+      width: 374,
+      height: 64,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          ClipRRect(
             borderRadius: BorderRadius.circular(RadiusPalette.full),
-            border: Border.all(
-              color: ColorPalette.white.withOpacity(0.3),
-              width: 1,
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: ColorPalette.white.withOpacity(0.75),
+                  borderRadius: BorderRadius.circular(RadiusPalette.full),
+                  border: Border.all(
+                    color: ColorPalette.white.withOpacity(0.3),
+                    width: 1,
+                  ),
+                ),
+              ),
             ),
           ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _GlassNavItem(
-                icon: Icons.search,
-                selectedIcon: Icons.search,
-                label: 'Find',
-                isSelected: currentIndex == 0,
-                onTap: () => onTap(0),
-              ),
-              _GlassNavItem(
-                icon: Icons.article_outlined,
-                selectedIcon: Icons.article_rounded,
-                label: 'Feed',
-                isSelected: currentIndex == 1,
-                onTap: () => onTap(1),
-              ),
-              // 中央の黒いボタン
-              _CenterBlackButton(
-                isSelected: currentIndex == 2,
-                onTap: () => onTap(2),
-              ),
-              _GlassNavItem(
-                icon: Icons.work_outline,
-                selectedIcon: Icons.work_rounded,
-                label: 'Campaign',
-                isSelected: currentIndex == 3,
-                onTap: () => onTap(3),
-              ),
-              _GlassNavItem(
-                icon: Icons.person_outline_rounded,
-                selectedIcon: Icons.person_rounded,
-                label: 'Profile',
-                isSelected: currentIndex == 4,
-                onTap: () => onTap(4),
-              ),
-            ],
+          Positioned.fill(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                _GlassNavItem(
+                  icon: Icons.search,
+                  selectedIcon: Icons.search,
+                  label: 'Find',
+                  isSelected: currentIndex == 0,
+                  onTap: () => onTap(0),
+                ),
+                _GlassNavItem(
+                  icon: Icons.article_outlined,
+                  selectedIcon: Icons.article_rounded,
+                  label: 'Feed',
+                  isSelected: currentIndex == 1,
+                  onTap: () => onTap(1),
+                ),
+                // 中央の黒いボタン
+                Transform.translate(
+                  offset: Offset(0, -16),
+                  child: _CenterBlackButton(
+                    isSelected: currentIndex == 2,
+                    onTap: () => onTap(2),
+                  ),
+                ),
+                _GlassNavItem(
+                  icon: Icons.work_outline,
+                  selectedIcon: Icons.work_rounded,
+                  label: 'Campaign',
+                  isSelected: currentIndex == 3,
+                  onTap: () => onTap(3),
+                ),
+                _GlassNavItem(
+                  icon: Icons.person_outline_rounded,
+                  selectedIcon: Icons.person_rounded,
+                  label: 'Profile',
+                  isSelected: currentIndex == 4,
+                  onTap: () => onTap(4),
+                ),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -546,7 +567,7 @@ class _GlassNavItem extends StatelessWidget {
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: SizedBox(
-        width: 60,
+        width: 73.2,
         child: Stack(
           alignment: Alignment.center,
           children: [
@@ -556,8 +577,8 @@ class _GlassNavItem extends StatelessWidget {
               curve: Curves.easeInOut,
               opacity: isSelected ? 1.0 : 0.0,
               child: Container(
-                width: 52,
-                height: 64,
+                width: 73.2,
+                height: 56,
                 decoration: BoxDecoration(
                   color: ColorPalette.white.withOpacity(0.85),
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
@@ -654,11 +675,16 @@ class _CenterBlackButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 52,
-        height: 52,
+        width: 64,
+        height: 64,
         decoration: BoxDecoration(
-          color: ColorPalette.neutral800,
           shape: BoxShape.circle,
+          gradient: RadialGradient(
+            center: Alignment(0, 1.15),
+            radius: 1.2,
+            colors: [Color(0xFF525252), Color(0xFF0A0A0A)],
+            stops: [0.0, 0.78],
+          ),
           boxShadow: [
             BoxShadow(
               color: ColorPalette.neutral800.withOpacity(0.3),
