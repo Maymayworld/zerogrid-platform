@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/duolingo_form_components.dart';
 
-enum ContactSupportPage {
-  home,
-  faq,
-  askHelp,
-  feedback,
-}
+enum ContactSupportPage { home, faq, askHelp, feedback }
 
 class ContactSupportHomeScreen extends StatefulWidget {
   const ContactSupportHomeScreen({super.key});
@@ -29,72 +25,66 @@ class _ContactSupportHomeScreenState extends State<ContactSupportHomeScreen> {
   Widget build(BuildContext context) {
     return SafeArea(
       top: false,
-      child: Container(
-        height: MediaQuery.of(context).size.height * 0.94,
-        decoration: BoxDecoration(
-          color: ColorPalette.white,
-          borderRadius: BorderRadius.vertical(
-            top: Radius.circular(RadiusPalette.lg),
+      child: AnimatedSize(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeInOut,
+        alignment: Alignment.topCenter,
+        clipBehavior: Clip.antiAlias,
+        child: Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.94,
           ),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // ハンドル
-            Padding(
-              padding: EdgeInsets.only(top: SpacePalette.sm),
-              child: Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: ColorPalette.neutral300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
+          decoration: BoxDecoration(
+            color: ColorPalette.white,
+            borderRadius: BorderRadius.vertical(
+              top: Radius.circular(RadiusPalette.lg),
+            ),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.fromLTRB(
+                  SpacePalette.base,
+                  SpacePalette.base,
+                  SpacePalette.base,
+                  SpacePalette.sm,
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFE5E5E5),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.close, size: 22),
+                        onPressed: () => Navigator.of(context).pop(),
+                        splashRadius: 22,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        'Contact Support',
+                        style: TextStylePalette.smallHeader,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    const SizedBox(width: 40),
+                  ],
                 ),
               ),
-            ),
-            // タイトル行（戻るボタン含む）
-            Padding(
-              padding: EdgeInsets.fromLTRB(
-                SpacePalette.base,
-                SpacePalette.base,
-                SpacePalette.base,
-                SpacePalette.sm,
+              Flexible(
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: _buildPage(context),
+                ),
               ),
-              child: Row(
-                children: [
-                  if (_page != ContactSupportPage.home)
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back_ios_new, size: 18),
-                      onPressed: () {
-                        if (_page == ContactSupportPage.home) {
-                          Navigator.of(context).pop();
-                        } else {
-                          _goTo(ContactSupportPage.home);
-                        }
-                      },
-                    )
-                  else
-                    const SizedBox(width: 40),
-                  Expanded(
-                    child: Text(
-                      'Contact Support',
-                      style: TextStylePalette.smallHeader,
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  const SizedBox(width: 40),
-                ],
-              ),
-            ),
-            Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: _buildPage(context),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -131,18 +121,14 @@ class _HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: EdgeInsets.all(SpacePalette.base),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Need help? We’re here to support you',
-            style: TextStylePalette.smallHeader,
-          ),
-          SizedBox(height: SpacePalette.sm),
-          Text(
-            'Find quick answers, ask for help, or share feedback with the ZeroGrid team.',
+            'Need help? We’re here to support yo',
             style: TextStylePalette.subText,
           ),
           SizedBox(height: SpacePalette.lg),
@@ -152,14 +138,14 @@ class _HomeView extends StatelessWidget {
             subtitle: 'Browse common questions and answers',
             onTap: onTapFaq,
           ),
-          SizedBox(height: SpacePalette.sm),
+          SizedBox(height: SpacePalette.base),
           _SupportOptionTile(
             icon: Icons.chat_bubble_outline,
             title: 'Ask for Help',
             subtitle: 'Tell us what you need help with',
             onTap: onTapAskHelp,
           ),
-          SizedBox(height: SpacePalette.sm),
+          SizedBox(height: SpacePalette.base),
           _SupportOptionTile(
             icon: Icons.feedback_outlined,
             title: 'Give Feedback',
@@ -173,110 +159,188 @@ class _HomeView extends StatelessWidget {
   }
 }
 
-class _FaqView extends StatelessWidget {
+class _FaqView extends StatefulWidget {
   final VoidCallback onAskHelp;
 
   const _FaqView({required this.onAskHelp});
 
   @override
-  Widget build(BuildContext context) {
-    final questions = [
-      'Question 1',
-      'Question 2',
-      'Question 3',
-      'Question 4',
-      'Question 5',
-      'Question 6',
-    ];
+  State<_FaqView> createState() => _FaqViewState();
+}
 
-    return Padding(
-      padding: EdgeInsets.all(SpacePalette.base),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Find quick answers or get help when you need it',
-            style: TextStylePalette.smallHeader,
-          ),
-          SizedBox(height: SpacePalette.sm),
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'Search for help',
-              prefixIcon: const Icon(Icons.search),
-            ),
-          ),
-          SizedBox(height: SpacePalette.base),
-          Expanded(
-            child: ListView.separated(
-              itemCount: questions.length,
-              separatorBuilder: (_, __) => Divider(
-                height: 1,
-                color: ColorPalette.neutral200,
-              ),
-              itemBuilder: (context, index) {
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    questions[index],
-                    style: TextStylePalette.normalText,
-                  ),
-                  subtitle: index == 1
-                      ? Text(
-                          'Answer of question',
-                          style: TextStylePalette.smSubText,
-                        )
-                      : null,
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () {},
-                );
-              },
-            ),
-          ),
-          SizedBox(height: SpacePalette.base),
-          Container(
-            width: double.infinity,
-            padding: EdgeInsets.all(SpacePalette.base),
-            decoration: BoxDecoration(
-              color: ColorPalette.white,
-              borderRadius: BorderRadius.circular(RadiusPalette.base),
-              border: Border.all(color: ColorPalette.neutral200),
-            ),
-            child: Column(
+class _FaqViewState extends State<_FaqView> {
+  static const double _floatingHelpCardReservedSpace = 220;
+
+  final List<String> _questions = const [
+    'Question 1',
+    'Question 2',
+    'Question 3',
+    'Question 4',
+    'Question 5',
+    'Question 6',
+    'Question 7',
+    'Question 8',
+    'Question 9',
+    'Question 10',
+  ];
+
+  late final List<bool> _expanded = List<bool>.filled(
+    _questions.length,
+    false,
+    growable: false,
+  );
+
+  Widget _buildQuestionCard(int index) {
+    final isExpanded = _expanded[index];
+    return InkWell(
+      borderRadius: BorderRadius.circular(RadiusPalette.xl),
+      onTap: () {
+        setState(() {
+          _expanded[index] = !_expanded[index];
+        });
+      },
+      child: Container(
+        padding: EdgeInsets.all(SpacePalette.base),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(RadiusPalette.xl),
+          border: Border.all(color: const Color(0xFFE5E5E5), width: 1),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Still need help?',
-                  style: TextStylePalette.smTitle,
+                Expanded(
+                  child: Text(
+                    _questions[index],
+                    style: TextStylePalette.normalText,
+                  ),
                 ),
-                SizedBox(height: SpacePalette.xs),
-                Text(
-                  'Our support team is ready to assist you.',
-                  style: TextStylePalette.smSubText,
-                ),
-                SizedBox(height: SpacePalette.sm),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: onAskHelp,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: ColorPalette.neutral800,
-                      foregroundColor: ColorPalette.white,
-                      padding: EdgeInsets.symmetric(
-                        vertical: SpacePalette.inner,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(RadiusPalette.base),
-                      ),
-                    ),
-                    child: const Text('Contact Support'),
+                AnimatedRotation(
+                  turns: isExpanded ? 0.5 : 0.0,
+                  duration: const Duration(milliseconds: 150),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    color: ColorPalette.neutral600,
                   ),
                 ),
               ],
             ),
+            if (isExpanded) ...[
+              SizedBox(height: SpacePalette.xs),
+              Text(
+                'Answer of question ${index + 1}',
+                style: TextStylePalette.smSubText,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFloatingHelpCard() {
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.all(SpacePalette.base),
+      decoration: BoxDecoration(
+        color: ColorPalette.white,
+        borderRadius: BorderRadius.circular(RadiusPalette.xl),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x1F737373),
+            offset: Offset(0, 8),
+            blurRadius: 24,
+            spreadRadius: 0,
           ),
         ],
       ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Still need help?', style: TextStylePalette.smTitle),
+          SizedBox(height: SpacePalette.xs),
+          Text(
+            'Our support team is ready to assist you.',
+            style: TextStylePalette.smSubText,
+          ),
+          SizedBox(height: SpacePalette.sm),
+          SizedBox(
+            width: double.infinity,
+            child: DuolingoOutlineButton(
+              onPressed: widget.onAskHelp,
+              text: 'Contact Support',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      children: [
+        ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.fromLTRB(
+            SpacePalette.base,
+            SpacePalette.base,
+            SpacePalette.base,
+            _floatingHelpCardReservedSpace,
+          ),
+          children: [
+            Text(
+              'Find quick answers or get help when you need it',
+              style: TextStylePalette.subText,
+            ),
+            SizedBox(height: SpacePalette.sm),
+            TextField(
+              decoration: InputDecoration(
+                hintText: 'Search for help',
+                prefixIcon: const Icon(Icons.search, color: Color(0xFFA3A3A3)),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 8,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(999),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Color(0xFFE5E5E5),
+                  ),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(999),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Color(0xFFE5E5E5),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(999),
+                  borderSide: const BorderSide(
+                    width: 1,
+                    color: Color(0xFFE5E5E5),
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 24),
+            for (int i = 0; i < _questions.length; i++) ...[
+              if (i > 0) SizedBox(height: SpacePalette.base),
+              _buildQuestionCard(i),
+            ],
+          ],
+        ),
+        Positioned(
+          left: SpacePalette.base,
+          right: SpacePalette.base,
+          bottom: SpacePalette.base,
+          child: _buildFloatingHelpCard(),
+        ),
+      ],
     );
   }
 }
@@ -289,59 +353,46 @@ class _AskHelpView extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.all(SpacePalette.base),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(
-            'Ask for Help',
-            style: TextStylePalette.smallHeader,
-          ),
+          Text('How can we help?', style: TextStylePalette.smallHeader),
           SizedBox(height: SpacePalette.sm),
           Text(
-            'Tell us what you need help with. We’ll get back to you as soon as we can.',
+            'Tell us what’s going on, and you’ll hear back by email',
             style: TextStylePalette.subText,
           ),
           SizedBox(height: SpacePalette.lg),
-          Text(
-            'Subject',
-            style: TextStylePalette.smTitle,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text('Tell us something', style: TextStylePalette.smTitle),
+            ],
           ),
           SizedBox(height: SpacePalette.xs),
-          TextField(
-            decoration: const InputDecoration(
-              hintText: 'Briefly describe your issue',
-            ),
-          ),
-          SizedBox(height: SpacePalette.base),
-          Text(
-            'Details',
-            style: TextStylePalette.smTitle,
-          ),
-          SizedBox(height: SpacePalette.xs),
-          Expanded(
+          SizedBox(
+            height: 150,
             child: TextField(
               maxLines: null,
               expands: true,
               textAlignVertical: TextAlignVertical.top,
-              decoration: const InputDecoration(
-                hintText:
-                    'Please provide any details that can help us understand the situation.',
+              decoration: InputDecoration(
+                hintText: 'Please don’t include sensitive information',
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: SpacePalette.inner,
+                  horizontal: SpacePalette.sm,
+                ),
               ),
             ),
           ),
           SizedBox(height: SpacePalette.base),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: DuolingoButton(
               onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorPalette.neutral800,
-                foregroundColor: ColorPalette.white,
-                padding: EdgeInsets.symmetric(vertical: SpacePalette.inner),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
-              ),
-              child: const Text('Send'),
+              isEnabled: true,
+              text: 'Send',
+              buttonColor: const Color(0xFFFC6736),
             ),
           ),
         ],
@@ -365,12 +416,10 @@ class _FeedbackViewState extends State<_FeedbackView> {
     return Padding(
       padding: EdgeInsets.all(SpacePalette.base),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Give Feedback',
-            style: TextStylePalette.smallHeader,
-          ),
+          Text('Give Feedback', style: TextStylePalette.smallHeader),
           SizedBox(height: SpacePalette.sm),
           Text(
             'Your feedback helps us improve and serve you better.',
@@ -391,35 +440,31 @@ class _FeedbackViewState extends State<_FeedbackView> {
             },
           ),
           SizedBox(height: SpacePalette.lg),
-          Text(
-            'Tell us something',
-            style: TextStylePalette.smTitle,
-          ),
+          Text('Tell us something', style: TextStylePalette.smTitle),
           SizedBox(height: SpacePalette.xs),
-          Expanded(
+          SizedBox(
+            height: 120,
             child: TextField(
               maxLines: null,
               expands: true,
               textAlignVertical: TextAlignVertical.top,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 hintText: 'e.g. love the app! keep it up',
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: SpacePalette.inner,
+                  horizontal: SpacePalette.sm,
+                ),
               ),
             ),
           ),
           SizedBox(height: SpacePalette.base),
           SizedBox(
             width: double.infinity,
-            child: ElevatedButton(
+            child: DuolingoButton(
               onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorPalette.neutral800,
-                foregroundColor: ColorPalette.white,
-                padding: EdgeInsets.symmetric(vertical: SpacePalette.inner),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
-              ),
-              child: const Text('Share Feedback'),
+              isEnabled: true,
+              text: 'Share Feedback',
+              buttonColor: const Color(0xFFFC6736),
             ),
           ),
         ],
@@ -445,12 +490,12 @@ class _SupportOptionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(RadiusPalette.base),
+      borderRadius: BorderRadius.circular(RadiusPalette.xl),
       child: Container(
         padding: EdgeInsets.all(SpacePalette.base),
         decoration: BoxDecoration(
           color: ColorPalette.white,
-          borderRadius: BorderRadius.circular(RadiusPalette.base),
+          borderRadius: BorderRadius.circular(RadiusPalette.xl),
           border: Border.all(color: ColorPalette.neutral200),
         ),
         child: Row(
@@ -463,34 +508,20 @@ class _SupportOptionTile extends StatelessWidget {
                 color: ColorPalette.neutral100,
                 borderRadius: BorderRadius.circular(RadiusPalette.base),
               ),
-              child: Icon(
-                icon,
-                size: 22,
-                color: ColorPalette.neutral800,
-              ),
+              child: Icon(icon, size: 22, color: ColorPalette.neutral800),
             ),
             SizedBox(width: SpacePalette.inner),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    title,
-                    style: TextStylePalette.smTitle,
-                  ),
+                  Text(title, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.xs),
-                  Text(
-                    subtitle,
-                    style: TextStylePalette.smSubText,
-                  ),
+                  Text(subtitle, style: TextStylePalette.smSubText),
                 ],
               ),
             ),
-            Icon(
-              Icons.chevron_right,
-              size: 20,
-              color: ColorPalette.neutral400,
-            ),
+            Icon(Icons.chevron_right, size: 20, color: ColorPalette.neutral400),
           ],
         ),
       ),
@@ -507,7 +538,7 @@ class _EmojiRatingRow extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  static const _emojis = ['😡', '😕', '😐', '🙂', '😂'];
+  static const _emojis = ['😠', '😔', '😐', '😊', '🤩'];
 
   @override
   Widget build(BuildContext context) {
@@ -516,25 +547,32 @@ class _EmojiRatingRow extends StatelessWidget {
         final style = _cellStyle(index);
         return Expanded(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: SpacePalette.xs),
-            child: OutlinedButton(
-              onPressed: () => onSelected(index),
-              style: OutlinedButton.styleFrom(
-                backgroundColor: style.backgroundColor,
-                side: BorderSide(
-                  color: style.borderColor,
-                  width: 1.5,
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Align(
+              alignment: Alignment.center,
+              child: SizedBox(
+                width: 56,
+                height: 56,
+                child: OutlinedButton(
+                  onPressed: () => onSelected(index),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    backgroundColor: style.backgroundColor,
+                    side: BorderSide(
+                      color: style.borderColor,
+                      width: style.borderWidth,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                    ),
+                  ),
+                  child: Center(
+                    child: Text(
+                      _emojis[index],
+                      style: const TextStyle(fontSize: 22),
+                    ),
+                  ),
                 ),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 10,
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
-              ),
-              child: Text(
-                _emojis[index],
-                style: const TextStyle(fontSize: 22),
               ),
             ),
           ),
@@ -546,48 +584,54 @@ class _EmojiRatingRow extends StatelessWidget {
   _EmojiCellStyle _cellStyle(int index) {
     // 未選択状態
     Color border = ColorPalette.neutral200;
+    double borderWidth = 1;
     Color? bg;
 
     if (index == selectedIndex) {
+      borderWidth = 1.5;
       // very negative
       if (index == 0) {
-        border = Colors.redAccent;
-        bg = const Color(0xFFFFEBEE); // light red
+        border = const Color(0xFFB91C1C);
+        bg = const Color(0xFFFEE2E2);
       }
       // negative
       else if (index == 1) {
-        border = Colors.redAccent;
-        bg = Colors.white;
+        border = const Color(0xFFDC2626);
+        bg = const Color(0xFFFEF2F2);
       }
       // neutral
       else if (index == 2) {
-        border = ColorPalette.neutral800;
-        bg = Colors.white;
+        border = const Color(0xFF262626);
+        bg = const Color(0xFFF5F5F5);
       }
       // positive
       else if (index == 3) {
-        border = const Color(0xFF4CAF50);
-        bg = Colors.white;
+        border = const Color(0xFF16A34A);
+        bg = const Color(0xFFF0FDF4);
       }
       // very positive
       else if (index == 4) {
-        border = const Color(0xFF4CAF50);
-        bg = const Color(0xFFE8F5E9); // light green
+        border = const Color(0xFF15803D);
+        bg = const Color(0xFFDCFCE7);
       }
     }
 
-    return _EmojiCellStyle(borderColor: border, backgroundColor: bg);
+    return _EmojiCellStyle(
+      borderColor: border,
+      borderWidth: borderWidth,
+      backgroundColor: bg,
+    );
   }
 }
 
 class _EmojiCellStyle {
   final Color borderColor;
+  final double borderWidth;
   final Color? backgroundColor;
 
   const _EmojiCellStyle({
     required this.borderColor,
+    required this.borderWidth,
     required this.backgroundColor,
   });
 }
-
-

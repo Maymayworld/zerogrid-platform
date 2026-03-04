@@ -52,7 +52,10 @@ class ProfileScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Logout failed: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text('Logout failed: $e'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -104,7 +107,10 @@ class ProfileScreen extends HookConsumerWidget {
                             : null,
                         child: profile?.avatarUrl == null
                             ? Text(
-                                profile?.displayName.substring(0, 2).toUpperCase() ?? 'CR',
+                                profile?.displayName
+                                        .substring(0, 2)
+                                        .toUpperCase() ??
+                                    'CR',
                                 style: TextStylePalette.smTitle.copyWith(
                                   color: ColorPalette.white,
                                 ),
@@ -142,7 +148,11 @@ class ProfileScreen extends HookConsumerWidget {
               SizedBox(height: SpacePalette.base),
 
               // Payout Account Card
-              _buildPayoutCard(context, connectStatus.value, connectLoading.value),
+              _buildPayoutCard(
+                context,
+                connectStatus.value,
+                connectLoading.value,
+              ),
               SizedBox(height: SpacePalette.lg),
 
               // Account section
@@ -212,7 +222,7 @@ class ProfileScreen extends HookConsumerWidget {
                     iconColor: const Color(0xFF9C27B0),
                     label: 'Contact Support',
                     onTap: () {
-                      showModalBottomSheet(
+                      showModalBottomSheet<dynamic>(
                         context: context,
                         isScrollControlled: true,
                         backgroundColor: Colors.transparent,
@@ -226,9 +236,14 @@ class ProfileScreen extends HookConsumerWidget {
                     iconColor: ColorPalette.neutral800,
                     label: 'Follow @ZeroGrid',
                     onTap: () async {
-                      final url = Uri.parse('https://www.instagram.com/zerogrid.jp?igsh=MTdqNzRoNWV2dWN3Yg==');
+                      final url = Uri.parse(
+                        'https://www.instagram.com/zerogrid.jp?igsh=MTdqNzRoNWV2dWN3Yg==',
+                      );
                       if (await canLaunchUrl(url)) {
-                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                        await launchUrl(
+                          url,
+                          mode: LaunchMode.externalApplication,
+                        );
                       }
                     },
                   ),
@@ -257,7 +272,11 @@ class ProfileScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildPayoutCard(BuildContext context, ConnectStatus? status, bool isLoading) {
+  Widget _buildPayoutCard(
+    BuildContext context,
+    ConnectStatus? status,
+    bool isLoading,
+  ) {
     if (isLoading) {
       return Container(
         width: double.infinity,
@@ -268,24 +287,36 @@ class ProfileScreen extends HookConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.account_balance_outlined, size: 24, color: ColorPalette.white),
+            Icon(
+              Icons.account_balance_outlined,
+              size: 24,
+              color: ColorPalette.white,
+            ),
             SizedBox(width: SpacePalette.inner),
             Text(
               'Payout Account',
-              style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
+              style: TextStylePalette.smallHeader.copyWith(
+                color: ColorPalette.white,
+              ),
             ),
             Spacer(),
             SizedBox(
-              width: 16, height: 16,
-              child: CircularProgressIndicator(strokeWidth: 2, color: ColorPalette.white),
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: ColorPalette.white,
+              ),
             ),
           ],
         ),
       );
     }
 
-    final isConnected = status?.hasConnect == true && status?.payoutsEnabled == true;
-    final isPending = status?.hasConnect == true && status?.payoutsEnabled != true;
+    final isConnected =
+        status?.hasConnect == true && status?.payoutsEnabled == true;
+    final isPending =
+        status?.hasConnect == true && status?.payoutsEnabled != true;
 
     if (isConnected) {
       return Container(
@@ -305,7 +336,9 @@ class ProfileScreen extends HookConsumerWidget {
                 children: [
                   Text(
                     'Payout Account',
-                    style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
+                    style: TextStylePalette.smallHeader.copyWith(
+                      color: ColorPalette.white,
+                    ),
                   ),
                   SizedBox(height: SpacePalette.xs),
                   Text(
@@ -318,7 +351,10 @@ class ProfileScreen extends HookConsumerWidget {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.sm,
+                vertical: SpacePalette.xs,
+              ),
               decoration: BoxDecoration(
                 color: ColorPalette.positive500.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(RadiusPalette.full),
@@ -326,7 +362,11 @@ class ProfileScreen extends HookConsumerWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.check_circle, size: 14, color: ColorPalette.positive500),
+                  Icon(
+                    Icons.check_circle,
+                    size: 14,
+                    color: ColorPalette.positive500,
+                  ),
                   SizedBox(width: 4),
                   Text(
                     'Connected',
@@ -348,7 +388,9 @@ class ProfileScreen extends HookConsumerWidget {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => WithdrawalScreen(currentBalance: 0)),
+            MaterialPageRoute(
+              builder: (context) => WithdrawalScreen(currentBalance: 0),
+            ),
           );
         },
         child: Container(
@@ -360,7 +402,11 @@ class ProfileScreen extends HookConsumerWidget {
           ),
           child: Row(
             children: [
-              Icon(Icons.account_balance_outlined, size: 24, color: ColorPalette.white),
+              Icon(
+                Icons.account_balance_outlined,
+                size: 24,
+                color: ColorPalette.white,
+              ),
               SizedBox(width: SpacePalette.inner),
               Expanded(
                 child: Column(
@@ -368,7 +414,9 @@ class ProfileScreen extends HookConsumerWidget {
                   children: [
                     Text(
                       'Payout Account',
-                      style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
+                      style: TextStylePalette.smallHeader.copyWith(
+                        color: ColorPalette.white,
+                      ),
                     ),
                     SizedBox(height: SpacePalette.xs),
                     Text(
@@ -381,7 +429,10 @@ class ProfileScreen extends HookConsumerWidget {
                 ),
               ),
               Container(
-                padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
+                padding: EdgeInsets.symmetric(
+                  horizontal: SpacePalette.sm,
+                  vertical: SpacePalette.xs,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.orange.withOpacity(0.2),
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
@@ -405,7 +456,9 @@ class ProfileScreen extends HookConsumerWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => WithdrawalScreen(currentBalance: 0)),
+          MaterialPageRoute(
+            builder: (context) => WithdrawalScreen(currentBalance: 0),
+          ),
         );
       },
       child: Container(
@@ -417,7 +470,11 @@ class ProfileScreen extends HookConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.account_balance_outlined, size: 24, color: ColorPalette.white),
+            Icon(
+              Icons.account_balance_outlined,
+              size: 24,
+              color: ColorPalette.white,
+            ),
             SizedBox(width: SpacePalette.inner),
             Expanded(
               child: Column(
@@ -425,7 +482,9 @@ class ProfileScreen extends HookConsumerWidget {
                 children: [
                   Text(
                     'Payout Account',
-                    style: TextStylePalette.smallHeader.copyWith(color: ColorPalette.white),
+                    style: TextStylePalette.smallHeader.copyWith(
+                      color: ColorPalette.white,
+                    ),
                   ),
                   SizedBox(height: SpacePalette.xs),
                   Text(
