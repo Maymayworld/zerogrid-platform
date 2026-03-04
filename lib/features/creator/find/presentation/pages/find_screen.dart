@@ -32,7 +32,13 @@ class FindScreen extends HookConsumerWidget {
     final profileState = ref.watch(userProfileProvider);
     final avatarUrl = profileState.profile?.avatarUrl;
 
-    final filterCategories = ['All', 'Business', 'Entertainment', 'Music', 'Podcast'];
+    final filterCategories = [
+      'All',
+      'Business',
+      'Entertainment',
+      'Music',
+      'Podcast',
+    ];
 
     Future<void> loadLikedIds() async {
       try {
@@ -73,12 +79,14 @@ class FindScreen extends HookConsumerWidget {
       try {
         if (currentLiked.contains(campaignId)) {
           await likeService.unlikeCampaign(campaignId);
-          ref.read(likedCampaignIdsProvider.notifier).state =
-              {...currentLiked}..remove(campaignId);
+          ref.read(likedCampaignIdsProvider.notifier).state = {...currentLiked}
+            ..remove(campaignId);
         } else {
           await likeService.likeCampaign(campaignId);
-          ref.read(likedCampaignIdsProvider.notifier).state =
-              {...currentLiked, campaignId};
+          ref.read(likedCampaignIdsProvider.notifier).state = {
+            ...currentLiked,
+            campaignId,
+          };
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -149,10 +157,7 @@ class FindScreen extends HookConsumerWidget {
                   ),
                   Spacer(),
                   // 検索ガラスボタン
-                  _buildGlassButton(
-                    icon: Icons.search,
-                    onTap: () {},
-                  ),
+                  _buildGlassButton(icon: Icons.search, onTap: () {}),
                   SizedBox(width: SpacePalette.sm),
                   // いいねフィルターガラスボタン
                   _buildGlassButton(
@@ -198,9 +203,7 @@ class FindScreen extends HookConsumerWidget {
                             ),
                             child: Center(
                               child: Text(
-                                unreadCount > 9
-                                    ? '9+'
-                                    : unreadCount.toString(),
+                                unreadCount > 9 ? '9+' : unreadCount.toString(),
                                 style: TextStyle(
                                   color: ColorPalette.white,
                                   fontSize: 8,
@@ -218,7 +221,9 @@ class FindScreen extends HookConsumerWidget {
 
             // Ad Banner（neutral200背景、テキストなし）
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: SpacePalette.base),
+              padding: const EdgeInsets.symmetric(
+                horizontal: SpacePalette.base,
+              ),
               child: SizedBox(
                 height: 144,
                 child: Stack(
@@ -232,7 +237,9 @@ class FindScreen extends HookConsumerWidget {
                           margin: EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
                             color: ColorPalette.neutral200,
-                            borderRadius: BorderRadius.circular(RadiusPalette.base),
+                            borderRadius: BorderRadius.circular(
+                              RadiusPalette.base,
+                            ),
                           ),
                         );
                       },
@@ -268,7 +275,9 @@ class FindScreen extends HookConsumerWidget {
             Align(
               alignment: Alignment.centerLeft,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: SpacePalette.base),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: SpacePalette.base,
+                ),
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: Row(
@@ -303,7 +312,9 @@ class FindScreen extends HookConsumerWidget {
                 isLoading: isLoading.value,
                 error: error.value,
                 campaigns: showLikedOnly.value
-                    ? campaigns.value.where((c) => likedIds.contains(c.id)).toList()
+                    ? campaigns.value
+                          .where((c) => likedIds.contains(c.id))
+                          .toList()
                     : campaigns.value,
                 likedIds: likedIds,
                 scrollController: scrollController,
@@ -332,10 +343,7 @@ class FindScreen extends HookConsumerWidget {
         decoration: BoxDecoration(
           color: ColorPalette.white.withOpacity(0.8),
           shape: BoxShape.circle,
-          border: Border.all(
-            color: ColorPalette.neutral200,
-            width: 1,
-          ),
+          border: Border.all(color: ColorPalette.neutral200, width: 1),
           boxShadow: [
             BoxShadow(
               color: ColorPalette.neutral800.withOpacity(0.04),
@@ -431,9 +439,8 @@ class FindScreen extends HookConsumerWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ProjectDetailScreen(
-                      campaign: campaign,
-                    ),
+                    builder: (context) =>
+                        ProjectDetailScreen(campaign: campaign),
                   ),
                 );
               },

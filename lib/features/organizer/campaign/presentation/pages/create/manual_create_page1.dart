@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page2.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
@@ -121,21 +122,9 @@ class ManualCreatePage1 extends HookConsumerWidget{
                 ),
               ),
               SizedBox(height: SpacePalette.lg),
-              Container(
+              SizedBox(
                 width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(RadiusPalette.full),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorPalette.smashedPumpkin800,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
+                child: DuolingoButton(
                   onPressed: () {
                     ref.read(projectProvider.notifier).setBasicInfo(projectNameController.text, descriptionController.text);
                     Navigator.push(
@@ -145,21 +134,9 @@ class ManualCreatePage1 extends HookConsumerWidget{
                       )
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.smashedPumpkin600,
-                    foregroundColor: ColorPalette.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.full),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Next',
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  isEnabled: true,
+                  isLoading: false,
+                  text: 'Next',
                 ),
               ),
             ],

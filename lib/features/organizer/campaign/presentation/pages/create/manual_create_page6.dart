@@ -6,6 +6,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/preview_page.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 
 class ManualCreatePage6 extends HookConsumerWidget {
@@ -330,57 +331,29 @@ class ManualCreatePage6 extends HookConsumerWidget {
 
               // Next button
               SizedBox(height: SpacePalette.base),
-              Container(
+              SizedBox(
                 width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(RadiusPalette.full),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorPalette.smashedPumpkin800,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: isUploading.value
-                      ? null
-                      : () {
-                          // Combine uploaded file URLs and manual links
-                          final allResources = [
-                            ...uploadedFiles.value.map((f) => f.url),
-                            ...links.value
-                                .where((l) => l.trim().isNotEmpty),
-                          ];
-                          ref
-                              .read(projectProvider.notifier)
-                              .setLinks(allResources);
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => PreviewPage(),
-                            ),
-                          );
-                        },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.smashedPumpkin600,
-                    foregroundColor: ColorPalette.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius:
-                          BorderRadius.circular(RadiusPalette.full),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Next',
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                child: DuolingoButton(
+                  onPressed: () {
+                    // Combine uploaded file URLs and manual links
+                    final allResources = [
+                      ...uploadedFiles.value.map((f) => f.url),
+                      ...links.value
+                          .where((l) => l.trim().isNotEmpty),
+                    ];
+                    ref
+                        .read(projectProvider.notifier)
+                        .setLinks(allResources);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PreviewPage(),
+                      ),
+                    );
+                  },
+                  isEnabled: !isUploading.value,
+                  isLoading: isUploading.value,
+                  text: 'Next',
                 ),
               ),
             ],

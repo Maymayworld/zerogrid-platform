@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
-import 'package:zero_grid/features/auth/presentation/widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';

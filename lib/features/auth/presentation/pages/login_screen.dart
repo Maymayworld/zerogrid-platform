@@ -11,7 +11,7 @@ import '../../../../shared/theme/main_layout.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'forgot_password_screen.dart';
 import 'signup_screen1.dart';
-import '../widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 
 class LoginScreen extends HookConsumerWidget {
   final UserRole role;
@@ -210,7 +210,8 @@ class LoginScreen extends HookConsumerWidget {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => ForgotPasswordScreen(role: role),
+                            builder: (context) =>
+                                ForgotPasswordScreen(role: role),
                           ),
                         );
                       },

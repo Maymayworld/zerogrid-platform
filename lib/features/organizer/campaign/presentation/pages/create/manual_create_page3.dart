@@ -5,14 +5,14 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page4.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-class ManualCreatePage3 extends HookConsumerWidget{
+class ManualCreatePage3 extends HookConsumerWidget {
   const ManualCreatePage3({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-
     final targetviewController = useTextEditingController();
 
     return Scaffold(
@@ -21,8 +21,8 @@ class ManualCreatePage3 extends HookConsumerWidget{
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
-        onPressed: () => Navigator.pop(context),
+          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SafeArea(
@@ -52,36 +52,33 @@ class ManualCreatePage3 extends HookConsumerWidget{
                 child: TextField(
                   controller: targetviewController,
                   keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly
-                  ],
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   cursorColor: ColorPalette.neutral800,
                   decoration: InputDecoration(
                     suffixIcon: Center(
                       widthFactor: 1,
                       child: Padding(
-                        padding: const EdgeInsets.only(right: SpacePalette.inner),
-                        child: Text(
-                          'Views',
-                          style: TextStylePalette.smSubText,
+                        padding: const EdgeInsets.only(
+                          right: SpacePalette.inner,
                         ),
+                        child: Text('Views', style: TextStylePalette.smSubText),
                       ),
                     ),
                     border: OutlineInputBorder(),
                     enabledBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: ColorPalette.neutral200,
-                        width: 1
-                      )
+                        width: 1,
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(
                         color: ColorPalette.neutral800,
-                        width: 2
-                      )
-                    )
+                        width: 2,
+                      ),
+                    ),
                   ),
-                )
+                ),
               ),
               SizedBox(height: SpacePalette.sm),
               Align(
@@ -92,50 +89,28 @@ class ManualCreatePage3 extends HookConsumerWidget{
                 ),
               ),
               Spacer(),
-              Container(
+              SizedBox(
                 width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(RadiusPalette.full),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorPalette.smashedPumpkin800,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
+                child: DuolingoButton(
                   onPressed: () {
-                    ref.read(projectProvider.notifier).setTargetViews(int.parse(targetviewController.text));
+                    ref
+                        .read(projectProvider.notifier)
+                        .setTargetViews(int.parse(targetviewController.text));
                     Navigator.push(
-                      context, (MaterialPageRoute(
-                        builder: (context) => ManualCreatePage4()
-                        )
-                      )
+                      context,
+                      (MaterialPageRoute(
+                        builder: (context) => ManualCreatePage4(),
+                      )),
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.smashedPumpkin600,
-                    foregroundColor: ColorPalette.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.full),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Next',
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  isEnabled: true,
+                  isLoading: false,
+                  text: 'Next',
                 ),
               ),
             ],
           ),
-        )
+        ),
       ),
     );
   }

@@ -5,8 +5,8 @@ import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'package:zero_grid/shared/widgets/platform_icon.dart';
-import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page2.dart';
 
 class ManualCreatePage2 extends HookConsumerWidget{
   const ManualCreatePage2({super.key});
@@ -153,21 +153,9 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 ],
               ),
               Spacer(),
-              Container(
+              SizedBox(
                 width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(RadiusPalette.full),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorPalette.smashedPumpkin800,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
+                child: DuolingoButton(
                   onPressed: () {
                     ref.read(projectProvider.notifier).setCategoryAndPlatforms(category[selectedCategory.value], selectedPlatforms.value.map((index) => platform[index]).toList());
                     Navigator.push(
@@ -176,21 +164,9 @@ class ManualCreatePage2 extends HookConsumerWidget{
                       )
                     );
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.smashedPumpkin600,
-                    foregroundColor: ColorPalette.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.full),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Next',
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  isEnabled: true,
+                  isLoading: false,
+                  text: 'Next',
                 ),
               ),
             ],

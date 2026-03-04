@@ -4,7 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 
 class ResetPasswordScreen extends HookConsumerWidget {
   final String? resetToken;

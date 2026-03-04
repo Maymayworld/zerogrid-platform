@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'reset_code_input_screen.dart';
 
 class ForgotPasswordScreen extends HookConsumerWidget {

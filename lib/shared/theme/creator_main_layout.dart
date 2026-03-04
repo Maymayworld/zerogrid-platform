@@ -13,7 +13,7 @@ import '../../features/creator/campaign/presentation/pages/campaign_screen.dart'
 import '../../features/creator/campaign/presentation/pages/upload_screen.dart';
 import '../../features/creator/campaign/presentation/providers/participation_service_provider.dart';
 import '../../features/creator/profile/profile_screen.dart';
-import '../../features/auth/presentation/widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import '../../features/organizer/campaign/data/models/campaign.dart';
 
 class CreatorMainLayout extends HookConsumerWidget {

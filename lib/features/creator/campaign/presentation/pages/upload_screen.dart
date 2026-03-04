@@ -11,7 +11,7 @@ import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/submission/data/models/social_connection.dart';
 import '../../../../creator/submission/presentation/providers/submission_providers.dart';
 import '../../../../creator/submission/presentation/pages/connected_accounts_screen.dart';
-import '../../../../auth/presentation/widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 
 class ProjectUploadScreen extends HookConsumerWidget {
   final String campaignId;

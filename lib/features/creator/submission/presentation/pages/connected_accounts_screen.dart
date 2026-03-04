@@ -4,7 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
-import '../../../../auth/presentation/widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import '../../data/models/social_connection.dart';
 import '../providers/submission_providers.dart';
 import '../../../../auth/presentation/providers/oauth_provider.dart';

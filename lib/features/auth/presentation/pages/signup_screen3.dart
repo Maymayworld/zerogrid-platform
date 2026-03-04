@@ -8,7 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
-import '../widgets/duolingo_form_components.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'signup_success_screen.dart';
 
 class SignUpScreen3 extends HookConsumerWidget {

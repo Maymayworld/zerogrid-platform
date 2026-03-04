@@ -75,7 +75,11 @@ class ProjectCard extends StatelessWidget {
                 return Container(
                   color: ColorPalette.neutral400,
                   child: Center(
-                    child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
+                    child: Icon(
+                      Icons.image,
+                      size: 50,
+                      color: ColorPalette.neutral400,
+                    ),
                   ),
                 );
               },
@@ -86,10 +90,7 @@ class ProjectCard extends StatelessWidget {
                 gradient: LinearGradient(
                   begin: Alignment.center,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    ColorPalette.neutral800,
-                  ],
+                  colors: [Colors.transparent, ColorPalette.neutral800],
                 ),
               ),
             ),
@@ -158,8 +159,12 @@ class ProjectCard extends StatelessWidget {
                           SizedBox(width: SpacePalette.sm),
                           _CardDuolingoCircleButton(
                             onPressed: onLike,
-                            icon: isLiked ? Icons.favorite : Icons.favorite_border,
-                            iconColor: isLiked ? ColorPalette.critical500 : ColorPalette.neutral800,
+                            icon: isLiked
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            iconColor: isLiked
+                                ? ColorPalette.critical500
+                                : ColorPalette.neutral800,
                           ),
                         ],
                       ),
@@ -219,10 +224,7 @@ class ProjectCard extends StatelessWidget {
       decoration: BoxDecoration(
         shape: BoxShape.circle,
         gradient: RadialGradient(
-          colors: [
-            Color(0xFFFFFFFF),
-            Color(0xFFD4D4D4),
-          ],
+          colors: [Color(0xFFFFFFFF), Color(0xFFD4D4D4)],
           stops: [0.5, 1.0],
         ),
       ),
@@ -236,10 +238,7 @@ class _CardDuolingoButton extends StatefulWidget {
   final VoidCallback onPressed;
   final Widget child;
 
-  const _CardDuolingoButton({
-    required this.onPressed,
-    required this.child,
-  });
+  const _CardDuolingoButton({required this.onPressed, required this.child});
 
   @override
   State<_CardDuolingoButton> createState() => _CardDuolingoButtonState();
@@ -266,7 +265,9 @@ class _CardDuolingoButtonState extends State<_CardDuolingoButton> {
           children: [
             // シャドウ
             Positioned(
-              left: 0, right: 0, bottom: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
               child: Container(
                 height: buttonHeight,
                 decoration: BoxDecoration(
@@ -278,7 +279,8 @@ class _CardDuolingoButtonState extends State<_CardDuolingoButton> {
             // サーフェス（押下時に下にずれて影が隠れる）
             AnimatedPositioned(
               duration: const Duration(milliseconds: 50),
-              left: 0, right: 0,
+              left: 0,
+              right: 0,
               top: _isPressed ? shadowOffset : 0,
               child: Container(
                 height: buttonHeight,
@@ -310,7 +312,8 @@ class _CardDuolingoCircleButton extends StatefulWidget {
   });
 
   @override
-  State<_CardDuolingoCircleButton> createState() => _CardDuolingoCircleButtonState();
+  State<_CardDuolingoCircleButton> createState() =>
+      _CardDuolingoCircleButtonState();
 }
 
 class _CardDuolingoCircleButtonState extends State<_CardDuolingoCircleButton> {
@@ -335,7 +338,9 @@ class _CardDuolingoCircleButtonState extends State<_CardDuolingoCircleButton> {
           children: [
             // シャドウ
             Positioned(
-              bottom: 0, left: 0, right: 0,
+              bottom: 0,
+              left: 0,
+              right: 0,
               child: Container(
                 width: buttonSize,
                 height: buttonSize,
@@ -348,7 +353,8 @@ class _CardDuolingoCircleButtonState extends State<_CardDuolingoCircleButton> {
             // サーフェス（押下時に下にずれて影が隠れる）
             AnimatedPositioned(
               duration: const Duration(milliseconds: 50),
-              left: 0, right: 0,
+              left: 0,
+              right: 0,
               top: _isPressed ? shadowOffset : 0,
               child: Container(
                 width: buttonSize,
@@ -359,11 +365,7 @@ class _CardDuolingoCircleButtonState extends State<_CardDuolingoCircleButton> {
                   border: Border.all(color: ColorPalette.neutral200),
                 ),
                 child: Center(
-                  child: Icon(
-                    widget.icon,
-                    color: widget.iconColor,
-                    size: 20,
-                  ),
+                  child: Icon(widget.icon, color: widget.iconColor, size: 20),
                 ),
               ),
             ),

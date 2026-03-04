@@ -1,6 +1,6 @@
-// lib/features/auth/presentation/widgets/duolingo_form_components.dart
+// lib/shared/widgets/duolingo_form_components.dart
 import 'package:flutter/material.dart';
-import '../../../../shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/theme/app_theme.dart';
 
 /// Duolingoスタイルのテキストフィールド
 class DuolingoTextField extends StatelessWidget {
@@ -78,6 +78,10 @@ class DuolingoButton extends StatefulWidget {
   final bool isEnabled;
   final bool isLoading;
   final String text;
+  final IconData? trailingIcon;
+  final bool enablePressAnimation;
+  final Color? buttonColor;
+  final Color? shadowColor;
 
   const DuolingoButton({
     Key? key,
@@ -85,6 +89,10 @@ class DuolingoButton extends StatefulWidget {
     required this.isEnabled,
     this.isLoading = false,
     required this.text,
+    this.trailingIcon,
+    this.enablePressAnimation = true,
+    this.buttonColor,
+    this.shadowColor,
   }) : super(key: key);
 
   @override
@@ -98,70 +106,111 @@ class _DuolingoButtonState extends State<DuolingoButton> {
 
   @override
   Widget build(BuildContext context) {
-    final bool showShadow = widget.isEnabled && !_isPressed;
+    final bool isPressed = widget.enablePressAnimation && _isPressed;
+    final bool showShadow = widget.isEnabled && !isPressed;
+    final Color activeButtonColor =
+        widget.buttonColor ?? ColorPalette.smashedPumpkin600;
+    final Color activeShadowColor =
+        widget.shadowColor ?? ColorPalette.smashedPumpkin700;
+
+    final buttonFace = Container(
+      height: ButtonSizePalette.button,
+      decoration: BoxDecoration(
+        color: widget.isEnabled
+            ? activeButtonColor
+            : ColorPalette.neutral200,
+        borderRadius: BorderRadius.circular(RadiusPalette.full),
+      ),
+      child: Center(
+        child: widget.isLoading
+            ? const SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  color: ColorPalette.white,
+                  strokeWidth: 2,
+                ),
+              )
+            : widget.trailingIcon != null
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    widget.text,
+                    style: widget.isEnabled
+                        ? TextStylePalette.buttonTextWhite
+                        : TextStylePalette.buttonTextDisabled,
+                  ),
+                  SizedBox(width: SpacePalette.sm),
+                  Icon(
+                    widget.trailingIcon!,
+                    size: 20,
+                    color: widget.isEnabled
+                        ? ColorPalette.white
+                        : ColorPalette.neutral400,
+                  ),
+                ],
+              )
+            : Text(
+                widget.text,
+                style: widget.isEnabled
+                    ? TextStylePalette.buttonTextWhite
+                    : TextStylePalette.buttonTextDisabled,
+              ),
+      ),
+    );
 
     return GestureDetector(
-      onTapDown:
-          widget.isEnabled ? (_) => setState(() => _isPressed = true) : null,
+      onTapDown: widget.isEnabled && widget.enablePressAnimation
+          ? (_) => setState(() => _isPressed = true)
+          : null,
       onTapUp: widget.isEnabled
           ? (_) {
-              setState(() => _isPressed = false);
+              if (widget.enablePressAnimation) {
+                setState(() => _isPressed = false);
+              }
               widget.onPressed();
             }
           : null,
-      onTapCancel:
-          widget.isEnabled ? () => setState(() => _isPressed = false) : null,
+      onTapCancel: widget.isEnabled && widget.enablePressAnimation
+          ? () => setState(() => _isPressed = false)
+          : null,
       child: SizedBox(
         height: ButtonSizePalette.button + shadowOffset,
         child: Stack(
           children: [
-            if (showShadow)
-              Positioned(
-                left: 0,
-                right: 0,
-                top: shadowOffset,
+            Positioned(
+              left: 0,
+              right: 0,
+              top: shadowOffset,
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 50),
+                opacity: showShadow ? 1 : 0,
                 child: Container(
                   height: ButtonSizePalette.button,
                   decoration: BoxDecoration(
-                    color: ColorPalette.smashedPumpkin700,
-                    borderRadius:
-                        BorderRadius.circular(RadiusPalette.full),
+                    color: activeShadowColor,
+                    borderRadius: BorderRadius.circular(RadiusPalette.full),
                   ),
                 ),
               ),
-            AnimatedPositioned(
-              duration: const Duration(milliseconds: 50),
-              left: 0,
-              right: 0,
-              top: _isPressed ? shadowOffset : 0,
-              child: Container(
-                height: ButtonSizePalette.button,
-                decoration: BoxDecoration(
-                  color: widget.isEnabled
-                      ? ColorPalette.smashedPumpkin600
-                      : ColorPalette.neutral200,
-                  borderRadius:
-                      BorderRadius.circular(RadiusPalette.full),
-                ),
-                child: Center(
-                  child: widget.isLoading
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            color: ColorPalette.white,
-                            strokeWidth: 2,
-                          ),
-                        )
-                      : Text(
-                          widget.text,
-                          style: widget.isEnabled
-                              ? TextStylePalette.buttonTextWhite
-                              : TextStylePalette.buttonTextDisabled,
-                        ),
-                ),
-              ),
             ),
+            if (widget.enablePressAnimation)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 50),
+                left: 0,
+                right: 0,
+                top: isPressed ? shadowOffset : 0,
+                child: buttonFace,
+              )
+            else
+              Positioned(
+                left: 0,
+                right: 0,
+                top: 0,
+                child: buttonFace,
+              ),
           ],
         ),
       ),
@@ -183,8 +232,7 @@ class DuolingoOutlineButton extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<DuolingoOutlineButton> createState() =>
-      _DuolingoOutlineButtonState();
+  State<DuolingoOutlineButton> createState() => _DuolingoOutlineButtonState();
 }
 
 class _DuolingoOutlineButtonState extends State<DuolingoOutlineButton> {
@@ -232,8 +280,7 @@ class _DuolingoOutlineButtonState extends State<DuolingoOutlineButton> {
                     height: buttonHeight,
                     decoration: BoxDecoration(
                       color: ColorPalette.neutral200,
-                      borderRadius:
-                          BorderRadius.circular(RadiusPalette.full),
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
                     ),
                   ),
                 ),
@@ -246,10 +293,11 @@ class _DuolingoOutlineButtonState extends State<DuolingoOutlineButton> {
                   height: buttonHeight,
                   decoration: BoxDecoration(
                     color: ColorPalette.white,
-                    borderRadius:
-                        BorderRadius.circular(RadiusPalette.full),
+                    borderRadius: BorderRadius.circular(RadiusPalette.full),
                     border: Border.all(
-                        color: ColorPalette.neutral200, width: 2),
+                      color: ColorPalette.neutral200,
+                      width: 2,
+                    ),
                   ),
                   child: Center(child: content),
                 ),

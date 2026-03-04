@@ -1,10 +1,10 @@
 // lib/shared/theme/organizer_main_layout.dart
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../features/organizer/home/presentation/home_screen.dart';
+import '../../features/organizer/home/presentation/providers/organizer_tab_index_provider.dart';
 import '../../features/organizer/campaign/presentation/pages/campaign_screen.dart';
 import '../../features/organizer/campaign/presentation/pages/create/create_screen.dart';
 import '../../features/organizer/chat/presentation/chat_list_screen.dart';
@@ -15,7 +15,7 @@ import '../../features/organizer/approval/presentation/providers/approval_provid
 class OrganizerMainLayout extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = useState(0);
+    final currentIndex = ref.watch(organizerTabIndexProvider);
     final hasPendingRequests = ref.watch(hasPendingRequestsProvider);
 
     // 中央ボタン（index 2）の画面を動的に切り替え
@@ -34,7 +34,7 @@ class OrganizerMainLayout extends HookConsumerWidget {
           // メインコンテンツ
           Positioned.fill(
             child: IndexedStack(
-              index: currentIndex.value,
+              index: currentIndex,
               children: screens,
             ),
           ),
@@ -48,8 +48,8 @@ class OrganizerMainLayout extends HookConsumerWidget {
               child: Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.sm),
                 child: _LiquidGlassNavBar(
-                  currentIndex: currentIndex.value,
-                  onTap: (index) => currentIndex.value = index,
+                  currentIndex: currentIndex,
+                  onTap: (index) => ref.read(organizerTabIndexProvider.notifier).state = index,
                   hasPendingRequests: hasPendingRequests,
                 ),
               ),

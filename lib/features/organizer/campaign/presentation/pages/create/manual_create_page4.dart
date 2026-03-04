@@ -6,6 +6,7 @@ import 'package:zero_grid/features/organizer/campaign/data/services/campaign_ser
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page5.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
+import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 class ManualCreatePage4 extends HookConsumerWidget{
@@ -86,22 +87,10 @@ class ManualCreatePage4 extends HookConsumerWidget{
                 )
               ),
               Spacer(),
-              Container(
+              SizedBox(
                 width: double.infinity,
-                height: 52,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(RadiusPalette.full),
-                  boxShadow: [
-                    BoxShadow(
-                      color: ColorPalette.smashedPumpkin800,
-                      offset: Offset(0, 4),
-                      blurRadius: 0,
-                      spreadRadius: 0,
-                    ),
-                  ],
-                ),
-                child: ElevatedButton(
-                  onPressed: isChecking.value ? null : () async {
+                child: DuolingoButton(
+                  onPressed: () async {
                     final budgetText = budgetController.text.trim();
                     if (budgetText.isEmpty) return;
                     final budget = int.tryParse(budgetText);
@@ -139,21 +128,9 @@ class ManualCreatePage4 extends HookConsumerWidget{
                       isChecking.value = false;
                     }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.smashedPumpkin600,
-                    foregroundColor: ColorPalette.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.full),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Next',
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  isEnabled: !isChecking.value,
+                  isLoading: isChecking.value,
+                  text: 'Next',
                 ),
               ),
             ],

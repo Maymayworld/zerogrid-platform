@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'login_screen.dart';
 import '../../data/models/user_role.dart';
 import '../../../../shared/theme/app_theme.dart';
+import '../../../../shared/widgets/duolingo_form_components.dart';
 
 class SelectRoleScreen extends StatefulWidget {
   @override
@@ -10,13 +11,9 @@ class SelectRoleScreen extends StatefulWidget {
 }
 
 class _SelectRoleScreenState extends State<SelectRoleScreen>
-    with SingleTickerProviderStateMixin {
+{
   // true = Creator (yellow), false = Organizer (blue)
   bool _isCreator = true;
-  late AnimationController _animationController;
-  late Animation<double> _slideAnimation;
-  late Animation<Color?> _buttonColorAnimation;
-  late Animation<Color?> _buttonShadowAnimation;
 
   // Duolingo button colors
   static const Color _organizerButtonColor = Color(0xFF2090FF);
@@ -24,45 +21,11 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
   static const Color _creatorButtonColor = Color(0xFFFBBF24);
   static const Color _creatorShadowColor = Color(0xFFF59E0B);
 
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 300),
-      vsync: this,
-    );
-
-    _slideAnimation = Tween<double>(begin: 1, end: 0).animate(
-      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
-    );
-
-    _buttonColorAnimation = ColorTween(
-      begin: _creatorButtonColor,
-      end: _organizerButtonColor,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
-
-    _buttonShadowAnimation = ColorTween(
-      begin: _creatorShadowColor,
-      end: _organizerShadowColor,
-    ).animate(CurvedAnimation(parent: _animationController, curve: Curves.easeInOut));
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
-
   void _selectRole(bool isCreator) {
     if (_isCreator == isCreator) return;
     setState(() {
       _isCreator = isCreator;
     });
-    if (isCreator) {
-      _animationController.reverse();
-    } else {
-      _animationController.forward();
-    }
   }
 
   void _onContinue() {
@@ -208,16 +171,17 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                 // Bottom button
                 Padding(
                   padding: const EdgeInsets.all(SpacePalette.base),
-                  child: AnimatedBuilder(
-                    animation: _animationController,
-                    builder: (context, child) {
-                      return _buildDuolingoButton(
-                        text: 'Count Me In!',
-                        color: _buttonColorAnimation.value ?? _creatorButtonColor,
-                        shadowColor: _buttonShadowAnimation.value ?? _creatorShadowColor,
-                        onPressed: _onContinue,
-                      );
-                    },
+                  child: DuolingoButton(
+                    onPressed: _onContinue,
+                    isEnabled: true,
+                    isLoading: false,
+                    text: 'Count Me In!',
+                    buttonColor: _isCreator
+                        ? _creatorButtonColor
+                        : _organizerButtonColor,
+                    shadowColor: _isCreator
+                        ? _creatorShadowColor
+                        : _organizerShadowColor,
                   ),
                 ),
 
@@ -318,60 +282,4 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
     );
   }
 
-  Widget _buildDuolingoButton({
-    required String text,
-    required Color color,
-    required Color shadowColor,
-    required VoidCallback onPressed,
-  }) {
-    const double shadowOffset = 4.0;
-    const double buttonHeight = 52.0;
-    
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: double.infinity,
-        height: buttonHeight + shadowOffset,
-        child: Stack(
-          children: [
-            // Shadow layer (4px below)
-            Positioned(
-              left: 0,
-              right: 0,
-              top: shadowOffset,
-              height: buttonHeight,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: shadowColor,
-                  borderRadius: BorderRadius.circular(buttonHeight / 2),
-                ),
-              ),
-            ),
-            // Surface layer (top)
-            Positioned(
-              left: 0,
-              right: 0,
-              top: 0,
-              height: buttonHeight,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(buttonHeight / 2),
-                ),
-                child: Center(
-                  child: Text(
-                    text,
-                    style: TextStylePalette.buttonTextWhite.copyWith(
-                      color: ColorPalette.white,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
