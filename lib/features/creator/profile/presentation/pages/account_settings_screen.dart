@@ -49,10 +49,20 @@ class AccountSettingsScreen extends HookConsumerWidget {
       }
     }
 
+    // Auto-refresh when app resumes (after returning from browser OAuth)
+    final appLifecycleState = useAppLifecycleState();
+
     useEffect(() {
       loadConnections();
       return null;
     }, []);
+
+    useEffect(() {
+      if (appLifecycleState == AppLifecycleState.resumed) {
+        loadConnections();
+      }
+      return null;
+    }, [appLifecycleState]);
 
     // Get connection for a provider
     SocialConnection? getConnectionFor(String provider) {

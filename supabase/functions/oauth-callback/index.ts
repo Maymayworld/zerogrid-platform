@@ -3,30 +3,10 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
-const successHtml = `<html>
-  <head><meta charset="utf-8"></head>
-  <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
-    <div style="text-align: center;">
-      <div style="font-size: 48px; margin-bottom: 16px;">&#x2713;</div>
-      <h2 style="margin: 0 0 8px 0;">Connected!</h2>
-      <p style="color: #666; margin: 0;">You can close this window</p>
-    </div>
-  </body>
-  <script>setTimeout(() => { window.close(); }, 2000);</script>
-</html>`
+const successText = `Connected! You can close this window and return to the app.`
 
-function errorHtml(message: string) {
-  return `<html>
-    <head><meta charset="utf-8"></head>
-    <body style="font-family: system-ui; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0;">
-      <div style="text-align: center;">
-        <div style="font-size: 48px; margin-bottom: 16px;">&#x2717;</div>
-        <h2 style="margin: 0 0 8px 0;">Connection Failed</h2>
-        <p style="color: #666; margin: 0;">${message}</p>
-      </div>
-    </body>
-    <script>setTimeout(() => { window.close(); }, 3000);</script>
-  </html>`
+function errorText(message: string) {
+  return `Connection failed: ${message}`
 }
 
 serve(async (req) => {
@@ -36,11 +16,11 @@ serve(async (req) => {
   const error = url.searchParams.get('error')
 
   if (error) {
-    return new Response(errorHtml(error), { headers: { 'Content-Type': 'text/html' } })
+    return new Response(errorText(error), {})
   }
 
   if (!code || !state) {
-    return new Response(errorHtml('Missing code or state'), { headers: { 'Content-Type': 'text/html' } })
+    return new Response(errorText('Missing code or state'), {})
   }
 
   try {
@@ -251,12 +231,12 @@ serve(async (req) => {
       throw new Error(`Database error: ${dbError.message}`)
     }
 
-    return new Response(successHtml, { headers: { 'Content-Type': 'text/html; charset=utf-8' } })
+    return new Response(successText)
   } catch (error) {
     console.error('OAuth callback error:', error)
     return new Response(
       errorHtml(error.message),
-      { headers: { 'Content-Type': 'text/html; charset=utf-8' } }
+      {}
     )
   }
 })
