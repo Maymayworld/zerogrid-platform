@@ -193,43 +193,43 @@ class PersonalChatScreen extends HookConsumerWidget {
                           ),
           ),
           // 入力フィールド
-          Container(
-            padding: EdgeInsets.all(SpacePalette.base),
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral100,
-              border: Border(
-                top: BorderSide(
-                  color: ColorPalette.neutral200,
-                  width: 1.5,
-                ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                SpacePalette.base,
+                SpacePalette.sm,
+                SpacePalette.base,
+                SpacePalette.base,
               ),
-            ),
-            child: SafeArea(
               child: Row(
                 children: [
                   Expanded(
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: ColorPalette.white,
-                        borderRadius: BorderRadius.circular(RadiusPalette.lg),
-                      ),
-                      child: TextField(
-                        controller: messageController,
-                        style: TextStylePalette.normalText,
-                        textInputAction: TextInputAction.send,
-                        onSubmitted: (_) => sendMessage(),
-                        decoration: InputDecoration(
-                          hintText: 'Message...',
-                          hintStyle: TextStylePalette.hintText,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(
-                            horizontal: SpacePalette.base,
-                            vertical: SpacePalette.sm,
-                          ),
-                          suffixIcon: Icon(
-                            Icons.emoji_emotions_outlined,
-                            color: ColorPalette.neutral400,
-                          ),
+                    child: TextField(
+                      controller: messageController,
+                      style: TextStylePalette.normalText,
+                      textInputAction: TextInputAction.send,
+                      onSubmitted: (_) => sendMessage(),
+                      decoration: InputDecoration(
+                        hintText: 'Message...',
+                        hintStyle: TextStylePalette.hintText,
+                        filled: true,
+                        fillColor: ColorPalette.white,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(RadiusPalette.full),
+                          borderSide: BorderSide(color: ColorPalette.neutral200),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(RadiusPalette.full),
+                          borderSide: BorderSide(color: ColorPalette.neutral200),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(RadiusPalette.full),
+                          borderSide: BorderSide(color: ColorPalette.neutral400),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: SpacePalette.base,
+                          vertical: SpacePalette.sm,
                         ),
                       ),
                     ),
@@ -237,12 +237,20 @@ class PersonalChatScreen extends HookConsumerWidget {
                   SizedBox(width: SpacePalette.sm),
                   GestureDetector(
                     onTap: isSending.value ? null : sendMessage,
-                    child: Icon(
-                      isSending.value ? Icons.hourglass_empty : Icons.send,
-                      color: isSending.value
-                          ? ColorPalette.neutral400
-                          : ColorPalette.neutral800,
-                      size: 24,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: isSending.value
+                            ? ColorPalette.neutral400
+                            : ColorPalette.smashedPumpkin600,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.arrow_upward,
+                        color: ColorPalette.white,
+                        size: 20,
+                      ),
                     ),
                   ),
                 ],

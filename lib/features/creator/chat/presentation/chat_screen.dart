@@ -230,24 +230,6 @@ class ProjectChatScreen extends HookConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    // + ボタン
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: ColorPalette.neutral200,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          color: ColorPalette.neutral500,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: SpacePalette.sm),
                     // テキストフィールド
                     Expanded(
                       child: TextField(

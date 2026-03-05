@@ -221,69 +221,44 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
             left: 0,
             right: 0,
             bottom: 0,
-            child: Container(
-              padding: EdgeInsets.fromLTRB(
-                SpacePalette.base,
-                SpacePalette.sm,
-                SpacePalette.base,
-                SpacePalette.base,
-              ),
-              decoration: BoxDecoration(
-                color: ColorPalette.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(RadiusPalette.xl),
-                  topRight: Radius.circular(RadiusPalette.xl),
+            child: SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.fromLTRB(
+                  SpacePalette.base,
+                  SpacePalette.sm,
+                  SpacePalette.base,
+                  SpacePalette.base,
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: ColorPalette.neutral800.withOpacity(0.06),
-                    offset: Offset(0, -2),
-                    blurRadius: 8,
-                  ),
-                ],
-              ),
-              child: SafeArea(
-                top: false,
                 child: Row(
                   children: [
-                    // + ボタン
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        width: 36,
-                        height: 36,
-                        decoration: BoxDecoration(
-                          color: ColorPalette.neutral100,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          color: ColorPalette.neutral500,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    SizedBox(width: SpacePalette.sm),
                     // テキストフィールド
                     Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorPalette.neutral100,
-                          borderRadius: BorderRadius.circular(RadiusPalette.full),
-                        ),
-                        child: TextField(
-                          controller: messageController,
-                          style: TextStylePalette.normalText,
-                          textInputAction: TextInputAction.send,
-                          onSubmitted: (_) => sendMessage(),
-                          decoration: InputDecoration(
-                            hintText: 'Message...',
-                            hintStyle: TextStylePalette.hintText,
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: SpacePalette.base,
-                              vertical: SpacePalette.sm,
-                            ),
+                      child: TextField(
+                        controller: messageController,
+                        style: TextStylePalette.normalText,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: (_) => sendMessage(),
+                        decoration: InputDecoration(
+                          hintText: 'Message...',
+                          hintStyle: TextStylePalette.hintText,
+                          filled: true,
+                          fillColor: ColorPalette.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            borderSide: BorderSide(color: ColorPalette.neutral200),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            borderSide: BorderSide(color: ColorPalette.neutral200),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            borderSide: BorderSide(color: ColorPalette.neutral400),
+                          ),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: SpacePalette.base,
+                            vertical: SpacePalette.sm,
                           ),
                         ),
                       ),
