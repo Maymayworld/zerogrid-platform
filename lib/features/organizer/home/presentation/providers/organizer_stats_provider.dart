@@ -9,19 +9,19 @@ final organizerStatsServiceProvider = Provider<OrganizerStatsService>((ref) {
 });
 
 /// 自分のキャンペーン一覧と統計
-final myCampaignStatsProvider = FutureProvider<List<CampaignStats>>((ref) async {
+final myCampaignStatsProvider = FutureProvider.autoDispose<List<CampaignStats>>((ref) async {
   final service = ref.read(organizerStatsServiceProvider);
   return service.getMyCampaignStats();
 });
 
 /// 累計視聴回数
-final totalViewsProvider = FutureProvider<int>((ref) async {
+final totalViewsProvider = FutureProvider.autoDispose<int>((ref) async {
   final service = ref.read(organizerStatsServiceProvider);
   return service.getTotalViewsAcrossAllCampaigns();
 });
 
 /// アクティブなキャンペーン数
-final activeCampaignCountProvider = FutureProvider<int>((ref) async {
+final activeCampaignCountProvider = FutureProvider.autoDispose<int>((ref) async {
   final service = ref.read(organizerStatsServiceProvider);
   return service.getActiveCampaignCount();
 });
