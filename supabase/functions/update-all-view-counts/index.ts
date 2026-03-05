@@ -88,6 +88,7 @@ serve(async (req) => {
         creator_id,
         campaign_id,
         view_count,
+        social_connection_id,
         campaigns!inner(status, deadline)
       `)
       .eq('status', 'approved')
@@ -166,6 +167,7 @@ serve(async (req) => {
             video_url: url,
             platform: sub.platform,
             user_id: sub.creator_id,
+            social_connection_id: sub.social_connection_id,
           }),
         })
 

@@ -32,6 +32,9 @@ class Submission {
   final String? platformPostId;
   final String? platformPostUrl;
 
+  // Multi-account OAuth
+  final String? socialConnectionId;
+
   // Joined data
   final String? campaignName;
   final String? creatorName;
@@ -59,6 +62,7 @@ class Submission {
     this.uploadStatus,
     this.platformPostId,
     this.platformPostUrl,
+    this.socialConnectionId,
     this.campaignName,
     this.creatorName,
     this.creatorAvatarUrl,
@@ -92,6 +96,7 @@ class Submission {
       uploadStatus: map['upload_status'] as String?,
       platformPostId: map['platform_post_id'] as String?,
       platformPostUrl: map['platform_post_url'] as String?,
+      socialConnectionId: map['social_connection_id'] as String?,
       campaignName: map['campaign_name'] as String?,
       creatorName: map['creator_name'] as String?,
       creatorAvatarUrl: map['creator_avatar_url'] as String?,
@@ -121,6 +126,7 @@ class Submission {
       'upload_status': uploadStatus,
       'platform_post_id': platformPostId,
       'platform_post_url': platformPostUrl,
+      'social_connection_id': socialConnectionId,
     };
   }
 
@@ -146,6 +152,7 @@ class Submission {
     String? uploadStatus,
     String? platformPostId,
     String? platformPostUrl,
+    String? socialConnectionId,
     String? campaignName,
     String? creatorName,
     String? creatorAvatarUrl,
@@ -172,6 +179,7 @@ class Submission {
       uploadStatus: uploadStatus ?? this.uploadStatus,
       platformPostId: platformPostId ?? this.platformPostId,
       platformPostUrl: platformPostUrl ?? this.platformPostUrl,
+      socialConnectionId: socialConnectionId ?? this.socialConnectionId,
       campaignName: campaignName ?? this.campaignName,
       creatorName: creatorName ?? this.creatorName,
       creatorAvatarUrl: creatorAvatarUrl ?? this.creatorAvatarUrl,

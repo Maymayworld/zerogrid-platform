@@ -4,72 +4,43 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/submission.dart';
 import '../../../../../shared/data/services/notification_service.dart';
 
+/// Represents a target platform + account for submission
+class PlatformAccountTarget {
+  final String platform;
+  final String connectionId;
+
+  const PlatformAccountTarget({
+    required this.platform,
+    required this.connectionId,
+  });
+}
+
 class SubmissionService {
   final SupabaseClient _supabase = Supabase.instance.client;
 
   String? get _userId => _supabase.auth.currentUser?.id;
 
-  /// Check if a URL has already been submitted for a campaign
-  Future<bool> isDuplicateUrl(String campaignId, String videoUrl) async {
-    if (_userId == null) return false;
-    final normalized = videoUrl.trim().toLowerCase();
-    final response = await _supabase
-        .from('submission_requests')
-        .select('id')
-        .eq('campaign_id', campaignId)
-        .or('video_url.ilike.$normalized,platform_post_url.ilike.$normalized');
-    return (response as List).isNotEmpty;
-  }
-
-  /// Create a URL-based submission request
-  Future<Submission> createUrlSubmission({
-    required String campaignId,
-    required String organizerId,
-    required String videoUrl,
-    required String platform,
-    String? title,
-  }) async {
-    if (_userId == null) throw Exception('User not logged in');
-
-    // Duplicate check
-    final isDuplicate = await isDuplicateUrl(campaignId, videoUrl);
-    if (isDuplicate) {
-      throw Exception('This URL has already been submitted for this campaign');
-    }
-
-    final response = await _supabase.from('submission_requests').insert({
-      'campaign_id': campaignId,
-      'creator_id': _userId,
-      'organizer_id': organizerId,
-      'video_url': videoUrl.trim(),
-      'platform': platform.toLowerCase(),
-      'video_title': title ?? '',
-      'status': 'pending',
-    }).select().single();
-
-    await _sendSubmissionNotification(campaignId, organizerId);
-    return Submission.fromMap(response);
-  }
-
-  /// Create a file-based submission (video upload)
-  Future<Submission> createFileSubmission({
+  /// Create file-based submissions for multiple platform+account targets
+  /// Video is uploaded once, N submission_requests records are created
+  Future<List<Submission>> createFileSubmissions({
     required String campaignId,
     required String organizerId,
     required Uint8List videoBytes,
     required String fileName,
-    required List<String> targetPlatforms,
+    required List<PlatformAccountTarget> targets,
     Uint8List? thumbnailBytes,
     String? title,
     int? videoDuration,
     void Function(double progress)? onProgress,
   }) async {
     if (_userId == null) throw Exception('User not logged in');
+    if (targets.isEmpty) throw Exception('At least one target platform is required');
 
     final timestamp = DateTime.now().millisecondsSinceEpoch;
     final ext = fileName.split('.').last.toLowerCase();
     final videoPath = '$_userId/${timestamp}_video.$ext';
 
-    // 1. Upload video to Supabase Storage
+    // 1. Upload video to Supabase Storage (once)
     onProgress?.call(0.1);
 
     await _supabase.storage.from('videos').uploadBinary(
@@ -102,31 +73,37 @@ class SubmissionService {
 
     onProgress?.call(0.8);
 
-    // 3. Create submission record(s) for each target platform
-    final primaryPlatform = targetPlatforms.isNotEmpty
-        ? targetPlatforms.first.toLowerCase()
-        : 'youtube';
+    // 3. Create submission record for each target
+    final records = targets.map((target) {
+      return {
+        'campaign_id': campaignId,
+        'creator_id': _userId,
+        'organizer_id': organizerId,
+        'platform': target.platform.toLowerCase(),
+        'social_connection_id': target.connectionId,
+        'video_title': title ?? '',
+        'video_thumbnail_url': thumbnailUrl,
+        'local_video_url': videoUrl,
+        'video_file_size': videoBytes.length,
+        'video_duration': videoDuration,
+        'upload_status': 'completed',
+        'status': 'pending',
+      };
+    }).toList();
 
-    final response = await _supabase.from('submission_requests').insert({
-      'campaign_id': campaignId,
-      'creator_id': _userId,
-      'organizer_id': organizerId,
-      'platform': primaryPlatform,
-      'video_title': title ?? '',
-      'video_thumbnail_url': thumbnailUrl,
-      'local_video_url': videoUrl,
-      'video_file_size': videoBytes.length,
-      'video_duration': videoDuration,
-      'upload_status': 'completed',
-      'status': 'pending',
-    }).select().single();
+    final response = await _supabase
+        .from('submission_requests')
+        .insert(records)
+        .select();
 
     onProgress?.call(1.0);
 
     // Organizerに通知
     await _sendSubmissionNotification(campaignId, organizerId);
 
-    return Submission.fromMap(response);
+    return (response as List)
+        .map((map) => Submission.fromMap(map))
+        .toList();
   }
 
   String _getVideoContentType(String ext) {

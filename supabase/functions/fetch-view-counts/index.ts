@@ -136,14 +136,15 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
 
-    const { submission_id, video_url, platform, user_id } = await req.json()
+    const { submission_id, video_url, platform, user_id, social_connection_id } = await req.json()
 
     // platform_post_url を優先的に取得
     let effectiveUrl = video_url
+    let submissionConnectionId = social_connection_id
     if (submission_id) {
       const { data: sub } = await supabase
         .from('submission_requests')
-        .select('platform_post_url, video_url')
+        .select('platform_post_url, video_url, social_connection_id')
         .eq('id', submission_id)
         .single()
 
@@ -151,6 +152,9 @@ serve(async (req) => {
         effectiveUrl = sub.platform_post_url
       } else if (sub?.video_url) {
         effectiveUrl = sub.video_url
+      }
+      if (sub?.social_connection_id) {
+        submissionConnectionId = sub.social_connection_id
       }
     }
 
@@ -165,15 +169,28 @@ serve(async (req) => {
     let accessToken: string | undefined
 
     // ユーザーのアクセストークンを取得（TikTok, Instagram用）
-    if (user_id && (platform === 'tiktok' || platform === 'instagram')) {
-      const { data: connection } = await supabase
-        .from('social_connections')
-        .select('access_token')
-        .eq('user_id', user_id)
-        .eq('platform', platform)
-        .single()
-
-      accessToken = connection?.access_token
+    if (platform === 'tiktok' || platform === 'instagram') {
+      // social_connection_id がある場合はそれを使用
+      if (submissionConnectionId) {
+        const { data: connection } = await supabase
+          .from('social_connections')
+          .select('access_token')
+          .eq('id', submissionConnectionId)
+          .single()
+        accessToken = connection?.access_token
+      }
+      // フォールバック: user_id + platform
+      if (!accessToken && user_id) {
+        const { data: connection } = await supabase
+          .from('social_connections')
+          .select('access_token')
+          .eq('user_id', user_id)
+          .eq('provider', platform)
+          .eq('status', 'connected')
+          .limit(1)
+          .maybeSingle()
+        accessToken = connection?.access_token
+      }
     }
 
     // プラットフォームごとに視聴回数を取得

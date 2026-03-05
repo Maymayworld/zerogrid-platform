@@ -7,8 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:video_compress/video_compress.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
-import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/submission/data/models/social_connection.dart';
+import '../../../../creator/submission/data/services/submission_service.dart';
 import '../../../../creator/submission/presentation/providers/submission_providers.dart';
 import '../../../../creator/submission/presentation/pages/connected_accounts_screen.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
@@ -30,14 +30,10 @@ class ProjectUploadScreen extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final titleController = useTextEditingController();
-    final urlController = useTextEditingController();
     final isSubmitting = useState(false);
     final uploadProgress = useState(0.0);
     final connections = useState<List<SocialConnection>>([]);
     final isLoadingData = useState(true);
-
-    // Mode: 0 = file upload, 1 = URL
-    final mode = useState(0);
 
     // Video file state
     final selectedVideoPath = useState<String?>(null);
@@ -45,12 +41,9 @@ class ProjectUploadScreen extends HookConsumerWidget {
     final selectedVideoSize = useState<int?>(null);
     final videoDuration = useState<int?>(null);
     final videoThumbnailBytes = useState<Uint8List?>(null);
-    final selectedPlatforms = useState<Set<String>>({'YouTube'});
 
-    // URL mode: selected platform
-    final urlPlatform = useState<String>(
-      platforms.isNotEmpty ? platforms.first.toLowerCase() : 'youtube',
-    );
+    // Selected targets (platform + connectionId)
+    final selectedTargets = useState<List<PlatformAccountTarget>>([]);
 
     useEffect(() {
       Future<void> loadData() async {
@@ -109,9 +102,69 @@ class ProjectUploadScreen extends HookConsumerWidget {
       }
     }
 
+    String providerToPlatform(String provider) {
+      switch (provider.toLowerCase()) {
+        case 'youtube': return 'YouTube';
+        case 'instagram': return 'Instagram';
+        case 'tiktok': return 'TikTok';
+        default: return provider;
+      }
+    }
+
+    // Get connected accounts grouped by platform
+    List<SocialConnection> connectionsForPlatform(String platformKey) {
+      return connections.value
+          .where((c) => c.isConnected && c.provider.toLowerCase() == platformKey.toLowerCase())
+          .toList();
+    }
+
+    // Check if a platform is selected in targets
+    bool isPlatformSelected(String platformKey) {
+      return selectedTargets.value.any((t) => t.platform.toLowerCase() == platformKey.toLowerCase());
+    }
+
+    // Get selected connection for a platform
+    PlatformAccountTarget? getTargetForPlatform(String platformKey) {
+      try {
+        return selectedTargets.value.firstWhere((t) => t.platform.toLowerCase() == platformKey.toLowerCase());
+      } catch (_) {
+        return null;
+      }
+    }
+
+    // Toggle platform selection
+    void togglePlatform(String platformKey) {
+      final key = platformKey.toLowerCase();
+      final current = List<PlatformAccountTarget>.from(selectedTargets.value);
+
+      if (isPlatformSelected(key)) {
+        current.removeWhere((t) => t.platform.toLowerCase() == key);
+      } else {
+        // Auto-select account if only one exists
+        final accts = connectionsForPlatform(key);
+        if (accts.isNotEmpty) {
+          current.add(PlatformAccountTarget(
+            platform: key,
+            connectionId: accts.first.id,
+          ));
+        }
+      }
+      selectedTargets.value = current;
+    }
+
+    // Change account for a platform
+    void selectAccountForPlatform(String platformKey, String connectionId) {
+      final key = platformKey.toLowerCase();
+      final current = List<PlatformAccountTarget>.from(selectedTargets.value);
+      current.removeWhere((t) => t.platform.toLowerCase() == key);
+      current.add(PlatformAccountTarget(platform: key, connectionId: connectionId));
+      selectedTargets.value = current;
+    }
+
     // File upload submission
     Future<void> handleFileSubmit() async {
       if (selectedVideoPath.value == null) return;
+      if (selectedTargets.value.isEmpty) return;
       if (selectedVideoSize.value != null && selectedVideoSize.value! > 500 * 1024 * 1024) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Video must be under 500MB'), backgroundColor: Colors.red),
@@ -145,12 +198,12 @@ class ProjectUploadScreen extends HookConsumerWidget {
         uploadProgress.value = 0.3;
 
         final submissionService = ref.read(submissionServiceProvider);
-        await submissionService.createFileSubmission(
+        await submissionService.createFileSubmissions(
           campaignId: campaignId,
           organizerId: organizerId,
           videoBytes: videoBytes,
           fileName: selectedVideoName.value ?? 'video.mp4',
-          targetPlatforms: selectedPlatforms.value.toList(),
+          targets: selectedTargets.value,
           thumbnailBytes: videoThumbnailBytes.value,
           title: titleController.text.trim().isNotEmpty ? titleController.text.trim() : null,
           videoDuration: videoDuration.value,
@@ -177,45 +230,6 @@ class ProjectUploadScreen extends HookConsumerWidget {
       }
     }
 
-    // URL submission
-    Future<void> handleUrlSubmit() async {
-      final url = urlController.text.trim();
-      if (url.isEmpty) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please enter a video URL')),
-        );
-        return;
-      }
-
-      isSubmitting.value = true;
-
-      try {
-        final submissionService = ref.read(submissionServiceProvider);
-        await submissionService.createUrlSubmission(
-          campaignId: campaignId,
-          organizerId: organizerId,
-          videoUrl: url,
-          platform: urlPlatform.value,
-          title: titleController.text.trim().isNotEmpty ? titleController.text.trim() : null,
-        );
-
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('URL submitted successfully!'), backgroundColor: ColorPalette.positive500),
-          );
-          Navigator.pop(context, true);
-        }
-      } catch (e) {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('$e'), backgroundColor: Colors.red),
-          );
-        }
-      } finally {
-        isSubmitting.value = false;
-      }
-    }
-
     String formatBytes(int bytes) {
       final mb = bytes / (1024 * 1024);
       if (mb >= 1000) return '${(mb / 1024).toStringAsFixed(1)} GB';
@@ -228,39 +242,11 @@ class ProjectUploadScreen extends HookConsumerWidget {
       return '${m.toString().padLeft(2, '0')}:${s.toString().padLeft(2, '0')}';
     }
 
-    String providerToPlatform(String provider) {
-      switch (provider.toLowerCase()) {
-        case 'youtube': return 'YouTube';
-        case 'instagram': return 'Instagram';
-        case 'tiktok': return 'TikTok';
-        default: return provider;
-      }
-    }
-
-    // Connected accounts (for file upload mode)
-    final connectedAccounts = connections.value
-        .where((c) => c.isConnected && platforms.any((p) => p.toLowerCase() == c.provider.toLowerCase()))
-        .toList();
-    final selectedAccountId = useState<String?>(
-      connectedAccounts.isNotEmpty ? connectedAccounts.first.id : null,
-    );
-    if (connectedAccounts.isNotEmpty && !connectedAccounts.any((a) => a.id == selectedAccountId.value)) {
-      selectedAccountId.value = connectedAccounts.first.id;
-    }
-    final selectedAccount = connectedAccounts.cast<SocialConnection?>().firstWhere(
-      (a) => a?.id == selectedAccountId.value,
-      orElse: () => null,
-    );
-    if (selectedAccount != null) {
-      selectedPlatforms.value = {providerToPlatform(selectedAccount.provider)};
-    }
-
-    final isFileMode = mode.value == 0;
     final hasVideo = selectedVideoPath.value != null;
-    final hasUrl = urlController.text.trim().isNotEmpty;
-    final canSubmitFile = hasVideo && selectedAccount != null && !isSubmitting.value;
-    final canSubmitUrl = hasUrl && !isSubmitting.value;
-    final canSubmit = isFileMode ? canSubmitFile : canSubmitUrl;
+    final canSubmit = hasVideo && selectedTargets.value.isNotEmpty && !isSubmitting.value;
+
+    // Check if any platform has connected accounts
+    final hasAnyConnection = connections.value.any((c) => c.isConnected);
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -304,36 +290,46 @@ class ProjectUploadScreen extends HookConsumerWidget {
                               ],
                             ),
                           ),
-                          SizedBox(height: SpacePalette.base),
-
-                          // Mode toggle
-                          Container(
-                            padding: EdgeInsets.all(SpacePalette.xs),
-                            decoration: BoxDecoration(
-                              color: ColorPalette.neutral200,
-                              borderRadius: BorderRadius.circular(RadiusPalette.base),
-                            ),
-                            child: Row(
-                              children: [
-                                _buildModeTab('Upload Video', 0, mode),
-                                SizedBox(width: SpacePalette.xs),
-                                _buildModeTab('Paste URL', 1, mode),
-                              ],
-                            ),
-                          ),
                           SizedBox(height: SpacePalette.base + SpacePalette.sm),
 
-                          if (isFileMode) ...[
-                            // === FILE UPLOAD MODE ===
-                            // Platform account selector
-                            Text('Platform', style: TextStylePalette.smTitle),
+                          // Platform + Account selector
+                            Row(
+                              children: [
+                                Expanded(child: Text('Platforms', style: TextStylePalette.smTitle)),
+                                GestureDetector(
+                                  onTap: () async {
+                                    await Navigator.push(context, MaterialPageRoute(builder: (_) => const ConnectedAccountsScreen()));
+                                    final socialService = ref.read(socialConnectionServiceProvider);
+                                    final conns = await socialService.getMyConnections();
+                                    connections.value = conns;
+                                  },
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.settings_outlined, size: 16, color: ColorPalette.neutral500),
+                                      SizedBox(width: 4),
+                                      Text('Manage', style: TextStylePalette.smSubText),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(height: SpacePalette.sm),
-                            if (connectedAccounts.isEmpty)
+
+                            if (!hasAnyConnection)
                               _buildConnectAccountButton(context, ref, connections)
                             else
-                              _buildAccountSelector(
-                                context, ref, connections, connectedAccounts,
-                                selectedAccountId, selectedAccount, selectedPlatforms, providerToPlatform,
+                              _buildMultiPlatformSelector(
+                                context,
+                                platforms,
+                                connections.value,
+                                selectedTargets,
+                                connectionsForPlatform,
+                                isPlatformSelected,
+                                getTargetForPlatform,
+                                togglePlatform,
+                                selectAccountForPlatform,
+                                providerToPlatform,
                               ),
                             SizedBox(height: SpacePalette.base + SpacePalette.sm),
 
@@ -346,16 +342,9 @@ class ProjectUploadScreen extends HookConsumerWidget {
                               videoDuration, selectedVideoPath, formatBytes, formatDuration,
                             ),
                             SizedBox(height: SpacePalette.base + SpacePalette.sm),
-                          ] else ...[
-                            // === URL MODE ===
-                            // Platform selector
-                            Text('Platform', style: TextStylePalette.smTitle),
-                            SizedBox(height: SpacePalette.sm),
-                            _buildUrlPlatformSelector(platforms, urlPlatform),
-                            SizedBox(height: SpacePalette.base + SpacePalette.sm),
 
-                            // URL input
-                            Text('Video URL', style: TextStylePalette.smTitle),
+                            // Title (file mode only)
+                            Text('Title', style: TextStylePalette.smTitle),
                             SizedBox(height: SpacePalette.sm),
                             Container(
                               decoration: BoxDecoration(
@@ -364,52 +353,23 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                 border: Border.all(color: ColorPalette.neutral200),
                               ),
                               child: TextField(
-                                controller: urlController,
+                                controller: titleController,
                                 maxLines: 1,
                                 style: TextStylePalette.normalText,
                                 decoration: InputDecoration(
-                                  hintText: 'https://...',
+                                  hintText: 'Video title',
                                   hintStyle: TextStylePalette.hintText,
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.symmetric(
                                     horizontal: SpacePalette.sm,
                                     vertical: SpacePalette.sm,
                                   ),
-                                  prefixIcon: Icon(Icons.link, color: ColorPalette.neutral400, size: 20),
-                                ),
-                                onChanged: (_) => (context as Element).markNeedsBuild(),
-                              ),
-                            ),
-                            SizedBox(height: SpacePalette.base + SpacePalette.sm),
-                          ],
-
-                          // Title (shared)
-                          Text('Title', style: TextStylePalette.smTitle),
-                          SizedBox(height: SpacePalette.sm),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: ColorPalette.white,
-                              borderRadius: BorderRadius.circular(RadiusPalette.base),
-                              border: Border.all(color: ColorPalette.neutral200),
-                            ),
-                            child: TextField(
-                              controller: titleController,
-                              maxLines: 1,
-                              style: TextStylePalette.normalText,
-                              decoration: InputDecoration(
-                                hintText: 'Video title',
-                                hintStyle: TextStylePalette.hintText,
-                                border: InputBorder.none,
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: SpacePalette.sm,
-                                  vertical: SpacePalette.sm,
                                 ),
                               ),
                             ),
-                          ),
 
-                          // Upload progress (file mode only)
-                          if (isFileMode && isSubmitting.value) ...[
+                          // Upload progress
+                          if (isSubmitting.value) ...[
                             SizedBox(height: SpacePalette.base),
                             Row(
                               children: [
@@ -448,10 +408,10 @@ class ProjectUploadScreen extends HookConsumerWidget {
                         child: Opacity(
                           opacity: canSubmit ? 1 : 0.5,
                           child: DuolingoButton(
-                            onPressed: isFileMode ? handleFileSubmit : handleUrlSubmit,
+                            onPressed: handleFileSubmit,
                             isEnabled: true,
                             isLoading: isSubmitting.value,
-                            text: isFileMode ? 'Upload' : 'Submit URL',
+                            text: 'Upload',
                           ),
                         ),
                       ),
@@ -459,30 +419,6 @@ class ProjectUploadScreen extends HookConsumerWidget {
                   ),
                 ],
               ),
-      ),
-    );
-  }
-
-  Widget _buildModeTab(String label, int index, ValueNotifier<int> mode) {
-    final selected = mode.value == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () => mode.value = index,
-        child: Container(
-          height: 36,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? ColorPalette.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(RadiusPalette.mini + 2),
-            boxShadow: selected
-                ? [BoxShadow(color: ColorPalette.neutral800.withOpacity(0.06), blurRadius: 4, offset: Offset(0, 1))]
-                : null,
-          ),
-          child: Text(
-            label,
-            style: selected ? TextStylePalette.smTitle : TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500),
-          ),
-        ),
       ),
     );
   }
@@ -514,75 +450,164 @@ class ProjectUploadScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildAccountSelector(
+  Widget _buildMultiPlatformSelector(
     BuildContext context,
-    WidgetRef ref,
-    ValueNotifier<List<SocialConnection>> connections,
-    List<SocialConnection> connectedAccounts,
-    ValueNotifier<String?> selectedAccountId,
-    SocialConnection? selectedAccount,
-    ValueNotifier<Set<String>> selectedPlatforms,
+    List<String> platforms,
+    List<SocialConnection> allConnections,
+    ValueNotifier<List<PlatformAccountTarget>> selectedTargets,
+    List<SocialConnection> Function(String) connectionsForPlatform,
+    bool Function(String) isPlatformSelected,
+    PlatformAccountTarget? Function(String) getTargetForPlatform,
+    void Function(String) togglePlatform,
+    void Function(String, String) selectAccountForPlatform,
     String Function(String) providerToPlatform,
   ) {
-    return Row(
-      children: [
-        Expanded(
-          child: Container(
-            padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.sm),
-            decoration: BoxDecoration(
-              color: ColorPalette.white,
-              borderRadius: BorderRadius.circular(RadiusPalette.base),
-              border: Border.all(color: ColorPalette.neutral200),
-            ),
-            child: GestureDetector(
-              onTap: connectedAccounts.length <= 1
-                  ? null
-                  : () {
-                      final currentIndex = connectedAccounts.indexWhere((a) => a.id == selectedAccountId.value);
-                      final nextIndex = (currentIndex + 1) % connectedAccounts.length;
-                      final next = connectedAccounts[nextIndex];
-                      selectedAccountId.value = next.id;
-                      selectedPlatforms.value = {providerToPlatform(next.provider)};
-                    },
+    return Column(
+      children: platforms.map((p) {
+        final key = p.toLowerCase();
+        final accts = connectionsForPlatform(key);
+        final selected = isPlatformSelected(key);
+        final target = getTargetForPlatform(key);
+        final hasAccounts = accts.isNotEmpty;
+
+        // Find the selected account name
+        String? selectedAccountName;
+        if (target != null) {
+          try {
+            final conn = accts.firstWhere((a) => a.id == target.connectionId);
+            selectedAccountName = conn.providerAccountName;
+          } catch (_) {}
+        }
+
+        return Padding(
+          padding: EdgeInsets.only(bottom: SpacePalette.sm),
+          child: GestureDetector(
+            onTap: hasAccounts ? () => togglePlatform(key) : null,
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.sm),
+              decoration: BoxDecoration(
+                color: selected ? ColorPalette.neutral800 : ColorPalette.white,
+                borderRadius: BorderRadius.circular(RadiusPalette.base),
+                border: Border.all(
+                  color: selected
+                      ? ColorPalette.neutral800
+                      : hasAccounts
+                          ? ColorPalette.neutral200
+                          : ColorPalette.neutral200,
+                ),
+              ),
               child: Row(
                 children: [
-                  SizedBox(width: 28, height: 28, child: PlatformIcon.fromPlatform(selectedAccount?.provider ?? 'youtube', size: 20)),
+                  PlatformIcon.fromPlatform(key, size: 18),
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(providerToPlatform(selectedAccount?.provider ?? 'youtube'), style: TextStylePalette.smTitle),
-                        if (selectedAccount?.providerAccountName != null && selectedAccount!.providerAccountName!.isNotEmpty)
-                          Text('@${selectedAccount.providerAccountName}', style: TextStylePalette.smSubText),
+                        Text(
+                          p,
+                          style: TextStylePalette.smTitle.copyWith(
+                            color: selected ? ColorPalette.white : (hasAccounts ? ColorPalette.neutral800 : ColorPalette.neutral400),
+                          ),
+                        ),
+                        if (selected && selectedAccountName != null)
+                          Text(
+                            '@$selectedAccountName',
+                            style: TextStylePalette.smSubText.copyWith(
+                              color: ColorPalette.neutral400,
+                            ),
+                          ),
+                        if (!hasAccounts)
+                          Text(
+                            'No account connected',
+                            style: TextStylePalette.smSubText.copyWith(color: ColorPalette.neutral400),
+                          ),
                       ],
                     ),
                   ),
-                  if (connectedAccounts.length > 1) Icon(Icons.swap_horiz, size: 20, color: ColorPalette.neutral400),
+                  // Account picker (if multiple accounts for this platform and selected)
+                  if (selected && accts.length > 1)
+                    GestureDetector(
+                      onTap: () {
+                        _showAccountPicker(context, accts, target?.connectionId, (id) {
+                          selectAccountForPlatform(key, id);
+                        });
+                      },
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.15),
+                          borderRadius: BorderRadius.circular(RadiusPalette.full),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.swap_horiz, size: 14, color: ColorPalette.white),
+                            SizedBox(width: 2),
+                            Text('Switch', style: TextStylePalette.smSubText.copyWith(color: ColorPalette.white)),
+                          ],
+                        ),
+                      ),
+                    ),
+                  if (selected)
+                    Padding(
+                      padding: EdgeInsets.only(left: SpacePalette.sm),
+                      child: Icon(Icons.check_circle, size: 20, color: ColorPalette.positive400),
+                    ),
                 ],
               ),
             ),
           ),
-        ),
-        SizedBox(width: SpacePalette.sm),
-        GestureDetector(
-          onTap: () async {
-            await Navigator.push(context, MaterialPageRoute(builder: (_) => const ConnectedAccountsScreen()));
-            final socialService = ref.read(socialConnectionServiceProvider);
-            final conns = await socialService.getMyConnections();
-            connections.value = conns;
-          },
-          child: Container(
-            width: 44, height: 44,
-            decoration: BoxDecoration(
-              color: ColorPalette.white,
-              borderRadius: BorderRadius.circular(RadiusPalette.base),
-              border: Border.all(color: ColorPalette.neutral200),
+        );
+      }).toList(),
+    );
+  }
+
+  void _showAccountPicker(
+    BuildContext context,
+    List<SocialConnection> accounts,
+    String? currentConnectionId,
+    void Function(String) onSelect,
+  ) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: ColorPalette.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.lg)),
+      ),
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: EdgeInsets.all(SpacePalette.base),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Select Account', style: TextStylePalette.miniTitle),
+                SizedBox(height: SpacePalette.sm),
+                ...accounts.map((a) {
+                  final isSelected = a.id == currentConnectionId;
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(
+                      isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                      color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
+                    ),
+                    title: Text(
+                      '@${a.providerAccountName ?? a.providerAccountId}',
+                      style: TextStylePalette.normalText,
+                    ),
+                    onTap: () {
+                      onSelect(a.id);
+                      Navigator.pop(context);
+                    },
+                  );
+                }),
+              ],
             ),
-            child: Icon(Icons.settings_outlined, color: ColorPalette.neutral500, size: 20),
           ),
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -669,39 +694,4 @@ class ProjectUploadScreen extends HookConsumerWidget {
     );
   }
 
-  Widget _buildUrlPlatformSelector(List<String> platforms, ValueNotifier<String> urlPlatform) {
-    return Row(
-      children: platforms.map((p) {
-        final key = p.toLowerCase();
-        final selected = urlPlatform.value == key;
-        return Padding(
-          padding: EdgeInsets.only(right: SpacePalette.sm),
-          child: GestureDetector(
-            onTap: () => urlPlatform.value = key,
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.sm),
-              decoration: BoxDecoration(
-                color: selected ? ColorPalette.neutral800 : ColorPalette.white,
-                borderRadius: BorderRadius.circular(RadiusPalette.base),
-                border: Border.all(color: selected ? ColorPalette.neutral800 : ColorPalette.neutral200),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  PlatformIcon.fromPlatform(key, size: 16),
-                  SizedBox(width: SpacePalette.xs),
-                  Text(
-                    p,
-                    style: TextStylePalette.smTitle.copyWith(
-                      color: selected ? ColorPalette.white : ColorPalette.neutral800,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
 }

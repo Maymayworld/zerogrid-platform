@@ -51,6 +51,7 @@ serve(async (req) => {
     url.searchParams.set('scope', scope)
     url.searchParams.set('response_type', 'code')
     url.searchParams.set('state', state)
+    url.searchParams.set('auth_type', 'rerequest')
 
     return new Response(
       JSON.stringify({ url: url.toString() }),

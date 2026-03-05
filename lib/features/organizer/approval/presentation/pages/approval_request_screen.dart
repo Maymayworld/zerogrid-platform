@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/approval_request.dart';
@@ -15,7 +14,6 @@ class ApprovalRequestScreen extends ConsumerStatefulWidget {
 }
 
 class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
-  int _tabIndex = 0;
   bool _isProcessing = false;
 
   VideoPlayerController? _currentController;
@@ -43,7 +41,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
         if (mounted) {
           setState(() => _isVideoReady = true);
           _currentController!.setLooping(true);
-          if (_tabIndex == 0) _currentController!.play();
+          _currentController!.play();
           _preloadNext(1);
         }
       });
@@ -61,7 +59,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
 
     if (_currentController != null && _currentController!.value.isInitialized) {
       setState(() => _isVideoReady = true);
-      if (_tabIndex == 0) _currentController!.play();
+      _currentController!.play();
     } else {
       setState(() => _isVideoReady = false);
       _currentController = VideoPlayerController.networkUrl(Uri.parse(request.localVideoUrl!));
@@ -69,7 +67,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
         if (mounted) {
           setState(() => _isVideoReady = true);
           _currentController!.setLooping(true);
-          if (_tabIndex == 0) _currentController!.play();
+          _currentController!.play();
         }
       });
     }
@@ -122,18 +120,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     _isProcessing = false;
   }
 
-  // ── Link approval ──
-
-  Future<void> _approveLink(ApprovalRequest request) async {
-    final notifier = ref.read(approvalNotifierProvider.notifier);
-    await notifier.approve(request.id, request: request);
-  }
-
-  Future<void> _rejectLink(ApprovalRequest request) async {
-    final notifier = ref.read(approvalNotifierProvider.notifier);
-    await notifier.reject(request.id, request: request);
-  }
-
   // ── Build ──
 
   @override
@@ -141,27 +127,20 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     final requestsAsync = ref.watch(pendingRequestsProvider);
 
     return Scaffold(
-      backgroundColor: _tabIndex == 0 ? Colors.black : ColorPalette.neutral100,
+      backgroundColor: Colors.black,
       body: requestsAsync.when(
         data: (allRequests) {
-          final videoList = allRequests.where((r) => r.hasLocalVideo).toList();
-          final linkList = allRequests.where((r) => !r.hasLocalVideo).toList();
-
           // Init video requests once
-          if (!_videoInitDone && videoList.isNotEmpty) {
-            _videoRequests = List.from(videoList);
+          if (!_videoInitDone && allRequests.isNotEmpty) {
+            _videoRequests = List.from(allRequests.where((r) => r.hasLocalVideo));
             _videoInitDone = true;
             WidgetsBinding.instance.addPostFrameCallback((_) => _loadFirstVideo());
           }
 
           return Column(
             children: [
-              _buildTabbedHeader(videoList.length, linkList.length),
-              Expanded(
-                child: _tabIndex == 0
-                    ? _buildVideoTab()
-                    : _buildLinksTab(linkList),
-              ),
+              _buildHeader(),
+              Expanded(child: _buildVideoTab()),
             ],
           );
         },
@@ -171,8 +150,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     );
   }
 
-  Widget _buildTabbedHeader(int videoCount, int linkCount) {
-    final isVideoTab = _tabIndex == 0;
+  Widget _buildHeader() {
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -183,65 +161,13 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
       ),
       child: SafeArea(
         bottom: false,
-        child: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.sm, SpacePalette.base, 0),
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'Approval Requests',
-                  style: TextStylePalette.header.copyWith(color: ColorPalette.white),
-                ),
-              ),
-            ),
-            SizedBox(height: SpacePalette.sm),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
-              child: Container(
-                padding: EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.15),
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
-                child: Row(
-                  children: [
-                    _buildTab('Videos', videoCount, 0, isVideoTab),
-                    SizedBox(width: 4),
-                    _buildTab('Links', linkCount, 1, !isVideoTab),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: SpacePalette.sm),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTab(String label, int count, int index, bool selected) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() => _tabIndex = index);
-          if (index == 0) {
-            _currentController?.play();
-          } else {
-            _currentController?.pause();
-          }
-        },
-        child: Container(
-          height: 36,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? Colors.white.withOpacity(0.25) : Colors.transparent,
-            borderRadius: BorderRadius.circular(RadiusPalette.mini + 2),
-          ),
-          child: Text(
-            '$label${count > 0 ? ' ($count)' : ''}',
-            style: TextStylePalette.smTitle.copyWith(
-              color: selected ? ColorPalette.white : ColorPalette.white.withOpacity(0.6),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.sm, SpacePalette.base, SpacePalette.sm),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Approval Requests',
+              style: TextStylePalette.header.copyWith(color: ColorPalette.white),
             ),
           ),
         ),
@@ -428,147 +354,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  // ── Links tab ──
-
-  Widget _buildLinksTab(List<ApprovalRequest> linkRequests) {
-    if (linkRequests.isEmpty) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.check_circle_outline, size: 64, color: ColorPalette.positive500),
-            SizedBox(height: SpacePalette.base),
-            Text('No pending links', style: TextStylePalette.title),
-          ],
-        ),
-      );
-    }
-
-    return ListView.separated(
-      padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.base, SpacePalette.base, 132),
-      itemCount: linkRequests.length,
-      separatorBuilder: (_, __) => SizedBox(height: SpacePalette.sm),
-      itemBuilder: (context, index) {
-        final request = linkRequests[index];
-        return _buildLinkCard(request);
-      },
-    );
-  }
-
-  Widget _buildLinkCard(ApprovalRequest request) {
-    return Container(
-      padding: EdgeInsets.all(SpacePalette.base),
-      decoration: BoxDecoration(
-        color: ColorPalette.white,
-        borderRadius: BorderRadius.circular(RadiusPalette.base),
-        border: Border.all(color: ColorPalette.neutral200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              CircleAvatar(
-                radius: 16,
-                backgroundImage: request.creatorAvatarUrl.isNotEmpty ? NetworkImage(request.creatorAvatarUrl) : null,
-                child: request.creatorAvatarUrl.isEmpty ? Icon(Icons.person, size: 16, color: ColorPalette.neutral400) : null,
-              ),
-              SizedBox(width: SpacePalette.sm),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(request.creatorName, style: TextStylePalette.smTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
-                    Text(request.campaignName, style: TextStylePalette.smSubText, maxLines: 1, overflow: TextOverflow.ellipsis),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 4),
-                decoration: BoxDecoration(
-                  color: ColorPalette.neutral100,
-                  borderRadius: BorderRadius.circular(RadiusPalette.full),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    PlatformIcon.fromPlatform(request.platform, size: 14),
-                    SizedBox(width: 4),
-                    Text(_getPlatformLabel(request.platform), style: TextStylePalette.smText),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          if (request.videoTitle.isNotEmpty) ...[
-            SizedBox(height: SpacePalette.sm),
-            Text(request.videoTitle, style: TextStylePalette.normalText, maxLines: 2, overflow: TextOverflow.ellipsis),
-          ],
-
-          if (request.videoUrl.isNotEmpty) ...[
-            SizedBox(height: SpacePalette.sm),
-            GestureDetector(
-              onTap: () {
-                final uri = Uri.tryParse(request.videoUrl);
-                if (uri != null) launchUrl(uri, mode: LaunchMode.externalApplication);
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.open_in_new, size: 16, color: ColorPalette.smashedPumpkin600),
-                  SizedBox(width: SpacePalette.xs),
-                  Expanded(
-                    child: Text(
-                      request.videoUrl,
-                      style: TextStylePalette.smText.copyWith(color: ColorPalette.smashedPumpkin600),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-
-          SizedBox(height: SpacePalette.base),
-          Row(
-            children: [
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => _rejectLink(request),
-                  child: Container(
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: ColorPalette.critical500),
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                    ),
-                    child: Text('Reject', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.critical500)),
-                  ),
-                ),
-              ),
-              SizedBox(width: SpacePalette.sm),
-              Expanded(
-                child: GestureDetector(
-                  onTap: () => _approveLink(request),
-                  child: Container(
-                    height: 40,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: ColorPalette.positive500,
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                    ),
-                    child: Text('Approve', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
     );
   }
 

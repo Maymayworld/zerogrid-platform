@@ -194,14 +194,8 @@ serve(async (req) => {
       throw new Error(`Unknown platform: ${platform}`)
     }
 
-    // Save to database
-    const { data: existing } = await supabase
-      .from('social_connections')
-      .select('id')
-      .eq('user_id', user_id)
-      .eq('provider', platform)
-      .maybeSingle()
-
+    // Save to database — upsert by (user_id, provider, provider_account_id)
+    // Same account reconnect → update tokens; different account → new row
     const connectionData = {
       user_id,
       provider: platform,
@@ -213,21 +207,15 @@ serve(async (req) => {
       updated_at: new Date().toISOString(),
     }
 
-    let dbError
-    if (existing) {
-      const result = await supabase
-        .from('social_connections')
-        .update(connectionData)
-        .eq('id', existing.id)
-      dbError = result.error
-    } else {
-      const result = await supabase
-        .from('social_connections')
-        .insert(connectionData)
-      dbError = result.error
-    }
+    // Use Supabase upsert with the new UNIQUE constraint columns
+    const { error: dbError } = await supabase
+      .from('social_connections')
+      .upsert(connectionData, {
+        onConflict: 'user_id,provider,provider_account_id',
+      })
 
     if (dbError) {
+      console.error('Upsert error:', dbError)
       throw new Error(`Database error: ${dbError.message}`)
     }
 

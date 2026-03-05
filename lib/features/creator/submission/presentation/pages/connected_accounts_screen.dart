@@ -72,14 +72,10 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
       return null;
     }, [appLifecycleState]);
 
-    SocialConnection? getConnectionFor(String provider) {
-      try {
-        return connections.value.firstWhere(
-          (c) => c.provider == provider && c.isConnected,
-        );
-      } catch (_) {
-        return null;
-      }
+    List<SocialConnection> getConnectionsFor(String provider) {
+      return connections.value
+          .where((c) => c.provider == provider && c.isConnected)
+          .toList();
     }
 
     Future<void> handleConnect(String provider) async {
@@ -96,7 +92,6 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
             await oauthService.connectTikTok();
             break;
         }
-        // Reload connections after OAuth completes
         await loadConnections();
       } catch (e) {
         if (context.mounted) {
@@ -163,9 +158,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
       }
     }
 
-    final connectedCount = platforms
-        .where((p) => getConnectionFor(p.provider) != null)
-        .length;
+    final totalConnected = connections.value.where((c) => c.isConnected).length;
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -184,152 +177,202 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
               child: CircularProgressIndicator(color: ColorPalette.neutral800),
             )
           : SafeArea(
-              child: Padding(
-                padding: EdgeInsets.all(SpacePalette.base),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: SpacePalette.sm,
-                        vertical: SpacePalette.xs,
-                      ),
-                      decoration: BoxDecoration(
-                        color: ColorPalette.white,
-                        borderRadius: BorderRadius.circular(RadiusPalette.full),
-                        border: Border.all(color: ColorPalette.neutral200),
-                      ),
-                      child: Text(
-                        '$connectedCount connected',
-                        style: TextStylePalette.smTitle,
-                      ),
-                    ),
-                    SizedBox(height: SpacePalette.base),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: ColorPalette.white,
-                        borderRadius: BorderRadius.circular(RadiusPalette.base),
-                        border: Border.all(color: ColorPalette.neutral200),
-                      ),
+              child: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(SpacePalette.base),
                       child: Column(
-                        children: platforms.map((platform) {
-                          final conn = getConnectionFor(platform.provider);
-                          final isConnected = conn != null;
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: SpacePalette.sm,
+                              vertical: SpacePalette.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: ColorPalette.white,
+                              borderRadius: BorderRadius.circular(RadiusPalette.full),
+                              border: Border.all(color: ColorPalette.neutral200),
+                            ),
+                            child: Text(
+                              '$totalConnected connected',
+                              style: TextStylePalette.smTitle,
+                            ),
+                          ),
+                          SizedBox(height: SpacePalette.base),
 
-                          return Column(
-                            children: [
-                              InkWell(
-                                onTap: isConnected
-                                    ? () => handleDisconnect(conn.id)
-                                    : () => handleConnect(platform.provider),
-                                child: Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: SpacePalette.base,
-                                    vertical: SpacePalette.base,
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: 36,
-                                        height: 36,
-                                        decoration: BoxDecoration(
-                                          color: platform.color.withOpacity(0.1),
-                                          shape: BoxShape.circle,
-                                        ),
-                                        child: Center(child: platform.iconWidget),
-                                      ),
-                                      SizedBox(width: SpacePalette.sm),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              platform.name,
-                                              style: TextStylePalette.bigText,
-                                            ),
-                                            if (isConnected &&
-                                                conn.providerAccountName != null &&
-                                                conn.providerAccountName!
-                                                    .isNotEmpty)
-                                              Text(
-                                                '@${conn.providerAccountName}',
-                                                style: TextStylePalette.smSubText,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                          ],
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: SpacePalette.sm,
-                                          vertical: 6,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: isConnected
-                                              ? ColorPalette.positive100
-                                              : ColorPalette.neutral100,
-                                          borderRadius: BorderRadius.circular(
-                                            RadiusPalette.full,
-                                          ),
-                                          border: Border.all(
-                                            color: isConnected
-                                                ? ColorPalette.positive300
-                                                : ColorPalette.neutral300,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          isConnected ? 'Connected' : 'Add',
-                                          style: TextStylePalette.smTitle.copyWith(
-                                            color: isConnected
-                                                ? ColorPalette.positive700
-                                                : ColorPalette.neutral700,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              if (platform != platforms.last)
-                                Divider(
-                                  height: 1,
-                                  indent: SpacePalette.base,
-                                  endIndent: SpacePalette.base,
-                                  color: ColorPalette.neutral200,
-                                ),
-                            ],
-                          );
-                        }).toList(),
+                          // Platform sections
+                          ...platforms.map((platform) {
+                            final conns = getConnectionsFor(platform.provider);
+                            return _buildPlatformSection(
+                              platform: platform,
+                              connections: conns,
+                              onConnect: () => handleConnect(platform.provider),
+                              onDisconnect: handleDisconnect,
+                            );
+                          }),
+
+                          SizedBox(height: SpacePalette.base),
+                          Text(
+                            'Only posting permissions are requested. You can disconnect anytime.',
+                            style: TextStylePalette.smSubText,
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: SpacePalette.base),
-                    Text(
-                      'Only posting permissions are requested. You can disconnect anytime.',
-                      style: TextStylePalette.smSubText,
+                  ),
+                  // Bottom button
+                  Container(
+                    padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.sm, SpacePalette.base, SpacePalette.base),
+                    decoration: BoxDecoration(
+                      color: ColorPalette.neutral100,
+                      border: Border(top: BorderSide(color: ColorPalette.neutral200, width: 1)),
                     ),
-                    Spacer(),
-                    Text(
-                      'You can connect more platforms anytime',
-                      style: TextStylePalette.smSubText,
-                    ),
-                    SizedBox(height: SpacePalette.sm),
-                    IgnorePointer(
-                      ignoring: connectedCount == 0,
+                    child: IgnorePointer(
+                      ignoring: totalConnected == 0,
                       child: Opacity(
-                        opacity: connectedCount == 0 ? 0.5 : 1,
+                        opacity: totalConnected == 0 ? 0.5 : 1,
                         child: DuolingoButton(
                           onPressed: () => Navigator.pop(context, true),
                           isEnabled: true,
-                          text: 'Start Creating Post',
+                          text: 'Done',
                         ),
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
+    );
+  }
+
+  Widget _buildPlatformSection({
+    required _PlatformConfig platform,
+    required List<SocialConnection> connections,
+    required VoidCallback onConnect,
+    required Future<void> Function(String) onDisconnect,
+  }) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: SpacePalette.base),
+      child: Container(
+        decoration: BoxDecoration(
+          color: ColorPalette.white,
+          borderRadius: BorderRadius.circular(RadiusPalette.base),
+          border: Border.all(color: ColorPalette.neutral200),
+        ),
+        child: Column(
+          children: [
+            // Platform header
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.base,
+                vertical: SpacePalette.sm + 2,
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: platform.color.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(child: platform.iconWidget),
+                  ),
+                  SizedBox(width: SpacePalette.sm),
+                  Expanded(
+                    child: Text(platform.name, style: TextStylePalette.bigText),
+                  ),
+                  // Add account button
+                  GestureDetector(
+                    onTap: onConnect,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SpacePalette.sm,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: ColorPalette.neutral100,
+                        borderRadius: BorderRadius.circular(RadiusPalette.full),
+                        border: Border.all(color: ColorPalette.neutral300),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.add, size: 14, color: ColorPalette.neutral700),
+                          SizedBox(width: 2),
+                          Text(
+                            'Add',
+                            style: TextStylePalette.smTitle.copyWith(
+                              color: ColorPalette.neutral700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // Connected accounts list
+            if (connections.isNotEmpty) ...[
+              Divider(height: 1, indent: SpacePalette.base, endIndent: SpacePalette.base, color: ColorPalette.neutral200),
+              ...connections.map((conn) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: SpacePalette.base,
+                    vertical: SpacePalette.sm,
+                  ),
+                  child: Row(
+                    children: [
+                      SizedBox(width: 32), // align with icon above
+                      SizedBox(width: SpacePalette.sm),
+                      Expanded(
+                        child: Text(
+                          '@${conn.providerAccountName ?? conn.providerAccountId}',
+                          style: TextStylePalette.normalText,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () => onDisconnect(conn.id),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(RadiusPalette.full),
+                            border: Border.all(color: ColorPalette.neutral300),
+                          ),
+                          child: Text(
+                            'Disconnect',
+                            style: TextStylePalette.smSubText.copyWith(color: ColorPalette.neutral500),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
+            ],
+
+            // Empty state
+            if (connections.isEmpty)
+              Padding(
+                padding: EdgeInsets.only(
+                  left: SpacePalette.base,
+                  right: SpacePalette.base,
+                  bottom: SpacePalette.sm,
+                ),
+                child: Text(
+                  'No account connected',
+                  style: TextStylePalette.smSubText,
+                ),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }

@@ -354,13 +354,10 @@ class _SubmissionCard extends StatelessWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: Text(
-                      submission.hasLocalVideo
-                          ? 'Uploaded video'
-                          : submission.videoUrl,
+                      'Uploaded video',
                       style: TextStyle(
                         fontSize: 13,
-                        color: submission.hasLocalVideo ? ColorPalette.neutral600 : Colors.blue[700],
-                        decoration: submission.hasLocalVideo ? null : TextDecoration.underline,
+                        color: ColorPalette.neutral600,
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,

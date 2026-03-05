@@ -23,7 +23,7 @@ class SocialConnectionService {
         .toList();
   }
 
-  /// Get connection for a specific provider
+  /// Get connection for a specific provider (first one found)
   Future<SocialConnection?> getConnection(String provider) async {
     if (_userId == null) return null;
 
@@ -33,10 +33,28 @@ class SocialConnectionService {
         .eq('user_id', _userId!)
         .eq('provider', provider.toLowerCase())
         .eq('status', 'connected')
+        .limit(1)
         .maybeSingle();
 
     if (response == null) return null;
     return SocialConnection.fromMap(response);
+  }
+
+  /// Get all connections for a specific provider (multi-account)
+  Future<List<SocialConnection>> getConnectionsForProvider(String provider) async {
+    if (_userId == null) return [];
+
+    final response = await _supabase
+        .from('social_connections')
+        .select()
+        .eq('user_id', _userId!)
+        .eq('provider', provider.toLowerCase())
+        .eq('status', 'connected')
+        .order('created_at', ascending: false);
+
+    return (response as List)
+        .map((map) => SocialConnection.fromMap(map))
+        .toList();
   }
 
   /// Save a new connection after OAuth flow completes
@@ -51,12 +69,13 @@ class SocialConnectionService {
   }) async {
     if (_userId == null) throw Exception('User not logged in');
 
-    // Upsert: if connection already exists for this provider, update it
+    // Upsert: if same account already exists, update tokens; otherwise insert new
     final existing = await _supabase
         .from('social_connections')
         .select('id')
         .eq('user_id', _userId!)
         .eq('provider', provider.toLowerCase())
+        .eq('provider_account_id', providerAccountId)
         .maybeSingle();
 
     Map<String, dynamic> data = {
@@ -107,48 +126,4 @@ class SocialConnectionService {
         .eq('id', connectionId);
   }
 
-  /// Validate that a submitted URL belongs to the connected account
-  /// Returns true if the URL appears to match the connected account
-  bool validateUrlOwnership({
-    required String url,
-    required String provider,
-    required String providerAccountId,
-    String? providerAccountName,
-  }) {
-    final lowerUrl = url.toLowerCase();
-    final lowerProvider = provider.toLowerCase();
-
-    switch (lowerProvider) {
-      case 'youtube':
-        // Check if URL contains the channel ID or custom URL
-        if (lowerUrl.contains(providerAccountId.toLowerCase())) return true;
-        if (providerAccountName != null &&
-            lowerUrl.contains(providerAccountName.toLowerCase())) return true;
-        // YouTube URLs like youtube.com/watch?v=xxx don't contain channel info
-        // so we allow them if the account is connected (basic trust)
-        if (lowerUrl.contains('youtube.com') || lowerUrl.contains('youtu.be')) {
-          return true;
-        }
-        return false;
-
-      case 'instagram':
-        if (providerAccountName != null &&
-            lowerUrl.contains(providerAccountName.toLowerCase())) return true;
-        // Instagram URLs like instagram.com/reel/xxx or instagram.com/p/xxx
-        if (lowerUrl.contains('instagram.com')) return true;
-        return false;
-
-      case 'tiktok':
-        if (providerAccountName != null &&
-            lowerUrl.contains('@${providerAccountName.toLowerCase()}')) {
-          return true;
-        }
-        // TikTok URLs like tiktok.com/@user/video/xxx
-        if (lowerUrl.contains('tiktok.com')) return true;
-        return false;
-
-      default:
-        return false;
-    }
-  }
 }

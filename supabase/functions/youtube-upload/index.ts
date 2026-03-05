@@ -156,14 +156,39 @@ serve(async (req) => {
     }
 
     // 2. クリエイターのYouTube接続情報を取得
-    const { data: connection, error: connError } = await supabase
-      .from('social_connections')
-      .select('access_token, refresh_token')
-      .eq('user_id', submission.creator_id)
-      .eq('provider', 'youtube')
-      .single()
+    // social_connection_id がある場合はそれを使用、なければフォールバック
+    let connection: any = null
+    let connectionId: string | null = null
 
-    if (connError || !connection) {
+    if (submission.social_connection_id) {
+      const { data, error } = await supabase
+        .from('social_connections')
+        .select('id, access_token, refresh_token')
+        .eq('id', submission.social_connection_id)
+        .single()
+      if (!error && data) {
+        connection = data
+        connectionId = data.id
+      }
+    }
+
+    // Fallback: 古いsubmission（social_connection_idなし）
+    if (!connection) {
+      const { data, error } = await supabase
+        .from('social_connections')
+        .select('id, access_token, refresh_token')
+        .eq('user_id', submission.creator_id)
+        .eq('provider', 'youtube')
+        .eq('status', 'connected')
+        .limit(1)
+        .single()
+      if (!error && data) {
+        connection = data
+        connectionId = data.id
+      }
+    }
+
+    if (!connection) {
       throw new Error('YouTube not connected for this creator')
     }
 
@@ -177,8 +202,7 @@ serve(async (req) => {
         await supabase
           .from('social_connections')
           .update({ access_token: newToken })
-          .eq('user_id', submission.creator_id)
-          .eq('provider', 'youtube')
+          .eq('id', connectionId)
       }
     }
 
