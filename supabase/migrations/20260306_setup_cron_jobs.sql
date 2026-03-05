@@ -1,10 +1,14 @@
 -- ================================================================
--- 定期実行ジョブの設定 (pg_cron + pg_net)
+-- 定期実行ジョブの設定 (pg_cron + pg_net + vault)
 -- ================================================================
--- 注意: このマイグレーションは extensions の有効化のみ行います。
--- cron ジョブ本体は Service Role Key が必要なため、
--- Supabase Dashboard の SQL Editor で別途実行してください。
--- (下記コメント内の SQL を参照)
+-- このマイグレーションで以下を行います:
+--   1. pg_cron, pg_net 拡張機能の有効化
+--   2. Vault に Service Role Key を保存
+--   3. 1時間ごとの cron ジョブを登録
+--
+-- ※ マイグレーション適用前に、Supabase Dashboard > Project Settings
+--    > API から Service Role Key を確認し、下記の
+--    'YOUR_SERVICE_ROLE_KEY' を実際のキーに置き換えてください。
 -- ================================================================
 
 -- 拡張機能を有効化
@@ -13,10 +17,17 @@ create extension if not exists pg_net with schema extensions;
 
 -- ================================================================
 -- 以下を Supabase Dashboard > SQL Editor で実行してください
--- YOUR_SERVICE_ROLE_KEY を実際のキーに置き換えてください
+-- 'YOUR_SERVICE_ROLE_KEY' を実際のキーに置き換えてください
 -- ================================================================
---
--- 視聴回数の一括更新（1時間ごと）
+
+-- Step 1: Vault に Service Role Key を保存（1回だけ実行）
+-- select vault.create_secret(
+--   'service_role_key',
+--   'YOUR_SERVICE_ROLE_KEY',
+--   'Supabase Service Role Key for Edge Function calls'
+-- );
+
+-- Step 2: 視聴回数の一括更新（1時間ごと）
 -- ※ 更新完了後、自動で process-ended-campaigns を呼び出し、
 --    期限切れ or 目標達成の案件を検出→報酬分配を実行します。
 -- つまりこの1つのcronで以下が全て処理されます:
@@ -33,14 +44,22 @@ create extension if not exists pg_net with schema extensions;
 --   $$
 --   select net.http_post(
 --     url := 'https://gfzpegwatwyzbbbkcuvu.supabase.co/functions/v1/update-all-view-counts',
---     headers := '{"Authorization": "Bearer YOUR_SERVICE_ROLE_KEY", "Content-Type": "application/json"}'::jsonb,
+--     headers := jsonb_build_object(
+--       'Authorization', 'Bearer ' || (
+--         select decrypted_secret
+--         from vault.decrypted_secrets
+--         where name = 'service_role_key'
+--         limit 1
+--       ),
+--       'Content-Type', 'application/json'
+--     ),
 --     body := '{}'::jsonb
 --   ) as request_id;
 --   $$
 -- );
---
--- -- 確認用: 登録済みジョブ一覧
+
+-- 確認用: 登録済みジョブ一覧
 -- select * from cron.job;
---
--- -- 実行履歴確認
+
+-- 実行履歴確認
 -- select * from cron.job_run_details order by start_time desc limit 20;

@@ -33,21 +33,20 @@ class OrganizerStatsService {
     }
   }
 
-  /// 累計視聴回数を取得（video_analytics経由）
+  /// 累計視聴回数を取得（campaigns.total_views を合算）
   Future<int> getTotalViewsAcrossAllCampaigns() async {
     if (_userId == null) return 0;
 
     try {
-      // campaigns → posts → video_analytics の経路で集計
       final response = await _supabase
-          .from('video_analytics')
-          .select('views, posts!inner(campaign_id, campaigns!inner(organizer_id))')
-          .eq('posts.campaigns.organizer_id', _userId!);
+          .from('campaigns')
+          .select('total_views')
+          .eq('organizer_id', _userId!);
 
       final rows = response as List;
       return rows.fold<int>(
         0,
-        (sum, r) => sum + ((r['views'] as num?)?.toInt() ?? 0),
+        (sum, r) => sum + ((r['total_views'] as num?)?.toInt() ?? 0),
       );
     } catch (e) {
       print('Error getting total views: $e');
