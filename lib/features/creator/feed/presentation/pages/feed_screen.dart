@@ -31,8 +31,10 @@ class FeedScreen extends HookConsumerWidget {
     final tabIndex = ref.watch(creatorTabIndexProvider);
     final isFeedVisible = tabIndex == 1;
 
-    // VideoPlayer controllers
+    // Video controllers managed centrally — child widgets receive them directly
     final vpControllers = useState<Map<int, VideoPlayerController>>({});
+    // Guard against concurrent creation for the same index
+    final creatingGuard = useRef(<int>{});
 
     Future<void> loadFeed() async {
       if (initialSubmissions != null) return;
@@ -64,9 +66,13 @@ class FeedScreen extends HookConsumerWidget {
       try {
         final isNowLiked = await feedService.toggleLike(submissionId);
         if (isNowLiked) {
-          ref.read(feedLikedIdsProvider.notifier).state = {...current, submissionId};
+          ref.read(feedLikedIdsProvider.notifier).state = {
+            ...current,
+            submissionId
+          };
         } else {
-          ref.read(feedLikedIdsProvider.notifier).state = {...current}..remove(submissionId);
+          ref.read(feedLikedIdsProvider.notifier).state = {...current}
+            ..remove(submissionId);
         }
       } catch (e) {
         if (context.mounted) {
@@ -77,34 +83,44 @@ class FeedScreen extends HookConsumerWidget {
       }
     }
 
-    Future<VideoPlayerController> getOrCreateVpController(int index) async {
-      if (vpControllers.value.containsKey(index)) {
-        return vpControllers.value[index]!;
+    /// Initialize a controller without auto-play. Race-guarded.
+    Future<void> ensureControllerReady(int index) async {
+      if (index < 0 || index >= submissions.value.length) return;
+      if (vpControllers.value.containsKey(index)) return;
+      if (creatingGuard.value.contains(index)) return;
+
+      creatingGuard.value.add(index);
+      try {
+        final submission = submissions.value[index];
+        if (submission.localVideoUrl == null) return;
+        final controller = VideoPlayerController.networkUrl(
+          Uri.parse(submission.localVideoUrl!),
+        );
+        await controller.initialize();
+        controller.setLooping(true);
+        // Add to map — triggers FeedScreen rebuild, passing controller to child
+        vpControllers.value = {...vpControllers.value, index: controller};
+      } catch (e) {
+        debugPrint('Failed to init video $index: $e');
+      } finally {
+        creatingGuard.value.remove(index);
       }
-      final submission = submissions.value[index];
-      final controller = VideoPlayerController.networkUrl(
-        Uri.parse(submission.localVideoUrl!),
-      );
-      await controller.initialize();
-      controller.setLooping(true);
-      if (index == currentIndex.value && isFeedVisible) {
-        controller.play();
-      }
-      vpControllers.value = {...vpControllers.value, index: controller};
-      return controller;
     }
 
-    // Pause & reset current video
-    void pauseAndResetCurrent() {
-      final controller = vpControllers.value[currentIndex.value];
-      if (controller != null && controller.value.isInitialized) {
-        controller.pause();
-        controller.seekTo(Duration.zero);
+    /// Pause and reset ALL controllers
+    void pauseAll() {
+      for (final c in vpControllers.value.values) {
+        if (c.value.isInitialized) {
+          c.pause();
+          c.seekTo(Duration.zero);
+        }
       }
     }
 
-    // Play current video from start
-    void playCurrent() {
+    /// Play the current video (only if Feed is visible)
+    void playCurrentIfVisible() {
+      final visible = ref.read(creatorTabIndexProvider) == 1;
+      if (!visible) return;
       final controller = vpControllers.value[currentIndex.value];
       if (controller != null && controller.value.isInitialized) {
         controller.seekTo(Duration.zero);
@@ -113,43 +129,55 @@ class FeedScreen extends HookConsumerWidget {
     }
 
     void onPageChanged(int index) {
-      // Pause previous
-      pauseAndResetCurrent();
-      currentIndex.value = index;
-      // Play new
-      if (isFeedVisible) {
-        getOrCreateVpController(index).then((c) {
-          c.seekTo(Duration.zero);
-          c.play();
-        });
+      // Pause previous video
+      final prevController = vpControllers.value[currentIndex.value];
+      if (prevController != null && prevController.value.isInitialized) {
+        prevController.pause();
+        prevController.seekTo(Duration.zero);
       }
+      currentIndex.value = index;
+      // Create (if needed) and play new video
+      ensureControllerReady(index).then((_) {
+        // Verify still on this page and feed is visible
+        if (currentIndex.value == index) {
+          playCurrentIfVisible();
+        }
+      });
     }
 
-    // Pause/reset when tab changes away from Feed
+    // Handle tab visibility changes
     useEffect(() {
       if (!isFeedVisible) {
-        pauseAndResetCurrent();
-      } else {
-        // Returned to Feed tab — play from start
-        playCurrent();
+        pauseAll();
+      } else if (submissions.value.isNotEmpty) {
+        ensureControllerReady(currentIndex.value).then((_) {
+          playCurrentIfVisible();
+        });
       }
       return null;
     }, [isFeedVisible]);
 
-    // Pause on app background
+    // Handle app lifecycle
     final appLifecycleState = useAppLifecycleState();
     useEffect(() {
       if (appLifecycleState == AppLifecycleState.paused ||
           appLifecycleState == AppLifecycleState.inactive) {
-        pauseAndResetCurrent();
-      } else if (appLifecycleState == AppLifecycleState.resumed && isFeedVisible) {
-        playCurrent();
+        pauseAll();
+      } else if (appLifecycleState == AppLifecycleState.resumed) {
+        playCurrentIfVisible();
       }
       return null;
     }, [appLifecycleState]);
 
+    // Initial load
     useEffect(() {
-      Future.wait([loadFeed(), loadLikedIds()]);
+      Future.wait([loadFeed(), loadLikedIds()]).then((_) {
+        if (submissions.value.isNotEmpty) {
+          ensureControllerReady(currentIndex.value).then((_) {
+            playCurrentIfVisible();
+          });
+        }
+      });
       return () {
         for (final c in vpControllers.value.values) {
           c.dispose();
@@ -176,21 +204,19 @@ class FeedScreen extends HookConsumerWidget {
                     itemCount: submissions.value.length,
                     itemBuilder: (context, index) {
                       final submission = submissions.value[index];
-                      final isActive = currentIndex.value == index;
+                      final controller = vpControllers.value[index];
                       final isLiked = likedIds.contains(submission.id);
 
                       return _LocalVideoPage(
                         submission: submission,
-                        isActive: isActive,
+                        controller: controller,
                         isLiked: isLiked,
-                        getOrCreateController: () =>
-                            getOrCreateVpController(index),
                         onLike: () => toggleLike(submission.id),
                         onJoin: () {
-                          pauseAndResetCurrent();
+                          pauseAll();
                           _navigateToCampaign(
                               context, ref, submission.campaignId,
-                              onReturn: playCurrent);
+                              onReturn: playCurrentIfVisible);
                         },
                       );
                     },
@@ -236,7 +262,6 @@ class FeedScreen extends HookConsumerWidget {
             builder: (context) => ProjectDetailScreen(campaign: campaign),
           ),
         );
-        // Returned from detail screen
         onReturn?.call();
       }
     } catch (e) {
@@ -251,35 +276,31 @@ class FeedScreen extends HookConsumerWidget {
   }
 }
 
-/// ローカル動画ページ（video_player使用）
-class _LocalVideoPage extends HookWidget {
+/// Video page — receives controller directly from parent (no async creation)
+class _LocalVideoPage extends StatelessWidget {
   final Submission submission;
-  final bool isActive;
+  final VideoPlayerController? controller;
   final bool isLiked;
-  final Future<VideoPlayerController> Function() getOrCreateController;
   final VoidCallback onLike;
   final VoidCallback onJoin;
 
   const _LocalVideoPage({
     required this.submission,
-    required this.isActive,
+    this.controller,
     required this.isLiked,
-    required this.getOrCreateController,
     required this.onLike,
     required this.onJoin,
   });
 
   @override
   Widget build(BuildContext context) {
-    final controllerFuture = useMemoized(
-      () => isActive ? getOrCreateController() : null,
-      [isActive],
-    );
+    final hasVideo = controller != null && controller!.value.isInitialized;
 
     return Stack(
       fit: StackFit.expand,
       children: [
         Container(color: Colors.black),
+        // Thumbnail as background (visible while loading)
         if (submission.videoThumbnailUrl != null)
           Center(
             child: Image.network(
@@ -288,36 +309,29 @@ class _LocalVideoPage extends HookWidget {
               errorBuilder: (_, __, ___) => Container(color: Colors.black),
             ),
           ),
-        if (isActive && controllerFuture != null)
-          FutureBuilder<VideoPlayerController>(
-            future: controllerFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done &&
-                  snapshot.hasData) {
-                final controller = snapshot.data!;
-                return GestureDetector(
-                  onTap: () {
-                    if (controller.value.isPlaying) {
-                      controller.pause();
-                    } else {
-                      controller.play();
-                    }
-                  },
-                  child: Center(
-                    child: AspectRatio(
-                      aspectRatio: controller.value.aspectRatio,
-                      child: VideoPlayer(controller),
-                    ),
-                  ),
-                );
+        // Video player layered on top
+        if (hasVideo)
+          GestureDetector(
+            onTap: () {
+              if (controller!.value.isPlaying) {
+                controller!.pause();
+              } else {
+                controller!.play();
               }
-              return Center(
-                child: CircularProgressIndicator(
-                  color: ColorPalette.white,
-                  strokeWidth: 2,
-                ),
-              );
             },
+            child: Center(
+              child: AspectRatio(
+                aspectRatio: controller!.value.aspectRatio,
+                child: VideoPlayer(controller!),
+              ),
+            ),
+          )
+        else
+          Center(
+            child: CircularProgressIndicator(
+              color: ColorPalette.white,
+              strokeWidth: 2,
+            ),
           ),
         _buildOverlay(context),
       ],
@@ -395,8 +409,7 @@ class _LocalVideoPage extends HookWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionButton(
-                    icon:
-                        isLiked ? Icons.favorite : Icons.favorite_border,
+                    icon: isLiked ? Icons.favorite : Icons.favorite_border,
                     color: isLiked
                         ? ColorPalette.critical500
                         : ColorPalette.white,
