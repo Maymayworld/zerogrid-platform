@@ -4,13 +4,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:video_player/video_player.dart';
-import 'package:youtube_player_iframe/youtube_player_iframe.dart';
 import '../../../../../shared/theme/app_theme.dart';
-import '../../../../../shared/utils/youtube_utils.dart';
 import '../../../../creator/submission/data/models/submission.dart';
 import '../../../campaign/presentation/pages/detail_screen.dart';
 import '../../../../organizer/campaign/presentation/providers/campaign_service_provider.dart';
 import '../providers/feed_provider.dart';
+import '../providers/creator_tab_index_provider.dart';
 
 class FeedScreen extends HookConsumerWidget {
   final List<Submission>? initialSubmissions;
@@ -29,10 +28,10 @@ class FeedScreen extends HookConsumerWidget {
     final currentIndex = useState(initialIndex);
     final likedIds = ref.watch(feedLikedIdsProvider);
     final pageController = usePageController(initialPage: initialIndex);
+    final tabIndex = ref.watch(creatorTabIndexProvider);
+    final isFeedVisible = tabIndex == 1;
 
-    // YouTube controllers
-    final ytControllers = useState<Map<int, YoutubePlayerController>>({});
-    // VideoPlayer controllers (for local videos)
+    // VideoPlayer controllers
     final vpControllers = useState<Map<int, VideoPlayerController>>({});
 
     Future<void> loadFeed() async {
@@ -78,29 +77,6 @@ class FeedScreen extends HookConsumerWidget {
       }
     }
 
-    YoutubePlayerController getOrCreateYtController(int index) {
-      if (ytControllers.value.containsKey(index)) {
-        return ytControllers.value[index]!;
-      }
-      final submission = submissions.value[index];
-      final videoId = extractYoutubeVideoId(submission.videoUrl);
-      if (videoId == null) {
-        throw Exception('Invalid YouTube URL: ${submission.videoUrl}');
-      }
-      final controller = YoutubePlayerController.fromVideoId(
-        videoId: videoId,
-        autoPlay: index == currentIndex.value,
-        params: const YoutubePlayerParams(
-          showControls: false,
-          showFullscreenButton: false,
-          enableCaption: false,
-          playsInline: true,
-        ),
-      );
-      ytControllers.value = {...ytControllers.value, index: controller};
-      return controller;
-    }
-
     Future<VideoPlayerController> getOrCreateVpController(int index) async {
       if (vpControllers.value.containsKey(index)) {
         return vpControllers.value[index]!;
@@ -111,43 +87,70 @@ class FeedScreen extends HookConsumerWidget {
       );
       await controller.initialize();
       controller.setLooping(true);
-      if (index == currentIndex.value) {
+      if (index == currentIndex.value && isFeedVisible) {
         controller.play();
       }
       vpControllers.value = {...vpControllers.value, index: controller};
       return controller;
     }
 
-    void onPageChanged(int index) {
-      final prevSubmission = submissions.value[currentIndex.value];
-
-      // Pause previous
-      if (prevSubmission.hasLocalVideo) {
-        vpControllers.value[currentIndex.value]?.pause();
-      } else {
-        ytControllers.value[currentIndex.value]?.pauseVideo();
-      }
-
-      currentIndex.value = index;
-
-      // Play new
-      final newSubmission = submissions.value[index];
-      if (newSubmission.hasLocalVideo) {
-        getOrCreateVpController(index).then((c) => c.play());
-      } else {
-        try {
-          final controller = getOrCreateYtController(index);
-          controller.playVideo();
-        } catch (_) {}
+    // Pause & reset current video
+    void pauseAndResetCurrent() {
+      final controller = vpControllers.value[currentIndex.value];
+      if (controller != null && controller.value.isInitialized) {
+        controller.pause();
+        controller.seekTo(Duration.zero);
       }
     }
+
+    // Play current video from start
+    void playCurrent() {
+      final controller = vpControllers.value[currentIndex.value];
+      if (controller != null && controller.value.isInitialized) {
+        controller.seekTo(Duration.zero);
+        controller.play();
+      }
+    }
+
+    void onPageChanged(int index) {
+      // Pause previous
+      pauseAndResetCurrent();
+      currentIndex.value = index;
+      // Play new
+      if (isFeedVisible) {
+        getOrCreateVpController(index).then((c) {
+          c.seekTo(Duration.zero);
+          c.play();
+        });
+      }
+    }
+
+    // Pause/reset when tab changes away from Feed
+    useEffect(() {
+      if (!isFeedVisible) {
+        pauseAndResetCurrent();
+      } else {
+        // Returned to Feed tab — play from start
+        playCurrent();
+      }
+      return null;
+    }, [isFeedVisible]);
+
+    // Pause on app background
+    final appLifecycleState = useAppLifecycleState();
+    useEffect(() {
+      if (appLifecycleState == AppLifecycleState.paused ||
+          appLifecycleState == AppLifecycleState.inactive) {
+        pauseAndResetCurrent();
+      } else if (appLifecycleState == AppLifecycleState.resumed && isFeedVisible) {
+        playCurrent();
+      }
+      return null;
+    }, [appLifecycleState]);
 
     useEffect(() {
       Future.wait([loadFeed(), loadLikedIds()]);
       return () {
-        for (final c in ytControllers.value.values) {
-          c.close();
-        }
         for (final c in vpControllers.value.values) {
           c.dispose();
         }
@@ -176,32 +179,20 @@ class FeedScreen extends HookConsumerWidget {
                       final isActive = currentIndex.value == index;
                       final isLiked = likedIds.contains(submission.id);
 
-                      if (submission.hasLocalVideo) {
-                        return _LocalVideoPage(
-                          submission: submission,
-                          isActive: isActive,
-                          isLiked: isLiked,
-                          getOrCreateController: () =>
-                              getOrCreateVpController(index),
-                          onLike: () => toggleLike(submission.id),
-                          onJoin: () => _navigateToCampaign(
-                              context, ref, submission.campaignId),
-                        );
-                      } else {
-                        final videoId =
-                            extractYoutubeVideoId(submission.videoUrl);
-                        return _YouTubeVideoPage(
-                          submission: submission,
-                          videoId: videoId,
-                          isActive: isActive,
-                          isLiked: isLiked,
-                          getOrCreateController: () =>
-                              getOrCreateYtController(index),
-                          onLike: () => toggleLike(submission.id),
-                          onJoin: () => _navigateToCampaign(
-                              context, ref, submission.campaignId),
-                        );
-                      }
+                      return _LocalVideoPage(
+                        submission: submission,
+                        isActive: isActive,
+                        isLiked: isLiked,
+                        getOrCreateController: () =>
+                            getOrCreateVpController(index),
+                        onLike: () => toggleLike(submission.id),
+                        onJoin: () {
+                          pauseAndResetCurrent();
+                          _navigateToCampaign(
+                              context, ref, submission.campaignId,
+                              onReturn: playCurrent);
+                        },
+                      );
                     },
                   ),
       ),
@@ -233,17 +224,20 @@ class FeedScreen extends HookConsumerWidget {
   }
 
   void _navigateToCampaign(
-      BuildContext context, WidgetRef ref, String campaignId) async {
+      BuildContext context, WidgetRef ref, String campaignId,
+      {VoidCallback? onReturn}) async {
     try {
       final campaignService = ref.read(campaignServiceProvider);
       final campaign = await campaignService.getCampaign(campaignId);
       if (campaign != null && context.mounted) {
-        Navigator.push(
+        await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => ProjectDetailScreen(campaign: campaign),
           ),
         );
+        // Returned from detail screen
+        onReturn?.call();
       }
     } catch (e) {
       if (context.mounted) {
@@ -286,7 +280,6 @@ class _LocalVideoPage extends HookWidget {
       fit: StackFit.expand,
       children: [
         Container(color: Colors.black),
-        // Thumbnail fallback
         if (submission.videoThumbnailUrl != null)
           Center(
             child: Image.network(
@@ -295,7 +288,6 @@ class _LocalVideoPage extends HookWidget {
               errorBuilder: (_, __, ___) => Container(color: Colors.black),
             ),
           ),
-        // Video player
         if (isActive && controllerFuture != null)
           FutureBuilder<VideoPlayerController>(
             future: controllerFuture,
@@ -342,7 +334,7 @@ class _LocalVideoPage extends HookWidget {
             Positioned(
               left: SpacePalette.base,
               right: 80,
-              bottom: bottomPadding + 80,
+              bottom: bottomPadding + 148,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -398,156 +390,7 @@ class _LocalVideoPage extends HookWidget {
             ),
             Positioned(
               right: SpacePalette.base,
-              bottom: bottomPadding + 80,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _ActionButton(
-                    icon:
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                    color: isLiked
-                        ? ColorPalette.critical500
-                        : ColorPalette.white,
-                    onTap: onLike,
-                  ),
-                  SizedBox(height: SpacePalette.lg),
-                  _ActionButton(
-                    icon: Icons.arrow_forward_ios,
-                    label: 'JOIN',
-                    color: ColorPalette.white,
-                    onTap: onJoin,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// YouTube動画ページ（youtube_player_iframe使用、後方互換）
-class _YouTubeVideoPage extends StatelessWidget {
-  final Submission submission;
-  final String? videoId;
-  final bool isActive;
-  final bool isLiked;
-  final YoutubePlayerController Function() getOrCreateController;
-  final VoidCallback onLike;
-  final VoidCallback onJoin;
-
-  const _YouTubeVideoPage({
-    required this.submission,
-    required this.videoId,
-    required this.isActive,
-    required this.isLiked,
-    required this.getOrCreateController,
-    required this.onLike,
-    required this.onJoin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final thumbnailUrl =
-        videoId != null ? getYoutubeThumbnailUrl(videoId!) : null;
-
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        Container(color: Colors.black),
-        if (thumbnailUrl != null)
-          Center(
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: Image.network(
-                thumbnailUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(color: Colors.black),
-              ),
-            ),
-          ),
-        if (isActive && videoId != null)
-          Center(
-            child: AspectRatio(
-              aspectRatio: 16 / 9,
-              child: YoutubePlayer(
-                controller: getOrCreateController(),
-              ),
-            ),
-          ),
-        _buildOverlay(context),
-      ],
-    );
-  }
-
-  Widget _buildOverlay(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
-
-    return Positioned.fill(
-      child: SafeArea(
-        child: Stack(
-          children: [
-            Positioned(
-              left: SpacePalette.base,
-              right: 80,
-              bottom: bottomPadding + 80,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 16,
-                        backgroundColor: ColorPalette.neutral400,
-                        backgroundImage: submission.creatorAvatarUrl != null
-                            ? NetworkImage(submission.creatorAvatarUrl!)
-                            : null,
-                        child: submission.creatorAvatarUrl == null
-                            ? Icon(Icons.person,
-                                size: 16, color: ColorPalette.white)
-                            : null,
-                      ),
-                      SizedBox(width: SpacePalette.sm),
-                      Flexible(
-                        child: Text(
-                          submission.creatorName ?? 'Creator',
-                          style: TextStylePalette.smTitle
-                              .copyWith(color: ColorPalette.white),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (submission.campaignName != null) ...[
-                    SizedBox(height: SpacePalette.sm),
-                    Text(
-                      submission.campaignName!,
-                      style: TextStylePalette.smText.copyWith(
-                          color: ColorPalette.white.withOpacity(0.8)),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                  if (submission.videoTitle != null &&
-                      submission.videoTitle!.isNotEmpty) ...[
-                    SizedBox(height: SpacePalette.xs),
-                    Text(
-                      submission.videoTitle!,
-                      style: TextStylePalette.smSubText.copyWith(
-                          color: ColorPalette.white.withOpacity(0.6)),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-            Positioned(
-              right: SpacePalette.base,
-              bottom: bottomPadding + 80,
+              bottom: bottomPadding + 148,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [

@@ -13,6 +13,7 @@ import '../../features/creator/campaign/presentation/pages/campaign_screen.dart'
 import '../../features/creator/campaign/presentation/pages/upload_screen.dart';
 import '../../features/creator/campaign/presentation/providers/participation_service_provider.dart';
 import '../../features/creator/profile/profile_screen.dart';
+import '../../features/creator/feed/presentation/providers/creator_tab_index_provider.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import '../../features/organizer/campaign/data/models/campaign.dart';
 
@@ -23,7 +24,7 @@ class CreatorMainLayout extends HookConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final currentIndex = useState(initialIndex);
+    final currentIndex = ref.watch(creatorTabIndexProvider);
 
     final screens = [
       FindScreen(),
@@ -40,7 +41,7 @@ class CreatorMainLayout extends HookConsumerWidget {
         children: [
           // メインコンテンツ
           Positioned.fill(
-            child: IndexedStack(index: currentIndex.value, children: screens),
+            child: IndexedStack(index: currentIndex, children: screens),
           ),
           // FAB（プラスボタン）
           Positioned(
@@ -85,8 +86,8 @@ class CreatorMainLayout extends HookConsumerWidget {
                 padding: EdgeInsets.only(bottom: SpacePalette.sm),
                 child: Center(
                   child: _LiquidGlassNavBar(
-                    currentIndex: currentIndex.value,
-                    onTap: (index) => currentIndex.value = index,
+                    currentIndex: currentIndex,
+                    onTap: (index) => ref.read(creatorTabIndexProvider.notifier).state = index,
                   ),
                 ),
               ),

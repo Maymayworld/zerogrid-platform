@@ -7,8 +7,8 @@ class FeedService {
 
   String? get _userId => _supabase.auth.currentUser?.id;
 
-  /// 承認済み動画を全件取得（フィード用）
-  /// local_video_url がある動画と YouTube URL の動画両方を表示
+  /// 承認済みのアップロード動画のみ取得（フィード用）
+  /// リンク提出(platform_post_url のみ)は対象外
   Future<List<Submission>> getFeedSubmissions() async {
     final response = await _supabase
         .from('submission_requests')
@@ -18,6 +18,7 @@ class FeedService {
           campaigns:campaign_id (name)
         ''')
         .eq('status', 'approved')
+        .not('local_video_url', 'is', null)
         .order('submitted_at', ascending: false);
 
     return (response as List).map((map) {
