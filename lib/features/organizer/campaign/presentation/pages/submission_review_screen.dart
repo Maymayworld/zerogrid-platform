@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/submission/data/models/submission.dart';
@@ -332,10 +333,14 @@ class _SubmissionCard extends StatelessWidget {
 
           // Video URL
           GestureDetector(
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('URL: ${submission.playableUrl ?? 'No URL'}')),
-              );
+            onTap: () async {
+              final url = submission.platformPostUrl ?? submission.playableUrl;
+              if (url != null && url.isNotEmpty) {
+                final uri = Uri.parse(url);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
+              }
             },
             child: Container(
               padding: EdgeInsets.all(SpacePalette.sm),
@@ -432,10 +437,11 @@ class _SubmissionCard extends StatelessWidget {
           if (submission.platformPostUrl != null &&
               submission.platformPostUrl!.isNotEmpty) ...[
             GestureDetector(
-              onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(submission.platformPostUrl!)),
-                );
+              onTap: () async {
+                final uri = Uri.parse(submission.platformPostUrl!);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                }
               },
               child: Container(
                 padding: EdgeInsets.all(SpacePalette.xs),

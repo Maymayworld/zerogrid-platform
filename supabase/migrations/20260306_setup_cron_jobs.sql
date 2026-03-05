@@ -1,0 +1,46 @@
+-- ================================================================
+-- 定期実行ジョブの設定 (pg_cron + pg_net)
+-- ================================================================
+-- 注意: このマイグレーションは extensions の有効化のみ行います。
+-- cron ジョブ本体は Service Role Key が必要なため、
+-- Supabase Dashboard の SQL Editor で別途実行してください。
+-- (下記コメント内の SQL を参照)
+-- ================================================================
+
+-- 拡張機能を有効化
+create extension if not exists pg_cron with schema pg_catalog;
+create extension if not exists pg_net with schema extensions;
+
+-- ================================================================
+-- 以下を Supabase Dashboard > SQL Editor で実行してください
+-- YOUR_SERVICE_ROLE_KEY を実際のキーに置き換えてください
+-- ================================================================
+--
+-- 視聴回数の一括更新（1時間ごと）
+-- ※ 更新完了後、自動で process-ended-campaigns を呼び出し、
+--    期限切れ or 目標達成の案件を検出→報酬分配を実行します。
+-- つまりこの1つのcronで以下が全て処理されます:
+--   1. 全提出物の視聴回数を最新化
+--   2. キャンペーンの total_views を再計算
+--   3. 期限切れ/目標達成の案件を検出
+--   4. 該当案件の報酬分配(10%プラットフォーム手数料含む)
+--   5. 未使用予算の返金
+--   6. オーガナイザーへの完了通知
+--
+-- select cron.schedule(
+--   'update-all-view-counts',
+--   '0 * * * *',
+--   $$
+--   select net.http_post(
+--     url := 'https://gfzpegwatwyzbbbkcuvu.supabase.co/functions/v1/update-all-view-counts',
+--     headers := '{"Authorization": "Bearer YOUR_SERVICE_ROLE_KEY", "Content-Type": "application/json"}'::jsonb,
+--     body := '{}'::jsonb
+--   ) as request_id;
+--   $$
+-- );
+--
+-- -- 確認用: 登録済みジョブ一覧
+-- select * from cron.job;
+--
+-- -- 実行履歴確認
+-- select * from cron.job_run_details order by start_time desc limit 20;

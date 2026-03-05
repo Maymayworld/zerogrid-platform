@@ -199,6 +199,25 @@ serve(async (req) => {
         .eq('id', campaignId)
     }
 
+    // 視聴回数更新後、終了案件の検出＋報酬分配を実行
+    let processResult = null
+    try {
+      const funcUrl = `${supabaseUrl}/functions/v1/process-ended-campaigns`
+      const processResponse = await fetch(funcUrl, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${supabaseKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({}),
+      })
+      processResult = await processResponse.json()
+      console.log('process-ended-campaigns result:', processResult)
+    } catch (error) {
+      console.error('Failed to call process-ended-campaigns:', error)
+      processResult = { error: error.message }
+    }
+
     return new Response(
       JSON.stringify({
         success: true,
@@ -207,7 +226,8 @@ serve(async (req) => {
         youtube: youtubeSubmissions.length,
         tiktok: tiktokSubmissions.length,
         instagram: instagramSubmissions.length,
-        campaigns_processed: campaignIds.length
+        campaigns_processed: campaignIds.length,
+        ended_campaigns: processResult
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
