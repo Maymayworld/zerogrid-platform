@@ -143,8 +143,7 @@ class FeedScreen extends HookConsumerWidget {
     }
 
     useEffect(() {
-      loadFeed();
-      loadLikedIds();
+      Future.wait([loadFeed(), loadLikedIds()]);
       return () {
         for (final c in ytControllers.value.values) {
           c.close();

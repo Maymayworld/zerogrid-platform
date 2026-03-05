@@ -159,7 +159,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     }
 
     _isProcessing = false;
-    ref.invalidate(pendingRequestsProvider);
   }
 
   // ── Link approval ──
@@ -167,13 +166,11 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
   Future<void> _approveLink(ApprovalRequest request) async {
     final notifier = ref.read(approvalNotifierProvider.notifier);
     await notifier.approve(request.id, request: request);
-    ref.invalidate(pendingRequestsProvider);
   }
 
   Future<void> _rejectLink(ApprovalRequest request) async {
     final notifier = ref.read(approvalNotifierProvider.notifier);
     await notifier.reject(request.id, request: request);
-    ref.invalidate(pendingRequestsProvider);
   }
 
   // ── Build ──

@@ -96,8 +96,7 @@ class FindScreen extends HookConsumerWidget {
     }
 
     useEffect(() {
-      loadCampaigns();
-      loadLikedIds();
+      Future.wait([loadCampaigns(), loadLikedIds()]);
       return null;
     }, []);
 

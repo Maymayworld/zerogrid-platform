@@ -40,11 +40,12 @@ class ApprovalService {
 
     final response = await _supabase
         .from('submission_requests')
-        .select('id')
+        .select()
         .eq('organizer_id', userId)
-        .eq('status', 'pending');
+        .eq('status', 'pending')
+        .count(CountOption.exact);
 
-    return (response as List).length;
+    return response.count;
   }
 
   // 処理済みリクエストを取得（履歴用）

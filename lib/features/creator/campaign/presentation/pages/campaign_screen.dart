@@ -32,10 +32,6 @@ class CampaignScreen extends HookConsumerWidget {
         final participationService = ref.read(participationServiceProvider);
         final result = await participationService.getParticipatingCampaigns();
         campaigns.value = result;
-
-        // IDsも更新
-        final ids = result.map((c) => c.id).toSet();
-        ref.read(participatingCampaignIdsProvider.notifier).state = ids;
       } catch (e) {
         error.value = e.toString();
       } finally {
@@ -43,7 +39,7 @@ class CampaignScreen extends HookConsumerWidget {
       }
     }
 
-    // participatingIdsが変わったら再取得
+    // 初回ロード + 外部からの参加/離脱で再取得
     useEffect(() {
       loadParticipatingCampaigns();
       return null;
