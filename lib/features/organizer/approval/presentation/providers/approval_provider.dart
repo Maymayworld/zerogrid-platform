@@ -17,9 +17,11 @@ final pendingRequestCountProvider = StreamProvider<int>((ref) {
 });
 
 // 未処理リクエストがあるかどうか
+// valueOrNull はリフレッシュ・再接続中でも直前の値を保持するため、
+// 画面がApproval⇔Createの間でちらつかない
 final hasPendingRequestsProvider = Provider<bool>((ref) {
   final countAsync = ref.watch(pendingRequestCountProvider);
-  return countAsync.whenOrNull(data: (count) => count > 0) ?? false;
+  return (countAsync.valueOrNull ?? 0) > 0;
 });
 
 // 未処理リクエスト一覧

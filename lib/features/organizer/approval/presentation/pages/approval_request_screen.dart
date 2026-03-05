@@ -15,12 +15,7 @@ class ApprovalRequestScreen extends ConsumerStatefulWidget {
 }
 
 class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
-  // Tab: 0 = Videos, 1 = Links
   int _tabIndex = 0;
-
-  // Video swipe state
-  Offset _dragOffset = Offset.zero;
-  _SwipeDirection? _swipeDirection;
   bool _isProcessing = false;
 
   VideoPlayerController? _currentController;
@@ -28,7 +23,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
   bool _isVideoReady = false;
 
   List<ApprovalRequest> _videoRequests = [];
-  final int _currentVideoIndex = 0;
+  int _currentVideoIndex = 0;
   bool _videoInitDone = false;
 
   @override
@@ -93,49 +88,14 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     });
   }
 
-  // ── Swipe handling ──
+  // ── Video approval ──
 
-  void _onPanUpdate(DragUpdateDetails details) {
+  Future<void> _handleVideoAction(ApprovalRequest request, bool approve) async {
     if (_isProcessing) return;
-    setState(() {
-      _dragOffset += details.delta;
-      if (_dragOffset.dx > 50) {
-        _swipeDirection = _SwipeDirection.right;
-      } else if (_dragOffset.dx < -50) {
-        _swipeDirection = _SwipeDirection.left;
-      } else {
-        _swipeDirection = null;
-      }
-    });
-  }
-
-  void _onPanEnd(DragEndDetails details) {
-    if (_isProcessing || _currentVideoIndex >= _videoRequests.length) return;
-    final velocity = details.velocity.pixelsPerSecond;
-    final shouldSwipe = _dragOffset.dx.abs() > 100 || velocity.dx.abs() > 500;
-    if (shouldSwipe && _swipeDirection != null) {
-      _handleVideoSwipe(_videoRequests[_currentVideoIndex], _swipeDirection!);
-    } else {
-      _resetDrag();
-    }
-  }
-
-  void _resetDrag() {
-    setState(() {
-      _dragOffset = Offset.zero;
-      _swipeDirection = null;
-    });
-  }
-
-  Future<void> _handleVideoSwipe(ApprovalRequest request, _SwipeDirection direction) async {
     _isProcessing = true;
-    setState(() {
-      _dragOffset = direction == _SwipeDirection.right ? Offset(500, 0) : Offset(-500, 0);
-    });
-    await Future.delayed(const Duration(milliseconds: 200));
 
     final notifier = ref.read(approvalNotifierProvider.notifier);
-    if (direction == _SwipeDirection.right) {
+    if (approve) {
       await notifier.approve(request.id, request: request);
     } else {
       await notifier.reject(request.id, request: request);
@@ -144,13 +104,14 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     _currentController?.pause();
     setState(() {
       _videoRequests.removeAt(_currentVideoIndex);
-      _dragOffset = Offset.zero;
-      _swipeDirection = null;
       _isVideoReady = false;
+      if (_currentVideoIndex >= _videoRequests.length && _videoRequests.isNotEmpty) {
+        _currentVideoIndex = _videoRequests.length - 1;
+      }
     });
 
     if (_videoRequests.isNotEmpty) {
-      _initVideoForIndex(_currentVideoIndex.clamp(0, _videoRequests.length - 1));
+      _initVideoForIndex(_currentVideoIndex);
     } else {
       _currentController?.dispose();
       _currentController = null;
@@ -195,15 +156,12 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
 
           return Column(
             children: [
-              // Header with tabs
               _buildTabbedHeader(videoList.length, linkList.length),
-              // Content
               Expanded(
                 child: _tabIndex == 0
                     ? _buildVideoTab()
                     : _buildLinksTab(linkList),
               ),
-              SizedBox(height: 80),
             ],
           );
         },
@@ -238,7 +196,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
               ),
             ),
             SizedBox(height: SpacePalette.sm),
-            // Tab bar
             Padding(
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
               child: Container(
@@ -268,7 +225,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
       child: GestureDetector(
         onTap: () {
           setState(() => _tabIndex = index);
-          // Pause/play video based on tab
           if (index == 0) {
             _currentController?.play();
           } else {
@@ -310,145 +266,168 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     }
 
     final current = _videoRequests[_currentVideoIndex.clamp(0, _videoRequests.length - 1)];
-    return GestureDetector(
-      onPanUpdate: _onPanUpdate,
-      onPanEnd: _onPanEnd,
-      onTap: () {
-        if (_currentController != null && _currentController!.value.isInitialized) {
-          _currentController!.value.isPlaying ? _currentController!.pause() : _currentController!.play();
-          setState(() {});
-        }
-      },
-      child: AnimatedContainer(
-        duration: _isProcessing ? Duration(milliseconds: 200) : Duration.zero,
-        transform: Matrix4.translationValues(_dragOffset.dx, 0, 0),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // Video
-            if (_isVideoReady && _currentController != null && _currentController!.value.isInitialized)
-              Center(
-                child: AspectRatio(
-                  aspectRatio: _currentController!.value.aspectRatio,
-                  child: VideoPlayer(_currentController!),
-                ),
-              )
-            else
-              Center(child: CircularProgressIndicator(color: ColorPalette.white)),
+    return Column(
+      children: [
+        // Video area
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              if (_currentController != null && _currentController!.value.isInitialized) {
+                _currentController!.value.isPlaying ? _currentController!.pause() : _currentController!.play();
+                setState(() {});
+              }
+            },
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                // Video
+                if (_isVideoReady && _currentController != null && _currentController!.value.isInitialized)
+                  Center(
+                    child: AspectRatio(
+                      aspectRatio: _currentController!.value.aspectRatio,
+                      child: VideoPlayer(_currentController!),
+                    ),
+                  )
+                else
+                  Center(child: CircularProgressIndicator(color: ColorPalette.white)),
 
-            // Swipe overlay
-            if (_swipeDirection != null)
-              Container(
-                color: _swipeDirection == _SwipeDirection.right
-                    ? ColorPalette.positive500.withOpacity(0.3)
-                    : ColorPalette.critical500.withOpacity(0.3),
-                child: Center(
+                // Counter
+                Positioned(
+                  top: SpacePalette.sm,
+                  right: SpacePalette.sm,
                   child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: SpacePalette.lg, vertical: SpacePalette.base),
+                    padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
                     decoration: BoxDecoration(
-                      color: _swipeDirection == _SwipeDirection.right ? ColorPalette.positive500 : ColorPalette.critical500,
-                      borderRadius: BorderRadius.circular(RadiusPalette.lg),
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
                     ),
                     child: Text(
-                      _swipeDirection == _SwipeDirection.right ? 'APPROVE' : 'REJECT',
-                      style: TextStylePalette.header.copyWith(color: ColorPalette.white),
+                      '${_currentVideoIndex + 1} / ${_videoRequests.length}',
+                      style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white),
                     ),
                   ),
                 ),
-              ),
 
-            // Counter
-            Positioned(
-              top: SpacePalette.sm,
-              right: SpacePalette.sm,
-              child: Container(
-                padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.4),
-                  borderRadius: BorderRadius.circular(RadiusPalette.full),
-                ),
-                child: Text(
-                  '${_currentVideoIndex + 1} / ${_videoRequests.length}',
-                  style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white),
-                ),
-              ),
-            ),
-
-            // Bottom info
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
-                  ),
-                ),
-                padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.lg * 2, SpacePalette.base, SpacePalette.base),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
+                // Bottom info overlay
+                Positioned(
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [Colors.transparent, Colors.black.withOpacity(0.8)],
+                      ),
+                    ),
+                    padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.lg * 2, SpacePalette.base, SpacePalette.sm),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        CircleAvatar(
-                          radius: 18,
-                          backgroundImage: current.creatorAvatarUrl.isNotEmpty ? NetworkImage(current.creatorAvatarUrl) : null,
-                          child: current.creatorAvatarUrl.isEmpty ? Icon(Icons.person, size: 18, color: ColorPalette.neutral400) : null,
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 18,
+                              backgroundImage: current.creatorAvatarUrl.isNotEmpty ? NetworkImage(current.creatorAvatarUrl) : null,
+                              child: current.creatorAvatarUrl.isEmpty ? Icon(Icons.person, size: 18, color: ColorPalette.neutral400) : null,
+                            ),
+                            SizedBox(width: SpacePalette.sm),
+                            Expanded(
+                              child: Text(current.creatorName, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white), maxLines: 1, overflow: TextOverflow.ellipsis),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 4),
+                              decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(RadiusPalette.full)),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  PlatformIcon.fromPlatform(current.platform, size: 14),
+                                  SizedBox(width: 4),
+                                  Text(_getPlatformLabel(current.platform), style: TextStylePalette.smText.copyWith(color: ColorPalette.white)),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
-                        SizedBox(width: SpacePalette.sm),
-                        Expanded(
-                          child: Text(current.creatorName, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white), maxLines: 1, overflow: TextOverflow.ellipsis),
-                        ),
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 4),
-                          decoration: BoxDecoration(color: Colors.white.withOpacity(0.15), borderRadius: BorderRadius.circular(RadiusPalette.full)),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              PlatformIcon.fromPlatform(current.platform, size: 14),
-                              SizedBox(width: 4),
-                              Text(_getPlatformLabel(current.platform), style: TextStylePalette.smText.copyWith(color: ColorPalette.white)),
-                            ],
-                          ),
-                        ),
+                        if (current.videoTitle.isNotEmpty) ...[
+                          SizedBox(height: SpacePalette.sm),
+                          Text(current.videoTitle, style: TextStylePalette.normalText.copyWith(color: ColorPalette.white), maxLines: 2, overflow: TextOverflow.ellipsis),
+                        ],
+                        SizedBox(height: SpacePalette.xs),
+                        Text(current.campaignName, style: TextStylePalette.smText.copyWith(color: ColorPalette.smashedPumpkin300), maxLines: 1, overflow: TextOverflow.ellipsis),
                       ],
                     ),
-                    if (current.videoTitle.isNotEmpty) ...[
-                      SizedBox(height: SpacePalette.sm),
-                      Text(current.videoTitle, style: TextStylePalette.normalText.copyWith(color: ColorPalette.white), maxLines: 2, overflow: TextOverflow.ellipsis),
-                    ],
-                    SizedBox(height: SpacePalette.xs),
-                    Text(current.campaignName, style: TextStylePalette.smText.copyWith(color: ColorPalette.smashedPumpkin300), maxLines: 1, overflow: TextOverflow.ellipsis),
-                    SizedBox(height: SpacePalette.base),
-                    Row(
+                  ),
+                ),
+
+                // Pause indicator
+                if (_currentController != null && _currentController!.value.isInitialized && !_currentController!.value.isPlaying)
+                  Center(
+                    child: Container(
+                      width: 64, height: 64,
+                      decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), shape: BoxShape.circle),
+                      child: Icon(Icons.play_arrow, color: ColorPalette.white, size: 36),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        // Reject / Approve buttons (outside video stack, above bottom nav)
+        Container(
+          color: Colors.black,
+          padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.sm, SpacePalette.base, 132),
+          child: Row(
+            children: [
+              Expanded(
+                child: GestureDetector(
+                  onTap: _isProcessing ? null : () => _handleVideoAction(current, false),
+                  child: Container(
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      border: Border.all(color: ColorPalette.critical500),
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
+                    ),
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        _buildGuideChip(Icons.close, 'Reject', ColorPalette.critical500, '←'),
-                        SizedBox(width: SpacePalette.lg),
-                        _buildGuideChip(Icons.check, 'Approve', ColorPalette.positive500, '→'),
+                        Icon(Icons.close, color: ColorPalette.critical500, size: 20),
+                        SizedBox(width: SpacePalette.xs),
+                        Text('Reject', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.critical500)),
                       ],
                     ),
-                  ],
+                  ),
                 ),
               ),
-            ),
-
-            // Pause indicator
-            if (_currentController != null && _currentController!.value.isInitialized && !_currentController!.value.isPlaying && _swipeDirection == null)
-              Center(
-                child: Container(
-                  width: 64, height: 64,
-                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), shape: BoxShape.circle),
-                  child: Icon(Icons.play_arrow, color: ColorPalette.white, size: 36),
+              SizedBox(width: SpacePalette.sm),
+              Expanded(
+                child: GestureDetector(
+                  onTap: _isProcessing ? null : () => _handleVideoAction(current, true),
+                  child: Container(
+                    height: 48,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      color: ColorPalette.positive500,
+                      borderRadius: BorderRadius.circular(RadiusPalette.base),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.check, color: ColorPalette.white, size: 20),
+                        SizedBox(width: SpacePalette.xs),
+                        Text('Approve', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-          ],
+            ],
+          ),
         ),
-      ),
+      ],
     );
   }
 
@@ -469,7 +448,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     }
 
     return ListView.separated(
-      padding: EdgeInsets.all(SpacePalette.base),
+      padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.base, SpacePalette.base, 132),
       itemCount: linkRequests.length,
       separatorBuilder: (_, __) => SizedBox(height: SpacePalette.sm),
       itemBuilder: (context, index) {
@@ -490,7 +469,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Creator + platform
           Row(
             children: [
               CircleAvatar(
@@ -531,7 +509,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
             Text(request.videoTitle, style: TextStylePalette.normalText, maxLines: 2, overflow: TextOverflow.ellipsis),
           ],
 
-          // URL link
           if (request.videoUrl.isNotEmpty) ...[
             SizedBox(height: SpacePalette.sm),
             GestureDetector(
@@ -557,7 +534,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
           ],
 
           SizedBox(height: SpacePalette.base),
-          // Approve / Reject buttons
           Row(
             children: [
               Expanded(
@@ -598,26 +574,6 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
 
   // ── Helpers ──
 
-  Widget _buildGuideChip(IconData icon, String label, Color color, String direction) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.xs),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
-        borderRadius: BorderRadius.circular(RadiusPalette.full),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(direction, style: TextStyle(color: color, fontSize: 14, fontWeight: FontWeight.bold)),
-          SizedBox(width: 4),
-          Icon(icon, color: color, size: 16),
-          SizedBox(width: 4),
-          Text(label, style: TextStylePalette.smText.copyWith(color: color)),
-        ],
-      ),
-    );
-  }
-
   String _getPlatformLabel(String platform) {
     switch (platform.toLowerCase()) {
       case 'youtube': return 'YouTube';
@@ -627,5 +583,3 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
     }
   }
 }
-
-enum _SwipeDirection { left, right }
