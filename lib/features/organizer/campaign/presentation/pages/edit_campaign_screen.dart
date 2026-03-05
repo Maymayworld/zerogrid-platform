@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import '../../../../../shared/widgets/duolingo_form_components.dart';
 import '../../data/models/campaign.dart';
 import '../providers/campaign_service_provider.dart';
 import 'submission_review_screen.dart';
@@ -299,28 +300,36 @@ class EditCampaignScreen extends HookConsumerWidget {
                   ),
                   SizedBox(height: SpacePalette.base),
 
-                  // Target Views
+                  // Target Views (読み取り専用)
                   Text('Target Views', style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   TextField(
                     controller: targetViewsController,
-                    keyboardType: TextInputType.number,
+                    readOnly: true,
+                    enabled: false,
                     decoration: _inputDecoration('200000').copyWith(
                       suffixText: 'Views',
-                      suffixStyle: TextStylePalette.normalText,
+                      suffixStyle: TextStylePalette.normalText.copyWith(
+                        color: ColorPalette.neutral400,
+                      ),
+                      fillColor: ColorPalette.neutral100,
                     ),
                   ),
                   SizedBox(height: SpacePalette.base),
 
-                  // Budget
+                  // Budget (読み取り専用)
                   Text('Budget', style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   TextField(
                     controller: budgetController,
-                    keyboardType: TextInputType.number,
+                    readOnly: true,
+                    enabled: false,
                     decoration: _inputDecoration('3000').copyWith(
                       prefixText: '¥ ',
-                      prefixStyle: TextStylePalette.normalText,
+                      prefixStyle: TextStylePalette.normalText.copyWith(
+                        color: ColorPalette.neutral400,
+                      ),
+                      fillColor: ColorPalette.neutral100,
                     ),
                   ),
                   SizedBox(height: SpacePalette.base),
@@ -355,7 +364,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                   ),
                   SizedBox(height: SpacePalette.base),
 
-                  // Platforms
+                  // Platforms (読み取り専用)
                   Text('Platforms', style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   Wrap(
@@ -365,19 +374,11 @@ class EditCampaignScreen extends HookConsumerWidget {
                       return FilterChip(
                         label: Text(platform),
                         selected: isSelected,
-                        onSelected: (selected) {
-                          final current = {...selectedPlatforms.value};
-                          if (selected) {
-                            current.add(platform);
-                          } else {
-                            current.remove(platform);
-                          }
-                          selectedPlatforms.value = current;
-                        },
+                        onSelected: null,
                         selectedColor: ColorPalette.neutral800,
                         checkmarkColor: ColorPalette.white,
                         labelStyle: TextStyle(
-                          color: isSelected ? ColorPalette.white : ColorPalette.neutral800,
+                          color: isSelected ? ColorPalette.white : ColorPalette.neutral400,
                         ),
                       );
                     }).toList(),
@@ -437,34 +438,15 @@ class EditCampaignScreen extends HookConsumerWidget {
           ),
 
           // Updateボタン
-          Container(
-            padding: EdgeInsets.all(SpacePalette.base),
-            decoration: BoxDecoration(
-              color: ColorPalette.white,
-              border: Border(
-                top: BorderSide(color: ColorPalette.neutral200, width: 1),
-              ),
-            ),
-            child: SafeArea(
-              child: SizedBox(
-                width: double.infinity,
-                height: ButtonSizePalette.button,
-                child: ElevatedButton(
-                  onPressed: isSaving.value ? null : handleSave,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorPalette.neutral800,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(RadiusPalette.base),
-                    ),
-                  ),
-                  child: isSaving.value
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                        )
-                      : Text('Update Project', style: TextStylePalette.buttonTextWhite),
-                ),
+          SafeArea(
+            top: false,
+            child: Padding(
+              padding: EdgeInsets.all(SpacePalette.base),
+              child: DuolingoButton(
+                onPressed: handleSave,
+                isEnabled: !isSaving.value,
+                isLoading: isSaving.value,
+                text: 'Update Project',
               ),
             ),
           ),
