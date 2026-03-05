@@ -13,6 +13,7 @@ import 'features/auth/presentation/providers/user_profile_provider.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/auth/data/models/user_role.dart';
 import 'features/organizer/payment/data/services/payment_service.dart';
+import 'features/organizer/approval/presentation/providers/approval_provider.dart';
 import 'features/organizer/payment/presentation/providers/payment_provider.dart';
 import 'shared/theme/main_layout.dart';
 import 'shared/theme/app_theme.dart';
@@ -346,6 +347,8 @@ class _NoProfileScreenState extends ConsumerState<_NoProfileScreen> {
                   onPressed: () async {
                     await ref.read(authServiceProvider).signOut();
                     ref.read(userProfileProvider.notifier).clear();
+                    ref.invalidate(pendingRequestsProvider);
+                    ref.invalidate(pendingRequestCountProvider);
                     if (context.mounted) {
                       Navigator.pushAndRemoveUntil(
                         context,

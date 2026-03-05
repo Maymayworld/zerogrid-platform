@@ -250,27 +250,9 @@ class SubmissionService {
     }).toList();
   }
 
-  /// Update submission status (approve/reject)
-  /// If approved and submission has a local video, triggers auto-posting to SNS
-  Future<void> updateSubmissionStatus({
-    required String submissionId,
-    required String status,
-    String? reviewNote,
-  }) async {
-    await _supabase.from('submission_requests').update({
-      'status': status,
-      'reviewed_at': DateTime.now().toUtc().toIso8601String(),
-      if (reviewNote != null) 'review_note': reviewNote,
-    }).eq('id', submissionId);
-
-    // Auto-post to SNS when approved
-    if (status == 'approved') {
-      await _triggerAutoPost(submissionId);
-    }
-  }
-
-  /// Trigger auto-posting to the target SNS platform
-  Future<void> _triggerAutoPost(String submissionId) async {
+  /// Trigger auto-posting to the target SNS platform.
+  /// Public so that ApprovalService can call it after approving.
+  Future<void> triggerAutoPost(String submissionId) async {
     try {
       // Get the submission to check if it has a local video
       final response = await _supabase
@@ -308,18 +290,18 @@ class SubmissionService {
         'upload_status': 'posting',
       }).eq('id', submissionId);
 
-      // Trigger the upload Edge Function (fire-and-forget)
-      _supabase.functions.invoke(
-        functionName,
-        body: {'submission_id': submissionId},
-      ).then((_) {
-        // Success - Edge Function updates the record itself
-      }).catchError((e) {
+      // Call Edge Function — await so failures are caught
+      try {
+        await _supabase.functions.invoke(
+          functionName,
+          body: {'submission_id': submissionId},
+        );
+      } catch (e) {
         // Mark as failed if Edge Function call fails
-        _supabase.from('submission_requests').update({
+        await _supabase.from('submission_requests').update({
           'upload_status': 'failed',
         }).eq('id', submissionId);
-      });
+      }
     } catch (e) {
       // Don't throw - auto-posting failure shouldn't block approval
       print('Auto-post trigger failed: $e');

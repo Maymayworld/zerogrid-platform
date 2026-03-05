@@ -7,9 +7,14 @@ import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/submission/data/services/submission_service.dart';
+import '../../../../organizer/approval/data/services/approval_service.dart';
 
 final _submissionServiceProvider = Provider<SubmissionService>((ref) {
   return SubmissionService();
+});
+
+final _approvalServiceProvider = Provider<ApprovalService>((ref) {
+  return ApprovalService();
 });
 
 class SubmissionReviewScreen extends HookConsumerWidget {
@@ -626,14 +631,15 @@ class _SubmissionCard extends StatelessWidget {
 
     if (confirmed == true && context.mounted) {
       try {
-        final service = ref.read(_submissionServiceProvider);
-        await service.updateSubmissionStatus(
-          submissionId: submissionId,
-          status: status,
-          reviewNote: noteController.text.trim().isNotEmpty
-              ? noteController.text.trim()
-              : null,
-        );
+        final approvalService = ref.read(_approvalServiceProvider);
+        final reviewNote = noteController.text.trim().isNotEmpty
+            ? noteController.text.trim()
+            : null;
+        if (status == 'approved') {
+          await approvalService.approveRequest(submissionId, reviewNote: reviewNote);
+        } else {
+          await approvalService.rejectRequest(submissionId, reviewNote: reviewNote);
+        }
         await onStatusChanged();
 
         if (context.mounted) {

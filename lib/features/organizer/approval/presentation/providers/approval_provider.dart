@@ -10,15 +10,15 @@ final approvalServiceProvider = Provider<ApprovalService>((ref) {
   return ApprovalService();
 });
 
-// 未処理リクエスト数
-final pendingRequestCountProvider = StreamProvider<int>((ref) {
+// 未処理リクエスト数（autoDisposeで画面離脱時にStream解除→復帰時に再購読）
+final pendingRequestCountProvider = StreamProvider.autoDispose<int>((ref) {
+  // keepAlive: OrganizerMainLayoutが常にwatchしているので実質生き続けるが、
+  // サインアウト等でウィジェットツリーから外れた場合にStreamが確実にクリーンアップされる
   final service = ref.watch(approvalServiceProvider);
   return service.watchPendingRequestCount();
 });
 
 // 未処理リクエストがあるかどうか
-// valueOrNull はリフレッシュ・再接続中でも直前の値を保持するため、
-// 画面がApproval⇔Createの間でちらつかない
 final hasPendingRequestsProvider = Provider<bool>((ref) {
   final countAsync = ref.watch(pendingRequestCountProvider);
   return (countAsync.valueOrNull ?? 0) > 0;
@@ -60,6 +60,7 @@ class ApprovalNotifier extends StateNotifier<AsyncValue<void>> {
         );
       }
       _ref.invalidate(pendingRequestsProvider);
+      _ref.invalidate(pendingRequestCountProvider);
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -80,6 +81,7 @@ class ApprovalNotifier extends StateNotifier<AsyncValue<void>> {
         );
       }
       _ref.invalidate(pendingRequestsProvider);
+      _ref.invalidate(pendingRequestCountProvider);
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);
@@ -91,6 +93,7 @@ class ApprovalNotifier extends StateNotifier<AsyncValue<void>> {
     try {
       await _service.skipRequest(requestId);
       _ref.invalidate(pendingRequestsProvider);
+      _ref.invalidate(pendingRequestCountProvider);
       state = const AsyncValue.data(null);
     } catch (e, st) {
       state = AsyncValue.error(e, st);

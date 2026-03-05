@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
+import '../../../../organizer/home/presentation/providers/organizer_tab_index_provider.dart';
 import '../../data/models/approval_request.dart';
 import '../providers/approval_provider.dart';
 
@@ -24,6 +25,8 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
   int _currentVideoIndex = 0;
   bool _videoInitDone = false;
 
+  bool get _isVisible => ref.read(organizerTabIndexProvider) == 2;
+
   @override
   void dispose() {
     _currentController?.dispose();
@@ -41,7 +44,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
         if (mounted) {
           setState(() => _isVideoReady = true);
           _currentController!.setLooping(true);
-          _currentController!.play();
+          if (_isVisible) _currentController!.play();
           _preloadNext(1);
         }
       });
@@ -59,7 +62,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
 
     if (_currentController != null && _currentController!.value.isInitialized) {
       setState(() => _isVideoReady = true);
-      _currentController!.play();
+      if (_isVisible) _currentController!.play();
     } else {
       setState(() => _isVideoReady = false);
       _currentController = VideoPlayerController.networkUrl(Uri.parse(request.localVideoUrl!));
@@ -67,7 +70,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
         if (mounted) {
           setState(() => _isVideoReady = true);
           _currentController!.setLooping(true);
-          _currentController!.play();
+          if (_isVisible) _currentController!.play();
         }
       });
     }
@@ -115,6 +118,10 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
       _currentController = null;
       _nextController?.dispose();
       _nextController = null;
+      // 全件処理済み → 次回のリクエスト取得時にビデオリストを再初期化
+      _videoInitDone = false;
+      // Homeタブに切り替え
+      ref.read(organizerTabIndexProvider.notifier).state = 0;
     }
 
     _isProcessing = false;
@@ -125,6 +132,19 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
   @override
   Widget build(BuildContext context) {
     final requestsAsync = ref.watch(pendingRequestsProvider);
+
+    // タブ切り替え時に再生/停止を制御
+    ref.listen<int>(organizerTabIndexProvider, (prev, next) {
+      if (next == 2) {
+        // Approvalタブに来た → 再生
+        if (_isVideoReady && _currentController != null && _currentController!.value.isInitialized) {
+          _currentController!.play();
+        }
+      } else {
+        // 別タブに移動 → 停止
+        _currentController?.pause();
+      }
+    });
 
     return Scaffold(
       backgroundColor: Colors.black,

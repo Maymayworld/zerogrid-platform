@@ -2,7 +2,7 @@
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/approval_request.dart';
-import '../../../../../shared/data/services/notification_service.dart';
+import '../../../../creator/submission/data/services/submission_service.dart';
 
 class ApprovalService {
   final SupabaseClient _supabase = Supabase.instance.client;
@@ -76,18 +76,23 @@ class ApprovalService {
   }
 
   // リクエストを承認
-  Future<void> approveRequest(String requestId) async {
+  Future<void> approveRequest(String requestId, {String? reviewNote}) async {
     await _supabase.from('submission_requests').update({
       'status': 'approved',
       'reviewed_at': DateTime.now().toIso8601String(),
+      if (reviewNote != null) 'review_note': reviewNote,
     }).eq('id', requestId);
+
+    // 自動投稿をトリガー
+    await SubmissionService().triggerAutoPost(requestId);
   }
 
   // リクエストを却下
-  Future<void> rejectRequest(String requestId) async {
+  Future<void> rejectRequest(String requestId, {String? reviewNote}) async {
     await _supabase.from('submission_requests').update({
       'status': 'rejected',
       'reviewed_at': DateTime.now().toIso8601String(),
+      if (reviewNote != null) 'review_note': reviewNote,
     }).eq('id', requestId);
   }
 

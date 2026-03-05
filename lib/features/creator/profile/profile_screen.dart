@@ -19,6 +19,7 @@ import '../feed/presentation/providers/feed_provider.dart';
 import '../campaign/presentation/providers/participation_service_provider.dart';
 import '../likes/presentation/providers/like_service_provider.dart';
 import '../submission/presentation/providers/submission_providers.dart';
+import '../../organizer/approval/presentation/providers/approval_provider.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -52,6 +53,8 @@ class ProfileScreen extends HookConsumerWidget {
         ref.read(likedCampaignIdsProvider.notifier).state = {};
         ref.read(connectedProvidersProvider.notifier).state = {};
         ref.read(socialConnectionsProvider.notifier).state = [];
+        ref.invalidate(pendingRequestsProvider);
+        ref.invalidate(pendingRequestCountProvider);
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => SelectRoleScreen()),
