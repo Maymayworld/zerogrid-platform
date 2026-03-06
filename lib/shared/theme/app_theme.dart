@@ -348,7 +348,9 @@ class CardSectionSize {
 
 class AppTheme {
   static ThemeData get lightTheme {
-    final textTheme = GoogleFonts.interTextTheme();
+    // Use NotoSansJP for Japanese support (local asset)
+    const String fontFamily = 'NotoSansJP';
+    final textTheme = ThemeData().textTheme.apply(fontFamily: fontFamily);
     
     return ThemeData(
       useMaterial3: true,
