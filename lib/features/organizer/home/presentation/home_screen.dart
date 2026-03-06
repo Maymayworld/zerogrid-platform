@@ -256,9 +256,50 @@ class _ViewsCard extends ConsumerWidget {
     return num.toString();
   }
 
+  /// Y軸ラベル用フォーマット（1K, 10K, 1.5M など）
+  String _formatAxisLabel(double value) {
+    if (value >= 1000000) {
+      final m = value / 1000000;
+      return m == m.roundToDouble() ? '${m.toInt()}M' : '${m.toStringAsFixed(1)}M';
+    } else if (value >= 1000) {
+      final k = value / 1000;
+      return k == k.roundToDouble() ? '${k.toInt()}K' : '${k.toStringAsFixed(1)}K';
+    }
+    return value.toInt().toString();
+  }
+
+  /// 最大値に応じた「きれいな」Y軸間隔を計算
+  double _calcInterval(double maxVal) {
+    if (maxVal <= 0) return 1;
+    // 4〜5本のグリッド線になるように間隔を決定
+    final raw = maxVal / 4;
+    final magnitude = _pow10((raw.toInt().toString().length - 1).clamp(0, 20));
+    final normalized = raw / magnitude;
+    double nice;
+    if (normalized <= 1) {
+      nice = 1;
+    } else if (normalized <= 2) {
+      nice = 2;
+    } else if (normalized <= 5) {
+      nice = 5;
+    } else {
+      nice = 10;
+    }
+    return nice * magnitude;
+  }
+
+  double _pow10(int exp) {
+    double result = 1;
+    for (int i = 0; i < exp; i++) {
+      result *= 10;
+    }
+    return result;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final totalViewsAsync = ref.watch(totalViewsProvider);
+    final campaignStatsAsync = ref.watch(myCampaignStatsProvider);
 
     return Container(
       padding: EdgeInsets.all(SpacePalette.base),
@@ -319,83 +360,130 @@ class _ViewsCard extends ConsumerWidget {
 
           SizedBox(height: SpacePalette.lg),
 
-          // グラフ（プレースホルダー）
+          // グラフ — キャンペーン開始日順に累計再生回数を表示
           SizedBox(
             height: 150,
-            child: LineChart(
-              LineChartData(
-                gridData: FlGridData(
-                  show: true,
-                  drawVerticalLine: false,
-                  horizontalInterval: 50000,
-                  getDrawingHorizontalLine: (value) {
-                    return FlLine(
-                      color: ColorPalette.neutral200,
-                      strokeWidth: 1,
-                      dashArray: [5, 5],
-                    );
-                  },
-                ),
-                titlesData: FlTitlesData(
-                  leftTitles: AxisTitles(
-                    sideTitles: SideTitles(
-                      showTitles: true,
-                      reservedSize: 35,
-                      interval: 50000,
-                      getTitlesWidget: (value, meta) {
-                        String text;
-                        if (value == 0) {
-                          text = '0';
-                        } else {
-                          text = '${(value / 1000).toInt()}K';
-                        }
-                        return Text(
-                          text,
-                          style: TextStylePalette.smSubText.copyWith(
-                            fontSize: 10,
-                            color: ColorPalette.neutral400,
-                          ),
+            child: campaignStatsAsync.when(
+              data: (campaigns) {
+                // 締め切り順にソート
+                final sorted = List<CampaignStats>.from(campaigns)
+                  ..sort((a, b) => a.deadline.compareTo(b.deadline));
+
+                // 累計データポイントを作成
+                final spots = <FlSpot>[FlSpot(0, 0)];
+                final dateLabels = <int, String>{0: ''};
+                int cumulative = 0;
+                for (int i = 0; i < sorted.length; i++) {
+                  cumulative += sorted[i].totalViews;
+                  spots.add(FlSpot((i + 1).toDouble(), cumulative.toDouble()));
+                  final d = sorted[i].deadline;
+                  dateLabels[i + 1] = '${d.month}/${d.day}';
+                }
+
+                // データがない場合
+                if (sorted.isEmpty) {
+                  spots.clear();
+                  spots.addAll([FlSpot(0, 0), FlSpot(1, 0)]);
+                }
+
+                final maxVal = spots.map((s) => s.y).reduce((a, b) => a > b ? a : b);
+                final interval = _calcInterval(maxVal);
+                final maxY = maxVal <= 0 ? 100.0 : (((maxVal / interval).ceil()) * interval);
+                final maxX = spots.last.x;
+
+                return LineChart(
+                  LineChartData(
+                    gridData: FlGridData(
+                      show: true,
+                      drawVerticalLine: false,
+                      horizontalInterval: interval,
+                      getDrawingHorizontalLine: (value) {
+                        return FlLine(
+                          color: ColorPalette.neutral200,
+                          strokeWidth: 1,
+                          dashArray: [5, 5],
                         );
                       },
                     ),
-                  ),
-                  bottomTitles: AxisTitles(
-                    sideTitles: SideTitles(showTitles: false),
-                  ),
-                  rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                ),
-                borderData: FlBorderData(show: false),
-                lineBarsData: [
-                  LineChartBarData(
-                    spots: [
-                      FlSpot(0, 0),
-                      FlSpot(1, 0),
-                      FlSpot(2, 0),
-                    ],
-                    isCurved: true,
-                    curveSmoothness: 0.35,
-                    color: ColorPalette.smashedPumpkin600,
-                    barWidth: 3,
-                    isStrokeCapRound: true,
-                    dotData: FlDotData(show: false),
-                    belowBarData: BarAreaData(
-                      show: true,
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          ColorPalette.smashedPumpkin500.withOpacity(0.3),
-                          ColorPalette.smashedPumpkin500.withOpacity(0.05),
-                        ],
+                    titlesData: FlTitlesData(
+                      leftTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: true,
+                          reservedSize: 40,
+                          interval: interval,
+                          getTitlesWidget: (value, meta) {
+                            if (value == meta.max) return SizedBox.shrink();
+                            return Text(
+                              value == 0 ? '0' : _formatAxisLabel(value),
+                              style: TextStylePalette.smSubText.copyWith(
+                                fontSize: 10,
+                                color: ColorPalette.neutral400,
+                              ),
+                            );
+                          },
+                        ),
                       ),
+                      bottomTitles: AxisTitles(
+                        sideTitles: SideTitles(
+                          showTitles: sorted.isNotEmpty,
+                          reservedSize: 22,
+                          interval: 1,
+                          getTitlesWidget: (value, meta) {
+                            final idx = value.toInt();
+                            if (idx <= 0 || !dateLabels.containsKey(idx)) {
+                              return SizedBox.shrink();
+                            }
+                            return Padding(
+                              padding: EdgeInsets.only(top: 4),
+                              child: Text(
+                                dateLabels[idx]!,
+                                style: TextStylePalette.smSubText.copyWith(
+                                  fontSize: 9,
+                                  color: ColorPalette.neutral400,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
                     ),
+                    borderData: FlBorderData(show: false),
+                    lineBarsData: [
+                      LineChartBarData(
+                        spots: spots,
+                        isCurved: true,
+                        curveSmoothness: 0.35,
+                        color: ColorPalette.smashedPumpkin600,
+                        barWidth: 3,
+                        isStrokeCapRound: true,
+                        dotData: FlDotData(show: spots.length <= 6),
+                        belowBarData: BarAreaData(
+                          show: true,
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              ColorPalette.smashedPumpkin500.withOpacity(0.3),
+                              ColorPalette.smashedPumpkin500.withOpacity(0.05),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                    minY: 0,
+                    maxY: maxY,
+                    minX: 0,
+                    maxX: maxX <= 0 ? 1 : maxX,
                   ),
-                ],
-                minY: 0,
-                maxY: 150000,
-                minX: 0,
-                maxX: 2,
+                );
+              },
+              loading: () => Center(
+                child: CircularProgressIndicator(color: ColorPalette.neutral300, strokeWidth: 2),
+              ),
+              error: (_, __) => Center(
+                child: Text(AppLocalizations.of(context)!.error, style: TextStylePalette.smSubText),
               ),
             ),
           ),
