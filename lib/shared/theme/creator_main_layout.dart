@@ -44,6 +44,16 @@ class CreatorMainLayout extends HookConsumerWidget {
           Positioned.fill(
             child: IndexedStack(index: currentIndex, children: screens),
           ),
+          // ステータスバー背景（iOS対応）
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: MediaQuery.of(context).padding.top,
+              color: ColorPalette.black,
+            ),
+          ),
           // FAB（プラスボタン）
           Positioned(
             right: SpacePalette.base + 4,
