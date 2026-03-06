@@ -24,7 +24,6 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
           borderRadius: BorderRadius.vertical(top: Radius.circular(RadiusPalette.xl)),
         ),
         child: SafeArea(
-          top: false,
           child: Column(
             children: [
               // Header with X button

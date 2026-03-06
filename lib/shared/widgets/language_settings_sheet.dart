@@ -13,7 +13,6 @@ class LanguageSettingsSheet extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return SafeArea(
-      top: false,
       child: Container(
         decoration: BoxDecoration(
           color: ColorPalette.white,

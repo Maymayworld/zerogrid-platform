@@ -25,7 +25,6 @@ class _ContactSupportHomeScreenState extends State<ContactSupportHomeScreen> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      top: false,
       child: AnimatedSize(
         duration: const Duration(milliseconds: 250),
         curve: Curves.easeInOut,
