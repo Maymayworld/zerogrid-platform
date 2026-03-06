@@ -59,18 +59,7 @@ serve(async (req) => {
       throw new Error('Payout account verification is not complete.')
     }
 
-    // Stripe Transfer: プラットフォーム → Connected Account
-    const transfer = await stripe.transfers.create({
-      amount: amount,
-      currency: 'jpy',
-      destination: profile.stripe_connect_id,
-      metadata: {
-        supabase_user_id: user.id,
-        type: 'creator_withdrawal',
-      },
-    })
-
-    // 残高を更新
+    // 1. 先に残高を差し引く（二重引き出し防止）
     const newBalance = currentBalance - amount
     const { error: balErr } = await admin
       .from('profiles')
@@ -79,7 +68,28 @@ serve(async (req) => {
 
     if (balErr) throw new Error(`Balance update: ${balErr.message}`)
 
-    // トランザクション記録
+    // 2. Stripe Transfer: プラットフォーム → Connected Account
+    let transfer
+    try {
+      transfer = await stripe.transfers.create({
+        amount: amount,
+        currency: 'jpy',
+        destination: profile.stripe_connect_id,
+        metadata: {
+          supabase_user_id: user.id,
+          type: 'creator_withdrawal',
+        },
+      })
+    } catch (stripeError) {
+      // Transfer失敗 → 残高を復元
+      await admin
+        .from('profiles')
+        .update({ balance: currentBalance })
+        .eq('id', user.id)
+      throw new Error(`Stripe transfer failed: ${stripeError.message}`)
+    }
+
+    // 3. トランザクション記録
     const { error: txErr } = await admin
       .from('transactions')
       .insert({
@@ -92,7 +102,10 @@ serve(async (req) => {
         status: 'completed',
       })
 
-    if (txErr) throw new Error(`Transaction insert: ${txErr.message}`)
+    if (txErr) {
+      // トランザクション記録失敗はログのみ（Transfer成功済みなので残高は戻さない）
+      console.error('Transaction insert failed (transfer already succeeded):', txErr)
+    }
 
     // 通知設定を確認してから送信
     const { data: notifPref } = await admin

@@ -102,6 +102,7 @@ class RewardService {
   }
 
   /// 推定収益を計算（まだ分配されていない分）
+  /// distribute-rewards と同じロジック: 達成率 × 予算 × (1 - 10%手数料) × 自分のシェア
   Future<int> getEstimatedPendingEarnings() async {
     if (_userId == null) return 0;
 
@@ -111,24 +112,49 @@ class RewardService {
           .from('submission_requests')
           .select('''
             view_count,
-            campaigns:campaign_id (budget, target_views, status)
+            campaign_id,
+            campaigns:campaign_id (budget, target_views, status, total_views)
           ''')
           .eq('creator_id', _userId!)
           .eq('status', 'approved');
 
-      int totalEstimated = 0;
+      // キャンペーン別に自分の視聴数を集計
+      final Map<String, Map<String, dynamic>> campaignData = {};
+      final Map<String, int> myViewsByCampaign = {};
 
       for (final sub in (response as List)) {
         final campaign = sub['campaigns'] as Map<String, dynamic>?;
         if (campaign == null || campaign['status'] != 'active') continue;
 
+        final campaignId = sub['campaign_id'] as String;
         final viewCount = (sub['view_count'] as num?)?.toInt() ?? 0;
+
+        campaignData[campaignId] = campaign;
+        myViewsByCampaign[campaignId] =
+            (myViewsByCampaign[campaignId] ?? 0) + viewCount;
+      }
+
+      const platformFeeRate = 0.10;
+      int totalEstimated = 0;
+
+      for (final entry in myViewsByCampaign.entries) {
+        final campaign = campaignData[entry.key]!;
+        final myViews = entry.value;
         final budget = (campaign['budget'] as num?)?.toInt() ?? 0;
         final targetViews = (campaign['target_views'] as num?)?.toInt() ?? 1;
+        final totalViews = (campaign['total_views'] as num?)?.toInt() ?? 0;
 
-        // 1000再生あたりの単価 × 視聴回数
-        final pricePerThousand = (budget / targetViews) * 1000;
-        final estimated = (viewCount / 1000 * pricePerThousand).round();
+        if (totalViews == 0 || myViews == 0) continue;
+
+        // distribute-rewards と同じ計算式
+        final achievementRate =
+            (totalViews / targetViews).clamp(0.0, 1.0);
+        final distributableAmount = (budget * achievementRate).floor();
+        final platformFee = (distributableAmount * platformFeeRate).floor();
+        final creatorPool = distributableAmount - platformFee;
+
+        final myShare = myViews / totalViews;
+        final estimated = (creatorPool * myShare).floor();
         totalEstimated += estimated;
       }
 

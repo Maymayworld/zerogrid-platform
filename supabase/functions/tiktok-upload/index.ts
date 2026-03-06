@@ -72,7 +72,7 @@ serve(async (req) => {
     // 2. TikTok接続情報を取得
     const { data: connection } = await supabase
       .from('social_connections')
-      .select('access_token, refresh_token, provider_account_id')
+      .select('access_token, refresh_token, provider_account_id, provider_account_name')
       .eq('user_id', submission.creator_id)
       .eq('provider', 'tiktok')
       .single()
@@ -169,7 +169,9 @@ serve(async (req) => {
 
     // 7. Check publish status (may take time to process)
     // TikTok processes asynchronously, so we save what we have
-    const tiktokUrl = `https://www.tiktok.com/@${connection.provider_account_id}/video/${publishId}`
+    // provider_account_name = @ユーザー名、provider_account_id = open_id（数字）
+    const username = connection.provider_account_name || connection.provider_account_id
+    const tiktokUrl = `https://www.tiktok.com/@${username}/video/${publishId}`
 
     // 8. 提出物を更新
     await supabase

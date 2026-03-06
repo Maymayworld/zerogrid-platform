@@ -44,12 +44,36 @@ serve(async (req) => {
       throw new Error('Campaign not found')
     }
 
-    // 既に分配済みかチェック（completed = 分配済み、processing以外のactive等も通す）
+    // 既に分配済みかチェック（completed = 分配済み）
     if (campaign.status === 'completed' && !force) {
       return new Response(
-        JSON.stringify({ 
-          success: false, 
-          message: 'Campaign already completed and rewards distributed' 
+        JSON.stringify({
+          success: false,
+          message: 'Campaign already completed and rewards distributed'
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    // 冪等性チェック: このキャンペーンに対するpayoutトランザクションが既に存在するか
+    const { data: existingPayouts } = await supabase
+      .from('transactions')
+      .select('id')
+      .eq('reference_id', campaign_id)
+      .eq('type', 'payout')
+      .limit(1)
+
+    if (existingPayouts && existingPayouts.length > 0 && !force) {
+      // 既に分配済み — キャンペーンを完了状態にして終了
+      await supabase
+        .from('campaigns')
+        .update({ status: 'completed' })
+        .eq('id', campaign_id)
+
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'Rewards already distributed for this campaign (idempotency check)'
         }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
@@ -106,6 +130,7 @@ serve(async (req) => {
 
     // クリエイター別の分配額を計算（手数料控除後の原資から按分）
     const creatorShares: CreatorShare[] = []
+    let totalDistributed = 0
     for (const [creatorId, viewCount] of creatorViews) {
       const sharePercentage = totalViews > 0 ? viewCount / totalViews : 0
       const rewardAmount = Math.floor(creatorPool * sharePercentage)
@@ -116,7 +141,12 @@ serve(async (req) => {
         sharePercentage: sharePercentage * 100,
         rewardAmount,
       })
+      totalDistributed += rewardAmount
     }
+
+    // floor切り捨てによる端数をプラットフォーム手数料に加算
+    const remainder = creatorPool - totalDistributed
+    const totalPlatformFee = platformFee + remainder
 
     // トランザクションとして分配を実行
     const now = new Date().toISOString()
@@ -176,14 +206,14 @@ serve(async (req) => {
       }
     }
 
-    // 2. プラットフォーム手数料をトランザクションに記録
-    if (platformFee > 0) {
+    // 2. プラットフォーム手数料をトランザクションに記録（端数含む）
+    if (totalPlatformFee > 0) {
       await supabase
         .from('transactions')
         .insert({
           user_id: campaign.organizer_id,
           type: 'platform_fee',
-          amount: platformFee,
+          amount: totalPlatformFee,
           description: `Platform fee (10%) for campaign: ${campaign.name}`,
           reference_id: campaign_id,
           created_at: now,
@@ -236,7 +266,7 @@ serve(async (req) => {
         target_views: targetViews,
         achievement_rate: achievementRate * 100,
         distributed: distributableAmount,
-        platform_fee: platformFee,
+        platform_fee: totalPlatformFee,
         creator_pool: creatorPool,
         refunded: refundAmount,
         creator_shares: creatorShares,

@@ -223,7 +223,7 @@ serve(async (req) => {
   } catch (error) {
     console.error('OAuth callback error:', error)
     return new Response(
-      errorHtml(error.message),
+      errorText(error.message),
       {}
     )
   }

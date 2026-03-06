@@ -114,7 +114,7 @@ class ViewCountService {
             view_count,
             status,
             campaign_id,
-            campaigns:campaign_id (name, budget, target_views)
+            campaigns:campaign_id (name, budget, target_views, total_views)
           ''')
           .eq('creator_id', userId)
           .eq('status', 'approved')
@@ -131,6 +131,7 @@ class ViewCountService {
           campaignName: campaign?['name'] as String? ?? '',
           campaignBudget: (campaign?['budget'] as num?)?.toInt() ?? 0,
           campaignTargetViews: (campaign?['target_views'] as num?)?.toInt() ?? 1,
+          campaignTotalViews: (campaign?['total_views'] as num?)?.toInt() ?? 0,
         );
       }).toList();
     } catch (e) {
@@ -178,6 +179,7 @@ class SubmissionViewStats {
   final String campaignName;
   final int campaignBudget;
   final int campaignTargetViews;
+  final int campaignTotalViews;
 
   SubmissionViewStats({
     required this.submissionId,
@@ -188,16 +190,21 @@ class SubmissionViewStats {
     required this.campaignName,
     required this.campaignBudget,
     required this.campaignTargetViews,
+    required this.campaignTotalViews,
   });
 
-  /// 1000再生あたりの単価
-  double get pricePerThousand {
-    if (campaignTargetViews == 0) return 0;
-    return (campaignBudget / campaignTargetViews) * 1000;
-  }
-
-  /// 現時点での推定収益
+  /// 現時点での推定収益（distribute-rewards と同じ計算式）
   int get estimatedEarnings {
-    return ((viewCount / 1000) * pricePerThousand).round();
+    if (campaignTotalViews == 0 || viewCount == 0) return 0;
+
+    const platformFeeRate = 0.10;
+    final achievementRate =
+        (campaignTotalViews / campaignTargetViews).clamp(0.0, 1.0);
+    final distributableAmount = (campaignBudget * achievementRate).floor();
+    final platformFee = (distributableAmount * platformFeeRate).floor();
+    final creatorPool = distributableAmount - platformFee;
+
+    final myShare = viewCount / campaignTotalViews;
+    return (creatorPool * myShare).floor();
   }
 }
