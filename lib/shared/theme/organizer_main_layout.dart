@@ -1,5 +1,6 @@
 // lib/shared/theme/organizer_main_layout.dart
 import 'dart:ui';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../shared/theme/app_theme.dart';
@@ -105,14 +106,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 _GlassNavItem(
                   icon: Icons.home_outlined,
                   selectedIcon: Icons.home_rounded,
-                  label: 'Home',
+                  label: AppLocalizations.of(context)!.navHome,
                   isSelected: currentIndex == 0,
                   onTap: () => onTap(0),
                 ),
                 _GlassNavItem(
                   icon: Icons.grid_view_outlined,
                   selectedIcon: Icons.grid_view_rounded,
-                  label: 'Campaigns',
+                  label: AppLocalizations.of(context)!.navCampaigns,
                   isSelected: currentIndex == 1,
                   onTap: () => onTap(1),
                 ),
@@ -128,7 +129,7 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 _GlassNavItem(
                   icon: Icons.chat_bubble_outline_rounded,
                   selectedIcon: Icons.chat_bubble_rounded,
-                  label: 'Chat',
+                  label: AppLocalizations.of(context)!.navChat,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
                   showBadge: true,
@@ -137,7 +138,7 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 _GlassNavItem(
                   icon: Icons.person_outline_rounded,
                   selectedIcon: Icons.person_rounded,
-                  label: 'Profile',
+                  label: AppLocalizations.of(context)!.navProfile,
                   isSelected: currentIndex == 4,
                   onTap: () => onTap(4),
                 ),

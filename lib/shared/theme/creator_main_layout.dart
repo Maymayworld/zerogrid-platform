@@ -1,5 +1,6 @@
 // lib/shared/theme/creator_main_layout.dart
 import 'dart:ui';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -181,7 +182,7 @@ class _CampaignSelectorSheet extends HookWidget {
               child: Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Select Campaign',
+                  AppLocalizations.of(context)!.selectCampaign,
                   style: TextStylePalette.smallHeader,
                 ),
               ),
@@ -196,7 +197,7 @@ class _CampaignSelectorSheet extends HookWidget {
               child: CommonSearchBar(
                 controller: searchController,
                 onChanged: (value) => searchQuery.value = value,
-                hintText: 'Search',
+                hintText: AppLocalizations.of(context)!.search,
               ),
             ),
             Divider(height: 1, color: ColorPalette.neutral200),
@@ -225,15 +226,15 @@ class _CampaignSelectorSheet extends HookWidget {
                           SizedBox(height: SpacePalette.base),
                           Text(
                             searchQuery.value.trim().isEmpty
-                                ? 'No campaigns yet'
-                                : 'No matching campaigns',
+                                ? AppLocalizations.of(context)!.noCampaignsYet
+                                : AppLocalizations.of(context)!.noMatchingCampaigns,
                             style: TextStylePalette.subText,
                           ),
                           SizedBox(height: SpacePalette.xs),
                           Text(
                             searchQuery.value.trim().isEmpty
-                                ? 'Join campaigns from the Find tab!'
-                                : 'Try a different keyword.',
+                                ? AppLocalizations.of(context)!.joinCampaignsFromFind
+                                : AppLocalizations.of(context)!.tryDifferentKeyword,
                             style: TextStylePalette.smSubText,
                           ),
                         ],
@@ -500,14 +501,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 _GlassNavItem(
                   icon: Icons.search,
                   selectedIcon: Icons.search,
-                  label: 'Find',
+                  label: AppLocalizations.of(context)!.navFind,
                   isSelected: currentIndex == 0,
                   onTap: () => onTap(0),
                 ),
                 _GlassNavItem(
                   icon: Icons.article_outlined,
                   selectedIcon: Icons.article_rounded,
-                  label: 'Feed',
+                  label: AppLocalizations.of(context)!.navFeed,
                   isSelected: currentIndex == 1,
                   onTap: () => onTap(1),
                 ),
@@ -522,14 +523,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
                 _GlassNavItem(
                   icon: Icons.work_outline,
                   selectedIcon: Icons.work_rounded,
-                  label: 'Campaign',
+                  label: AppLocalizations.of(context)!.navCampaign,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
                 ),
                 _GlassNavItem(
                   icon: Icons.person_outline_rounded,
                   selectedIcon: Icons.person_rounded,
-                  label: 'Profile',
+                  label: AppLocalizations.of(context)!.navProfile,
                   isSelected: currentIndex == 4,
                   onTap: () => onTap(4),
                 ),

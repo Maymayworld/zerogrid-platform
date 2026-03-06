@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
 class OrganizerAccountSettingsScreen extends HookConsumerWidget {
@@ -52,7 +53,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                     ),
                     Expanded(
                       child: Text(
-                        'Account Settings',
+                        AppLocalizations.of(context)!.accountSettings,
                         style: TextStylePalette.title,
                         textAlign: TextAlign.center,
                       ),
@@ -72,7 +73,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Email Section
-                      Text('Email', style: TextStylePalette.smTitle),
+                      Text(AppLocalizations.of(context)!.email, style: TextStylePalette.smTitle),
                       SizedBox(height: SpacePalette.sm),
                       Container(
                         width: double.infinity,
@@ -90,10 +91,10 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                       SizedBox(height: 24),
 
                       // Password Section
-                      Text('Password', style: TextStylePalette.smTitle),
+                      Text(AppLocalizations.of(context)!.password, style: TextStylePalette.smTitle),
                       SizedBox(height: SpacePalette.sm),
                       _DuolingoButton(
-                        text: 'Change Password',
+                        text: AppLocalizations.of(context)!.changePassword,
                         onPressed: () {
                           // TODO: Change password
                         },
@@ -122,7 +123,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                                 ),
                                 SizedBox(width: SpacePalette.xs),
                                 Text(
-                                  'Danger Zone',
+                                  AppLocalizations.of(context)!.dangerZone,
                                   style: TextStylePalette.smTitle.copyWith(
                                     color: ColorPalette.critical500,
                                   ),
@@ -130,17 +131,17 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                               ],
                             ),
                             SizedBox(height: SpacePalette.sm),
-                            Text('Delete Account', style: TextStylePalette.miniTitle),
+                            Text(AppLocalizations.of(context)!.deleteAccount, style: TextStylePalette.miniTitle),
                             SizedBox(height: SpacePalette.xs),
                             Text(
-                              'Once you delete your account there is no going back',
+                              AppLocalizations.of(context)!.deleteAccountWarning,
                               style: TextStylePalette.smText.copyWith(
                                 color: ColorPalette.neutral500,
                               ),
                             ),
                             SizedBox(height: SpacePalette.base),
                             _DuolingoButton(
-                              text: 'Delete Account',
+                              text: AppLocalizations.of(context)!.deleteAccount,
                               isDestructive: true,
                               onPressed: () {
                                 _showDeleteConfirmation(context);
@@ -166,16 +167,16 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete Account', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.deleteAccount, style: TextStylePalette.title),
         content: Text(
-          'Are you sure you want to delete your account? This action cannot be undone.',
+          AppLocalizations.of(context)!.deleteAccountWarning,
           style: TextStylePalette.normalText,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Cancel',
+              AppLocalizations.of(context)!.cancel,
               style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral600),
             ),
           ),
@@ -183,11 +184,11 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
             onPressed: () {
               Navigator.pop(context);
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Account deletion is not yet available.')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.accountDeletionUnavailable)),
               );
             },
             child: Text(
-              'Delete',
+              AppLocalizations.of(context)!.delete,
               style: TextStylePalette.normalText.copyWith(
                 color: ColorPalette.critical500,
                 fontWeight: FontWeight.w600,

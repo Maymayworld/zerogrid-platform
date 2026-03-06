@@ -1,5 +1,6 @@
 // lib/features/creator/campaign/presentation/widgets/project_card.dart
 import 'package:flutter/material.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 
@@ -151,7 +152,7 @@ class ProjectCard extends StatelessWidget {
                             child: _CardDuolingoButton(
                               onPressed: onTap,
                               child: Text(
-                                '¥${pricePerView.toStringAsFixed(1)} / 1000 views',
+                                '¥${pricePerView.toStringAsFixed(1)} ${AppLocalizations.of(context)!.per1000Views}',
                                 style: TextStylePalette.buttonTextBlack,
                               ),
                             ),

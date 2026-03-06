@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
@@ -41,8 +42,8 @@ class ForgotPasswordScreen extends HookConsumerWidget {
       if (!_isValidEmail(email)) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Please enter a valid email'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.pleaseEnterValidEmail),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -59,7 +60,7 @@ class ForgotPasswordScreen extends HookConsumerWidget {
 
         if (context.mounted) {
           successMessage.value =
-              'We sent a 6-digit code to your email. Enter it in the next screen.';
+              AppLocalizations.of(context)!.resetCodeSentSuccess;
 
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -74,7 +75,7 @@ class ForgotPasswordScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -108,12 +109,12 @@ class ForgotPasswordScreen extends HookConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Forgot Password?',
+                      AppLocalizations.of(context)!.forgotPasswordQuestion,
                       style: TextStylePalette.header,
                     ),
                     const SizedBox(height: SpacePalette.sm),
                     Text(
-                      'Enter your email and we\'ll send you a 6-digit code to reset your password.',
+                      AppLocalizations.of(context)!.enterEmailForResetCode,
                       style: TextStylePalette.subText,
                     ),
                     SizedBox(height: SpacePalette.lg),
@@ -148,7 +149,7 @@ class ForgotPasswordScreen extends HookConsumerWidget {
                       onPressed: handleSendResetCode,
                       isEnabled: isFormValid.value,
                       isLoading: isLoading.value,
-                      text: 'Send code',
+                      text: AppLocalizations.of(context)!.sendCode,
                     ),
                     const SizedBox(height: SpacePalette.base),
 
@@ -167,13 +168,13 @@ class ForgotPasswordScreen extends HookConsumerWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          'Back to ',
+                          AppLocalizations.of(context)!.backTo,
                           style: TextStylePalette.subGuide,
                         ),
                         GestureDetector(
                           onTap: () => Navigator.of(context).pop(),
                           child: Text(
-                            'Log in',
+                            AppLocalizations.of(context)!.logIn,
                             style: TextStylePalette.guideUnderline,
                           ),
                         ),

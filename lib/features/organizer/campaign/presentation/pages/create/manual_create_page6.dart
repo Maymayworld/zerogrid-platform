@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/preview_page.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
@@ -84,7 +85,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Upload failed: $e'),
+              content: Text(AppLocalizations.of(context)!.uploadFailed(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -122,7 +123,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Resources for Creators',
+                          AppLocalizations.of(context)!.resources,
                           style: TextStylePalette.header,
                         ),
                       ),
@@ -130,7 +131,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Upload files or add links to help creators produce better content',
+                          AppLocalizations.of(context)!.uploadFilesOrLinks,
                           style: TextStylePalette.subText,
                         ),
                       ),
@@ -167,8 +168,8 @@ class ManualCreatePage6 extends HookConsumerWidget {
                               SizedBox(width: SpacePalette.sm),
                               Text(
                                 isUploading.value
-                                    ? 'Uploading...'
-                                    : 'Upload Files',
+                                    ? AppLocalizations.of(context)!.uploading
+                                    : AppLocalizations.of(context)!.tapToUpload,
                                 style: TextStylePalette.smTitle,
                               ),
                             ],
@@ -179,7 +180,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          'Supported: JPG, PNG, SVG, MP4, PDF, ZIP',
+                          AppLocalizations.of(context)!.supportedFileFormats,
                           style: TextStylePalette.subGuide,
                         ),
                       ),
@@ -250,7 +251,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                       SizedBox(height: SpacePalette.lg),
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Add Link',
+                        child: Text(AppLocalizations.of(context)!.addLink,
                             style: TextStylePalette.miniTitle),
                       ),
                       SizedBox(height: SpacePalette.sm),
@@ -290,7 +291,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                                         ),
                                       )
                                     : null,
-                                hintText: 'Paste link here...',
+                                hintText: AppLocalizations.of(context)!.pasteLinkHint,
                                 hintStyle: TextStylePalette.hintText,
                                 border: OutlineInputBorder(),
                                 enabledBorder: OutlineInputBorder(
@@ -319,7 +320,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                           children: [
                             Icon(Icons.add),
                             SizedBox(width: SpacePalette.sm),
-                            Text('Add Another',
+                            Text(AppLocalizations.of(context)!.addAnother,
                                 style: TextStylePalette.guide),
                           ],
                         ),
@@ -353,7 +354,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                   },
                   isEnabled: !isUploading.value,
                   isLoading: isUploading.value,
-                  text: 'Next',
+                  text: AppLocalizations.of(context)!.next,
                 ),
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../providers/auth_provider.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
@@ -37,8 +38,8 @@ class ResetPasswordScreen extends HookConsumerWidget {
     Future<void> handleContinue() async {
       if (!isFormValid.value) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Password must be at least 8 characters.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.passwordMinLength),
             backgroundColor: ColorPalette.critical500,
           ),
         );
@@ -70,7 +71,7 @@ class ResetPasswordScreen extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Enter a new password to finish account recovery.',
+                AppLocalizations.of(context)!.enterNewPasswordInstruction,
                 style: TextStylePalette.subText,
               ),
               const SizedBox(height: SpacePalette.lg),
@@ -80,7 +81,7 @@ class ResetPasswordScreen extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Create New Password',
+                      AppLocalizations.of(context)!.createNewPassword,
                       style: const TextStyle(
                         color: Color(0xFF737373),
                         fontSize: 16,
@@ -111,11 +112,11 @@ class ResetPasswordScreen extends HookConsumerWidget {
                       onPressed: handleContinue,
                       isEnabled: isFormValid.value,
                       isLoading: isLoading.value,
-                      text: 'Continue',
+                      text: AppLocalizations.of(context)!.continueButton,
                     ),
                     const SizedBox(height: SpacePalette.base),
                     Text(
-                      'Password must be at least 8 characters.',
+                      AppLocalizations.of(context)!.passwordMinLength,
                       style: TextStylePalette.subGuide,
                     ),
                   ],
@@ -161,9 +162,9 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
     Future<void> handleUpdatePassword() async {
       if (!isFormValid.value) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
+          SnackBar(
             content:
-                Text('Passwords must match and be at least 8 characters.'),
+                Text(AppLocalizations.of(context)!.passwordsMustMatch),
             backgroundColor: ColorPalette.critical500,
           ),
         );
@@ -187,9 +188,9 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text(
-                'Password updated. Please log in with your new password.',
+                AppLocalizations.of(context)!.passwordUpdated,
               ),
               backgroundColor: ColorPalette.positive500,
             ),
@@ -203,7 +204,7 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('認証エラー: ${e.message}'),
+              content: Text(AppLocalizations.of(context)!.authErrorMessage(e.message)),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -212,7 +213,7 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -236,7 +237,7 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Re-enter your new password to confirm.',
+                AppLocalizations.of(context)!.reEnterPasswordInstruction,
                 style: TextStylePalette.subText,
               ),
               const SizedBox(height: SpacePalette.lg),
@@ -246,7 +247,7 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Confirm New Password',
+                      AppLocalizations.of(context)!.confirmNewPassword,
                       style: const TextStyle(
                         color: Color(0xFF737373),
                         fontSize: 16,
@@ -277,11 +278,11 @@ class _ConfirmResetPasswordScreen extends HookConsumerWidget {
                       onPressed: handleUpdatePassword,
                       isEnabled: isFormValid.value,
                       isLoading: isLoading.value,
-                      text: 'Update password',
+                      text: AppLocalizations.of(context)!.updatePassword,
                     ),
                     const SizedBox(height: SpacePalette.base),
                     Text(
-                      'Password must be at least 8 characters.',
+                      AppLocalizations.of(context)!.passwordMinLength,
                       style: TextStylePalette.subGuide,
                     ),
                   ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/duolingo_form_components.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 enum ContactSupportPage { home, faq, askHelp, feedback }
 
@@ -68,7 +69,7 @@ class _ContactSupportHomeScreenState extends State<ContactSupportHomeScreen> {
                     ),
                     Expanded(
                       child: Text(
-                        'Contact Support',
+                        AppLocalizations.of(context)!.contactSupport,
                         style: TextStylePalette.smallHeader,
                         textAlign: TextAlign.center,
                       ),
@@ -128,28 +129,28 @@ class _HomeView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Need help? We’re here to support yo',
+            AppLocalizations.of(context)!.needHelpSupport,
             style: TextStylePalette.subText,
           ),
           SizedBox(height: SpacePalette.lg),
           _SupportOptionTile(
             icon: Icons.help_outline,
-            title: 'Frequently Asked Questions',
-            subtitle: 'Browse common questions and answers',
+            title: AppLocalizations.of(context)!.frequentlyAskedQuestions,
+            subtitle: AppLocalizations.of(context)!.browseFaqSubtitle,
             onTap: onTapFaq,
           ),
           SizedBox(height: SpacePalette.base),
           _SupportOptionTile(
             icon: Icons.chat_bubble_outline,
-            title: 'Ask for Help',
-            subtitle: 'Tell us what you need help with',
+            title: AppLocalizations.of(context)!.askForHelp,
+            subtitle: AppLocalizations.of(context)!.askHelpSubtitle,
             onTap: onTapAskHelp,
           ),
           SizedBox(height: SpacePalette.base),
           _SupportOptionTile(
             icon: Icons.feedback_outlined,
-            title: 'Give Feedback',
-            subtitle: 'Share ideas and help us improve',
+            title: AppLocalizations.of(context)!.giveFeedback,
+            subtitle: AppLocalizations.of(context)!.resources,
             onTap: onTapFeedback,
           ),
           SizedBox(height: MediaQuery.of(context).padding.bottom),
@@ -170,27 +171,15 @@ class _FaqView extends StatefulWidget {
 
 class _FaqViewState extends State<_FaqView> {
   static const double _floatingHelpCardReservedSpace = 220;
-
-  final List<String> _questions = const [
-    'Question 1',
-    'Question 2',
-    'Question 3',
-    'Question 4',
-    'Question 5',
-    'Question 6',
-    'Question 7',
-    'Question 8',
-    'Question 9',
-    'Question 10',
-  ];
+  static const int _questionCount = 10;
 
   late final List<bool> _expanded = List<bool>.filled(
-    _questions.length,
+    _questionCount,
     false,
     growable: false,
   );
 
-  Widget _buildQuestionCard(int index) {
+  Widget _buildQuestionCard(BuildContext context, int index) {
     final isExpanded = _expanded[index];
     return InkWell(
       borderRadius: BorderRadius.circular(RadiusPalette.xl),
@@ -213,7 +202,7 @@ class _FaqViewState extends State<_FaqView> {
               children: [
                 Expanded(
                   child: Text(
-                    _questions[index],
+                    AppLocalizations.of(context)!.faqQuestion(index + 1),
                     style: TextStylePalette.normalText,
                   ),
                 ),
@@ -230,7 +219,7 @@ class _FaqViewState extends State<_FaqView> {
             if (isExpanded) ...[
               SizedBox(height: SpacePalette.xs),
               Text(
-                'Answer of question ${index + 1}',
+                AppLocalizations.of(context)!.faqAnswer(index + 1),
                 style: TextStylePalette.smSubText,
               ),
             ],
@@ -240,7 +229,7 @@ class _FaqViewState extends State<_FaqView> {
     );
   }
 
-  Widget _buildFloatingHelpCard() {
+  Widget _buildFloatingHelpCard(BuildContext context) {
     return Container(
       width: double.infinity,
       padding: EdgeInsets.all(SpacePalette.base),
@@ -259,10 +248,10 @@ class _FaqViewState extends State<_FaqView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Still need help?', style: TextStylePalette.smTitle),
+          Text(AppLocalizations.of(context)!.stillNeedHelp, style: TextStylePalette.smTitle),
           SizedBox(height: SpacePalette.xs),
           Text(
-            'Our support team is ready to assist you.',
+            AppLocalizations.of(context)!.supportTeamReady,
             style: TextStylePalette.smSubText,
           ),
           SizedBox(height: SpacePalette.sm),
@@ -270,7 +259,7 @@ class _FaqViewState extends State<_FaqView> {
             width: double.infinity,
             child: DuolingoOutlineButton(
               onPressed: widget.onAskHelp,
-              text: 'Contact Support',
+              text: AppLocalizations.of(context)!.contactSupport,
             ),
           ),
         ],
@@ -292,13 +281,13 @@ class _FaqViewState extends State<_FaqView> {
           ),
           children: [
             Text(
-              'Find quick answers or get help when you need it',
+              AppLocalizations.of(context)!.findQuickAnswers,
               style: TextStylePalette.subText,
             ),
             SizedBox(height: SpacePalette.sm),
             TextField(
               decoration: InputDecoration(
-                hintText: 'Search for help',
+                hintText: AppLocalizations.of(context)!.search,
                 prefixIcon: const Icon(Icons.search, color: Color(0xFFA3A3A3)),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 12,
@@ -328,9 +317,9 @@ class _FaqViewState extends State<_FaqView> {
               ),
             ),
             SizedBox(height: 24),
-            for (int i = 0; i < _questions.length; i++) ...[
+            for (int i = 0; i < _questionCount; i++) ...[
               if (i > 0) SizedBox(height: SpacePalette.base),
-              _buildQuestionCard(i),
+              _buildQuestionCard(context, i),
             ],
           ],
         ),
@@ -338,7 +327,7 @@ class _FaqViewState extends State<_FaqView> {
           left: SpacePalette.base,
           right: SpacePalette.base,
           bottom: SpacePalette.base,
-          child: _buildFloatingHelpCard(),
+          child: _buildFloatingHelpCard(context),
         ),
       ],
     );
@@ -356,17 +345,17 @@ class _AskHelpView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('How can we help?', style: TextStylePalette.smallHeader),
+          Text(AppLocalizations.of(context)!.howCanWeHelp, style: TextStylePalette.smallHeader),
           SizedBox(height: SpacePalette.sm),
           Text(
-            'Tell us what’s going on, and you’ll hear back by email',
+            AppLocalizations.of(context)!.tellUsAndHearBack,
             style: TextStylePalette.subText,
           ),
           SizedBox(height: SpacePalette.lg),
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Text('Tell us something', style: TextStylePalette.smTitle),
+              Text(AppLocalizations.of(context)!.tellUsSomething, style: TextStylePalette.smTitle),
             ],
           ),
           SizedBox(height: SpacePalette.xs),
@@ -377,7 +366,7 @@ class _AskHelpView extends StatelessWidget {
               expands: true,
               textAlignVertical: TextAlignVertical.top,
               decoration: InputDecoration(
-                hintText: 'Please don’t include sensitive information',
+                hintText: AppLocalizations.of(context)!.noSensitiveInfo,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: SpacePalette.inner,
                   horizontal: SpacePalette.sm,
@@ -391,7 +380,7 @@ class _AskHelpView extends StatelessWidget {
             child: DuolingoButton(
               onPressed: () {},
               isEnabled: true,
-              text: 'Send',
+              text: AppLocalizations.of(context)!.submit,
               buttonColor: const Color(0xFFFC6736),
             ),
           ),
@@ -419,15 +408,15 @@ class _FeedbackViewState extends State<_FeedbackView> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Give Feedback', style: TextStylePalette.smallHeader),
+          Text(AppLocalizations.of(context)!.giveFeedback, style: TextStylePalette.smallHeader),
           SizedBox(height: SpacePalette.sm),
           Text(
-            'Your feedback helps us improve and serve you better.',
+            AppLocalizations.of(context)!.feedbackHelpsUs,
             style: TextStylePalette.subText,
           ),
           SizedBox(height: SpacePalette.lg),
           Text(
-            'How do you feel about ZeroGrid?',
+            AppLocalizations.of(context)!.howFeelAboutZeroGrid,
             style: TextStylePalette.smTitle,
           ),
           SizedBox(height: SpacePalette.sm),
@@ -440,7 +429,7 @@ class _FeedbackViewState extends State<_FeedbackView> {
             },
           ),
           SizedBox(height: SpacePalette.lg),
-          Text('Tell us something', style: TextStylePalette.smTitle),
+          Text(AppLocalizations.of(context)!.tellUsSomething, style: TextStylePalette.smTitle),
           SizedBox(height: SpacePalette.xs),
           SizedBox(
             height: 120,
@@ -449,7 +438,7 @@ class _FeedbackViewState extends State<_FeedbackView> {
               expands: true,
               textAlignVertical: TextAlignVertical.top,
               decoration: InputDecoration(
-                hintText: 'e.g. love the app! keep it up',
+                hintText: AppLocalizations.of(context)!.feedbackExampleHint,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: SpacePalette.inner,
                   horizontal: SpacePalette.sm,
@@ -463,7 +452,7 @@ class _FeedbackViewState extends State<_FeedbackView> {
             child: DuolingoButton(
               onPressed: () {},
               isEnabled: true,
-              text: 'Share Feedback',
+              text: AppLocalizations.of(context)!.shareFeedback,
               buttonColor: const Color(0xFFFC6736),
             ),
           ),

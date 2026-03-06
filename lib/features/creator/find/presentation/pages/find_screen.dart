@@ -13,6 +13,7 @@ import '../../../likes/presentation/providers/like_service_provider.dart';
 import '../../../../../shared/presentation/providers/notification_provider.dart';
 import '../../../../auth/presentation/providers/user_profile_provider.dart';
 import '../../../profile/presentation/pages/profile_detail_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class FindScreen extends HookConsumerWidget {
   const FindScreen({Key? key}) : super(key: key);
@@ -90,7 +91,7 @@ class FindScreen extends HookConsumerWidget {
         }
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -387,9 +388,9 @@ class FindScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('Failed to load campaigns', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.failedToLoadCampaigns, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
-            ElevatedButton(onPressed: onRefresh, child: Text('Retry')),
+            ElevatedButton(onPressed: onRefresh, child: Text(AppLocalizations.of(context)!.retry)),
           ],
         ),
       );
@@ -402,7 +403,7 @@ class FindScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.search_off, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('No campaigns found', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.noMatchingCampaigns, style: TextStylePalette.subText),
           ],
         ),
       );

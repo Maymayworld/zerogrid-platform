@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/user_role.dart';
@@ -33,7 +34,7 @@ class SignUpScreen1 extends HookConsumerWidget {
           confirmPasswordController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Please fill in all fields'),
+            content: Text(AppLocalizations.of(context)!.pleaseFillInAllFields),
             backgroundColor: Colors.red,
           ),
         );
@@ -43,7 +44,7 @@ class SignUpScreen1 extends HookConsumerWidget {
       if (passwordController.text != confirmPasswordController.text) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Passwords do not match'),
+            content: Text(AppLocalizations.of(context)!.passwordsDoNotMatch),
             backgroundColor: Colors.red,
           ),
         );
@@ -72,7 +73,7 @@ class SignUpScreen1 extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -87,7 +88,7 @@ class SignUpScreen1 extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -119,18 +120,18 @@ class SignUpScreen1 extends HookConsumerWidget {
                   children: [
                     // タイトル
                     Text(
-                      'Create Your Account',
+                      AppLocalizations.of(context)!.createYourAccount,
                       style: TextStylePalette.header,
                     ),
                     SizedBox(height: SpacePalette.sm),
                     Text(
-                      'Start by setting up your login details',
+                      AppLocalizations.of(context)!.startBySettingUpLogin,
                       style: TextStylePalette.subText,
                     ),
                     SizedBox(height: SpacePalette.lg),
 
                     // Email
-                    Text('Email', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.email, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     SizedBox(
                       height: ButtonSizePalette.button,
@@ -150,7 +151,7 @@ class SignUpScreen1 extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.base),
 
                     // Password
-                    Text('Password', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.password, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     SizedBox(
                       height: ButtonSizePalette.button,
@@ -182,7 +183,7 @@ class SignUpScreen1 extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.base),
 
                     // Confirm Password
-                    Text('Confirm Password', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.confirmPassword, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     SizedBox(
                       height: ButtonSizePalette.button,
@@ -229,7 +230,7 @@ class SignUpScreen1 extends HookConsumerWidget {
                           ),
                         ),
                         child: Text(
-                          'Continue',
+                          AppLocalizations.of(context)!.continueButton,
                           style: TextStylePalette.buttonTextWhite,
                         ),
                       ),
@@ -244,7 +245,7 @@ class SignUpScreen1 extends HookConsumerWidget {
                           padding: EdgeInsets.symmetric(
                             horizontal: SpacePalette.base,
                           ),
-                          child: Text('or', style: TextStylePalette.dividerText),
+                          child: Text(AppLocalizations.of(context)!.or, style: TextStylePalette.dividerText),
                         ),
                         Expanded(child: Divider(color: ColorPalette.neutral200)),
                       ],
@@ -274,7 +275,7 @@ class SignUpScreen1 extends HookConsumerWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text('Have an account? ', style: TextStylePalette.subGuide),
+                          Text(AppLocalizations.of(context)!.haveAnAccount, style: TextStylePalette.subGuide),
                           TextButton(
                             onPressed: () {
                               Navigator.of(context).pushReplacement(
@@ -288,7 +289,7 @@ class SignUpScreen1 extends HookConsumerWidget {
                               minimumSize: Size(0, 0),
                               tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             ),
-                            child: Text('Sign In', style: TextStylePalette.guide),
+                            child: Text(AppLocalizations.of(context)!.signIn, style: TextStylePalette.guide),
                           ),
                         ],
                       ),

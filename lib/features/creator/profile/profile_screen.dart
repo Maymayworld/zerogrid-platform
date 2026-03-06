@@ -12,6 +12,8 @@ import 'presentation/pages/account_settings_screen.dart';
 import 'presentation/pages/profile_detail_screen.dart';
 import 'presentation/pages/contact_support_screens.dart';
 import 'presentation/widgets/notification_settings_sheet.dart';
+import '../../../shared/widgets/language_settings_sheet.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../earnings/data/services/payout_service.dart';
 import '../earnings/presentation/pages/earnings_screen.dart';
 import '../earnings/presentation/pages/withdrawal_screen.dart';
@@ -65,7 +67,7 @@ class ProfileScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Logout failed: $e'),
+              content: Text(AppLocalizations.of(context)!.logoutFailed(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -142,7 +144,7 @@ class ProfileScreen extends HookConsumerWidget {
                             ),
                             SizedBox(height: 2),
                             Text(
-                              'View Profile',
+                              AppLocalizations.of(context)!.viewProfile,
                               style: TextStylePalette.smSubText,
                             ),
                           ],
@@ -174,7 +176,7 @@ class ProfileScreen extends HookConsumerWidget {
                     icon: Icons.person_outlined,
                     iconBackgroundColor: ColorPalette.smashedPumpkin100,
                     iconColor: ColorPalette.smashedPumpkin600,
-                    label: 'Account Settings',
+                    label: AppLocalizations.of(context)!.accountSettings,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -188,7 +190,7 @@ class ProfileScreen extends HookConsumerWidget {
                     icon: Icons.payments_outlined,
                     iconBackgroundColor: const Color(0xFFE8F5E9),
                     iconColor: const Color(0xFF4CAF50),
-                    label: 'Earnings',
+                    label: AppLocalizations.of(context)!.earnings,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -204,13 +206,13 @@ class ProfileScreen extends HookConsumerWidget {
 
               // Preferences section
               ProfileMenuSection(
-                header: 'Preferences',
+                header: AppLocalizations.of(context)!.preferences,
                 children: [
                   ProfileMenuItem(
                     icon: Icons.notifications_outlined,
                     iconBackgroundColor: const Color(0xFFFFF3E0),
                     iconColor: const Color(0xFFFF9800),
-                    label: 'Notifications',
+                    label: AppLocalizations.of(context)!.notifications,
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -220,19 +222,33 @@ class ProfileScreen extends HookConsumerWidget {
                       );
                     },
                   ),
+                  ProfileMenuItem(
+                    icon: Icons.language,
+                    iconBackgroundColor: const Color(0xFFE3F2FD),
+                    iconColor: const Color(0xFF2196F3),
+                    label: AppLocalizations.of(context)!.language,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const LanguageSettingsSheet(),
+                      );
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: SpacePalette.base),
 
               // Resources section
               ProfileMenuSection(
-                header: 'Resources',
+                header: AppLocalizations.of(context)!.resources,
                 children: [
                   ProfileMenuItem(
                     icon: Icons.headset_mic_outlined,
                     iconBackgroundColor: const Color(0xFFF3E5F5),
                     iconColor: const Color(0xFF9C27B0),
-                    label: 'Contact Support',
+                    label: AppLocalizations.of(context)!.contactSupport,
                     onTap: () {
                       showModalBottomSheet<dynamic>(
                         context: context,
@@ -246,7 +262,7 @@ class ProfileScreen extends HookConsumerWidget {
                     icon: Icons.alternate_email,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,
-                    label: 'Follow @ZeroGrid',
+                    label: AppLocalizations.of(context)!.followZeroGrid,
                     onTap: () async {
                       final url = Uri.parse(
                         'https://www.instagram.com/zerogrid.jp?igsh=MTdqNzRoNWV2dWN3Yg==',
@@ -268,7 +284,7 @@ class ProfileScreen extends HookConsumerWidget {
                 children: [
                   ProfileMenuItem(
                     icon: Icons.power_settings_new,
-                    label: 'Sign Out',
+                    label: AppLocalizations.of(context)!.signOut,
                     isDestructive: true,
                     showChevron: false,
                     onTap: handleLogout,
@@ -306,7 +322,7 @@ class ProfileScreen extends HookConsumerWidget {
             ),
             SizedBox(width: SpacePalette.inner),
             Text(
-              'Payout Account',
+              AppLocalizations.of(context)!.payoutAccount,
               style: TextStylePalette.smallHeader.copyWith(
                 color: ColorPalette.white,
               ),
@@ -347,14 +363,14 @@ class ProfileScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Payout Account',
+                    AppLocalizations.of(context)!.payoutAccount,
                     style: TextStylePalette.smallHeader.copyWith(
                       color: ColorPalette.white,
                     ),
                   ),
                   SizedBox(height: SpacePalette.xs),
                   Text(
-                    'Ready for withdrawals',
+                    AppLocalizations.of(context)!.readyForWithdrawals,
                     style: TextStylePalette.smText.copyWith(
                       color: ColorPalette.neutral100.withOpacity(0.7),
                     ),
@@ -381,7 +397,7 @@ class ProfileScreen extends HookConsumerWidget {
                   ),
                   SizedBox(width: 4),
                   Text(
-                    'Connected',
+                    AppLocalizations.of(context)!.connected,
                     style: TextStylePalette.smText.copyWith(
                       color: ColorPalette.positive500,
                       fontWeight: FontWeight.w600,
@@ -425,14 +441,14 @@ class ProfileScreen extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Payout Account',
+                      AppLocalizations.of(context)!.payoutAccount,
                       style: TextStylePalette.smallHeader.copyWith(
                         color: ColorPalette.white,
                       ),
                     ),
                     SizedBox(height: SpacePalette.xs),
                     Text(
-                      'Verification in progress',
+                      AppLocalizations.of(context)!.verificationInProgress,
                       style: TextStylePalette.smText.copyWith(
                         color: ColorPalette.neutral100.withOpacity(0.7),
                       ),
@@ -450,7 +466,7 @@ class ProfileScreen extends HookConsumerWidget {
                   borderRadius: BorderRadius.circular(RadiusPalette.full),
                 ),
                 child: Text(
-                  'Pending',
+                  AppLocalizations.of(context)!.pending,
                   style: TextStylePalette.smText.copyWith(
                     color: Colors.orange,
                     fontWeight: FontWeight.w600,
@@ -493,14 +509,14 @@ class ProfileScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Payout Account',
+                    AppLocalizations.of(context)!.payoutAccount,
                     style: TextStylePalette.smallHeader.copyWith(
                       color: ColorPalette.white,
                     ),
                   ),
                   SizedBox(height: SpacePalette.xs),
                   Text(
-                    'Set up your payout account to withdraw earnings',
+                    AppLocalizations.of(context)!.setupPayoutAccount,
                     style: TextStylePalette.smText.copyWith(
                       color: ColorPalette.neutral100.withOpacity(0.7),
                     ),

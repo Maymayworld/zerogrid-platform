@@ -13,6 +13,7 @@ import '../../../creator/campaign/presentation/providers/participation_service_p
 import '../../../../features/organizer/campaign/data/models/campaign.dart';
 import 'chat_screen.dart';
 import 'creator_personal_chat_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 /// DM情報を保持するクラス
 class _DmChatInfo {
@@ -162,7 +163,7 @@ class CreatorChatListScreen extends HookConsumerWidget {
               padding: EdgeInsets.fromLTRB(SpacePalette.base, SpacePalette.base, SpacePalette.base, 0),
               child: Align(
                 alignment: Alignment.centerLeft,
-                child: Text('Chat', style: TextStylePalette.header),
+                child: Text(AppLocalizations.of(context)!.chat, style: TextStylePalette.header),
               ),
             ),
             SizedBox(height: SpacePalette.sm),
@@ -172,7 +173,7 @@ class CreatorChatListScreen extends HookConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
               child: CommonSearchBar(
                 controller: searchController,
-                hintText: 'Search',
+                hintText: AppLocalizations.of(context)!.search,
                 onChanged: (value) => searchQuery.value = value,
               ),
             ),
@@ -254,12 +255,12 @@ class CreatorChatListScreen extends HookConsumerWidget {
                               ),
                               SizedBox(height: SpacePalette.base),
                               Text(
-                                'No chats yet',
+                                AppLocalizations.of(context)!.noMessagesYetStart,
                                 style: TextStylePalette.subText,
                               ),
                               SizedBox(height: SpacePalette.xs),
                               Text(
-                                'Join campaigns to start chatting!',
+                                AppLocalizations.of(context)!.joinCampaignsFromFind,
                                 style: TextStylePalette.smSubText,
                               ),
                             ],

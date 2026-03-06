@@ -8,6 +8,7 @@ import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../auth/presentation/providers/oauth_provider.dart';
 import '../../../../creator/submission/presentation/providers/submission_providers.dart';
 import '../../../../creator/submission/data/models/social_connection.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class AccountSettingsScreen extends HookConsumerWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
@@ -94,7 +95,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to connect: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -105,13 +106,13 @@ class AccountSettingsScreen extends HookConsumerWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('Disconnect $providerName?', style: TextStylePalette.title),
-          content: Text('Are you sure you want to disconnect this account?', style: TextStylePalette.normalText),
+          title: Text(AppLocalizations.of(context)!.disconnectProvider(providerName), style: TextStylePalette.title),
+          content: Text(AppLocalizations.of(context)!.disconnectConfirm, style: TextStylePalette.normalText),
           actions: [
-            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text('Cancel')),
+            TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(AppLocalizations.of(context)!.cancel)),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: Text('Disconnect', style: TextStyle(color: ColorPalette.critical500)),
+              child: Text(AppLocalizations.of(context)!.disconnect, style: TextStyle(color: ColorPalette.critical500)),
             ),
           ],
         ),
@@ -124,13 +125,13 @@ class AccountSettingsScreen extends HookConsumerWidget {
           await loadConnections();
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('$providerName disconnected')),
+              SnackBar(content: Text(AppLocalizations.of(context)!.disconnectProvider(providerName))),
             );
           }
         } catch (e) {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Failed to disconnect: $e'), backgroundColor: Colors.red),
+              SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
             );
           }
         }
@@ -175,7 +176,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                   ),
                   Expanded(
                     child: Text(
-                      'Account Settings',
+                      AppLocalizations.of(context)!.accountSettings,
                       style: TextStylePalette.title,
                       textAlign: TextAlign.center,
                     ),
@@ -196,7 +197,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                   children: [
                     // Email Section
                     Text(
-                      'Email',
+                      AppLocalizations.of(context)!.email,
                       style: TextStylePalette.smTitle,
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -220,12 +221,12 @@ class AccountSettingsScreen extends HookConsumerWidget {
 
                     // Password Section
                     Text(
-                      'Password',
+                      AppLocalizations.of(context)!.password,
                       style: TextStylePalette.smTitle,
                     ),
                     SizedBox(height: SpacePalette.sm),
                     _DuolingoButton(
-                      text: 'Change Password',
+                      text: AppLocalizations.of(context)!.changePassword,
                       onPressed: () {
                         // TODO: Change password
                       },
@@ -235,7 +236,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
 
                     // Connected Accounts Section
                     Text(
-                      'Connected Accounts',
+                      AppLocalizations.of(context)!.connectedAccounts,
                       style: TextStylePalette.smTitle,
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -301,7 +302,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                               ),
                               SizedBox(width: SpacePalette.xs),
                               Text(
-                                'Danger Zone',
+                                AppLocalizations.of(context)!.dangerZone,
                                 style: TextStylePalette.smTitle.copyWith(
                                   color: ColorPalette.critical500,
                                 ),
@@ -310,19 +311,19 @@ class AccountSettingsScreen extends HookConsumerWidget {
                           ),
                           SizedBox(height: SpacePalette.sm),
                           Text(
-                            'Delete Account',
+                            AppLocalizations.of(context)!.deleteAccount,
                             style: TextStylePalette.miniTitle,
                           ),
                           SizedBox(height: SpacePalette.xs),
                           Text(
-                            'Once you delete your account there is no going back',
+                            AppLocalizations.of(context)!.deleteAccountWarning,
                             style: TextStylePalette.smText.copyWith(
                               color: ColorPalette.neutral500,
                             ),
                           ),
                           SizedBox(height: SpacePalette.base),
                           _DuolingoButton(
-                            text: 'Delete Account',
+                            text: AppLocalizations.of(context)!.deleteAccount,
                             isDestructive: true,
                             onPressed: () {
                               _showDeleteConfirmation(context, ref);
@@ -349,18 +350,18 @@ class AccountSettingsScreen extends HookConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          'Delete Account',
+          AppLocalizations.of(context)!.deleteAccount,
           style: TextStylePalette.title,
         ),
         content: Text(
-          'Are you sure you want to delete your account? This action cannot be undone.',
+          AppLocalizations.of(context)!.deleteAccountWarning,
           style: TextStylePalette.normalText,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
             child: Text(
-              'Cancel',
+              AppLocalizations.of(context)!.cancel,
               style: TextStylePalette.normalText.copyWith(
                 color: ColorPalette.neutral600,
               ),
@@ -371,11 +372,11 @@ class AccountSettingsScreen extends HookConsumerWidget {
               Navigator.pop(context);
               // TODO: Implement account deletion
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Account deletion is not yet available.')),
+                SnackBar(content: Text(AppLocalizations.of(context)!.accountDeletionUnavailable)),
               );
             },
             child: Text(
-              'Delete',
+              AppLocalizations.of(context)!.delete,
               style: TextStylePalette.normalText.copyWith(
                 color: ColorPalette.critical500,
                 fontWeight: FontWeight.w600,

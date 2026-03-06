@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../../data/models/user_role.dart';
@@ -66,7 +67,7 @@ class LoginScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('認証エラー: ${e.message}'),
+              content: Text(AppLocalizations.of(context)!.authErrorMessage(e.message)),
               backgroundColor: Colors.red,
             ),
           );
@@ -74,7 +75,7 @@ class LoginScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -91,7 +92,7 @@ class LoginScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -106,7 +107,7 @@ class LoginScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -133,7 +134,7 @@ class LoginScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.lg * 2),
 
                     // タイトル
-                    Text('Log In', style: TextStylePalette.header),
+                    Text(AppLocalizations.of(context)!.logIn, style: TextStylePalette.header),
                     const SizedBox(height: SpacePalette.lg),
 
                     // ソーシャルログインボタン
@@ -166,7 +167,7 @@ class LoginScreen extends HookConsumerWidget {
                             horizontal: SpacePalette.base,
                           ),
                           child: Text(
-                            'or',
+                            AppLocalizations.of(context)!.or,
                             style: TextStyle(
                               color: ColorPalette.neutral500,
                               fontSize: FontSizePalette.size14,
@@ -183,7 +184,7 @@ class LoginScreen extends HookConsumerWidget {
                     // Email フィールド（Duolingoスタイル）
                     DuolingoTextField(
                       controller: emailController,
-                      hintText: 'email',
+                      hintText: AppLocalizations.of(context)!.email,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: SpacePalette.base),
@@ -191,7 +192,7 @@ class LoginScreen extends HookConsumerWidget {
                     // Password フィールド（Duolingoスタイル）
                     DuolingoTextField(
                       controller: passwordController,
-                      hintText: 'password',
+                      hintText: AppLocalizations.of(context)!.password,
                       obscureText: true,
                     ),
                     const SizedBox(height: SpacePalette.lg),
@@ -201,7 +202,7 @@ class LoginScreen extends HookConsumerWidget {
                       onPressed: handleLogin,
                       isEnabled: isFormValid.value,
                       isLoading: isLoading.value,
-                      text: 'sign in',
+                      text: AppLocalizations.of(context)!.signIn,
                     ),
                     const SizedBox(height: SpacePalette.base),
 
@@ -216,7 +217,7 @@ class LoginScreen extends HookConsumerWidget {
                         );
                       },
                       child: Text(
-                        'Forgot Password?',
+                        AppLocalizations.of(context)!.forgotPasswordQuestion,
                         style: TextStylePalette.guide,
                       ),
                     ),
@@ -226,7 +227,7 @@ class LoginScreen extends HookConsumerWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('New here? ', style: TextStylePalette.subGuide),
+                        Text(AppLocalizations.of(context)!.newHere, style: TextStylePalette.subGuide),
                         GestureDetector(
                           onTap: () {
                             Navigator.of(context).pushReplacement(
@@ -236,7 +237,7 @@ class LoginScreen extends HookConsumerWidget {
                             );
                           },
                           child: Text(
-                            'Create an account',
+                            AppLocalizations.of(context)!.createAnAccount,
                             style: TextStylePalette.guideUnderline,
                           ),
                         ),

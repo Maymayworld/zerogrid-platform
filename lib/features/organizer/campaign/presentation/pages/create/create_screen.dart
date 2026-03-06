@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../../../shared/theme/app_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/home/presentation/providers/organizer_tab_index_provider.dart';
 import 'manual_create_page1.dart';
 
@@ -25,7 +26,7 @@ class CreateScreen extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: ColorPalette.white,
         elevation: 0,
-        title: Text('Create Project', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.createCampaign, style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -40,7 +41,7 @@ class CreateScreen extends HookConsumerWidget {
           child: Column(
             children: [
               Text(
-                'How Do You Want to Create This Project?',
+                AppLocalizations.of(context)!.howDoYouWantToCreate,
                 style: TextStylePalette.header,
               ),
               SizedBox(height: SpacePalette.base),
@@ -62,10 +63,10 @@ class CreateScreen extends HookConsumerWidget {
                     children: [
                       Icon(Icons.star, size: 32),
                       SizedBox(height: SpacePalette.base),
-                      Text('Create with AI', style: TextStylePalette.title),
+                      Text(AppLocalizations.of(context)!.createWithAI, style: TextStylePalette.title),
                       SizedBox(height: SpacePalette.sm),
                       Text(
-                        'Start from a short idea and let AI draft the details for you',
+                        AppLocalizations.of(context)!.startFromShortIdea,
                         style: TextStylePalette.subText,
                       ),
                     ],
@@ -98,10 +99,10 @@ class CreateScreen extends HookConsumerWidget {
                     children: [
                       Icon(Icons.star, size: 32),
                       SizedBox(height: SpacePalette.base),
-                      Text('Create Manually', style: TextStylePalette.title),
+                      Text(AppLocalizations.of(context)!.createManually, style: TextStylePalette.title),
                       SizedBox(height: SpacePalette.sm),
                       Text(
-                        'Build your project step by step with full control',
+                        AppLocalizations.of(context)!.buildProjectStepByStep,
                         style: TextStylePalette.subText,
                       ),
                     ],

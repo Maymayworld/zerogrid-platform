@@ -5,6 +5,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
@@ -58,7 +59,7 @@ class SignUpScreen3 extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to pick image: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToPickImage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -86,13 +87,13 @@ class SignUpScreen3 extends HookConsumerWidget {
               SizedBox(height: SpacePalette.lg),
               ListTile(
                 leading: Icon(Icons.image_outlined, color: ColorPalette.neutral800),
-                title: Text('Choose From Library', style: TextStylePalette.normalText),
+                title: Text(AppLocalizations.of(context)!.chooseFromLibrary, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.gallery),
               ),
               Divider(color: ColorPalette.neutral200),
               ListTile(
                 leading: Icon(Icons.camera_alt_outlined, color: ColorPalette.neutral800),
-                title: Text('Take Photo', style: TextStylePalette.normalText),
+                title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.camera),
               ),
               SizedBox(height: SpacePalette.base),
@@ -105,7 +106,7 @@ class SignUpScreen3 extends HookConsumerWidget {
     Future<void> handleCreateAccount() async {
       if (displayNameController.text.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Please enter a display name'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.pleaseEnterDisplayName), backgroundColor: Colors.red),
         );
         return;
       }
@@ -123,7 +124,7 @@ class SignUpScreen3 extends HookConsumerWidget {
           );
 
           if (response.user == null) {
-            throw Exception('Failed to create user');
+            throw Exception(AppLocalizations.of(context)!.failedToCreateUser);
           }
         }
 
@@ -177,7 +178,7 @@ class SignUpScreen3 extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -261,17 +262,17 @@ class SignUpScreen3 extends HookConsumerWidget {
                       // Upload Profile Picture ボタン（Duolingoアウトラインスタイル）
                       DuolingoOutlineButton(
                         onPressed: showImagePicker,
-                        text: 'Upload Profile Picture',
+                        text: AppLocalizations.of(context)!.uploadProfilePicture,
                         icon: Icons.upload_outlined,
                       ),
                       SizedBox(height: SpacePalette.xs),
-                      Text('(optional)', style: TextStylePalette.smSubText),
+                      Text(AppLocalizations.of(context)!.optional, style: TextStylePalette.smSubText),
                       SizedBox(height: SpacePalette.lg),
 
                       // Display Name
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Display Name', style: TextStylePalette.smTitle),
+                        child: Text(AppLocalizations.of(context)!.displayName, style: TextStylePalette.smTitle),
                       ),
                       SizedBox(height: SpacePalette.sm),
                       SizedBox(
@@ -279,7 +280,7 @@ class SignUpScreen3 extends HookConsumerWidget {
                         child: TextField(
                           controller: displayNameController,
                           decoration: InputDecoration(
-                            hintText: 'Enter Display Name',
+                            hintText: AppLocalizations.of(context)!.enterDisplayName,
                             hintStyle: TextStylePalette.hintText,
                             border: InputBorder.none,
                             enabledBorder: InputBorder.none,
@@ -302,7 +303,7 @@ class SignUpScreen3 extends HookConsumerWidget {
                 onPressed: handleCreateAccount,
                 isEnabled: hasDisplayName.value,
                 isLoading: isLoading.value,
-                text: 'Create Account',
+                text: AppLocalizations.of(context)!.createAccount,
               ),
               SizedBox(height: SpacePalette.base),
             ],

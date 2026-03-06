@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page6.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
@@ -61,7 +62,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Set Your Project Timeline',
+                  AppLocalizations.of(context)!.setProjectTimeline,
                   style: TextStylePalette.header,
                 ),
               ),
@@ -69,7 +70,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Choose when the project starts and when it wraps up',
+                  AppLocalizations.of(context)!.chooseProjectDates,
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -85,7 +86,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
                   ],
                   cursorColor: ColorPalette.neutral800,
                   decoration: InputDecoration(
-                    hintText: 'YYYY/MM/DD',
+                    hintText: AppLocalizations.of(context)!.dateFormatPlaceholder,
                     hintStyle: TextStylePalette.hintText,
                     suffixIcon: IconButton(
                       constraints: BoxConstraints(),
@@ -116,7 +117,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'The project will automatically become inactive when the end date is reached',
+                  AppLocalizations.of(context)!.projectAutoInactive,
                   style: TextStylePalette.subGuide,
                 ),
               ),
@@ -135,7 +136,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
                   },
                   isEnabled: true,
                   isLoading: false,
-                  text: 'Next',
+                  text: AppLocalizations.of(context)!.next,
                 ),
               ),
             ],

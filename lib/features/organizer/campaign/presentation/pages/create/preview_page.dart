@@ -11,6 +11,7 @@ import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:zero_grid/shared/widgets/platform_icon.dart';
 import 'package:zero_grid/shared/theme/main_layout.dart';
 import 'package:zero_grid/features/auth/data/models/user_role.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class PreviewPage extends HookConsumerWidget {
   const PreviewPage({super.key});
@@ -46,7 +47,7 @@ class PreviewPage extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to pick image: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToPickImage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -80,7 +81,7 @@ class PreviewPage extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Campaign posted successfully!'),
+              content: Text(AppLocalizations.of(context)!.campaignPostedSuccess),
               backgroundColor: ColorPalette.positive500,
             ),
           );
@@ -96,7 +97,7 @@ class PreviewPage extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to post: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToPost(e.toString())), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -118,7 +119,7 @@ class PreviewPage extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: ColorPalette.white,
         elevation: 0,
-        title: Text('Preview', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.preview, style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
@@ -160,7 +161,7 @@ class PreviewPage extends HookConsumerWidget {
                                     Icon(Icons.upload, size: 40, color: ColorPalette.neutral500),
                                     SizedBox(height: SpacePalette.sm),
                                     Text(
-                                      'Upload Image',
+                                      AppLocalizations.of(context)!.uploadImage,
                                       style: TextStylePalette.smallHeader.copyWith(
                                         color: ColorPalette.neutral500,
                                       ),
@@ -188,7 +189,7 @@ class PreviewPage extends HookConsumerWidget {
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          project.projectName.isEmpty ? 'Project Name' : project.projectName,
+                          project.projectName.isEmpty ? AppLocalizations.of(context)!.projectName : project.projectName,
                           style: TextStylePalette.smallHeader,
                         ),
                       ),
@@ -231,7 +232,7 @@ class PreviewPage extends HookConsumerWidget {
                                 ),
                                 SizedBox(height: SpacePalette.xs),
                                 Text(
-                                  'Organizer',
+                                  AppLocalizations.of(context)!.organizer,
                                   style: TextStylePalette.listLeading,
                                 ),
                               ],
@@ -246,13 +247,13 @@ class PreviewPage extends HookConsumerWidget {
                       // Description
                       Align(
                         alignment: Alignment.centerLeft,
-                        child: Text('Description', style: TextStylePalette.smTitle),
+                        child: Text(AppLocalizations.of(context)!.description, style: TextStylePalette.smTitle),
                       ),
                       SizedBox(height: SpacePalette.sm),
                       Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
-                          project.description.isEmpty ? 'No description' : project.description,
+                          project.description.isEmpty ? AppLocalizations.of(context)!.noDescription : project.description,
                           style: TextStylePalette.normalText,
                         ),
                       ),
@@ -265,7 +266,7 @@ class PreviewPage extends HookConsumerWidget {
                       if (project.links.isNotEmpty) ...[
                         Align(
                           alignment: Alignment.centerLeft,
-                          child: Text('Resources', style: TextStylePalette.smTitle),
+                          child: Text(AppLocalizations.of(context)!.resources, style: TextStylePalette.smTitle),
                         ),
                         SizedBox(height: SpacePalette.sm),
                         ...project.links.where((link) => link.isNotEmpty).map((link) => Padding(
@@ -325,7 +326,7 @@ class PreviewPage extends HookConsumerWidget {
                           child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
                         )
                       : Text(
-                          'Post',
+                          AppLocalizations.of(context)!.post,
                           style: canPost
                               ? TextStylePalette.buttonTextWhite.copyWith(
                                   fontSize: 16,

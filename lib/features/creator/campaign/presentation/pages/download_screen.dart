@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProjectDownloadScreen extends StatelessWidget {
   final List<String> resources;
@@ -71,7 +72,7 @@ class ProjectDownloadScreen extends StatelessWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Cannot open this link'),
+              content: Text(AppLocalizations.of(context)!.cannotOpenLink),
               backgroundColor: Colors.red,
             ),
           );
@@ -81,7 +82,7 @@ class ProjectDownloadScreen extends StatelessWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Invalid URL'),
+              content: Text(AppLocalizations.of(context)!.invalidUrl),
             backgroundColor: Colors.red,
           ),
         );
@@ -103,7 +104,7 @@ class ProjectDownloadScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Project Files', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.projectFiles, style: TextStylePalette.title),
         centerTitle: true,
       ),
       body: SafeArea(

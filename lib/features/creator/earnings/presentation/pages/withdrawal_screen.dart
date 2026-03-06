@@ -6,6 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/presentation/providers/reward_provider.dart';
 import '../../data/services/payout_service.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 final payoutServiceProvider = Provider<PayoutService>((ref) {
   return PayoutService();
@@ -58,7 +59,7 @@ class WithdrawalScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -81,11 +82,11 @@ class WithdrawalScreen extends HookConsumerWidget {
       final amount = int.tryParse(amountStr);
 
       if (amount == null || amount < 1000) {
-        errorText.value = 'Minimum withdrawal is ¥1,000';
+        errorText.value = AppLocalizations.of(context)!.minimumWithdrawal;
         return;
       }
       if (amount > currentBalance) {
-        errorText.value = 'Insufficient balance';
+        errorText.value = AppLocalizations.of(context)!.insufficientBalance;
         return;
       }
 
@@ -93,16 +94,16 @@ class WithdrawalScreen extends HookConsumerWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text('Confirm Withdrawal'),
-          content: Text('Withdraw ${formatCurrency(amount)} to your bank account?'),
+                      title: Text(AppLocalizations.of(context)!.withdraw),
+          content: Text(AppLocalizations.of(context)!.withdrawConfirm(formatCurrency(amount))),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(ctx, true),
-              child: Text('Confirm', style: TextStyle(color: ColorPalette.smashedPumpkin600)),
+              child: Text(AppLocalizations.of(context)!.ok, style: TextStyle(color: ColorPalette.smashedPumpkin600)),
             ),
           ],
         ),
@@ -117,7 +118,7 @@ class WithdrawalScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('${formatCurrency(amount)} withdrawal processed!'),
+              content: Text(AppLocalizations.of(context)!.withdrawalProcessed(formatCurrency(amount))),
               backgroundColor: ColorPalette.positive500,
             ),
           );
@@ -133,7 +134,7 @@ class WithdrawalScreen extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        title: Text('Withdraw'),
+        title: Text(AppLocalizations.of(context)!.withdraw),
         backgroundColor: ColorPalette.neutral100,
       ),
       body: isCheckingStatus.value
@@ -154,7 +155,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                     child: Column(
                       children: [
                         Text(
-                          'Available Balance',
+                          AppLocalizations.of(context)!.balance,
                           style: TextStylePalette.smText.copyWith(
                             color: ColorPalette.neutral400,
                           ),
@@ -176,10 +177,9 @@ class WithdrawalScreen extends HookConsumerWidget {
                   if (connectStatus.value == null || !connectStatus.value!.hasConnect) ...[
                     _buildSetupSection(
                       icon: Icons.account_balance_outlined,
-                      title: 'Set Up Payout Account',
-                      description: 'To withdraw funds, you need to set up your payout account through Stripe. '
-                          'This includes verifying your identity and adding your bank account.',
-                      buttonText: 'Set Up Now',
+                      title: AppLocalizations.of(context)!.payoutAccount,
+                      description: AppLocalizations.of(context)!.withdrawSetupDescription,
+                      buttonText: AppLocalizations.of(context)!.setUpNow,
                       isLoading: isProcessing.value,
                       onTap: handleSetupPayout,
                     ),
@@ -188,11 +188,11 @@ class WithdrawalScreen extends HookConsumerWidget {
                   else if (!connectStatus.value!.payoutsEnabled) ...[
                     _buildSetupSection(
                       icon: Icons.pending_outlined,
-                      title: 'Verification Pending',
+                      title: AppLocalizations.of(context)!.verificationInProgress,
                       description: connectStatus.value!.detailsSubmitted
-                          ? 'Your account is being verified by Stripe. This usually takes 1-2 business days.'
-                          : 'Please complete your account setup to enable withdrawals.',
-                      buttonText: connectStatus.value!.detailsSubmitted ? 'Refresh Status' : 'Continue Setup',
+                          ? AppLocalizations.of(context)!.accountVerifyingStripe
+                          : AppLocalizations.of(context)!.completeSetupForWithdrawals,
+                      buttonText: connectStatus.value!.detailsSubmitted ? AppLocalizations.of(context)!.refreshStatus : AppLocalizations.of(context)!.continueSetup,
                       isLoading: isProcessing.value,
                       onTap: connectStatus.value!.detailsSubmitted ? refreshStatus : handleSetupPayout,
                     ),
@@ -215,7 +215,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                           Icon(Icons.check_circle, size: 20, color: ColorPalette.positive500),
                           SizedBox(width: SpacePalette.sm),
                           Text(
-                            'Payout account verified',
+                            AppLocalizations.of(context)!.readyForWithdrawals,
                             style: TextStylePalette.smTitle.copyWith(
                               color: ColorPalette.positive700,
                             ),
@@ -226,7 +226,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.lg),
 
                     // 金額入力
-                    Text('Amount', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.balance, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     TextField(
                       controller: amountController,
@@ -273,14 +273,14 @@ class WithdrawalScreen extends HookConsumerWidget {
                         ),
                         SizedBox(width: SpacePalette.sm),
                         _QuickAmountButton(
-                          label: 'All',
+                          label: AppLocalizations.of(context)!.all,
                           onTap: () => amountController.text = currentBalance.toString(),
                         ),
                       ],
                     ),
                     SizedBox(height: SpacePalette.sm),
                     Text(
-                      'Minimum ¥1,000 · Funds arrive in 2-5 business days',
+                      AppLocalizations.of(context)!.withdrawalMinAndTiming,
                       style: TextStylePalette.smSubText,
                     ),
 
@@ -318,7 +318,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                                 ),
                               )
                             : Text(
-                                'Withdraw',
+                                AppLocalizations.of(context)!.withdraw,
                                 style: TextStylePalette.buttonTextWhite,
                               ),
                       ),

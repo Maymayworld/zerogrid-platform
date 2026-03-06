@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_theme.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class EditProfileScreen extends HookWidget {
   const EditProfileScreen({Key? key}) : super(key: key);
@@ -29,22 +30,22 @@ class EditProfileScreen extends HookWidget {
               children: [
                 _ImagePickerOption(
                   icon: Icons.photo_library_outlined,
-                  label: 'Choose From Library',
+                  label: AppLocalizations.of(context)!.chooseFromLibrary,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Choose from library...')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.chooseFromLibrary)),
                     );
                   },
                 ),
                 SizedBox(height: SpacePalette.sm),
                 _ImagePickerOption(
                   icon: Icons.camera_alt_outlined,
-                  label: 'Take Photo',
+                  label: AppLocalizations.of(context)!.takePhoto,
                   onTap: () {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Take photo...')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.takePhoto)),
                     );
                   },
                 ),
@@ -87,7 +88,7 @@ class EditProfileScreen extends HookWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Edit Profile',
+          AppLocalizations.of(context)!.editProfile,
           style: GoogleFonts.inter(
             fontSize: FontSizePalette.size16,
             fontWeight: FontWeight.w600,
@@ -141,7 +142,7 @@ class EditProfileScreen extends HookWidget {
                     
                     // Name
                     Text(
-                      'Name',
+                      AppLocalizations.of(context)!.name,
                       style: TextStylePalette.smTitle
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -149,7 +150,7 @@ class EditProfileScreen extends HookWidget {
                       controller: nameController,
                       style: TextStylePalette.normalText,
                       decoration: InputDecoration(
-                        hintText: 'Enter your name',
+                        hintText: AppLocalizations.of(context)!.pleaseEnterDisplayName,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,
@@ -164,7 +165,7 @@ class EditProfileScreen extends HookWidget {
                     
                     // Bio
                     Text(
-                      'Bio',
+                      AppLocalizations.of(context)!.description,
                       style: TextStylePalette.smTitle
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -173,7 +174,7 @@ class EditProfileScreen extends HookWidget {
                       style: TextStylePalette.normalText,
                       maxLines: 3,
                       decoration: InputDecoration(
-                        hintText: 'Tell us about yourself',
+                        hintText: AppLocalizations.of(context)!.tellUsAboutYourself,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,
@@ -188,7 +189,7 @@ class EditProfileScreen extends HookWidget {
                     
                     // Date of Birth
                     Text(
-                      'Date of Birth',
+                      AppLocalizations.of(context)!.dateOfBirth,
                       style: TextStylePalette.smTitle
                     ),
                     SizedBox(height: SpacePalette.sm),
@@ -205,7 +206,7 @@ class EditProfileScreen extends HookWidget {
                           children: [
                             Text(
                               dateOfBirthController.text.isEmpty
-                                  ? 'Select date'
+                                  ? AppLocalizations.of(context)!.selectDate
                                   : dateOfBirthController.text,
                               style: GoogleFonts.inter(
                                 fontSize: FontSizePalette.size14,
@@ -247,7 +248,7 @@ class EditProfileScreen extends HookWidget {
                     // 保存処理（後で実装）
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Profile updated!')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.profileImageUpdated)),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -257,7 +258,7 @@ class EditProfileScreen extends HookWidget {
                     ),
                   ),
                   child: Text(
-                    'Save',
+                    AppLocalizations.of(context)!.save,
                     style: TextStylePalette.buttonTextWhite
                   ),
                 ),

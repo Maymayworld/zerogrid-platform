@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/services/notification_preferences_service.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 final _notifPrefServiceProvider = Provider<NotificationPreferencesService>((ref) {
   return NotificationPreferencesService();
@@ -89,12 +90,12 @@ class NotificationSettingsSheet extends HookConsumerWidget {
                 ),
               ),
               SizedBox(height: SpacePalette.lg),
-              Text('Notifications', style: TextStylePalette.smallHeader),
+              Text(AppLocalizations.of(context)!.notifications, style: TextStylePalette.smallHeader),
               SizedBox(height: SpacePalette.lg),
 
               // All Notifications
               _buildToggleRow(
-                label: 'All Notifications',
+                label: AppLocalizations.of(context)!.allNotifications,
                 value: allNotifications.value,
                 onTap: () => toggle('all_notifications', allNotifications),
               ),
@@ -103,14 +104,14 @@ class NotificationSettingsSheet extends HookConsumerWidget {
 
               // Chat
               _buildToggleRow(
-                label: 'Chat',
+                label: AppLocalizations.of(context)!.chat,
                 value: chat.value,
                 onTap: () => toggle('chat', chat),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.base),
                 child: Text(
-                  'Direct messages from project owners and updates from group chats',
+                  AppLocalizations.of(context)!.chatNotificationDesc,
                   style: TextStyle(
                     fontSize: 14,
                     color: ColorPalette.neutral500,
@@ -120,14 +121,14 @@ class NotificationSettingsSheet extends HookConsumerWidget {
 
               // Earnings
               _buildToggleRow(
-                label: 'Earnings',
+                label: AppLocalizations.of(context)!.earnings,
                 value: earnings.value,
                 onTap: () => toggle('earnings', earnings),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.base),
                 child: Text(
-                  'Notifications about your view count, earnings, and balance updates',
+                  AppLocalizations.of(context)!.earningsNotificationDesc,
                   style: TextStyle(
                     fontSize: 14,
                     color: ColorPalette.neutral500,
@@ -137,14 +138,14 @@ class NotificationSettingsSheet extends HookConsumerWidget {
 
               // News
               _buildToggleRow(
-                label: 'News',
+                label: AppLocalizations.of(context)!.news,
                 value: news.value,
                 onTap: () => toggle('news', news),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.sm),
                 child: Text(
-                  'New campaign alerts, announcements, and important platform updates',
+                  AppLocalizations.of(context)!.newsNotificationDesc,
                   style: TextStyle(
                     fontSize: 14,
                     color: ColorPalette.neutral500,

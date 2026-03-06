@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/presentation/providers/notification_provider.dart';
 import '../../../creator/find/presentation/widgets/notification_sheet.dart';
@@ -107,7 +108,7 @@ class _DashboardHeader extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Dashboard',
+                    AppLocalizations.of(context)!.dashboard,
                     style: TextStylePalette.header.copyWith(
                       color: ColorPalette.white,
                     ),
@@ -171,7 +172,7 @@ class _DashboardHeader extends StatelessWidget {
 
               // Balance セクション
               Text(
-                'Balance',
+                AppLocalizations.of(context)!.balance,
                 style: TextStylePalette.normalText.copyWith(
                   color: ColorPalette.white.withOpacity(0.9),
                 ),
@@ -222,7 +223,7 @@ class _DashboardHeader extends StatelessWidget {
                         ),
                         SizedBox(height: SpacePalette.xs),
                         Text(
-                          'Deposit',
+                          AppLocalizations.of(context)!.deposit,
                           style: TextStylePalette.smText.copyWith(
                             color: ColorPalette.white,
                           ),
@@ -280,7 +281,7 @@ class _ViewsCard extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Cumulative Total Views',
+                AppLocalizations.of(context)!.cumulativeTotalViews,
                 style: TextStylePalette.title,
               ),
               Container(
@@ -294,7 +295,7 @@ class _ViewsCard extends ConsumerWidget {
                 ),
                 child: Row(
                   children: [
-                    Text('All Time', style: TextStylePalette.smText),
+                    Text(AppLocalizations.of(context)!.allTime, style: TextStylePalette.smText),
                     SizedBox(width: SpacePalette.xs),
                     Icon(
                       Icons.insights,
@@ -311,7 +312,7 @@ class _ViewsCard extends ConsumerWidget {
 
           // Total Views ラベル
           Text(
-            'Total Views',
+            AppLocalizations.of(context)!.totalViews,
             style: TextStylePalette.smSubTitle.copyWith(
               color: ColorPalette.neutral500,
             ),
@@ -334,7 +335,7 @@ class _ViewsCard extends ConsumerWidget {
               ),
             ),
             error: (_, __) => Text(
-              'Error',
+              AppLocalizations.of(context)!.error,
               style: TextStylePalette.header.copyWith(
                 fontWeight: FontWeight.bold,
                 color: ColorPalette.critical500,
@@ -484,7 +485,7 @@ class _ProjectsCard extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Your Projects',
+            AppLocalizations.of(context)!.yourProjects,
             style: TextStylePalette.title,
           ),
 
@@ -495,14 +496,14 @@ class _ProjectsCard extends ConsumerWidget {
             children: [
               Expanded(
                 child: Text(
-                  'Name',
+                  AppLocalizations.of(context)!.name,
                   style: TextStylePalette.smSubTitle.copyWith(
                     color: ColorPalette.neutral500,
                   ),
                 ),
               ),
               Text(
-                'Status',
+                AppLocalizations.of(context)!.status,
                 style: TextStylePalette.smSubTitle.copyWith(
                   color: ColorPalette.neutral500,
                 ),
@@ -529,13 +530,13 @@ class _ProjectsCard extends ConsumerWidget {
                         ),
                         SizedBox(height: SpacePalette.sm),
                         Text(
-                          'No campaigns yet',
+                          AppLocalizations.of(context)!.noCampaignsYet,
                           style: TextStylePalette.normalText.copyWith(
                             color: ColorPalette.neutral500,
                           ),
                         ),
                         Text(
-                          'Create your first campaign to get started',
+                          AppLocalizations.of(context)!.createFirstCampaign,
                           style: TextStylePalette.listLeading,
                         ),
                       ],
@@ -565,7 +566,7 @@ class _ProjectsCard extends ConsumerWidget {
               padding: EdgeInsets.symmetric(vertical: SpacePalette.lg),
               child: Center(
                 child: Text(
-                  'Failed to load campaigns',
+                  AppLocalizations.of(context)!.failedToLoadCampaigns,
                   style: TextStylePalette.normalText.copyWith(
                     color: ColorPalette.critical500,
                   ),

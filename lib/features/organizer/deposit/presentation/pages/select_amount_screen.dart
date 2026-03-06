@@ -2,6 +2,7 @@
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -76,11 +77,11 @@ class SelectAmountScreen extends HookConsumerWidget {
               children: [
                 Icon(Icons.check_circle, color: ColorPalette.positive500),
                 SizedBox(width: SpacePalette.sm),
-                Text('Deposit Successful'),
+                Text(AppLocalizations.of(context)!.depositSuccessful),
               ],
             ),
             content: Text(
-              'Your deposit has been processed.\nNew balance: ${formatCurrency(newBalance)}',
+              '${AppLocalizations.of(context)!.depositProcessed}\n${AppLocalizations.of(context)!.newBalanceMessage(formatCurrency(newBalance))}',
             ),
             actions: [
               TextButton(
@@ -88,7 +89,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                   Navigator.pop(ctx);
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: Text(AppLocalizations.of(context)!.ok),
               ),
             ],
           ),
@@ -98,7 +99,7 @@ class SelectAmountScreen extends HookConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Payment not yet confirmed. Please complete payment in the browser and try again.',
+              AppLocalizations.of(context)!.paymentNotConfirmed,
             ),
             backgroundColor: ColorPalette.critical500,
           ),
@@ -148,7 +149,7 @@ class SelectAmountScreen extends HookConsumerWidget {
         if (!context.mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Payment failed: $e'),
+            content: Text(AppLocalizations.of(context)!.paymentFailed(e.toString())),
             backgroundColor: ColorPalette.critical500,
           ),
         );
@@ -176,7 +177,7 @@ class SelectAmountScreen extends HookConsumerWidget {
               cancelPending();
             },
           ),
-          title: Text('Deposit', style: TextStylePalette.title.copyWith(
+          title: Text(AppLocalizations.of(context)!.deposit, style: TextStylePalette.title.copyWith(
             color: ColorPalette.neutral800,
           )),
           centerTitle: true,
@@ -194,13 +195,13 @@ class SelectAmountScreen extends HookConsumerWidget {
                 ),
                 SizedBox(height: SpacePalette.lg),
                 Text(
-                  'Complete your payment\nin the browser',
+                  AppLocalizations.of(context)!.deposit,
                   style: TextStylePalette.smallHeader,
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: SpacePalette.base),
                 Text(
-                  'After completing the payment, close the browser\nand tap the button below.',
+                  AppLocalizations.of(context)!.depositProcessed,
                   style: TextStylePalette.subText,
                   textAlign: TextAlign.center,
                 ),
@@ -239,7 +240,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                             ),
                           )
                         : Text(
-                            'Check Payment Status',
+                            AppLocalizations.of(context)!.checkPaymentStatus,
                             style: TextStylePalette.buttonTextWhite.copyWith(
                               fontSize: 16,
                               fontWeight: FontWeight.w600,
@@ -251,7 +252,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                 TextButton(
                   onPressed: cancelPending,
                   child: Text(
-                    'Cancel',
+                    AppLocalizations.of(context)!.cancel,
                     style: TextStylePalette.normalText.copyWith(
                       color: ColorPalette.neutral600,
                     ),
@@ -274,7 +275,7 @@ class SelectAmountScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Deposit', style: TextStylePalette.title.copyWith(
+        title: Text(AppLocalizations.of(context)!.deposit, style: TextStylePalette.title.copyWith(
           color: ColorPalette.neutral800,
         )),
         centerTitle: true,
@@ -303,7 +304,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Balance',
+                    AppLocalizations.of(context)!.balance,
                     style: TextStylePalette.smText.copyWith(
                       color: ColorPalette.white.withValues(alpha: 0.9),
                     ),
@@ -341,7 +342,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Deposit Amount',
+                    AppLocalizations.of(context)!.deposit,
                     style: TextStylePalette.title.copyWith(
                       fontWeight: FontWeight.w600,
                     ),

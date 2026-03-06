@@ -1,7 +1,7 @@
 // lib/widgets/filter_bottom_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'platform_icon.dart';
 
@@ -40,7 +40,7 @@ class FilterBottomSheet extends HookWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  'Filter',
+                  AppLocalizations.of(context)!.filter,
                   style: TextStylePalette.smallHeader
                 ),
                 GestureDetector(
@@ -56,7 +56,7 @@ class FilterBottomSheet extends HookWidget {
             SizedBox(height: SpacePalette.lg),
             // プラットフォーム選択
             Text(
-              'Platform',
+              AppLocalizations.of(context)!.platform,
               style: TextStylePalette.miniTitle
             ),
             SizedBox(height: SpacePalette.base),
@@ -64,7 +64,7 @@ class FilterBottomSheet extends HookWidget {
               children: [
                 _PlatformChip(
                   iconWidget: PlatformIcon.tiktok(size: 16),
-                  label: 'TikTok',
+                  label: AppLocalizations.of(context)!.tiktok,
                   isSelected: platforms.value.contains('tiktok'),
                   onTap: () {
                     final newSet = Set<String>.from(platforms.value);
@@ -79,7 +79,7 @@ class FilterBottomSheet extends HookWidget {
                 SizedBox(width: SpacePalette.sm),
                 _PlatformChip(
                   iconWidget: PlatformIcon.instagram(size: 16),
-                  label: 'Instagram',
+                  label: AppLocalizations.of(context)!.instagram,
                   isSelected: platforms.value.contains('instagram'),
                   onTap: () {
                     final newSet = Set<String>.from(platforms.value);
@@ -94,7 +94,7 @@ class FilterBottomSheet extends HookWidget {
                 SizedBox(width: SpacePalette.sm),
                 _PlatformChip(
                   iconWidget: PlatformIcon.youtube(size: 16),
-                  label: 'YouTube',
+                  label: AppLocalizations.of(context)!.youtube,
                   isSelected: platforms.value.contains('youtube'),
                   onTap: () {
                     final newSet = Set<String>.from(platforms.value);
@@ -111,7 +111,7 @@ class FilterBottomSheet extends HookWidget {
             SizedBox(height: SpacePalette.lg),
             // Pay per View
             Text(
-              'Pay per View',
+              AppLocalizations.of(context)!.payPerView,
               style: TextStylePalette.title
             ),
             SizedBox(height: SpacePalette.base),
@@ -160,7 +160,7 @@ class FilterBottomSheet extends HookWidget {
                   ),
                 ),
                 child: Text(
-                  'Apply',
+                  AppLocalizations.of(context)!.submit,
                   style: TextStylePalette.buttonTextWhite
                 ),
               ),

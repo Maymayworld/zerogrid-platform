@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page4.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
@@ -33,7 +34,7 @@ class ManualCreatePage3 extends HookConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Set Your Target Views',
+                  AppLocalizations.of(context)!.targetViews,
                   style: TextStylePalette.header,
                 ),
               ),
@@ -41,7 +42,7 @@ class ManualCreatePage3 extends HookConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Set the view goal you want this project to reach',
+                  AppLocalizations.of(context)!.setViewGoal,
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -61,7 +62,7 @@ class ManualCreatePage3 extends HookConsumerWidget {
                         padding: const EdgeInsets.only(
                           right: SpacePalette.inner,
                         ),
-                        child: Text('Views', style: TextStylePalette.smSubText),
+                        child: Text(AppLocalizations.of(context)!.views, style: TextStylePalette.smSubText),
                       ),
                     ),
                     border: OutlineInputBorder(),
@@ -84,7 +85,7 @@ class ManualCreatePage3 extends HookConsumerWidget {
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'You can adjust this anytime',
+                  AppLocalizations.of(context)!.adjustAnytime,
                   style: TextStylePalette.subGuide,
                 ),
               ),
@@ -105,7 +106,7 @@ class ManualCreatePage3 extends HookConsumerWidget {
                   },
                   isEnabled: true,
                   isLoading: false,
-                  text: 'Next',
+                  text: AppLocalizations.of(context)!.next,
                 ),
               ),
             ],

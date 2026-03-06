@@ -1,6 +1,7 @@
 // lib/features/organizer/campaign/presentation/pages/create/manual_create_page1.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page2.dart';
@@ -34,7 +35,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Let’s Start with the Basics',
+                  AppLocalizations.of(context)!.letsStartWithBasics,
                   style: TextStylePalette.header,
                 ),
               ),
@@ -42,7 +43,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Give creators a clear idea of what this project is about',
+                  AppLocalizations.of(context)!.giveCreatorsClearIdea,
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -50,7 +51,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Project Name',
+                  AppLocalizations.of(context)!.projectName,
                   style: TextStylePalette.miniTitle,
                 ),
               ),
@@ -82,7 +83,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Description',
+                  AppLocalizations.of(context)!.description,
                   style: TextStylePalette.miniTitle,
                 ),
               ),
@@ -117,7 +118,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Describe what creators are expected to do',
+                  AppLocalizations.of(context)!.describeCreatorExpectations,
                   style: TextStylePalette.subGuide,
                 ),
               ),
@@ -136,7 +137,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
                   },
                   isEnabled: true,
                   isLoading: false,
-                  text: 'Next',
+                  text: AppLocalizations.of(context)!.next,
                 ),
               ),
             ],

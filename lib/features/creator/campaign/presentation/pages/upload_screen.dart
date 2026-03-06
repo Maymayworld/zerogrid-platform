@@ -12,6 +12,7 @@ import '../../../../creator/submission/data/services/submission_service.dart';
 import '../../../../creator/submission/presentation/providers/submission_providers.dart';
 import '../../../../creator/submission/presentation/pages/connected_accounts_screen.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProjectUploadScreen extends HookConsumerWidget {
   final String campaignId;
@@ -96,7 +97,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to pick video: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToPickVideo(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -167,7 +168,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
       if (selectedTargets.value.isEmpty) return;
       if (selectedVideoSize.value != null && selectedVideoSize.value! > 500 * 1024 * 1024) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Video must be under 500MB'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.videoMaxSize500mb), backgroundColor: Colors.red),
         );
         return;
       }
@@ -214,14 +215,14 @@ class ProjectUploadScreen extends HookConsumerWidget {
 
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Video uploaded successfully!'), backgroundColor: ColorPalette.positive500),
+            SnackBar(content: Text(AppLocalizations.of(context)!.submissionSuccess), backgroundColor: ColorPalette.positive500),
           );
           Navigator.pop(context, true);
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to upload: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToUpload(e.toString())), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -258,7 +259,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Submit', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.submit, style: TextStylePalette.title),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -295,7 +296,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                           // Platform + Account selector
                             Row(
                               children: [
-                                Expanded(child: Text('Platforms', style: TextStylePalette.smTitle)),
+                                Expanded(child: Text(AppLocalizations.of(context)!.platforms, style: TextStylePalette.smTitle)),
                                 GestureDetector(
                                   onTap: () async {
                                     await Navigator.push(context, MaterialPageRoute(builder: (_) => const ConnectedAccountsScreen()));
@@ -308,7 +309,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                     children: [
                                       Icon(Icons.settings_outlined, size: 16, color: ColorPalette.neutral500),
                                       SizedBox(width: 4),
-                                      Text('Manage', style: TextStylePalette.smSubText),
+                                      Text(AppLocalizations.of(context)!.manage, style: TextStylePalette.smSubText),
                                     ],
                                   ),
                                 ),
@@ -334,17 +335,17 @@ class ProjectUploadScreen extends HookConsumerWidget {
                             SizedBox(height: SpacePalette.base + SpacePalette.sm),
 
                             // Video picker
-                            Text('Video', style: TextStylePalette.smTitle),
+                            Text(AppLocalizations.of(context)!.video, style: TextStylePalette.smTitle),
                             SizedBox(height: SpacePalette.sm),
                             _buildVideoPicker(
-                              isSubmitting, pickVideo, hasVideo,
+                              context, isSubmitting, pickVideo, hasVideo,
                               videoThumbnailBytes, selectedVideoName, selectedVideoSize,
                               videoDuration, selectedVideoPath, formatBytes, formatDuration,
                             ),
                             SizedBox(height: SpacePalette.base + SpacePalette.sm),
 
                             // Title (file mode only)
-                            Text('Title', style: TextStylePalette.smTitle),
+                            Text(AppLocalizations.of(context)!.title, style: TextStylePalette.smTitle),
                             SizedBox(height: SpacePalette.sm),
                             Container(
                               decoration: BoxDecoration(
@@ -357,7 +358,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                 maxLines: 1,
                                 style: TextStylePalette.normalText,
                                 decoration: InputDecoration(
-                                  hintText: 'Video title',
+                                  hintText: AppLocalizations.of(context)!.videoTitle,
                                   hintStyle: TextStylePalette.hintText,
                                   border: InputBorder.none,
                                   contentPadding: EdgeInsets.symmetric(
@@ -411,7 +412,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                             onPressed: handleFileSubmit,
                             isEnabled: true,
                             isLoading: isSubmitting.value,
-                            text: 'Upload',
+                            text: AppLocalizations.of(context)!.upload,
                           ),
                         ),
                       ),
@@ -443,7 +444,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.add_circle_outline, size: 20, color: ColorPalette.neutral500),
             SizedBox(width: SpacePalette.sm),
-            Text('Connect an account', style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500)),
+            Text(AppLocalizations.of(context)!.connectAnAccount, style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500)),
           ],
         ),
       ),
@@ -519,7 +520,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                           ),
                         if (!hasAccounts)
                           Text(
-                            'No account connected',
+                            AppLocalizations.of(context)!.noAccountConnected,
                             style: TextStylePalette.smSubText.copyWith(color: ColorPalette.neutral400),
                           ),
                       ],
@@ -544,7 +545,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                           children: [
                             Icon(Icons.swap_horiz, size: 14, color: ColorPalette.white),
                             SizedBox(width: 2),
-                            Text('Switch', style: TextStylePalette.smSubText.copyWith(color: ColorPalette.white)),
+                            Text(AppLocalizations.of(context)!.switchAccount, style: TextStylePalette.smSubText.copyWith(color: ColorPalette.white)),
                           ],
                         ),
                       ),
@@ -583,7 +584,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Select Account', style: TextStylePalette.miniTitle),
+                Text(AppLocalizations.of(context)!.selectAccount, style: TextStylePalette.miniTitle),
                 SizedBox(height: SpacePalette.sm),
                 ...accounts.map((a) {
                   final isSelected = a.id == currentConnectionId;
@@ -612,6 +613,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
   }
 
   Widget _buildVideoPicker(
+    BuildContext context,
     ValueNotifier<bool> isSubmitting,
     Future<void> Function() pickVideo,
     bool hasVideo,
@@ -684,9 +686,9 @@ class ProjectUploadScreen extends HookConsumerWidget {
                   children: [
                     Icon(Icons.video_library_outlined, size: 36, color: ColorPalette.neutral400),
                     SizedBox(height: SpacePalette.sm),
-                    Text('Tap to select a video', style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500)),
+                    Text(AppLocalizations.of(context)!.tapToSelectVideo, style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500)),
                     SizedBox(height: SpacePalette.xs),
-                    Text('Max 500MB · Up to 10 minutes', style: TextStylePalette.smSubText),
+                    Text(AppLocalizations.of(context)!.maxFileSize, style: TextStylePalette.smSubText),
                   ],
                 ),
               ),

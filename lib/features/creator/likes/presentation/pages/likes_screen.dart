@@ -10,6 +10,7 @@ import '../../../campaign/presentation/widgets/project_card.dart';
 import '../../../campaign/presentation/pages/detail_screen.dart';
 import '../../../find/presentation/widgets/notification_sheet.dart';
 import '../providers/like_service_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class LikesScreen extends HookConsumerWidget {
   const LikesScreen({Key? key}) : super(key: key);
@@ -68,11 +69,11 @@ class LikesScreen extends HookConsumerWidget {
             {...currentIds}..remove(campaignId);
 
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Removed from likes')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.remove)),
         );
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
         );
       }
     }
@@ -126,7 +127,7 @@ class LikesScreen extends HookConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
               child: CommonSearchBar(
                 controller: searchController,
-                hintText: 'Search liked projects',
+                hintText: AppLocalizations.of(context)!.searchCampaigns,
                 onChanged: (value) => searchQuery.value = value,
               ),
             ),
@@ -137,7 +138,7 @@ class LikesScreen extends HookConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Liked Projects', style: TextStylePalette.header),
+                  Text(AppLocalizations.of(context)!.likedProjects, style: TextStylePalette.header),
                   IconButton(
                     icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
                     onPressed: loadLikedCampaigns,
@@ -185,9 +186,9 @@ class LikesScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('Failed to load', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
-            ElevatedButton(onPressed: onRefresh, child: Text('Retry')),
+            ElevatedButton(onPressed: onRefresh, child: Text(AppLocalizations.of(context)!.retry)),
           ],
         ),
       );
@@ -200,9 +201,9 @@ class LikesScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.favorite_border, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('No liked projects yet', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.noLikedProjectsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),
-            Text('Find campaigns and tap ♥ to save them here', 
+            Text(AppLocalizations.of(context)!.findAndLikeCampaigns, 
                 style: TextStylePalette.smSubText),
           ],
         ),

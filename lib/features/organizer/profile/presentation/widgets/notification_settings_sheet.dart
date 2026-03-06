@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../creator/profile/data/services/notification_preferences_service.dart';
 
@@ -84,12 +85,12 @@ class OrganizerNotificationSettingsSheet extends HookConsumerWidget {
                 ),
               ),
               SizedBox(height: SpacePalette.lg),
-              Text('Notifications', style: TextStylePalette.smallHeader),
+              Text(AppLocalizations.of(context)!.notifications, style: TextStylePalette.smallHeader),
               SizedBox(height: SpacePalette.lg),
 
               // All Notifications
               _buildToggleRow(
-                label: 'All Notifications',
+                label: AppLocalizations.of(context)!.allNotifications,
                 value: allNotifications.value,
                 onTap: () => toggle('all_notifications', allNotifications),
               ),
@@ -98,28 +99,28 @@ class OrganizerNotificationSettingsSheet extends HookConsumerWidget {
 
               // Chat
               _buildToggleRow(
-                label: 'Chat',
+                label: AppLocalizations.of(context)!.chat,
                 value: chat.value,
                 onTap: () => toggle('chat', chat),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.base),
                 child: Text(
-                  'Messages from creators and group chats',
+                  AppLocalizations.of(context)!.chatNotificationDesc,
                   style: TextStyle(fontSize: 14, color: ColorPalette.neutral500),
                 ),
               ),
 
               // Campaign
               _buildToggleRow(
-                label: 'Campaign',
+                label: AppLocalizations.of(context)!.navCampaign,
                 value: campaign.value,
                 onTap: () => toggle('campaign', campaign),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: SpacePalette.sm),
                 child: Text(
-                  'New participations, video submissions, campaign completion, and budget updates',
+                  AppLocalizations.of(context)!.newsNotificationDesc,
                   style: TextStyle(fontSize: 14, color: ColorPalette.neutral500),
                 ),
               ),

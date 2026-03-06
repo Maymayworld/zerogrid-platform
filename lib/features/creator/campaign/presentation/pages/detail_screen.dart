@@ -13,6 +13,7 @@ import '../../../likes/presentation/providers/like_service_provider.dart';
 import '../widgets/share_sheet.dart';
 import 'success_screen.dart';
 import 'review_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProjectDetailScreen extends HookConsumerWidget {
   final Campaign? campaign;  // Campaignオブジェクトを受け取る
@@ -166,7 +167,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: ${e.toString()}'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -198,7 +199,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -365,8 +366,8 @@ class ProjectDetailScreen extends HookConsumerWidget {
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       reviewCountState.value > 0
-                                          ? '${avgRating.value.toStringAsFixed(1)} (${reviewCountState.value} reviews)'
-                                          : 'No reviews yet',
+                                          ? '${avgRating.value.toStringAsFixed(1)} (${reviewCountState.value})'
+                                          : AppLocalizations.of(context)!.noReviewsYet,
                                       style: TextStylePalette.listLeading,
                                     ),
                                   ],
@@ -386,7 +387,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Description', style: TextStylePalette.title),
+                            Text(AppLocalizations.of(context)!.description, style: TextStylePalette.title),
                             SizedBox(height: SpacePalette.sm),
                             Text(_description, style: TextStylePalette.normalText),
                           ],
@@ -425,7 +426,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text('Reviews', style: TextStylePalette.title),
+                                Text(AppLocalizations.of(context)!.reviews, style: TextStylePalette.title),
                                 Row(
                                   children: [
                                     if (reviewCountState.value > 0) ...[
@@ -446,7 +447,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                             if (reviews.value.isEmpty)
                               Padding(
                                 padding: EdgeInsets.only(bottom: SpacePalette.sm),
-                                child: Text('No reviews yet', style: TextStylePalette.smSubText),
+                                child: Text(AppLocalizations.of(context)!.noReviewsYet, style: TextStylePalette.smSubText),
                               )
                             else
                               ...reviews.value.take(3).map((review) => _ReviewItem(
@@ -518,8 +519,8 @@ class ProjectDetailScreen extends HookConsumerWidget {
                       )
                     : Text(
                         (isAlreadyJoined.value || showAddReview)
-                            ? 'Add Review'
-                            : 'Join',
+                            ? AppLocalizations.of(context)!.leaveAReview
+                            : AppLocalizations.of(context)!.submit,
                         style: TextStylePalette.buttonTextWhite,
                       ),
               ),

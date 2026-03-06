@@ -9,6 +9,7 @@ import '../../../../../shared/presentation/providers/view_count_provider.dart';
 import '../../../../../shared/data/services/reward_service.dart';
 import '../../../../../shared/data/services/view_count_service.dart';
 import 'withdrawal_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class EarningsScreen extends HookConsumerWidget {
   const EarningsScreen({Key? key}) : super(key: key);
@@ -57,7 +58,7 @@ class EarningsScreen extends HookConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Your Earnings',
+                          AppLocalizations.of(context)!.earnings,
                           style: TextStylePalette.header.copyWith(
                             color: ColorPalette.white,
                           ),
@@ -91,7 +92,7 @@ class EarningsScreen extends HookConsumerWidget {
                         Row(
                           children: [
                             Text(
-                              'Available Balance',
+                              AppLocalizations.of(context)!.balance,
                               style: TextStylePalette.normalText.copyWith(
                                 color: ColorPalette.neutral400,
                               ),
@@ -123,7 +124,7 @@ class EarningsScreen extends HookConsumerWidget {
                                   ),
                                 ),
                                 child: Text(
-                                  'Withdraw',
+                                  AppLocalizations.of(context)!.withdraw,
                                   style: TextStylePalette.smTitle.copyWith(
                                     color: ColorPalette.neutral800,
                                   ),
@@ -148,7 +149,7 @@ class EarningsScreen extends HookConsumerWidget {
                 children: [
                   Expanded(
                     child: _StatCard(
-                      title: 'Total Earned',
+                      title: AppLocalizations.of(context)!.earnings,
                       valueAsync: totalEarningsAsync,
                       formatValue: _formatCurrency,
                       icon: Icons.account_balance_wallet,
@@ -158,7 +159,7 @@ class EarningsScreen extends HookConsumerWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: _StatCard(
-                      title: 'Pending',
+                      title: AppLocalizations.of(context)!.pending,
                       valueAsync: estimatedAsync,
                       formatValue: (v) => '~${_formatCurrency(v)}',
                       icon: Icons.hourglass_empty,
@@ -213,14 +214,14 @@ class EarningsScreen extends HookConsumerWidget {
                             ),
                             SizedBox(height: SpacePalette.base),
                             Text(
-                              'No approved submissions yet',
+                              AppLocalizations.of(context)!.noApprovedSubmissionsYet,
                               style: TextStylePalette.normalText.copyWith(
                                 color: ColorPalette.neutral500,
                               ),
                             ),
                             SizedBox(height: SpacePalette.xs),
                             Text(
-                              'Submit videos to campaigns to start earning!',
+                              AppLocalizations.of(context)!.submitVideosToEarn,
                               style: TextStylePalette.listLeading,
                               textAlign: TextAlign.center,
                             ),
@@ -241,7 +242,7 @@ class EarningsScreen extends HookConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (_, __) => SliverToBoxAdapter(
-                child: Center(child: Text('Failed to load')),
+                child: Center(child: Text(AppLocalizations.of(context)!.failedToLoad)),
               ),
             )
           else
@@ -254,7 +255,7 @@ class EarningsScreen extends HookConsumerWidget {
                       padding: EdgeInsets.all(SpacePalette.lg),
                       child: Center(
                         child: Text(
-                          'No earnings yet',
+                          AppLocalizations.of(context)!.earningHistory,
                           style: TextStylePalette.normalText.copyWith(
                             color: ColorPalette.neutral500,
                           ),
@@ -275,7 +276,7 @@ class EarningsScreen extends HookConsumerWidget {
                 child: Center(child: CircularProgressIndicator()),
               ),
               error: (_, __) => SliverToBoxAdapter(
-                child: Center(child: Text('Failed to load')),
+                child: Center(child: Text(AppLocalizations.of(context)!.failedToLoad)),
               ),
             ),
 
@@ -465,7 +466,7 @@ class _PerformanceCard extends StatelessWidget {
                 '¥${stat.estimatedEarnings}',
                 style: TextStylePalette.miniTitle.copyWith(color: Colors.green),
               ),
-              Text('estimated', style: TextStylePalette.subGuide),
+              Text(AppLocalizations.of(context)!.estimated, style: TextStylePalette.subGuide),
             ],
           ),
         ],

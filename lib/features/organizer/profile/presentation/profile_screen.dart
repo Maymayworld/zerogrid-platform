@@ -17,6 +17,8 @@ import '../../approval/presentation/providers/approval_provider.dart';
 import '../../home/presentation/providers/organizer_stats_provider.dart';
 import 'pages/account_settings_screen.dart';
 import 'widgets/notification_settings_sheet.dart';
+import '../../../../shared/widgets/language_settings_sheet.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -66,7 +68,7 @@ class ProfileScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Logout failed: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.logoutFailed(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -143,7 +145,7 @@ class ProfileScreen extends HookConsumerWidget {
 
               // Role
               Text(
-                'Organizer',
+                AppLocalizations.of(context)!.organizer,
                 style: TextStylePalette.smSubText,
               ),
               SizedBox(height: SpacePalette.lg),
@@ -168,7 +170,7 @@ class ProfileScreen extends HookConsumerWidget {
                         ),
                         SizedBox(width: SpacePalette.xs),
                         Text(
-                          'My Wallet',
+                          AppLocalizations.of(context)!.myWallet,
                           style: TextStylePalette.smText.copyWith(
                             color: ColorPalette.white,
                           ),
@@ -224,7 +226,7 @@ class ProfileScreen extends HookConsumerWidget {
                                     Icon(Icons.add, size: 16, color: ColorPalette.white),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
-                                      'Deposit',
+                                      AppLocalizations.of(context)!.deposit,
                                       style: TextStylePalette.smText.copyWith(
                                         color: ColorPalette.white,
                                       ),
@@ -249,7 +251,7 @@ class ProfileScreen extends HookConsumerWidget {
                     icon: Icons.person_outlined,
                     iconBackgroundColor: ColorPalette.smashedPumpkin100,
                     iconColor: ColorPalette.smashedPumpkin600,
-                    label: 'Account Settings',
+                    label: AppLocalizations.of(context)!.accountSettings,
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -263,7 +265,7 @@ class ProfileScreen extends HookConsumerWidget {
                     icon: Icons.payment_outlined,
                     iconBackgroundColor: const Color(0xFFE8F5E9),
                     iconColor: const Color(0xFF4CAF50),
-                    label: 'Payment',
+                    label: AppLocalizations.of(context)!.payment,
                     onTap: () {
                       Navigator.push(
                         context,
@@ -279,13 +281,13 @@ class ProfileScreen extends HookConsumerWidget {
 
               // Preferences section
               ProfileMenuSection(
-                header: 'Preferences',
+                header: AppLocalizations.of(context)!.preferences,
                 children: [
                   ProfileMenuItem(
                     icon: Icons.notifications_outlined,
                     iconBackgroundColor: const Color(0xFFFFF3E0),
                     iconColor: const Color(0xFFFF9800),
-                    label: 'Notifications',
+                    label: AppLocalizations.of(context)!.notifications,
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -295,19 +297,33 @@ class ProfileScreen extends HookConsumerWidget {
                       );
                     },
                   ),
+                  ProfileMenuItem(
+                    icon: Icons.language,
+                    iconBackgroundColor: const Color(0xFFE3F2FD),
+                    iconColor: const Color(0xFF2196F3),
+                    label: AppLocalizations.of(context)!.language,
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        backgroundColor: Colors.transparent,
+                        builder: (context) => const LanguageSettingsSheet(),
+                      );
+                    },
+                  ),
                 ],
               ),
               SizedBox(height: SpacePalette.base),
 
               // Resources section
               ProfileMenuSection(
-                header: 'Resources',
+                header: AppLocalizations.of(context)!.resources,
                 children: [
                   ProfileMenuItem(
                     icon: Icons.headset_mic_outlined,
                     iconBackgroundColor: const Color(0xFFF3E5F5),
                     iconColor: const Color(0xFF9C27B0),
-                    label: 'Contact Support',
+                    label: AppLocalizations.of(context)!.contactSupport,
                     onTap: () {
                       showModalBottomSheet(
                         context: context,
@@ -321,7 +337,7 @@ class ProfileScreen extends HookConsumerWidget {
                     icon: Icons.alternate_email,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,
-                    label: 'Follow @ZeroGrid',
+                    label: AppLocalizations.of(context)!.followZeroGrid,
                     onTap: () async {
                       final url = Uri.parse('https://www.instagram.com/zerogrid.jp?igsh=MTdqNzRoNWV2dWN3Yg==');
                       if (await canLaunchUrl(url)) {
@@ -338,7 +354,7 @@ class ProfileScreen extends HookConsumerWidget {
                 children: [
                   ProfileMenuItem(
                     icon: Icons.power_settings_new,
-                    label: 'Sign Out',
+                    label: AppLocalizations.of(context)!.signOut,
                     isDestructive: true,
                     showChevron: false,
                     onTap: handleLogout,
@@ -369,12 +385,12 @@ class ProfileScreen extends HookConsumerWidget {
             children: [
               ListTile(
                 leading: Icon(Icons.photo_library),
-                title: Text('Choose from Library', style: TextStylePalette.normalText),
+                title: Text(AppLocalizations.of(context)!.chooseFromLibrary, style: TextStylePalette.normalText),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
               ListTile(
                 leading: Icon(Icons.camera_alt),
-                title: Text('Take Photo', style: TextStylePalette.normalText),
+                title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),
             ],
@@ -395,7 +411,7 @@ class ProfileScreen extends HookConsumerWidget {
 
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Uploading...')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.uploading)),
       );
 
       final authService = ref.read(authServiceProvider);
@@ -408,14 +424,14 @@ class ProfileScreen extends HookConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Profile image updated!')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.profileImageUpdated)),
         );
       }
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).hideCurrentSnackBar();
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update image: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.failedToUpdateImage(e.toString())), backgroundColor: Colors.red),
         );
       }
     }

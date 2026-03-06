@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/common_search_bar.dart';
 import '../../../../shared/data/models/chat_room.dart';
@@ -65,7 +66,7 @@ class ChatListScreen extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
-        title: Text('Chat', style: TextStylePalette.header),
+        title: Text(AppLocalizations.of(context)!.chat, style: TextStylePalette.header),
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
@@ -77,9 +78,9 @@ class ChatListScreen extends HookConsumerWidget {
             child: Row(
               children: [
                 Expanded(
-                  child: CommonSearchBar(
+                    child: CommonSearchBar(
                     controller: searchController,
-                    hintText: 'Search',
+                    hintText: AppLocalizations.of(context)!.search,
                     onChanged: (value) => searchQuery.value = value,
                   ),
                 ),
@@ -101,7 +102,7 @@ class ChatListScreen extends HookConsumerWidget {
                 : filteredCampaigns.isEmpty
                 ? Center(
                     child: Text(
-                      'No campaigns yet.\nCreate a campaign to start chatting!',
+                      '${AppLocalizations.of(context)!.noCampaignsYet}\n${AppLocalizations.of(context)!.createFirstCampaign}',
                       style: TextStylePalette.listLeading,
                       textAlign: TextAlign.center,
                     ),

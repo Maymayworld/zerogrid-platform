@@ -1,6 +1,6 @@
 // lib/features/creator/project/presentation/widgets/share_sheet.dart
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
 class ProjectShareSheet extends StatelessWidget {
@@ -52,7 +52,10 @@ class ProjectShareSheet extends StatelessWidget {
                       ),
                       SizedBox(height: SpacePalette.xs),
                       Text(
-                        'You can earn ¥${pricePerView.toInt()} per $viewCount views...',
+                        AppLocalizations.of(context)!.earnPerViews(
+                          pricePerView.toInt().toString(),
+                          viewCount.toString(),
+                        ),
                         style: TextStylePalette.lgListLeading
                       ),
                     ],
@@ -119,10 +122,10 @@ class ProjectShareSheet extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _ShareOption(icon: Icons.share, label: 'Share', color: Colors.blue),
-                _ShareOption(icon: Icons.message, label: 'Messages', color: Colors.green),
-                _ShareOption(icon: Icons.mail, label: 'Mail', color: Colors.blue),
-                _ShareOption(icon: Icons.note, label: 'Notes', color: Colors.yellow[700]!),
+                _ShareOption(icon: Icons.share, label: AppLocalizations.of(context)!.share, color: Colors.blue),
+                _ShareOption(icon: Icons.message, label: AppLocalizations.of(context)!.messages, color: Colors.green),
+                _ShareOption(icon: Icons.mail, label: AppLocalizations.of(context)!.mail, color: Colors.blue),
+                _ShareOption(icon: Icons.note, label: AppLocalizations.of(context)!.notes, color: Colors.yellow[700]!),
               ],
             ),
             SizedBox(height: SpacePalette.lg),

@@ -10,16 +10,14 @@ import '../../../campaign/presentation/pages/detail_screen.dart';
 import '../../../../organizer/campaign/presentation/providers/campaign_service_provider.dart';
 import '../providers/feed_provider.dart';
 import '../providers/creator_tab_index_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class FeedScreen extends HookConsumerWidget {
   final List<Submission>? initialSubmissions;
   final int initialIndex;
 
-  const FeedScreen({
-    Key? key,
-    this.initialSubmissions,
-    this.initialIndex = 0,
-  }) : super(key: key);
+  const FeedScreen({Key? key, this.initialSubmissions, this.initialIndex = 0})
+    : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -68,7 +66,7 @@ class FeedScreen extends HookConsumerWidget {
         if (isNowLiked) {
           ref.read(feedLikedIdsProvider.notifier).state = {
             ...current,
-            submissionId
+            submissionId,
           };
         } else {
           ref.read(feedLikedIdsProvider.notifier).state = {...current}
@@ -77,7 +75,12 @@ class FeedScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text(
+                AppLocalizations.of(context)!.errorMessage(e.toString()),
+              ),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -191,58 +194,64 @@ class FeedScreen extends HookConsumerWidget {
         backgroundColor: Colors.black,
         body: isLoading.value
             ? Center(
-                child: CircularProgressIndicator(
-                  color: ColorPalette.white,
-                ),
+                child: CircularProgressIndicator(color: ColorPalette.white),
               )
             : submissions.value.isEmpty
-                ? _buildEmptyState()
-                : PageView.builder(
-                    controller: pageController,
-                    scrollDirection: Axis.vertical,
-                    onPageChanged: onPageChanged,
-                    itemCount: submissions.value.length,
-                    itemBuilder: (context, index) {
-                      final submission = submissions.value[index];
-                      final controller = vpControllers.value[index];
-                      final isLiked = likedIds.contains(submission.id);
+            ? _buildEmptyState(context)
+            : PageView.builder(
+                controller: pageController,
+                scrollDirection: Axis.vertical,
+                onPageChanged: onPageChanged,
+                itemCount: submissions.value.length,
+                itemBuilder: (context, index) {
+                  final submission = submissions.value[index];
+                  final controller = vpControllers.value[index];
+                  final isLiked = likedIds.contains(submission.id);
 
-                      return _LocalVideoPage(
-                        submission: submission,
-                        controller: controller,
-                        isLiked: isLiked,
-                        onLike: () => toggleLike(submission.id),
-                        onJoin: () {
-                          pauseAll();
-                          _navigateToCampaign(
-                              context, ref, submission.campaignId,
-                              onReturn: playCurrentIfVisible);
-                        },
+                  return _LocalVideoPage(
+                    submission: submission,
+                    controller: controller,
+                    isLiked: isLiked,
+                    onLike: () => toggleLike(submission.id),
+                    onJoin: () {
+                      pauseAll();
+                      _navigateToCampaign(
+                        context,
+                        ref,
+                        submission.campaignId,
+                        onReturn: playCurrentIfVisible,
                       );
                     },
-                  ),
+                  );
+                },
+              ),
       ),
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.play_circle_outline,
-              size: 64, color: ColorPalette.neutral400),
+          Icon(
+            Icons.play_circle_outline,
+            size: 64,
+            color: ColorPalette.neutral400,
+          ),
           SizedBox(height: SpacePalette.base),
           Text(
-            'No videos yet',
-            style: TextStylePalette.header
-                .copyWith(color: ColorPalette.neutral400),
+            AppLocalizations.of(context)!.noSubmissionsYet,
+            style: TextStylePalette.header.copyWith(
+              color: ColorPalette.neutral400,
+            ),
           ),
           SizedBox(height: SpacePalette.sm),
           Text(
-            'Approved videos will appear here',
-            style: TextStylePalette.subText
-                .copyWith(color: ColorPalette.neutral500),
+            AppLocalizations.of(context)!.creatorsWillSubmitHere,
+            style: TextStylePalette.subText.copyWith(
+              color: ColorPalette.neutral500,
+            ),
           ),
         ],
       ),
@@ -250,8 +259,11 @@ class FeedScreen extends HookConsumerWidget {
   }
 
   void _navigateToCampaign(
-      BuildContext context, WidgetRef ref, String campaignId,
-      {VoidCallback? onReturn}) async {
+    BuildContext context,
+    WidgetRef ref,
+    String campaignId, {
+    VoidCallback? onReturn,
+  }) async {
     try {
       final campaignService = ref.read(campaignServiceProvider);
       final campaign = await campaignService.getCampaign(campaignId);
@@ -268,8 +280,9 @@ class FeedScreen extends HookConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('Failed to load campaign'),
-              backgroundColor: Colors.red),
+            content: Text(AppLocalizations.of(context)!.failedToLoadCampaigns),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
@@ -362,16 +375,21 @@ class _LocalVideoPage extends StatelessWidget {
                             ? NetworkImage(submission.creatorAvatarUrl!)
                             : null,
                         child: submission.creatorAvatarUrl == null
-                            ? Icon(Icons.person,
-                                size: 16, color: ColorPalette.white)
+                            ? Icon(
+                                Icons.person,
+                                size: 16,
+                                color: ColorPalette.white,
+                              )
                             : null,
                       ),
                       SizedBox(width: SpacePalette.sm),
                       Flexible(
                         child: Text(
-                          submission.creatorName ?? 'Creator',
-                          style: TextStylePalette.smTitle
-                              .copyWith(color: ColorPalette.white),
+                          submission.creatorName ??
+                              AppLocalizations.of(context)!.creator,
+                          style: TextStylePalette.smTitle.copyWith(
+                            color: ColorPalette.white,
+                          ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -382,8 +400,9 @@ class _LocalVideoPage extends StatelessWidget {
                     SizedBox(height: SpacePalette.sm),
                     Text(
                       submission.campaignName!,
-                      style: TextStylePalette.smText
-                          .copyWith(color: ColorPalette.white.withOpacity(0.8)),
+                      style: TextStylePalette.smText.copyWith(
+                        color: ColorPalette.white.withOpacity(0.8),
+                      ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -394,7 +413,8 @@ class _LocalVideoPage extends StatelessWidget {
                     Text(
                       submission.videoTitle!,
                       style: TextStylePalette.smSubText.copyWith(
-                          color: ColorPalette.white.withOpacity(0.6)),
+                        color: ColorPalette.white.withOpacity(0.6),
+                      ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -418,7 +438,7 @@ class _LocalVideoPage extends StatelessWidget {
                   SizedBox(height: SpacePalette.lg),
                   _ActionButton(
                     icon: Icons.arrow_forward_ios,
-                    label: 'JOIN',
+                    label: AppLocalizations.of(context)!.submit,
                     color: ColorPalette.white,
                     onTap: onJoin,
                   ),

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../data/services/organizer_stats_service.dart';
@@ -208,7 +209,7 @@ class _AnalyticsHeader extends StatelessWidget {
               SizedBox(height: SpacePalette.lg),
 
               Text(
-                'Total Views',
+                AppLocalizations.of(context)!.totalViews,
                 style: TextStylePalette.normalText.copyWith(
                   color: ColorPalette.white.withOpacity(0.9),
                 ),
@@ -325,7 +326,7 @@ class _ViewsAnalysisCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Views Analysis', style: TextStylePalette.title),
+              Text(AppLocalizations.of(context)!.viewsAnalysis, style: TextStylePalette.title),
               _PlatformDropdown(
                 value: selectedPlatform,
                 onChanged: onPlatformChanged,
@@ -455,7 +456,7 @@ class _UserRankingCard extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('User Ranking', style: TextStylePalette.title),
+              Text(AppLocalizations.of(context)!.userRanking, style: TextStylePalette.title),
               _PlatformDropdown(
                 value: selectedPlatform,
                 onChanged: onPlatformChanged,
@@ -469,15 +470,15 @@ class _UserRankingCard extends StatelessWidget {
           Row(
             children: [
               SizedBox(width: 30),
-              Expanded(
-                child: Text('User', style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500)),
+                Expanded(
+                child: Text(AppLocalizations.of(context)!.user, style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500)),
               ),
-              Text('Videos', style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500)),
+              Text(AppLocalizations.of(context)!.videos, style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500)),
               SizedBox(width: SpacePalette.base),
               SizedBox(
                 width: 80,
                 child: Text(
-                  'Views',
+                  AppLocalizations.of(context)!.views,
                   style: TextStylePalette.smSubTitle.copyWith(color: ColorPalette.neutral500),
                   textAlign: TextAlign.right,
                 ),
@@ -654,7 +655,7 @@ class _PlatformDropdown extends StatelessWidget {
           if (v != null) onChanged(v);
         },
         items: [
-          DropdownMenuItem(value: 'All', child: Text('All')),
+          DropdownMenuItem(value: 'All', child: Text(AppLocalizations.of(context)!.all)),
           DropdownMenuItem(
             value: 'YouTube',
             child: Row(

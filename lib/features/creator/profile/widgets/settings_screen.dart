@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../../../auth/presentation/providers/oauth_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class SettingsScreen extends HookConsumerWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -23,7 +24,7 @@ class SettingsScreen extends HookConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Settings',
+          AppLocalizations.of(context)!.settings,
           style: GoogleFonts.inter(
             fontSize: FontSizePalette.size16,
             fontWeight: FontWeight.w600,
@@ -40,7 +41,7 @@ class SettingsScreen extends HookConsumerWidget {
             children: [
               // Section: Connected Services
               Text(
-                'Connected Services',
+                AppLocalizations.of(context)!.connectedServices,
                 style: GoogleFonts.inter(
                   fontSize: FontSizePalette.size14,
                   fontWeight: FontWeight.w600,
@@ -57,7 +58,7 @@ class SettingsScreen extends HookConsumerWidget {
                 ),
                 error: (error, stack) => Center(
                   child: Text(
-                    'Failed to load connected services',
+                    AppLocalizations.of(context)!.failedToLoad,
                     style: TextStylePalette.subText,
                   ),
                 ),
@@ -141,7 +142,7 @@ class SettingsScreen extends HookConsumerWidget {
                         Padding(
                           padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
                           child: Text(
-                            'Utilities',
+                            AppLocalizations.of(context)!.utilities,
                             style: GoogleFonts.inter(
                               fontSize: FontSizePalette.size12,
                               color: ColorPalette.neutral400,
@@ -201,7 +202,7 @@ class SettingsScreen extends HookConsumerWidget {
                     SizedBox(width: SpacePalette.sm),
                     Expanded(
                       child: Text(
-                        'Connect your social accounts to participate in campaigns. Google Calendar helps you track deadlines.',
+                        AppLocalizations.of(context)!.connectSocialAccounts,
                         style: GoogleFonts.inter(
                           fontSize: FontSizePalette.size12,
                           color: ColorPalette.neutral600,
@@ -227,22 +228,22 @@ class SettingsScreen extends HookConsumerWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Disconnect $serviceName?'),
+        title: Text(AppLocalizations.of(context)!.disconnectProvider(serviceName)),
         content: Text(
-          'Are you sure you want to disconnect your $serviceName account?',
+          AppLocalizations.of(context)!.disconnectConfirm,
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(
-              'Cancel',
+              AppLocalizations.of(context)!.cancel,
               style: TextStyle(color: ColorPalette.neutral600),
             ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             child: Text(
-              'Disconnect',
+              AppLocalizations.of(context)!.disconnect,
               style: TextStyle(color: Colors.red),
             ),
           ),

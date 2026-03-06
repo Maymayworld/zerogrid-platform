@@ -1,6 +1,7 @@
 // lib/features/creator/find/presentation/widgets/notification_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/presentation/providers/notification_provider.dart';
 import 'notification_list_tile.dart';
@@ -43,7 +44,7 @@ class NotificationSheet extends HookConsumerWidget {
                   Expanded(
                     child: Center(
                       child: Text(
-                        'Notification',
+                        AppLocalizations.of(context)!.notifications,
                         style: TextStylePalette.title,
                       ),
                     ),
@@ -89,7 +90,7 @@ class NotificationSheet extends HookConsumerWidget {
                           ),
                           SizedBox(height: SpacePalette.base),
                           Text(
-                            'No notifications yet',
+                            AppLocalizations.of(context)!.noNotificationsYet,
                             style: TextStylePalette.subText,
                           ),
                         ],
@@ -128,7 +129,7 @@ class NotificationSheet extends HookConsumerWidget {
                 ),
                 error: (e, _) => Center(
                   child: Text(
-                    'Failed to load notifications',
+                    AppLocalizations.of(context)!.failedToLoadNotifications,
                     style: TextStylePalette.subText,
                   ),
                 ),

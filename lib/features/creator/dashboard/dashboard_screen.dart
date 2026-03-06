@@ -7,6 +7,7 @@ import '../../../shared/presentation/providers/reward_provider.dart';
 import '../../../shared/presentation/providers/view_count_provider.dart';
 import '../../../shared/data/services/reward_service.dart';
 import '../../../shared/data/services/view_count_service.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class DashboardScreen extends HookConsumerWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -48,11 +49,11 @@ class DashboardScreen extends HookConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Analytics', style: TextStylePalette.header),
+              Text(AppLocalizations.of(context)!.analytics, style: TextStylePalette.header),
               SizedBox(height: SpacePalette.lg),
 
               // Earnings section
-              Text('Earnings', style: TextStylePalette.smallHeader),
+              Text(AppLocalizations.of(context)!.earnings, style: TextStylePalette.smallHeader),
               SizedBox(height: SpacePalette.base),
 
               // Total Views & Total Earnings
@@ -60,7 +61,7 @@ class DashboardScreen extends HookConsumerWidget {
                 children: [
                   Expanded(
                     child: _StatCard(
-                      label: 'Total Views',
+                      label: AppLocalizations.of(context)!.totalViews,
                       value: submissionStatsAsync.when(
                         data: (_) => _formatNumber(totalViews ?? 0),
                         loading: () => '---',
@@ -73,7 +74,7 @@ class DashboardScreen extends HookConsumerWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: _StatCard(
-                      label: 'Total Earnings',
+                      label: AppLocalizations.of(context)!.earnings,
                       value: totalEarningsAsync.when(
                         data: (v) => _formatCurrency(v),
                         loading: () => '---',
@@ -90,7 +91,7 @@ class DashboardScreen extends HookConsumerWidget {
                 children: [
                   Expanded(
                     child: _StatCard(
-                      label: 'Active Campaigns',
+                      label: AppLocalizations.of(context)!.activeCampaigns,
                       value: submissionStatsAsync.when(
                         data: (stats) {
                           final uniqueCampaigns =
@@ -107,7 +108,7 @@ class DashboardScreen extends HookConsumerWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: _StatCard(
-                      label: 'Estimated Pending',
+                      label: AppLocalizations.of(context)!.estimatedPending,
                       value: estimatedAsync.when(
                         data: (v) => '~${_formatCurrency(v)}',
                         loading: () => '---',
@@ -122,7 +123,7 @@ class DashboardScreen extends HookConsumerWidget {
               SizedBox(height: SpacePalette.lg),
 
               // Earning History
-              Text('Earning History', style: TextStylePalette.smallHeader),
+              Text(AppLocalizations.of(context)!.earningHistory, style: TextStylePalette.smallHeader),
               SizedBox(height: SpacePalette.base),
 
               // Header row
@@ -138,7 +139,7 @@ class DashboardScreen extends HookConsumerWidget {
                           Icon(Icons.play_circle_outline,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
-                          Text('Video',
+                          Text(AppLocalizations.of(context)!.video,
                               style: TextStylePalette.smSubTitle),
                         ],
                       ),
@@ -149,7 +150,7 @@ class DashboardScreen extends HookConsumerWidget {
                           Icon(Icons.visibility_outlined,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
-                          Text('Views',
+                          Text(AppLocalizations.of(context)!.views,
                               style: TextStylePalette.smSubTitle),
                         ],
                       ),
@@ -160,7 +161,7 @@ class DashboardScreen extends HookConsumerWidget {
                           Icon(Icons.attach_money,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
-                          Text('Earning',
+                          Text(AppLocalizations.of(context)!.earning,
                               style: TextStylePalette.smSubTitle),
                         ],
                       ),
@@ -187,14 +188,14 @@ class DashboardScreen extends HookConsumerWidget {
                             ),
                             SizedBox(height: SpacePalette.base),
                             Text(
-                              'No approved submissions yet',
+                              AppLocalizations.of(context)!.noApprovedSubmissionsYet,
                               style: TextStylePalette.normalText
                                   .copyWith(
                                       color: ColorPalette.neutral500),
                             ),
                             SizedBox(height: SpacePalette.xs),
                             Text(
-                              'Submit videos to campaigns to start earning!',
+                              AppLocalizations.of(context)!.submitVideosToEarn,
                               style: TextStylePalette.smSubText,
                               textAlign: TextAlign.center,
                             ),
@@ -223,7 +224,7 @@ class DashboardScreen extends HookConsumerWidget {
                       EdgeInsets.symmetric(vertical: SpacePalette.lg),
                   child: Center(
                     child: Text(
-                      'Failed to load data',
+                      AppLocalizations.of(context)!.failedToLoad,
                       style: TextStylePalette.subText,
                     ),
                   ),
@@ -238,7 +239,7 @@ class DashboardScreen extends HookConsumerWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       SizedBox(height: SpacePalette.lg),
-                      Text('Past Earnings',
+                      Text(AppLocalizations.of(context)!.pastEarnings,
                           style: TextStylePalette.smallHeader),
                       SizedBox(height: SpacePalette.base),
                       ...earnings.map((e) => _PastEarningItem(

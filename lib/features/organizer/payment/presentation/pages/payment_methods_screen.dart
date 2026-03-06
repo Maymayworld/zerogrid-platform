@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/payment_method.dart';
 import '../providers/payment_provider.dart';
@@ -27,7 +28,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to load payment methods: $e'),
+              content: Text(AppLocalizations.of(context)!.failedToLoadPaymentMethods(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -60,7 +61,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to add card: $e'),
+              content: Text(AppLocalizations.of(context)!.failedToAddCard(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -74,19 +75,19 @@ class PaymentMethodsScreen extends HookConsumerWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Remove Card'),
-          content: Text('Remove ${method.displayName}?'),
+          title: Text(AppLocalizations.of(context)!.removeCard),
+          content: Text(AppLocalizations.of(context)!.removePaymentMethod(method.displayName)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             TextButton(
               onPressed: () => Navigator.pop(context, true),
               style: TextButton.styleFrom(
                 foregroundColor: ColorPalette.critical500,
               ),
-              child: Text('Remove'),
+              child: Text(AppLocalizations.of(context)!.remove),
             ),
           ],
         ),
@@ -102,7 +103,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Card removed'),
+              content: Text(AppLocalizations.of(context)!.cardRemoved),
               backgroundColor: ColorPalette.positive500,
             ),
           );
@@ -111,7 +112,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to remove card: $e'),
+              content: Text(AppLocalizations.of(context)!.failedToRemoveCard(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -135,7 +136,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Payment Methods',
+          AppLocalizations.of(context)!.paymentMethods,
           style: TextStylePalette.title.copyWith(color: ColorPalette.neutral800),
         ),
         centerTitle: true,
@@ -178,7 +179,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
                             )
                           : Icon(Icons.add),
                       label: Text(
-                        isAdding.value ? 'Adding...' : 'Add Payment Method',
+                        isAdding.value ? AppLocalizations.of(context)!.loading : AppLocalizations.of(context)!.paymentMethods,
                         style: TextStylePalette.buttonTextWhite,
                       ),
                       style: ElevatedButton.styleFrom(
@@ -212,14 +213,14 @@ class _EmptyState extends StatelessWidget {
           ),
           SizedBox(height: SpacePalette.base),
           Text(
-            'No payment methods',
+            AppLocalizations.of(context)!.paymentMethods,
             style: TextStylePalette.title.copyWith(
               color: ColorPalette.neutral500,
             ),
           ),
           SizedBox(height: SpacePalette.sm),
           Text(
-            'Add a card to start depositing funds',
+            AppLocalizations.of(context)!.payment,
             style: TextStylePalette.subText,
           ),
         ],

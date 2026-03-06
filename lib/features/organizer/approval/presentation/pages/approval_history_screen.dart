@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/approval_request.dart';
 import '../providers/approval_provider.dart';
@@ -21,7 +22,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Approval History',
+          AppLocalizations.of(context)!.approvalHistory,
           style: TextStylePalette.title.copyWith(
             color: ColorPalette.neutral800,
           ),
@@ -31,7 +32,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
       body: historyAsync.when(
         data: (history) {
           if (history.isEmpty) {
-            return _buildEmptyState();
+            return _buildEmptyState(context);
           }
           return _buildHistoryList(history);
         },
@@ -47,7 +48,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -59,14 +60,14 @@ class ApprovalHistoryScreen extends ConsumerWidget {
           ),
           SizedBox(height: SpacePalette.base),
           Text(
-            'No history yet',
+            AppLocalizations.of(context)!.approvalHistory,
             style: TextStylePalette.title.copyWith(
               color: ColorPalette.neutral500,
             ),
           ),
           SizedBox(height: SpacePalette.sm),
           Text(
-            'Reviewed submissions will appear here',
+            AppLocalizations.of(context)!.noApprovalRequests,
             style: TextStylePalette.normalText.copyWith(
               color: ColorPalette.neutral400,
             ),
@@ -176,7 +177,7 @@ class _HistoryItem extends StatelessWidget {
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                _buildStatusBadge(request.status),
+                _buildStatusBadge(context, request.status),
                 SizedBox(height: 8),
                 if (request.reviewedAt != null)
                   Text(
@@ -193,7 +194,7 @@ class _HistoryItem extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(ApprovalStatus status) {
+  Widget _buildStatusBadge(BuildContext context, ApprovalStatus status) {
     Color bgColor;
     Color textColor;
     String label;
@@ -203,13 +204,13 @@ class _HistoryItem extends StatelessWidget {
       case ApprovalStatus.approved:
         bgColor = ColorPalette.positive50;
         textColor = ColorPalette.positive500;
-        label = 'Approved';
+        label = AppLocalizations.of(context)!.approved;
         icon = Icons.check;
         break;
       case ApprovalStatus.rejected:
         bgColor = ColorPalette.critical50;
         textColor = ColorPalette.critical500;
-        label = 'Rejected';
+        label = AppLocalizations.of(context)!.rejected;
         icon = Icons.close;
         break;
       case ApprovalStatus.skipped:
@@ -221,7 +222,7 @@ class _HistoryItem extends StatelessWidget {
       default:
         bgColor = ColorPalette.neutral200;
         textColor = ColorPalette.neutral600;
-        label = 'Pending';
+        label = AppLocalizations.of(context)!.pending;
         icon = Icons.hourglass_empty;
     }
 

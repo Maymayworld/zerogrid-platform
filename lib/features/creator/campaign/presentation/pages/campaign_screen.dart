@@ -9,6 +9,7 @@ import '../widgets/project_card.dart';
 import '../providers/participation_service_provider.dart';
 import '../../../find/presentation/widgets/notification_sheet.dart';
 import 'menu_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class CampaignScreen extends HookConsumerWidget {
   const CampaignScreen({Key? key}) : super(key: key);
@@ -64,7 +65,7 @@ class CampaignScreen extends HookConsumerWidget {
                   Expanded(
                     child: CommonSearchBar(
                       controller: searchController,
-                      hintText: 'Search campaigns',
+                      hintText: AppLocalizations.of(context)!.searchCampaigns,
                       onChanged: (value) => searchQuery.value = value,
                     ),
                   ),
@@ -94,7 +95,7 @@ class CampaignScreen extends HookConsumerWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('My Campaigns', style: TextStylePalette.header),
+                  Text(AppLocalizations.of(context)!.myCampaigns, style: TextStylePalette.header),
                   IconButton(
                     icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
                     onPressed: loadParticipatingCampaigns,
@@ -141,9 +142,9 @@ class CampaignScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('Failed to load', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
-            ElevatedButton(onPressed: onRefresh, child: Text('Retry')),
+            ElevatedButton(onPressed: onRefresh, child: Text(AppLocalizations.of(context)!.retry)),
           ],
         ),
       );
@@ -156,9 +157,9 @@ class CampaignScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.campaign_outlined, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('No campaigns yet', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.noCampaignsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),
-            Text('Join campaigns from the Find tab!', style: TextStylePalette.smSubText),
+            Text(AppLocalizations.of(context)!.joinCampaignsFromFind, style: TextStylePalette.smSubText),
           ],
         ),
       );

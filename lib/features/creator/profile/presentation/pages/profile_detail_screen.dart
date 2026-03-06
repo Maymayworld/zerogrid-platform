@@ -11,6 +11,7 @@ import '../../../../auth/presentation/providers/user_profile_provider.dart';
 import '../../../../creator/submission/data/models/submission.dart';
 import '../../../../creator/feed/presentation/providers/feed_provider.dart';
 import '../../../../creator/feed/presentation/pages/feed_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProfileDetailScreen extends HookConsumerWidget {
   const ProfileDetailScreen({Key? key}) : super(key: key);
@@ -64,7 +65,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
       child: Scaffold(
         backgroundColor: ColorPalette.neutral100,
         appBar: AppBar(
-          title: Text('Profile'),
+          title: Text(AppLocalizations.of(context)!.profile),
           backgroundColor: ColorPalette.neutral100,
           actions: [
             IconButton(
@@ -150,7 +151,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
                     submissions: myPosts.value,
                     isLoading: isLoadingPosts.value,
                     emptyIcon: Icons.videocam_off_outlined,
-                    emptyText: 'No posts yet',
+                    emptyText: AppLocalizations.of(context)!.noSubmissionsYet,
                   ),
                   // タブ2: いいねした動画
                   _buildVideoGrid(
@@ -158,7 +159,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
                     submissions: likedPosts.value,
                     isLoading: isLoadingLiked.value,
                     emptyIcon: Icons.favorite_border,
-                    emptyText: 'No liked videos yet',
+                    emptyText: AppLocalizations.of(context)!.noLikedProjectsYet,
                   ),
                 ],
               ),
@@ -292,7 +293,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to pick image: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -328,7 +329,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
                   color: ColorPalette.neutral800,
                 ),
                 title: Text(
-                  'Choose From Library',
+                  AppLocalizations.of(context)!.chooseFromLibrary,
                   style: TextStylePalette.normalText,
                 ),
                 onTap: () => pickImage(ImageSource.gallery),
@@ -339,7 +340,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
                   Icons.camera_alt_outlined,
                   color: ColorPalette.neutral800,
                 ),
-                title: Text('Take Photo', style: TextStylePalette.normalText),
+                title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.camera),
               ),
               SizedBox(height: SpacePalette.base),
@@ -377,7 +378,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to save: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -393,7 +394,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
       appBar: AppBar(
-        title: Text('Edit Profile'),
+        title: Text(AppLocalizations.of(context)!.editProfile),
         backgroundColor: ColorPalette.neutral100,
         actions: [
           TextButton(
@@ -408,7 +409,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
                     ),
                   )
                 : Text(
-                    'Save',
+                    AppLocalizations.of(context)!.save,
                     style: TextStylePalette.smTitle.copyWith(
                       color: ColorPalette.smashedPumpkin600,
                     ),
@@ -473,12 +474,12 @@ class _ProfileEditScreen extends HookConsumerWidget {
               ),
             ),
             SizedBox(height: 32),
-            Text('Display Name', style: TextStylePalette.smTitle),
+            Text(AppLocalizations.of(context)!.displayName, style: TextStylePalette.smTitle),
             SizedBox(height: SpacePalette.sm),
             TextField(
               controller: nameController,
               style: TextStylePalette.normalText,
-              decoration: InputDecoration(hintText: 'Enter your display name'),
+              decoration: InputDecoration(hintText: AppLocalizations.of(context)!.pleaseEnterDisplayName),
             ),
             SizedBox(height: SpacePalette.lg),
           ],

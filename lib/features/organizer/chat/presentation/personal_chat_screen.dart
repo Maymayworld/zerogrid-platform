@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/data/models/chat_room.dart';
 import '../../../../shared/data/models/chat_message.dart';
@@ -106,7 +107,7 @@ class PersonalChatScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to send: $e')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToSend(e.toString()))),
           );
         }
       } finally {
@@ -160,14 +161,14 @@ class PersonalChatScreen extends HookConsumerWidget {
                 : room.value == null
                     ? Center(
                         child: Text(
-                          'Chat room not found',
+                          AppLocalizations.of(context)!.chat,
                           style: TextStylePalette.listLeading,
                         ),
                       )
                     : messages.value.isEmpty
                         ? Center(
                             child: Text(
-                              'No messages yet.\nSay hi to $creatorName!',
+                              AppLocalizations.of(context)!.noMessagesYetStart,
                               style: TextStylePalette.listLeading,
                               textAlign: TextAlign.center,
                             ),
@@ -211,7 +212,7 @@ class PersonalChatScreen extends HookConsumerWidget {
                       textInputAction: TextInputAction.send,
                       onSubmitted: (_) => sendMessage(),
                       decoration: InputDecoration(
-                        hintText: 'Message...',
+                        hintText: AppLocalizations.of(context)!.messageHint,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,

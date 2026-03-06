@@ -9,6 +9,7 @@ import '../../data/services/review_service.dart';
 import '../providers/participation_service_provider.dart';
 import '../providers/review_provider.dart';
 import 'success_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ReviewScreen extends HookConsumerWidget {
   final Campaign? campaign;
@@ -92,7 +93,7 @@ class ReviewScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: ${e.toString()}'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -130,7 +131,7 @@ class ReviewScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Reviews', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.reviews, style: TextStylePalette.title),
         centerTitle: true,
       ),
       body: Stack(
@@ -146,10 +147,10 @@ class ReviewScreen extends HookConsumerWidget {
                 children: [
                   Icon(Icons.rate_review_outlined, size: 48, color: ColorPalette.neutral300),
                   SizedBox(height: SpacePalette.base),
-                  Text('No reviews yet', style: TextStylePalette.subText),
+                  Text(AppLocalizations.of(context)!.noReviewsYet, style: TextStylePalette.subText),
                   if (canAddReview) ...[
                     SizedBox(height: SpacePalette.sm),
-                    Text('Be the first to leave a review!', style: TextStylePalette.smSubText),
+                    Text(AppLocalizations.of(context)!.beFirstToReview, style: TextStylePalette.smSubText),
                   ],
                 ],
               ),
@@ -204,8 +205,8 @@ class ReviewScreen extends HookConsumerWidget {
                         )
                       : Text(
                           canAddReview
-                              ? 'Add Review'
-                              : (isAlreadyJoined.value ? 'Already Joined' : 'Join'),
+                              ? AppLocalizations.of(context)!.leaveAReview
+                              : (isAlreadyJoined.value ? AppLocalizations.of(context)!.connected : AppLocalizations.of(context)!.submit),
                           style: TextStylePalette.buttonTextWhite,
                         ),
                 ),
@@ -256,7 +257,7 @@ class _ReviewListItemState extends State<_ReviewListItem> {
               Row(
                 children: [
                   Text(
-                    review.reviewerName ?? 'Anonymous',
+                    review.reviewerName ?? AppLocalizations.of(context)!.anonymous,
                     style: TextStylePalette.miniTitle,
                   ),
                   SizedBox(width: SpacePalette.sm),
@@ -278,7 +279,7 @@ class _ReviewListItemState extends State<_ReviewListItem> {
                 GestureDetector(
                   onTap: () => setState(() => _expanded = true),
                   child: Text(
-                    'View More',
+                    AppLocalizations.of(context)!.viewMore,
                     style: TextStylePalette.smText.copyWith(
                       color: ColorPalette.smashedPumpkin600,
                     ),
@@ -325,7 +326,7 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
   Future<void> _submit() async {
     if (_selectedRating == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Please select a rating'), backgroundColor: Colors.red),
+        SnackBar(content: Text(AppLocalizations.of(context)!.pleaseSelectRating), backgroundColor: Colors.red),
       );
       return;
     }
@@ -341,7 +342,7 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
         Navigator.pop(context, true);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Review submitted!'),
+            content: Text(AppLocalizations.of(context)!.reviewSubmitted),
             backgroundColor: ColorPalette.positive500,
           ),
         );
@@ -349,7 +350,7 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
+          SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
         );
       }
     } finally {
@@ -387,11 +388,11 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
             ),
             SizedBox(height: SpacePalette.lg),
 
-            Text('Leave a Review', style: TextStylePalette.smallHeader),
+            Text(AppLocalizations.of(context)!.leaveAReview, style: TextStylePalette.smallHeader),
             SizedBox(height: SpacePalette.lg),
 
             // Star rating
-            Text('Rating', style: TextStylePalette.smTitle),
+            Text(AppLocalizations.of(context)!.rating, style: TextStylePalette.smTitle),
             SizedBox(height: SpacePalette.sm),
             Row(
               children: List.generate(5, (index) {
@@ -414,13 +415,13 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
             SizedBox(height: SpacePalette.lg),
 
             // Comment
-            Text('Comment', style: TextStylePalette.smTitle),
+            Text(AppLocalizations.of(context)!.comment, style: TextStylePalette.smTitle),
             SizedBox(height: SpacePalette.sm),
             TextField(
               controller: _commentController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Share your experience...',
+                hintText: AppLocalizations.of(context)!.shareExperienceHint,
                 hintStyle: TextStylePalette.hintText,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
@@ -461,7 +462,7 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
                           strokeWidth: 2,
                         ),
                       )
-                    : Text('Submit Review', style: TextStylePalette.buttonTextWhite),
+                    : Text(AppLocalizations.of(context)!.submitReview, style: TextStylePalette.buttonTextWhite),
               ),
             ),
             SizedBox(height: SpacePalette.base),

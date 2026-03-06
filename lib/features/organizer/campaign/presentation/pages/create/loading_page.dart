@@ -1,7 +1,7 @@
 // lib/features/organizer/campaign/presentation/pages/create/loading_page.dart
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
 
 class LoadingPage extends HookWidget {
@@ -21,7 +21,7 @@ class LoadingPage extends HookWidget {
       ),
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsetsGeometry.all(SpacePalette.base),
+          padding: EdgeInsets.all(SpacePalette.base),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -35,7 +35,7 @@ class LoadingPage extends HookWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'Your Project is Coming to Life!',
+                  AppLocalizations.of(context)!.projectComingToLife,
                   style: TextStylePalette.smallHeader,
                 ),
               ),
@@ -43,7 +43,7 @@ class LoadingPage extends HookWidget {
               Align(
                 alignment: Alignment.center,
                 child: Text(
-                  'It’ll be ready in just a moment — we’re putting everything together for you.',
+                  AppLocalizations.of(context)!.projectReadyMessage,
                   style: TextStylePalette.subText,
                 ),
               )

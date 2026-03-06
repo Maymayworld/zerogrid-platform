@@ -1,0 +1,619 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Zero Grid",
+
+  "error": "Error",
+  "retry": "Retry",
+  "ok": "OK",
+  "cancel": "Cancel",
+  "save": "Save",
+  "delete": "Delete",
+  "search": "Search",
+  "loading": "Loading...",
+  "uploading": "Uploading...",
+  "add": "Add",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "remove": "Remove",
+  "submit": "Submit",
+  "done": "Done",
+  "next": "Next",
+  "back": "Back",
+  "close": "Close",
+
+  "logIn": "Log In",
+  "signOut": "Sign Out",
+  "newHere": "New here? ",
+  "welcome": "Welcome! ",
+  "tellUsWhichSide": "Tell us which side are you?",
+  "contentMakers": "Content-makers and storytelling pros",
+  "brandsTeams": "Brands, teams, and campaign owners",
+  "paidToCreators": "¥500,000 paid to creators every month",
+  "talentedCreators": "500+ talented creators",
+  "countMeIn": "Count Me In!",
+  "organizer": "Organizer",
+  "creator": "Creator",
+
+  "pickYourUsername": "Pick Your Username",
+  "checking": "Checking...",
+  "displayName": "Display Name",
+  "optional": "(optional)",
+  "chooseFromLibrary": "Choose From Library",
+  "takePhoto": "Take Photo",
+  "pleaseEnterDisplayName": "Please enter a display name",
+  "letsGo": "Let's Go",
+
+  "forgotPassword": "Forgot Password",
+  "enterCode": "Enter Code",
+  "resetCodeSent": "We sent a 6-digit code to {email}. Check your inbox and enter it below.",
+  "@resetCodeSent": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "verifyCode": "Verify code",
+  "resendCode": "Resend code",
+  "enterResetCodeInstructions": "Enter the 6-digit code from your email.",
+  "resetPassword": "Reset Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm Password",
+
+  "profileNotFound": "Profile not found",
+  "pleaseSignOutAndRegister": "Please sign out and register again.",
+  "authErrorMessage": "Authentication error: {message}",
+  "@authErrorMessage": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+  "errorMessage": "Error: {message}",
+  "@errorMessage": {
+    "placeholders": {
+      "message": { "type": "String" }
+    }
+  },
+
+  "navFind": "Find",
+  "navFeed": "Feed",
+  "navCampaign": "Campaign",
+  "navProfile": "Profile",
+  "navHome": "Home",
+  "navCampaigns": "Campaigns",
+  "navChat": "Chat",
+
+  "viewProfile": "View Profile",
+  "accountSettings": "Account Settings",
+  "earnings": "Earnings",
+  "preferences": "Preferences",
+  "notifications": "Notifications",
+  "contactSupport": "Contact Support",
+  "followZeroGrid": "Follow @ZeroGrid",
+
+  "payoutAccount": "Payout Account",
+  "readyForWithdrawals": "Ready for withdrawals",
+  "connected": "Connected",
+  "verificationInProgress": "Verification in progress",
+  "pending": "Pending",
+  "setupPayoutAccount": "Set up your payout account to withdraw earnings",
+
+  "myWallet": "My Wallet",
+  "deposit": "Deposit",
+  "payment": "Payment",
+
+  "language": "Language",
+  "english": "English",
+  "japanese": "日本語",
+  "languageSettings": "Language",
+  "systemDefault": "System Default",
+
+  "email": "Email",
+  "password": "Password",
+  "changePassword": "Change Password",
+  "connectedAccounts": "Connected Accounts",
+  "youtube": "YouTube",
+  "instagram": "Instagram",
+  "tiktok": "TikTok",
+  "googleCalendar": "Google Calendar",
+  "disconnectProvider": "Disconnect {providerName}?",
+  "@disconnectProvider": {
+    "placeholders": {
+      "providerName": { "type": "String" }
+    }
+  },
+  "disconnectConfirm": "Are you sure you want to disconnect this account?",
+  "dangerZone": "Danger Zone",
+  "deleteAccount": "Delete Account",
+  "deleteAccountWarning": "Once you delete your account there is no going back",
+  "accountDeletionUnavailable": "Account deletion is not yet available.",
+
+  "settings": "Settings",
+  "connectedServices": "Connected Services",
+  "utilities": "Utilities",
+  "connectSocialAccounts": "Connect your social accounts to submit videos across platforms",
+
+  "allNotifications": "All Notifications",
+  "chat": "Chat",
+  "chatNotificationDesc": "Direct messages from project owners and collaborators",
+  "earningsNotificationDesc": "Notifications about your view count and earnings updates",
+  "news": "News",
+  "newsNotificationDesc": "New campaign alerts and platform updates",
+
+  "editProfile": "Edit Profile",
+  "profile": "Profile",
+  "bankName": "Bank Name",
+  "branchName": "Branch Name",
+  "accountType": "Account Type",
+  "ordinary": "Ordinary",
+  "checkingAccount": "Checking",
+  "savingsAccount": "Savings",
+  "accountNumber": "Account Number",
+  "accountHolder": "Account Holder",
+  "profileImageUpdated": "Profile image updated!",
+  "failedToUpdateImage": "Failed to update image: {error}",
+  "@failedToUpdateImage": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "dashboard": "Dashboard",
+  "balance": "Balance",
+  "cumulativeTotalViews": "Cumulative Total Views",
+  "allTime": "All Time",
+  "totalViews": "Total Views",
+  "yourProjects": "Your Projects",
+  "name": "Name",
+  "status": "Status",
+
+  "myCampaigns": "My Campaigns",
+  "searchCampaigns": "Search campaigns",
+  "failedToLoad": "Failed to load",
+  "noCampaignsYet": "No campaigns yet",
+  "joinCampaignsFromFind": "Join campaigns from the Find tab!",
+  "createFirstCampaign": "Create your first campaign to get started",
+  "failedToLoadCampaigns": "Failed to load campaigns",
+  "selectCampaign": "Select Campaign",
+  "noMatchingCampaigns": "No matching campaigns",
+  "tryDifferentKeyword": "Try a different keyword.",
+
+  "platforms": "Platforms",
+  "manage": "Manage",
+  "video": "Video",
+  "title": "Title",
+  "connectAnAccount": "Connect an account",
+  "switchAccount": "Switch",
+  "selectAccount": "Select Account",
+  "tapToSelectVideo": "Tap to select a video",
+  "maxFileSize": "Max 500MB · Up to 10 minutes",
+
+  "projectFiles": "Project Files",
+  "cannotOpenLink": "Cannot open this link",
+  "invalidUrl": "Invalid URL",
+
+  "description": "Description",
+  "reviews": "Reviews",
+  "noReviewsYet": "No reviews yet",
+  "beFirstToReview": "Be the first to leave a review!",
+  "leaveAReview": "Leave a Review",
+  "rating": "Rating",
+  "comment": "Comment",
+  "submitReview": "Submit Review",
+
+  "likedProjects": "Liked Projects",
+  "noLikedProjectsYet": "No liked projects yet",
+  "findAndLikeCampaigns": "Find campaigns and tap ♥ to save them here",
+
+  "earningHistory": "Earning History",
+  "views": "Views",
+  "earning": "Earning",
+  "pastEarnings": "Past Earnings",
+  "withdraw": "Withdraw",
+
+  "messageHint": "Message...",
+  "noMessagesYetCreator": "No messages yet.\nSay hi to the organizer!",
+  "delivered": "Delivered",
+  "personalChat": "Personal Chat",
+  "noMessagesYetStart": "No messages yet.\nStart the conversation!",
+
+  "submissions": "Submissions",
+  "all": "All",
+  "approved": "Approved",
+  "rejected": "Rejected",
+  "noSubmissionsYet": "No submissions yet",
+  "creatorsWillSubmitHere": "Creators will submit videos here",
+  "reject": "Reject",
+  "approve": "Approve",
+  "approveSubmission": "Approve Submission",
+  "rejectSubmission": "Reject Submission",
+  "approveConfirm": "Are you sure you want to approve this submission?",
+  "rejectConfirm": "Are you sure you want to reject this submission?",
+  "addNoteOptional": "Add a note (optional)...",
+
+  "editProject": "Edit Project",
+  "projectName": "Project Name",
+  "targetViews": "Target Views",
+  "budget": "Budget",
+  "category": "Category",
+  "viewSubmissions": "View Submissions",
+  "reviewSubmissions": "Review creator video submissions",
+  "tapToUpload": "Tap to upload",
+
+  "removeCard": "Remove Card",
+  "removePaymentMethod": "Remove {method}?",
+  "@removePaymentMethod": {
+    "placeholders": {
+      "method": { "type": "String" }
+    }
+  },
+  "cardRemoved": "Card removed",
+  "paymentMethods": "Payment Methods",
+
+  "depositSuccessful": "Deposit Successful",
+  "depositProcessed": "Your deposit has been processed.",
+  "paymentMethodAdded": "Payment method added successfully",
+  "depositConfirmFailed": "Deposit confirmation failed: {error}",
+  "@depositConfirmFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "newBalanceMessage": "New balance: ¥{balance}",
+  "@newBalanceMessage": {
+    "placeholders": {
+      "balance": { "type": "String" }
+    }
+  },
+
+  "analytics": "Analytics",
+  "viewsAnalysis": "Views Analysis",
+  "userRanking": "User Ranking",
+  "user": "User",
+  "videos": "Videos",
+
+  "giveFeedback": "Give Feedback",
+  "resources": "Resources",
+  "account": "Account",
+
+  "logoutFailed": "Logout failed: {error}",
+  "@logoutFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "approvalRequests": "Approval Requests",
+  "approvalHistory": "Approval History",
+  "noApprovalRequests": "No approval requests",
+
+  "createCampaign": "Create Campaign",
+  "campaignName": "Campaign Name",
+  "campaignDescription": "Campaign Description",
+  "per1000Views": "/ 1000 views",
+
+  "signUp": "Sign Up",
+  "alreadyHaveAccount": "Already have an account? ",
+  "orContinueWith": "or continue with",
+  "continueWithApple": "Continue with Apple",
+  "continueWithGoogle": "Continue with Google",
+
+  "username": "Username",
+  "usernameAvailable": "Username is available!",
+  "usernameTaken": "Username is already taken",
+  "usernameInvalid": "Username must be 3-20 characters, lowercase letters, numbers, underscores only",
+
+  "signUpSuccess": "Sign Up Successful!",
+  "welcomeToZeroGrid": "Welcome to Zero Grid!",
+
+  "activeCampaigns": "Active Campaigns",
+  "completedCampaigns": "Completed Campaigns",
+
+  "submissionSuccess": "Submission Successful!",
+  "submissionSuccessMessage": "Your video has been submitted for review.",
+
+  "or": "or",
+  "createAnAccount": "Create an account",
+  "createYourAccount": "Create Your Account",
+  "startBySettingUpLogin": "Start by setting up your login details",
+  "continueButton": "Continue",
+  "haveAnAccount": "Have an account? ",
+  "signIn": "Sign In",
+  "pleaseFillInAllFields": "Please fill in all fields",
+  "passwordsDoNotMatch": "Passwords do not match",
+  "uploadProfilePicture": "Upload Profile Picture",
+  "enterDisplayName": "Enter Display Name",
+  "createAccount": "Create Account",
+  "failedToPickImage": "Failed to pick image: {error}",
+  "@failedToPickImage": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "forgotPasswordQuestion": "Forgot Password?",
+  "enterEmailForResetCode": "Enter your email and we'll send you a 6-digit code to reset your password.",
+  "pleaseEnterValidEmail": "Please enter a valid email",
+  "resetCodeSentSuccess": "We sent a 6-digit code to your email. Enter it in the next screen.",
+  "sendCode": "Send code",
+  "backTo": "Back to ",
+  "resetCodeSentDescription": "We sent a 6-digit code to {email}. Enter it below to continue.",
+  "@resetCodeSentDescription": {
+    "placeholders": {
+      "email": { "type": "String" }
+    }
+  },
+  "failedToVerifyCode": "Failed to verify code: {error}",
+  "@failedToVerifyCode": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "newCodeSent": "We sent a new code to your email.",
+  "failedToResendCode": "Failed to resend code: {error}",
+  "@failedToResendCode": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "enterNewPasswordInstruction": "Enter a new password to finish account recovery.",
+  "createNewPassword": "Create New Password",
+  "passwordMinLength": "Password must be at least 8 characters.",
+  "reEnterPasswordInstruction": "Re-enter your new password to confirm.",
+  "confirmNewPassword": "Confirm New Password",
+  "updatePassword": "Update password",
+  "passwordUpdated": "Password updated. Please log in with your new password.",
+  "passwordsMustMatch": "Passwords must match and be at least 8 characters.",
+  "signUpSuccessWelcome": "Welcome to Zero Grid,",
+  "allSetMessage": "You're all set. Time to earn and create!",
+  "failedToCreateUser": "Failed to create user",
+
+  "filter": "Filter",
+  "platform": "Platform",
+  "payPerView": "Pay per View",
+  "noNotificationsYet": "No notifications yet",
+  "failedToLoadNotifications": "Failed to load notifications",
+  "share": "Share",
+  "messages": "Messages",
+  "mail": "Mail",
+  "notes": "Notes",
+  "earnPerViews": "You can earn ¥{price} per {views} views...",
+  "@earnPerViews": {
+    "placeholders": {
+      "price": { "type": "String" },
+      "views": { "type": "String" }
+    }
+  },
+  "feedbackHelpsUs": "Your feedback helps us improve\nand serve you better",
+  "tellUsSomething": "Tell us something",
+  "thankYouForFeedback": "Thank you for your feedback!",
+  "shareFeedback": "Share Feedback",
+  "campaignPostedSuccess": "Campaign posted successfully!",
+  "failedToPost": "Failed to post: {error}",
+  "@failedToPost": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "preview": "Preview",
+  "uploadImage": "Upload Image",
+  "noDescription": "No description",
+  "post": "Post",
+  "projectComingToLife": "Your Project is Coming to Life!",
+  "projectReadyMessage": "It'll be ready in just a moment — we're putting everything together for you.",
+  "edit": "Edit",
+  "totalSpent": "{amount} total spent",
+  "@totalSpent": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+
+  "needHelpSupport": "Need help? We're here to support you",
+  "frequentlyAskedQuestions": "Frequently Asked Questions",
+  "browseFaqSubtitle": "Browse common questions and answers",
+  "askForHelp": "Ask for Help",
+  "askHelpSubtitle": "Tell us what you need help with",
+  "stillNeedHelp": "Still need help?",
+  "supportTeamReady": "Our support team is ready to assist you.",
+  "findQuickAnswers": "Find quick answers or get help when you need it",
+  "howCanWeHelp": "How can we help?",
+  "tellUsAndHearBack": "Tell us what's going on, and you'll hear back by email",
+  "noSensitiveInfo": "Please don't include sensitive information",
+  "howFeelAboutZeroGrid": "How do you feel about ZeroGrid?",
+  "feedbackExampleHint": "e.g. love the app! keep it up",
+  "faqQuestion": "Question {number}",
+  "@faqQuestion": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "faqAnswer": "Answer of question {number}",
+  "@faqAnswer": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+
+  "bankAccountSaved": "Bank account saved!",
+  "enterBankName": "Enter bank name",
+  "enterBranchName": "Enter branch name",
+  "enterAccountNumber": "Enter account number",
+  "enterAccountHolderName": "Enter account holder name",
+
+  "tellUsAboutYourself": "Tell us about yourself",
+
+  "pleaseSelectRating": "Please select a rating",
+  "reviewSubmitted": "Review submitted!",
+  "shareExperienceHint": "Share your experience...",
+
+  "failedToPickVideo": "Failed to pick video: {error}",
+  "@failedToPickVideo": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "videoMaxSize500mb": "Video must be under 500MB",
+  "failedToUpload": "Failed to upload: {error}",
+  "@failedToUpload": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "videoTitle": "Video title",
+  "upload": "Upload",
+  "noAccountConnected": "No account connected",
+
+  "estimated": "estimated",
+  "estimatedPending": "Estimated Pending",
+  "noApprovedSubmissionsYet": "No approved submissions yet",
+  "submitVideosToEarn": "Submit videos to campaigns to start earning!",
+
+  "postingPermissionsOnly": "Only posting permissions are requested. You can disconnect anytime.",
+
+  "createWithAI": "Create with AI",
+  "createManually": "Create Manually",
+  "letsStartWithBasics": "Let's Start with the Basics",
+  "giveCreatorsClearIdea": "Give creators a clear idea of what this project is about",
+  "describeCreatorExpectations": "Describe what creators are expected to do",
+  "selectCategoryAndPlatforms": "Select Category and Platforms",
+  "chooseCategoryFitsProject": "Choose category that fits your project",
+  "chooseWhereClipsPosted": "Choose where the creators' clips will be posted",
+  "setViewGoal": "Set the view goal you want this project to reach",
+  "adjustAnytime": "You can adjust this anytime",
+  "suggestRangesBasedOnCategory": "We'll suggest ranges based on your category and target views",
+  "insufficientBalanceAvailable": "Insufficient balance. Available: ¥{available}",
+  "@insufficientBalanceAvailable": {
+    "placeholders": {
+      "available": { "type": "String" }
+    }
+  },
+  "setProjectTimeline": "Set Your Project Timeline",
+  "chooseProjectDates": "Choose when the project starts and when it wraps up",
+  "dateFormatPlaceholder": "YYYY/MM/DD",
+  "projectAutoInactive": "The project will automatically become inactive when the end date is reached",
+  "uploadFailed": "Upload failed: {error}",
+  "@uploadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "uploadFilesOrLinks": "Upload files or add links to help creators produce better content",
+  "supportedFileFormats": "Supported: JPG, PNG, SVG, MP4, PDF, ZIP",
+  "addLink": "Add Link",
+  "pasteLinkHint": "Paste link here...",
+  "addAnother": "Add Another",
+
+  "uploadedVideo": "Uploaded video",
+  "postedToPlatform": "Posted to {platform}",
+  "@postedToPlatform": {
+    "placeholders": {
+      "platform": { "type": "String" }
+    }
+  },
+  "snsPostingFailed": "SNS posting failed",
+  "postingToPlatform": "Posting to {platform}...",
+  "@postingToPlatform": {
+    "placeholders": {
+      "platform": { "type": "String" }
+    }
+  },
+  "submissionApprovedAutoPosting": "Submission approved! Auto-posting to SNS...",
+  "submissionRejected": "Submission rejected",
+  "submissionApproved": "Submission Approved",
+  "submissionApprovedBody": "Your submission for \"{campaignName}\" was approved!",
+  "@submissionApprovedBody": {
+    "placeholders": {
+      "campaignName": { "type": "String" }
+    }
+  },
+  "submissionRejectedBody": "Your submission for \"{campaignName}\" was rejected.",
+  "@submissionRejectedBody": {
+    "placeholders": {
+      "campaignName": { "type": "String" }
+    }
+  },
+
+  "failedToSend": "Failed to send: {error}",
+  "@failedToSend": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "failedToLoadPaymentMethods": "Failed to load payment methods: {error}",
+  "@failedToLoadPaymentMethods": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "failedToAddCard": "Failed to add card: {error}",
+  "@failedToAddCard": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "failedToRemoveCard": "Failed to remove card: {error}",
+  "@failedToRemoveCard": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "paymentNotConfirmed": "Payment not yet confirmed. Please complete payment in the browser and try again.",
+  "paymentFailed": "Payment failed: {error}",
+  "@paymentFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "checkPaymentStatus": "Check Payment Status",
+  "addedToBalance": "{amount} added to your balance.",
+  "@addedToBalance": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+
+  "minimumWithdrawal": "Minimum withdrawal is ¥1,000",
+  "insufficientBalance": "Insufficient balance",
+  "withdrawConfirm": "Withdraw {amount} to your bank account?",
+  "@withdrawConfirm": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "withdrawalProcessed": "{amount} withdrawal processed!",
+  "@withdrawalProcessed": {
+    "placeholders": {
+      "amount": { "type": "String" }
+    }
+  },
+  "withdrawSetupDescription": "To withdraw funds, you need to set up your payout account through Stripe.",
+  "setUpNow": "Set Up Now",
+  "accountVerifyingStripe": "Your account is being verified by Stripe. This usually takes 1-2 business days.",
+  "completeSetupForWithdrawals": "Please complete your account setup to enable withdrawals.",
+  "refreshStatus": "Refresh Status",
+  "continueSetup": "Continue Setup",
+  "withdrawalMinAndTiming": "Minimum ¥1,000 · Funds arrive in 2-5 business days",
+
+  "categoryBusiness": "Business",
+  "categoryEntertainment": "Entertainment",
+  "categoryMusic": "Music",
+  "categoryPodcast": "Podcast",
+
+  "startDate": "Start Date",
+  "endDate": "End Date",
+
+  "dateOfBirth": "Date of Birth",
+  "selectDate": "Select date",
+  "viewMore": "View More",
+  "anonymous": "Anonymous",
+  "connectedCountLabel": "{count} connected",
+  "@connectedCountLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
+  "howDoYouWantToCreate": "How Do You Want to Create This Project?",
+  "startFromShortIdea": "Start from a short idea and let AI draft the details for you",
+  "buildProjectStepByStep": "Build your project step by step with full control"
+}

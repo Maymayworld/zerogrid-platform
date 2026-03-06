@@ -1,6 +1,7 @@
 // lib/shared/widgets/common_search_bar.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
 class CommonSearchBar extends StatelessWidget {
@@ -10,15 +11,15 @@ class CommonSearchBar extends StatelessWidget {
 
   const CommonSearchBar({
     Key? key,
-    this.hintText = 'Search',
+    this.hintText,
     this.onChanged,
     this.controller,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final colorPalette = ColorPalette();
-    
+    final hint = hintText ?? AppLocalizations.of(context)!.search;
+
     return SizedBox(
       height: 48,
       child: TextField(
@@ -29,7 +30,7 @@ class CommonSearchBar extends StatelessWidget {
           color: ColorPalette.neutral800,
         ),
         decoration: InputDecoration(
-          hintText: hintText,
+          hintText: hint,
           hintStyle: GoogleFonts.inter(
             fontSize: FontSizePalette.size14,
             color: ColorPalette.neutral400,

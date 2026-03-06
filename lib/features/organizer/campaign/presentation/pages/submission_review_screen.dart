@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../creator/submission/data/models/submission.dart';
@@ -69,7 +70,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Submissions', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.submissions, style: TextStylePalette.title),
         centerTitle: true,
         actions: [
           IconButton(
@@ -92,14 +93,14 @@ class SubmissionReviewScreen extends HookConsumerWidget {
               child: Row(
                 children: [
                   _FilterChip(
-                    label: 'All',
+                    label: AppLocalizations.of(context)!.all,
                     count: submissions.value.length,
                     isSelected: filterStatus.value == 'all',
                     onTap: () => filterStatus.value = 'all',
                   ),
                   SizedBox(width: SpacePalette.sm),
                   _FilterChip(
-                    label: 'Pending',
+                    label: AppLocalizations.of(context)!.pending,
                     count: submissions.value
                         .where((s) => s.status == SubmissionStatus.pending)
                         .length,
@@ -109,7 +110,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
                   ),
                   SizedBox(width: SpacePalette.sm),
                   _FilterChip(
-                    label: 'Approved',
+                    label: AppLocalizations.of(context)!.approved,
                     count: submissions.value
                         .where((s) => s.status == SubmissionStatus.approved)
                         .length,
@@ -119,7 +120,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
                   ),
                   SizedBox(width: SpacePalette.sm),
                   _FilterChip(
-                    label: 'Rejected',
+                    label: AppLocalizations.of(context)!.rejected,
                     count: submissions.value
                         .where((s) => s.status == SubmissionStatus.rejected)
                         .length,
@@ -170,11 +171,11 @@ class SubmissionReviewScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('Failed to load submissions', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
             ElevatedButton(
               onPressed: onRefresh,
-              child: Text('Retry'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
@@ -189,9 +190,9 @@ class SubmissionReviewScreen extends HookConsumerWidget {
             Icon(Icons.video_library_outlined, size: 48,
                 color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('No submissions yet', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.noSubmissionsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),
-            Text('Creators will submit videos here',
+            Text(AppLocalizations.of(context)!.creatorsWillSubmitHere,
                 style: TextStylePalette.smSubText),
           ],
         ),
@@ -321,7 +322,7 @@ class _SubmissionCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      submission.creatorName ?? 'Creator',
+                      submission.creatorName ?? AppLocalizations.of(context)!.creator,
                       style: TextStylePalette.listTitle,
                     ),
                     Text(
@@ -359,7 +360,7 @@ class _SubmissionCard extends StatelessWidget {
                   SizedBox(width: SpacePalette.sm),
                   Expanded(
                     child: Text(
-                      'Uploaded video',
+                      AppLocalizations.of(context)!.uploadedVideo,
                       style: TextStyle(
                         fontSize: 13,
                         color: ColorPalette.neutral600,
@@ -415,10 +416,10 @@ class _SubmissionCard extends StatelessWidget {
                   SizedBox(width: 4),
                   Text(
                     submission.uploadStatus == 'posted'
-                        ? 'Posted to ${submission.platformDisplayName}'
+                        ? AppLocalizations.of(context)!.postedToPlatform(submission.platformDisplayName)
                         : submission.uploadStatus == 'failed'
-                            ? 'SNS posting failed'
-                            : 'Posting to ${submission.platformDisplayName}...',
+                            ? AppLocalizations.of(context)!.snsPostingFailed
+                            : AppLocalizations.of(context)!.postingToPlatform(submission.platformDisplayName),
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w500,
@@ -530,7 +531,7 @@ class _SubmissionCard extends StatelessWidget {
                         'rejected',
                       ),
                       icon: Icon(Icons.close, size: 16),
-                      label: Text('Reject'),
+                      label: Text(AppLocalizations.of(context)!.reject),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.red,
                         side: BorderSide(color: Colors.red.withOpacity(0.3)),
@@ -553,7 +554,7 @@ class _SubmissionCard extends StatelessWidget {
                         'approved',
                       ),
                       icon: Icon(Icons.check, size: 16),
-                      label: Text('Approve'),
+                      label: Text(AppLocalizations.of(context)!.approve),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorPalette.positive500,
                         foregroundColor: ColorPalette.white,
@@ -583,7 +584,7 @@ class _SubmissionCard extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(
-          status == 'approved' ? 'Approve Submission' : 'Reject Submission',
+          status == 'approved' ? AppLocalizations.of(context)!.approveSubmission : AppLocalizations.of(context)!.rejectSubmission,
           style: TextStylePalette.miniTitle,
         ),
         content: Column(
@@ -591,8 +592,8 @@ class _SubmissionCard extends StatelessWidget {
           children: [
             Text(
               status == 'approved'
-                  ? 'Are you sure you want to approve this submission?'
-                  : 'Are you sure you want to reject this submission?',
+                  ? AppLocalizations.of(context)!.approveConfirm
+                  : AppLocalizations.of(context)!.rejectConfirm,
               style: TextStylePalette.normalText,
             ),
             SizedBox(height: SpacePalette.base),
@@ -600,7 +601,7 @@ class _SubmissionCard extends StatelessWidget {
               controller: noteController,
               maxLines: 3,
               decoration: InputDecoration(
-                hintText: 'Add a note (optional)...',
+                hintText: AppLocalizations.of(context)!.addNoteOptional,
                 hintStyle: TextStylePalette.hintText,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(RadiusPalette.base),
@@ -613,7 +614,7 @@ class _SubmissionCard extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: Text('Cancel'),
+            child: Text(AppLocalizations.of(context)!.cancel),
           ),
           ElevatedButton(
             onPressed: () => Navigator.pop(context, true),
@@ -623,7 +624,7 @@ class _SubmissionCard extends StatelessWidget {
                   : Colors.red,
               foregroundColor: ColorPalette.white,
             ),
-            child: Text(status == 'approved' ? 'Approve' : 'Reject'),
+            child: Text(status == 'approved' ? AppLocalizations.of(context)!.approve : AppLocalizations.of(context)!.reject),
           ),
         ],
       ),
@@ -647,8 +648,8 @@ class _SubmissionCard extends StatelessWidget {
             SnackBar(
               content: Text(
                 status == 'approved'
-                    ? 'Submission approved! Auto-posting to SNS...'
-                    : 'Submission rejected',
+                    ? AppLocalizations.of(context)!.submissionApprovedAutoPosting
+                    : AppLocalizations.of(context)!.submissionRejected,
               ),
               backgroundColor: status == 'approved'
                   ? ColorPalette.positive500
@@ -660,7 +661,7 @@ class _SubmissionCard extends StatelessWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to update: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );

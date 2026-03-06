@@ -1,6 +1,7 @@
 // lib/features/organizer/campaign/presentation/pages/create/manual_create_page2.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page3.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
@@ -16,11 +17,12 @@ class ManualCreatePage2 extends HookConsumerWidget{
 
     final selectedCategory = useState(-1);
     final selectedPlatforms = useState<Set<int>>({});
-    final category = [
-      'Business',
-      'Entertainment',
-      'Music',
-      'Podcast'
+    final categoryData = ['Business', 'Entertainment', 'Music', 'Podcast'];
+    final categoryDisplay = [
+      AppLocalizations.of(context)!.categoryBusiness,
+      AppLocalizations.of(context)!.categoryEntertainment,
+      AppLocalizations.of(context)!.categoryMusic,
+      AppLocalizations.of(context)!.categoryPodcast,
     ];
     final platform = [
       'YouTube',
@@ -57,7 +59,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Select Category and Platforms',
+                  AppLocalizations.of(context)!.selectCategoryAndPlatforms,
                   style: TextStylePalette.header,
                 ),
               ),
@@ -65,7 +67,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Choose category that fits your project',
+                  AppLocalizations.of(context)!.chooseCategoryFitsProject,
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -75,7 +77,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   Expanded(
                     child: CategoryBox(
                     icon: Icon(Icons.business),
-                    name: category[0],
+                    name: categoryDisplay[0],
                     isSelected: selectedCategory.value == 0,
                     onTap: () {selectedCategory.value = 0;}
                     )
@@ -84,7 +86,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   Expanded(
                     child: CategoryBox(
                       icon: Icon(Icons.gamepad),
-                      name: category[1],
+                      name: categoryDisplay[1],
                       isSelected: selectedCategory.value == 1,
                       onTap: () {selectedCategory.value = 1;}
                     )
@@ -97,7 +99,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   Expanded(
                     child: CategoryBox(
                     icon: Icon(Icons.music_note),
-                    name: category[2],
+                    name: categoryDisplay[2],
                     isSelected: selectedCategory.value == 2,
                     onTap: () {selectedCategory.value = 2;}
                     )
@@ -106,7 +108,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   Expanded(
                     child: CategoryBox(
                       icon: Icon(Icons.voice_chat),
-                      name: category[3],
+                      name: categoryDisplay[3],
                       isSelected: selectedCategory.value == 3,
                       onTap: () {selectedCategory.value = 3;}
                     )
@@ -117,7 +119,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Choose where the creators’ clips will be posted',
+                  AppLocalizations.of(context)!.chooseWhereClipsPosted,
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -157,7 +159,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 width: double.infinity,
                 child: DuolingoButton(
                   onPressed: () {
-                    ref.read(projectProvider.notifier).setCategoryAndPlatforms(category[selectedCategory.value], selectedPlatforms.value.map((index) => platform[index]).toList());
+                    ref.read(projectProvider.notifier).setCategoryAndPlatforms(categoryData[selectedCategory.value], selectedPlatforms.value.map((index) => platform[index]).toList());
                     Navigator.push(
                       context, MaterialPageRoute(
                         builder: (context) => ManualCreatePage3()
@@ -166,7 +168,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   },
                   isEnabled: true,
                   isLoading: false,
-                  text: 'Next',
+                  text: AppLocalizations.of(context)!.next,
                 ),
               ),
             ],

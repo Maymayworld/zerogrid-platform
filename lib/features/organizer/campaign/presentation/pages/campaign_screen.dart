@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../widgets/campaign_card.dart';
 import 'edit_campaign_screen.dart';
@@ -51,7 +52,7 @@ class CampaignScreen extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
-        title: Text('Campaign', style: TextStylePalette.header),
+        title: Text(AppLocalizations.of(context)!.navCampaign, style: TextStylePalette.header),
         centerTitle: false,
         automaticallyImplyLeading: false,
         actions: [
@@ -65,7 +66,7 @@ class CampaignScreen extends HookConsumerWidget {
                 ),
               );
             },
-            tooltip: 'Approval History',
+            tooltip: AppLocalizations.of(context)!.approvalHistory,
           ),
           IconButton(
             icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
@@ -93,7 +94,7 @@ class CampaignScreen extends HookConsumerWidget {
               child: TextField(
                 onChanged: (value) => searchQuery.value = value,
                 decoration: InputDecoration(
-                  hintText: 'Search',
+                  hintText: AppLocalizations.of(context)!.search,
                   hintStyle: TextStylePalette.hintText,
                   prefixIcon: Icon(
                     Icons.search,
@@ -149,9 +150,9 @@ class CampaignScreen extends HookConsumerWidget {
           children: [
             Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
-            Text('Failed to load campaigns', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.failedToLoadCampaigns, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
-            ElevatedButton(onPressed: onRefresh, child: Text('Retry')),
+            ElevatedButton(onPressed: onRefresh, child: Text(AppLocalizations.of(context)!.retry)),
           ],
         ),
       );
@@ -169,10 +170,10 @@ class CampaignScreen extends HookConsumerWidget {
               color: ColorPalette.neutral400,
             ),
             SizedBox(height: SpacePalette.base),
-            Text('No campaigns yet', style: TextStylePalette.subText),
+            Text(AppLocalizations.of(context)!.noCampaignsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),
             Text(
-              'Create your first campaign!',
+              AppLocalizations.of(context)!.createFirstCampaign,
               style: TextStylePalette.smSubText,
             ),
           ],

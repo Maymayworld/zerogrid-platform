@@ -17,6 +17,7 @@ import 'features/organizer/approval/presentation/providers/approval_provider.dar
 import 'features/organizer/payment/presentation/providers/payment_provider.dart';
 import 'shared/theme/main_layout.dart';
 import 'shared/theme/app_theme.dart';
+import 'l10n/app_localizations.dart';
 
 class AppWrapper extends ConsumerStatefulWidget {
   const AppWrapper({Key? key}) : super(key: key);
@@ -216,15 +217,15 @@ class _CheckoutReturnHandlerState extends ConsumerState<_CheckoutReturnHandler>
 
         if (mounted) {
           _showSuccessDialog(
-            'Deposit Successful',
-            'Your deposit has been processed.\nNew balance: \u00A5${_formatNumber(newBalance)}',
+            AppLocalizations.of(context)!.depositSuccessful,
+            '${AppLocalizations.of(context)!.depositProcessed}\n${AppLocalizations.of(context)!.newBalanceMessage(_formatNumber(newBalance))}',
           );
         }
       } catch (e) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Deposit confirmation failed: $e'),
+              content: Text(AppLocalizations.of(context)!.depositConfirmFailed(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -241,7 +242,7 @@ class _CheckoutReturnHandlerState extends ConsumerState<_CheckoutReturnHandler>
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Payment method added successfully'),
+            content: Text(AppLocalizations.of(context)!.paymentMethodAdded),
             backgroundColor: ColorPalette.positive500,
           ),
         );
@@ -271,7 +272,7 @@ class _CheckoutReturnHandlerState extends ConsumerState<_CheckoutReturnHandler>
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: Text('OK'),
+            child: Text(AppLocalizations.of(ctx)!.ok),
           ),
         ],
       ),
@@ -330,12 +331,12 @@ class _NoProfileScreenState extends ConsumerState<_NoProfileScreen> {
               Icon(Icons.account_circle_outlined, size: 64, color: ColorPalette.neutral400),
               SizedBox(height: 16),
               Text(
-                'Profile not found',
+                AppLocalizations.of(context)!.profileNotFound,
                 style: TextStylePalette.smallHeader,
               ),
               SizedBox(height: 8),
               Text(
-                'Please sign out and register again.',
+                AppLocalizations.of(context)!.pleaseSignOutAndRegister,
                 style: TextStylePalette.subText,
                 textAlign: TextAlign.center,
               ),
@@ -363,7 +364,7 @@ class _NoProfileScreenState extends ConsumerState<_NoProfileScreen> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  child: Text('Sign Out', style: TextStylePalette.buttonTextWhite),
+                  child: Text(AppLocalizations.of(context)!.signOut, style: TextStylePalette.buttonTextWhite),
                 ),
               ),
             ],

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter/services.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
 import '../providers/auth_provider.dart';
@@ -84,8 +85,8 @@ class ResetCodeInputScreen extends HookConsumerWidget {
       final code = codeValue.value;
       if (!_isValidCode(code)) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Enter the 6-digit code from your email.'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.enterResetCodeInstructions),
             backgroundColor: ColorPalette.critical500,
           ),
         );
@@ -117,7 +118,7 @@ class ResetCodeInputScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to verify code: $e'),
+              content: Text(AppLocalizations.of(context)!.failedToVerifyCode(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -134,8 +135,8 @@ class ResetCodeInputScreen extends HookConsumerWidget {
         await authService.requestPasswordReset(email);
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('We sent a new code to your email.'),
+            SnackBar(
+              content: Text(AppLocalizations.of(context)!.newCodeSent),
               backgroundColor: ColorPalette.neutral800,
             ),
           );
@@ -144,7 +145,7 @@ class ResetCodeInputScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to resend code: $e'),
+              content: Text(AppLocalizations.of(context)!.failedToResendCode(e.toString())),
               backgroundColor: ColorPalette.critical500,
             ),
           );
@@ -159,7 +160,7 @@ class ResetCodeInputScreen extends HookConsumerWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        title: Text('Forgot Password', style: TextStylePalette.smallHeader),
+        title: Text(AppLocalizations.of(context)!.forgotPassword, style: TextStylePalette.smallHeader),
       ),
       body: SafeArea(
         child: LayoutBuilder(
@@ -180,10 +181,10 @@ class ResetCodeInputScreen extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Enter Code', style: TextStylePalette.header),
+                    Text(AppLocalizations.of(context)!.enterCode, style: TextStylePalette.header),
                     const SizedBox(height: SpacePalette.sm),
                     Text(
-                      'We sent a 6-digit code to $email. Enter it below to continue.',
+                      AppLocalizations.of(context)!.resetCodeSentDescription(email),
                       style: TextStylePalette.subText,
                     ),
                     const SizedBox(height: SpacePalette.lg),
@@ -280,7 +281,7 @@ class ResetCodeInputScreen extends HookConsumerWidget {
                       onPressed: handleVerifyCode,
                       isEnabled: isFormValid.value,
                       isLoading: isLoading.value,
-                      text: 'Verify code',
+                      text: AppLocalizations.of(context)!.verifyCode,
                     ),
                     const SizedBox(height: SpacePalette.base),
                     Align(
@@ -288,7 +289,7 @@ class ResetCodeInputScreen extends HookConsumerWidget {
                       child: TextButton(
                         onPressed: isLoading.value ? null : handleResendCode,
                         child: Text(
-                          'Resend code',
+                          AppLocalizations.of(context)!.resendCode,
                           style: TextStylePalette.guideUnderline,
                         ),
                       ),

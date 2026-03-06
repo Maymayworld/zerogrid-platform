@@ -4,6 +4,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/bank_account.dart';
 import '../providers/bank_account_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class BankAccountScreen extends HookConsumerWidget {
   const BankAccountScreen({Key? key}) : super(key: key);
@@ -59,7 +60,7 @@ class BankAccountScreen extends HookConsumerWidget {
           accountNumber.isEmpty ||
           accountHolder.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please fill in all fields')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.pleaseFillInAllFields)),
         );
         return;
       }
@@ -78,14 +79,14 @@ class BankAccountScreen extends HookConsumerWidget {
         if (context.mounted) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Bank account saved!')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.bankAccountSaved)),
           );
         }
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to save: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -104,7 +105,7 @@ class BankAccountScreen extends HookConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Bank Account',
+          AppLocalizations.of(context)!.payoutAccount,
           style: TextStylePalette.title,
         ),
         centerTitle: true,
@@ -125,13 +126,13 @@ class BankAccountScreen extends HookConsumerWidget {
                     ],
 
                     // Bank Name
-                    Text('Bank Name', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.bankName, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     TextField(
                       controller: bankNameController,
                       style: TextStylePalette.normalText,
                       decoration: InputDecoration(
-                        hintText: 'Enter bank name',
+                        hintText: AppLocalizations.of(context)!.enterBankName,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,
@@ -146,13 +147,13 @@ class BankAccountScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.base),
 
                     // Branch Name
-                    Text('Branch Name', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.branchName, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     TextField(
                       controller: branchNameController,
                       style: TextStylePalette.normalText,
                       decoration: InputDecoration(
-                        hintText: 'Enter branch name',
+                        hintText: AppLocalizations.of(context)!.enterBranchName,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,
@@ -167,7 +168,7 @@ class BankAccountScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.base),
 
                     // Account Type
-                    Text('Account Type', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.accountType, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     Container(
                       padding: EdgeInsets.symmetric(
@@ -183,18 +184,18 @@ class BankAccountScreen extends HookConsumerWidget {
                           value: selectedAccountType.value,
                           isExpanded: true,
                           style: TextStylePalette.normalText,
-                          items: const [
+                          items: [
                             DropdownMenuItem(
                               value: 'ordinary',
-                              child: Text('Ordinary'),
+                              child: Text(AppLocalizations.of(context)!.ordinary),
                             ),
                             DropdownMenuItem(
                               value: 'checking',
-                              child: Text('Checking'),
+                              child: Text(AppLocalizations.of(context)!.checkingAccount),
                             ),
                             DropdownMenuItem(
                               value: 'savings',
-                              child: Text('Savings'),
+                              child: Text(AppLocalizations.of(context)!.savingsAccount),
                             ),
                           ],
                           onChanged: (value) {
@@ -208,14 +209,14 @@ class BankAccountScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.base),
 
                     // Account Number
-                    Text('Account Number', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.accountNumber, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     TextField(
                       controller: accountNumberController,
                       style: TextStylePalette.normalText,
                       keyboardType: TextInputType.number,
                       decoration: InputDecoration(
-                        hintText: 'Enter account number',
+                        hintText: AppLocalizations.of(context)!.enterAccountNumber,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,
@@ -230,13 +231,13 @@ class BankAccountScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.base),
 
                     // Account Holder
-                    Text('Account Holder', style: TextStylePalette.smTitle),
+                    Text(AppLocalizations.of(context)!.accountHolder, style: TextStylePalette.smTitle),
                     SizedBox(height: SpacePalette.sm),
                     TextField(
                       controller: accountHolderController,
                       style: TextStylePalette.normalText,
                       decoration: InputDecoration(
-                        hintText: 'Enter account holder name',
+                        hintText: AppLocalizations.of(context)!.enterAccountHolderName,
                         hintStyle: TextStylePalette.hintText,
                         filled: true,
                         fillColor: ColorPalette.white,
@@ -286,7 +287,7 @@ class BankAccountScreen extends HookConsumerWidget {
                             color: ColorPalette.white,
                           ),
                         )
-                      : Text('Save', style: TextStylePalette.buttonTextWhite),
+                      : Text(AppLocalizations.of(context)!.save, style: TextStylePalette.buttonTextWhite),
                 ),
               ),
             ),
@@ -323,7 +324,7 @@ class _BankAccountCard extends StatelessWidget {
               ),
               SizedBox(width: SpacePalette.xs),
               Text(
-                'Bank Account',
+                AppLocalizations.of(context)!.payoutAccount,
                 style: TextStylePalette.smText.copyWith(
                   color: ColorPalette.neutral100,
                 ),

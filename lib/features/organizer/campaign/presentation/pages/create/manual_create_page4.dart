@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/data/services/campaign_service.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page5.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/providers/project_provider.dart';
@@ -36,7 +37,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'Plan Your Budget',
+                  AppLocalizations.of(context)!.budget,
                   style: TextStylePalette.header,
                 ),
               ),
@@ -44,7 +45,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
               Align(
                 alignment: Alignment.centerLeft,
                 child: Text(
-                  'We’ll suggest ranges based on your category and target views',
+                  AppLocalizations.of(context)!.suggestRangesBasedOnCategory,
                   style: TextStylePalette.subText,
                 ),
               ),
@@ -105,7 +106,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(
-                              'Insufficient balance. Available: ¥$available',
+                              AppLocalizations.of(context)!.insufficientBalanceAvailable(available.toString()),
                             ),
                           ),
                         );
@@ -122,7 +123,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
                     } catch (e) {
                       if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('Error: $e')),
+                        SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString()))),
                       );
                     } finally {
                       isChecking.value = false;
@@ -130,7 +131,7 @@ class ManualCreatePage4 extends HookConsumerWidget{
                   },
                   isEnabled: !isChecking.value,
                   isLoading: isChecking.value,
-                  text: 'Next',
+                  text: AppLocalizations.of(context)!.next,
                 ),
               ),
             ],

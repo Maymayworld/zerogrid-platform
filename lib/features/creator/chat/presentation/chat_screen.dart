@@ -8,6 +8,7 @@ import '../../../../shared/data/models/chat_room.dart';
 import '../../../../shared/data/models/chat_message.dart';
 import '../../../../shared/data/services/chat_service.dart';
 import '../../../../shared/presentation/providers/chat_service_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProjectChatScreen extends HookConsumerWidget {
   final String? roomId;        // 直接roomIdを渡す場合
@@ -103,7 +104,7 @@ class ProjectChatScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to send: $e')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString()))),
           );
         }
       } finally {
@@ -178,7 +179,7 @@ class ProjectChatScreen extends HookConsumerWidget {
               : messages.value.isEmpty
                   ? Center(
                       child: Text(
-                        'No messages yet',
+                        AppLocalizations.of(context)!.noMessagesYetCreator,
                         style: TextStylePalette.listLeading,
                       ),
                     )
@@ -238,7 +239,7 @@ class ProjectChatScreen extends HookConsumerWidget {
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => sendMessage(),
                         decoration: InputDecoration(
-                          hintText: 'Message...',
+                          hintText: AppLocalizations.of(context)!.messageHint,
                           hintStyle: TextStylePalette.hintText,
                           filled: true,
                           fillColor: ColorPalette.white,
@@ -344,7 +345,7 @@ class _MessageBubble extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: SpacePalette.xs),
             child: Text(
-              'Delivered',
+              AppLocalizations.of(context)!.delivered,
               style: TextStylePalette.subGuide.copyWith(
                 color: ColorPalette.neutral400,
                 fontSize: 11,

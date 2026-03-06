@@ -1,6 +1,7 @@
 // lib/features/auth/presentation/pages/signup_success_screen.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/theme/main_layout.dart';
 import '../../data/models/user_role.dart';
@@ -82,7 +83,7 @@ class SignUpSuccessScreen extends StatelessWidget {
 
               // Welcome text
               Text(
-                'Welcome to Zero Grid,',
+                AppLocalizations.of(context)!.signUpSuccessWelcome,
                 style: TextStylePalette.header,
               ),
               if (username != null)
@@ -92,7 +93,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                 ),
               SizedBox(height: SpacePalette.sm),
               Text(
-                'You\'re all set. Time to earn and create!',
+                AppLocalizations.of(context)!.allSetMessage,
                 style: TextStylePalette.subText,
               ),
 
@@ -118,7 +119,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(RadiusPalette.full),
                     ),
                   ),
-                  child: Text("Let's Go", style: TextStylePalette.buttonTextWhite),
+                  child: Text(AppLocalizations.of(context)!.letsGo, style: TextStylePalette.buttonTextWhite),
                 ),
               ),
               SizedBox(height: SpacePalette.lg),

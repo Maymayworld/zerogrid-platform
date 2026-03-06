@@ -1,5 +1,6 @@
 // lib/features/auth/presentation/pages/select_role_screen.dart
 import 'package:flutter/material.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'login_screen.dart';
 import '../../data/models/user_role.dart';
 import '../../../../shared/theme/app_theme.dart';
@@ -79,7 +80,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              'Welcome! ',
+                              AppLocalizations.of(context)!.welcome,
                               style: TextStylePalette.header.copyWith(
                                 fontSize: 32,
                                 color: ColorPalette.neutral800,
@@ -93,7 +94,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                         ),
                         SizedBox(height: SpacePalette.sm),
                         Text(
-                          'Tell us which side are you?',
+                          AppLocalizations.of(context)!.tellUsWhichSide,
                           style: TextStylePalette.normalText.copyWith(
                             color: ColorPalette.neutral500,
                           ),
@@ -132,8 +133,8 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                           duration: const Duration(milliseconds: 200),
                           child: Text(
                             _isCreator
-                                ? 'Content-makers and storytelling pros'
-                                : 'Brands, teams, and campaign owners',
+                                ? AppLocalizations.of(context)!.contentMakers
+                                : AppLocalizations.of(context)!.brandsTeams,
                             key: ValueKey(_isCreator),
                             style: TextStylePalette.normalText.copyWith(
                               color: ColorPalette.neutral500,
@@ -154,8 +155,8 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                           duration: const Duration(milliseconds: 200),
                           child: Text(
                             _isCreator
-                                ? '¥500,000 paid to creators every month'
-                                : '500+ talented creators',
+                                ? AppLocalizations.of(context)!.paidToCreators
+                                : AppLocalizations.of(context)!.talentedCreators,
                             key: ValueKey('stats_$_isCreator'),
                             style: TextStylePalette.smText.copyWith(
                               color: ColorPalette.neutral400,
@@ -175,7 +176,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                     onPressed: _onContinue,
                     isEnabled: true,
                     isLoading: false,
-                    text: 'Count Me In!',
+                    text: AppLocalizations.of(context)!.countMeIn,
                     buttonColor: _isCreator
                         ? _creatorButtonColor
                         : _organizerButtonColor,
@@ -252,7 +253,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                             : ColorPalette.neutral400,
                         fontWeight: !_isCreator ? FontWeight.w600 : FontWeight.w500,
                       ),
-                      child: const Text('Organizer'),
+                      child: Text(AppLocalizations.of(context)!.organizer),
                     ),
                   ),
                 ),
@@ -270,7 +271,7 @@ class _SelectRoleScreenState extends State<SelectRoleScreen>
                             : ColorPalette.neutral400,
                         fontWeight: _isCreator ? FontWeight.w600 : FontWeight.w500,
                       ),
-                      child: const Text('Creator'),
+                      child: Text(AppLocalizations.of(context)!.creator),
                     ),
                   ),
                 ),

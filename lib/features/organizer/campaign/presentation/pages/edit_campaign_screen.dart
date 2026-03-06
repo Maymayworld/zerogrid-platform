@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/duolingo_form_components.dart';
 import '../../data/models/campaign.dart';
@@ -90,7 +91,7 @@ class EditCampaignScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to pick image: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.failedToPickImage(e.toString())), backgroundColor: Colors.red),
           );
         }
       }
@@ -127,7 +128,7 @@ class EditCampaignScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Project updated successfully!'),
+              content: Text(AppLocalizations.of(context)!.done),
               backgroundColor: ColorPalette.positive500,
             ),
           );
@@ -136,7 +137,7 @@ class EditCampaignScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to update: $e'), backgroundColor: Colors.red),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())), backgroundColor: Colors.red),
           );
         }
       } finally {
@@ -155,7 +156,7 @@ class EditCampaignScreen extends HookConsumerWidget {
             icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
             onPressed: () => Navigator.pop(context),
           ),
-          title: Text('Edit Project', style: TextStylePalette.title),
+          title: Text(AppLocalizations.of(context)!.editProject, style: TextStylePalette.title),
           centerTitle: true,
         ),
         body: Center(
@@ -177,7 +178,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           ),
         ),
         body: Center(
-          child: Text('Error: ${error.value}', style: TextStylePalette.subText),
+          child: Text(AppLocalizations.of(context)!.errorMessage(error.value!), style: TextStylePalette.subText),
         ),
       );
     }
@@ -191,7 +192,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Edit Project', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.editProject, style: TextStylePalette.title),
         centerTitle: true,
         actions: [
           if (campaign.value != null)
@@ -282,26 +283,26 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.lg),
 
                   // Project Name
-                  Text('Project Name', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.projectName, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   TextField(
                     controller: projectNameController,
-                    decoration: _inputDecoration('Enter project name'),
+                    decoration: _inputDecoration(AppLocalizations.of(context)!.projectName),
                   ),
                   SizedBox(height: SpacePalette.base),
 
                   // Description
-                  Text('Description', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.description, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   TextField(
                     controller: descriptionController,
                     maxLines: 4,
-                    decoration: _inputDecoration('Enter description'),
+                    decoration: _inputDecoration(AppLocalizations.of(context)!.description),
                   ),
                   SizedBox(height: SpacePalette.base),
 
                   // Target Views (読み取り専用)
-                  Text('Target Views', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.targetViews, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   TextField(
                     controller: targetViewsController,
@@ -318,7 +319,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.base),
 
                   // Budget (読み取り専用)
-                  Text('Budget', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.budget, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   TextField(
                     controller: budgetController,
@@ -335,7 +336,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.base),
 
                   // Category
-                  Text('Category', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.category, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   Container(
                     decoration: BoxDecoration(
@@ -345,7 +346,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                     child: DropdownButtonFormField<String>(
                       value: selectedCategory.value,
                       decoration: InputDecoration(
-                        hintText: 'Select category',
+                        hintText: AppLocalizations.of(context)!.category,
                         hintStyle: TextStylePalette.hintText,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(RadiusPalette.base),
@@ -365,7 +366,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.base),
 
                   // Platforms (読み取り専用)
-                  Text('Platforms', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.platforms, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   Wrap(
                     spacing: SpacePalette.sm,
@@ -386,7 +387,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                   SizedBox(height: SpacePalette.lg),
 
                   // View Submissions
-                  Text('Submissions', style: TextStylePalette.smTitle),
+                  Text(AppLocalizations.of(context)!.submissions, style: TextStylePalette.smTitle),
                   SizedBox(height: SpacePalette.sm),
                   GestureDetector(
                     onTap: () {
@@ -418,9 +419,9 @@ class EditCampaignScreen extends HookConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('View Submissions',
+                                Text(AppLocalizations.of(context)!.viewSubmissions,
                                     style: TextStylePalette.listTitle),
-                                Text('Review creator video submissions',
+                                Text(AppLocalizations.of(context)!.reviewSubmissions,
                                     style: TextStylePalette.listLeading),
                               ],
                             ),
@@ -446,7 +447,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                 onPressed: handleSave,
                 isEnabled: !isSaving.value,
                 isLoading: isSaving.value,
-                text: 'Update Project',
+                text: AppLocalizations.of(context)!.editProject,
               ),
             ),
           ),
@@ -480,7 +481,7 @@ class _PlaceholderImage extends StatelessWidget {
         children: [
           Icon(Icons.image, size: 40, color: ColorPalette.neutral400),
           SizedBox(height: SpacePalette.sm),
-          Text('Tap to upload', style: TextStylePalette.subText),
+          Text(AppLocalizations.of(context)!.tapToUpload, style: TextStylePalette.subText),
         ],
       ),
     );

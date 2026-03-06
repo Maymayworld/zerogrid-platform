@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/theme/creator_main_layout.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProjectSuccessScreen extends StatelessWidget {
   final String? campaignName;
@@ -40,18 +41,13 @@ class ProjectSuccessScreen extends StatelessWidget {
               
               // タイトル
               Text(
-                "You're in!",
-                style: TextStylePalette.header
-              ),
-              Text(
-                'Time to start earning.',
+                AppLocalizations.of(context)!.submissionSuccess,
                 style: TextStylePalette.header
               ),
               SizedBox(height: SpacePalette.base),
               
-              // 説明文
               Text(
-                'Start now. The sooner you create, the faster your views start climbing.',
+                AppLocalizations.of(context)!.submissionSuccessMessage,
                 textAlign: TextAlign.center,
                 style: TextStylePalette.subText
               ),

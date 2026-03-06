@@ -10,6 +10,7 @@ import '../../../chat/presentation/creator_personal_chat_screen.dart';
 import 'detail_screen.dart';
 import 'download_screen.dart';
 import 'upload_screen.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ProjectMenuScreen extends HookWidget {
   final Campaign? campaign;
@@ -77,7 +78,7 @@ class ProjectMenuScreen extends HookWidget {
                     ),
                   ),
                   SizedBox(width: SpacePalette.base),
-                  Text('Back', style: TextStylePalette.normalText),
+                  Text(AppLocalizations.of(context)!.back, style: TextStylePalette.normalText),
                 ],
               ),
             ),
@@ -202,9 +203,9 @@ class ProjectMenuScreen extends HookWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: _ChatBox(
+                            child:                           _ChatBox(
                               icon: Icons.group,
-                              label: 'Group Chat',
+                              label: AppLocalizations.of(context)!.chat,
                               onTap: () {
                                 if (campaign != null) {
                                   Navigator.push(
@@ -224,9 +225,9 @@ class ProjectMenuScreen extends HookWidget {
                           ),
                           SizedBox(width: SpacePalette.base),
                           Expanded(
-                            child: _ChatBox(
+                            child:                           _ChatBox(
                               icon: Icons.person,
-                              label: '1-on-1 Chat',
+                              label: AppLocalizations.of(context)!.personalChat,
                               onTap: () {
                                 if (campaign != null) {
                                   Navigator.push(
@@ -249,7 +250,7 @@ class ProjectMenuScreen extends HookWidget {
                       // Download Project Files
                       _ActionSection(
                         icon: Icons.download,
-                        title: 'Download Project Files',
+                        title: AppLocalizations.of(context)!.projectFiles,
                         subtitle: '${campaign?.resources.length ?? 0} items',
                         onTap: () {
                           Navigator.push(
@@ -268,8 +269,8 @@ class ProjectMenuScreen extends HookWidget {
                       // Submit Your Video
                       _ActionSection(
                         icon: Icons.upload,
-                        title: 'Submit Your Video',
-                        subtitle: 'Submit video links',
+                        title: AppLocalizations.of(context)!.submit,
+                        subtitle: AppLocalizations.of(context)!.video,
                         onTap: () {
                           Navigator.push(
                             context,

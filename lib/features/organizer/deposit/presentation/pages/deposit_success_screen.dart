@@ -1,5 +1,6 @@
 // lib/screens/organizer/deposit/presentation/pages/deposit_success_screen.dart
 import 'package:flutter/material.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../../shared/theme/app_theme.dart';
 import '../../../../../../shared/theme/main_layout.dart';
 import '../../../../../../features/auth/data/models/user_role.dart';
@@ -40,22 +41,24 @@ class DepositSuccessScreen extends StatelessWidget {
               
               // タイトル
               Text(
-                "Deposit Successful!",
+                AppLocalizations.of(context)!.depositSuccessful,
                 style: TextStylePalette.header
               ),
               SizedBox(height: SpacePalette.sm),
               Text(
-                '¥${amount.toString().replaceAllMapped(
-                  RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                  (Match m) => '${m[1]},',
-                )} added to your balance.',
+                AppLocalizations.of(context)!.addedToBalance(
+                  '¥${amount.toString().replaceAllMapped(
+                    RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                    (Match m) => '${m[1]},',
+                  )}',
+                ),
                 style: TextStylePalette.title
               ),
               SizedBox(height: SpacePalette.base),
               
               // 説明文
               Text(
-                'Your balance has been updated. You can now use these funds for your campaigns.',
+                AppLocalizations.of(context)!.depositProcessed,
                 textAlign: TextAlign.center,
                 style: TextStylePalette.subText
               ),
@@ -85,7 +88,7 @@ class DepositSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Back to Home',
+                    AppLocalizations.of(context)!.navHome,
                     style: TextStylePalette.buttonTextWhite
                   ),
                 ),

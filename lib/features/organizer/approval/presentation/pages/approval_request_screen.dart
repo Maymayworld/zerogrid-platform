@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:video_player/video_player.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../organizer/home/presentation/providers/organizer_tab_index_provider.dart';
@@ -186,7 +187,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'Approval Requests',
+              AppLocalizations.of(context)!.approvalRequests,
               style: TextStylePalette.header.copyWith(color: ColorPalette.white),
             ),
           ),
@@ -205,7 +206,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
           children: [
             Icon(Icons.check_circle_outline, size: 64, color: ColorPalette.positive500),
             SizedBox(height: SpacePalette.base),
-            Text('No pending videos', style: TextStylePalette.title.copyWith(color: ColorPalette.white)),
+            Text(AppLocalizations.of(context)!.noApprovalRequests, style: TextStylePalette.title.copyWith(color: ColorPalette.white)),
           ],
         ),
       );
@@ -342,7 +343,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                       children: [
                         Icon(Icons.close, color: ColorPalette.critical500, size: 20),
                         SizedBox(width: SpacePalette.xs),
-                        Text('Reject', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.critical500)),
+                        Text(AppLocalizations.of(context)!.reject, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.critical500)),
                       ],
                     ),
                   ),
@@ -364,7 +365,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                       children: [
                         Icon(Icons.check, color: ColorPalette.white, size: 20),
                         SizedBox(width: SpacePalette.xs),
-                        Text('Approve', style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
+                        Text(AppLocalizations.of(context)!.approve, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
                       ],
                     ),
                   ),

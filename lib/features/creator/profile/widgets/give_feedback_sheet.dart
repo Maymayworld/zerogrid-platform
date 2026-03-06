@@ -1,7 +1,7 @@
 // lib/screens/creator/profile/widgets/give_feedback_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 
 class GiveFeedbackSheet extends HookWidget {
@@ -26,12 +26,12 @@ class GiveFeedbackSheet extends HookWidget {
           children: [
             // ヘッダー
             Text(
-              'Give Feedback',
+              AppLocalizations.of(context)!.giveFeedback,
               style: TextStylePalette.title
             ),
             SizedBox(height: SpacePalette.sm),
             Text(
-              'Your feedback helps us improve\nand serve you better',
+              AppLocalizations.of(context)!.feedbackHelpsUs,
               textAlign: TextAlign.center,
               style: TextStylePalette.subText
             ),
@@ -79,7 +79,7 @@ class GiveFeedbackSheet extends HookWidget {
               maxLines: 5,
               style: TextStylePalette.normalText,
               decoration: InputDecoration(
-                hintText: 'Tell us something',
+                hintText: AppLocalizations.of(context)!.tellUsSomething,
                 hintStyle: TextStylePalette.hintText,
                 filled: true,
                 fillColor: ColorPalette.white,
@@ -101,7 +101,7 @@ class GiveFeedbackSheet extends HookWidget {
                   if (selectedEmoji.value != null || feedbackController.text.isNotEmpty) {
                     Navigator.pop(context);
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Thank you for your feedback!')),
+                      SnackBar(content: Text(AppLocalizations.of(context)!.thankYouForFeedback)),
                     );
                   }
                 },
@@ -112,7 +112,7 @@ class GiveFeedbackSheet extends HookWidget {
                   ),
                 ),
                 child: Text(
-                  'Share Feedback',
+                  AppLocalizations.of(context)!.shareFeedback,
                   style: TextStylePalette.buttonTextWhite
                 ),
               ),

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../data/models/user_role.dart';
@@ -116,7 +117,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                     Spacer(flex: 2),
 
                     // タイトル（中央寄せ）
-                    Text('Pick Your Username', style: TextStylePalette.header),
+                    Text(AppLocalizations.of(context)!.pickYourUsername, style: TextStylePalette.header),
                     SizedBox(height: SpacePalette.lg),
 
                     // Username TextField（@プレフィックス付き）
@@ -159,7 +160,7 @@ class SignUpScreen2 extends HookConsumerWidget {
 
                     // ステータスメッセージ
                     if (usernameStatus.value == UsernameStatus.checking)
-                      Text('Checking...', style: TextStylePalette.smSubText),
+                      Text(AppLocalizations.of(context)!.checking, style: TextStylePalette.smSubText),
                     if (usernameStatus.value == UsernameStatus.taken)
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -171,7 +172,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                           ),
                           SizedBox(width: SpacePalette.xs),
                           Text(
-                            'This username is already taken',
+                            AppLocalizations.of(context)!.usernameTaken,
                             style: TextStylePalette.smSubText.copyWith(
                               color: ColorPalette.critical500,
                             ),
@@ -189,7 +190,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                           ),
                           SizedBox(width: SpacePalette.xs),
                           Text(
-                            'Username is available ',
+                            AppLocalizations.of(context)!.usernameAvailable,
                             style: TextStylePalette.smSubText.copyWith(
                               color: ColorPalette.positive500,
                             ),
@@ -207,7 +208,7 @@ class SignUpScreen2 extends HookConsumerWidget {
               DuolingoButton(
                 onPressed: handleNext,
                 isEnabled: isAvailable,
-                text: 'Next',
+                text: AppLocalizations.of(context)!.next,
               ),
               SizedBox(height: SpacePalette.base),
             ],

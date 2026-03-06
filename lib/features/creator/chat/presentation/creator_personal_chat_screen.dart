@@ -8,6 +8,7 @@ import '../../../../shared/data/models/chat_room.dart';
 import '../../../../shared/data/models/chat_message.dart';
 import '../../../../shared/data/services/chat_service.dart';
 import '../../../../shared/presentation/providers/chat_service_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 /// Creator側からOrganizerとの1:1チャットを行う画面
 class CreatorPersonalChatScreen extends HookConsumerWidget {
@@ -33,7 +34,7 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
     final isSending = useState(false);
     final scrollController = useScrollController();
     final channel = useState<RealtimeChannel?>(null);
-    final organizerName = useState('Organizer');
+    final organizerName = useState(AppLocalizations.of(context)!.organizer);
     final organizerAvatarUrl = useState('https://i.pravatar.cc/150?u=$organizerId');
 
     // Organizer情報を取得
@@ -46,7 +47,7 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
             .maybeSingle();
 
         if (response != null) {
-          organizerName.value = response['display_name'] ?? 'Organizer';
+          organizerName.value = response['display_name'] ?? AppLocalizations.of(context)!.organizer;
           if (response['avatar_url'] != null) {
             organizerAvatarUrl.value = response['avatar_url'];
           }
@@ -120,7 +121,7 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
       } catch (e) {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Failed to send: $e')),
+            SnackBar(content: Text(AppLocalizations.of(context)!.errorMessage(e.toString()))),
           );
         }
       } finally {
@@ -165,7 +166,7 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(organizerName.value, style: TextStylePalette.listTitle),
-                  Text('Organizer', style: TextStylePalette.listLeading),
+                  Text(AppLocalizations.of(context)!.organizer, style: TextStylePalette.listLeading),
                 ],
               ),
             ),
@@ -180,14 +181,14 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
               : room.value == null
                   ? Center(
                       child: Text(
-                        'Chat room not available',
+                        AppLocalizations.of(context)!.failedToLoad,
                         style: TextStylePalette.listLeading,
                       ),
                     )
                   : messages.value.isEmpty
                       ? Center(
                           child: Text(
-                            'No messages yet.\nSay hi to the organizer!',
+                            AppLocalizations.of(context)!.noMessagesYetCreator,
                             style: TextStylePalette.listLeading,
                             textAlign: TextAlign.center,
                           ),
@@ -240,7 +241,7 @@ class CreatorPersonalChatScreen extends HookConsumerWidget {
                         textInputAction: TextInputAction.send,
                         onSubmitted: (_) => sendMessage(),
                         decoration: InputDecoration(
-                          hintText: 'Message...',
+                          hintText: AppLocalizations.of(context)!.messageHint,
                           hintStyle: TextStylePalette.hintText,
                           filled: true,
                           fillColor: ColorPalette.white,
@@ -342,7 +343,7 @@ class _MessageBubble extends StatelessWidget {
           Padding(
             padding: EdgeInsets.only(right: SpacePalette.xs),
             child: Text(
-              'Delivered',
+              AppLocalizations.of(context)!.delivered,
               style: TextStylePalette.subGuide.copyWith(
                 color: ColorPalette.neutral400,
                 fontSize: 11,

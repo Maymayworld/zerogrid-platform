@@ -8,6 +8,7 @@ import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
 import '../../data/models/social_connection.dart';
 import '../providers/submission_providers.dart';
 import '../../../../auth/presentation/providers/oauth_provider.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 
 class ConnectedAccountsScreen extends HookConsumerWidget {
   const ConnectedAccountsScreen({Key? key}) : super(key: key);
@@ -97,7 +98,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Failed to connect $provider: $e'),
+              content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
               backgroundColor: Colors.red,
             ),
           );
@@ -109,15 +110,15 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Disconnect Account', style: TextStylePalette.miniTitle),
+          title: Text(AppLocalizations.of(context)!.disconnect, style: TextStylePalette.miniTitle),
           content: Text(
-            'Are you sure you want to disconnect this account?',
+            AppLocalizations.of(context)!.disconnectConfirm,
             style: TextStylePalette.normalText,
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: Text('Cancel'),
+              child: Text(AppLocalizations.of(context)!.cancel),
             ),
             ElevatedButton(
               onPressed: () => Navigator.pop(context, true),
@@ -125,7 +126,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
               ),
-              child: Text('Disconnect'),
+              child: Text(AppLocalizations.of(context)!.disconnect),
             ),
           ],
         ),
@@ -140,7 +141,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Account disconnected'),
+                content: Text(AppLocalizations.of(context)!.disconnect),
                 backgroundColor: ColorPalette.neutral800,
               ),
             );
@@ -149,7 +150,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                content: Text('Failed to disconnect: $e'),
+                content: Text(AppLocalizations.of(context)!.errorMessage(e.toString())),
                 backgroundColor: Colors.red,
               ),
             );
@@ -169,7 +170,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text('Link Account', style: TextStylePalette.title),
+        title: Text(AppLocalizations.of(context)!.connectedAccounts, style: TextStylePalette.title),
         centerTitle: true,
       ),
       body: isLoading.value
@@ -196,7 +197,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                               border: Border.all(color: ColorPalette.neutral200),
                             ),
                             child: Text(
-                              '$totalConnected connected',
+                              AppLocalizations.of(context)!.connectedCountLabel(totalConnected),
                               style: TextStylePalette.smTitle,
                             ),
                           ),
@@ -206,6 +207,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                           ...platforms.map((platform) {
                             final conns = getConnectionsFor(platform.provider);
                             return _buildPlatformSection(
+                              context: context,
                               platform: platform,
                               connections: conns,
                               onConnect: () => handleConnect(platform.provider),
@@ -215,7 +217,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
 
                           SizedBox(height: SpacePalette.base),
                           Text(
-                            'Only posting permissions are requested. You can disconnect anytime.',
+                            AppLocalizations.of(context)!.postingPermissionsOnly,
                             style: TextStylePalette.smSubText,
                           ),
                         ],
@@ -236,7 +238,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                         child: DuolingoButton(
                           onPressed: () => Navigator.pop(context, true),
                           isEnabled: true,
-                          text: 'Done',
+                          text: AppLocalizations.of(context)!.done,
                         ),
                       ),
                     ),
@@ -248,6 +250,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
   }
 
   Widget _buildPlatformSection({
+    required BuildContext context,
     required _PlatformConfig platform,
     required List<SocialConnection> connections,
     required VoidCallback onConnect,
@@ -303,7 +306,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                           Icon(Icons.add, size: 14, color: ColorPalette.neutral700),
                           SizedBox(width: 2),
                           Text(
-                            'Add',
+                            AppLocalizations.of(context)!.add,
                             style: TextStylePalette.smTitle.copyWith(
                               color: ColorPalette.neutral700,
                             ),
@@ -346,7 +349,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                             border: Border.all(color: ColorPalette.neutral300),
                           ),
                           child: Text(
-                            'Disconnect',
+                            AppLocalizations.of(context)!.disconnect,
                             style: TextStylePalette.smSubText.copyWith(color: ColorPalette.neutral500),
                           ),
                         ),
@@ -366,7 +369,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                   bottom: SpacePalette.sm,
                 ),
                 child: Text(
-                  'No account connected',
+                  AppLocalizations.of(context)!.connectAnAccount,
                   style: TextStylePalette.smSubText,
                 ),
               ),

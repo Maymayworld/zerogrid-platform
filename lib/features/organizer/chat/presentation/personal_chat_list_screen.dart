@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/common_search_bar.dart';
 import '../../../../shared/data/models/chat_room.dart';
@@ -121,7 +122,7 @@ class PersonalChatListScreen extends HookConsumerWidget {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Personal Chat', style: TextStylePalette.title),
+            Text(AppLocalizations.of(context)!.personalChat, style: TextStylePalette.title),
             Text(projectName, style: TextStylePalette.listLeading),
           ],
         ),
@@ -147,7 +148,7 @@ class PersonalChatListScreen extends HookConsumerWidget {
                 Expanded(
                   child: CommonSearchBar(
                     controller: searchController,
-                    hintText: 'Search',
+                    hintText: AppLocalizations.of(context)!.search,
                     onChanged: (value) => searchQuery.value = value,
                   ),
                 ),

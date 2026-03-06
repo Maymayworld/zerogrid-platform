@@ -1,5 +1,6 @@
 // lib/features/organizer/campaign/presentation/widgets/campaign_card.dart
 import 'package:flutter/material.dart';
+import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
 class OrganizerCampaignCard extends StatelessWidget {
@@ -99,10 +100,12 @@ class OrganizerCampaignCard extends StatelessWidget {
                     SizedBox(height: SpacePalette.xs),
                     // 予算
                     Text(
-                      '¥${budget.toString().replaceAllMapped(
-                        RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
-                        (Match m) => '${m[1]},',
-                      )} total spent',
+                      AppLocalizations.of(context)!.totalSpent(
+                        '¥${budget.toString().replaceAllMapped(
+                          RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+                          (Match m) => '${m[1]},',
+                        )}',
+                      ),
                       style: TextStylePalette.miniTitle.copyWith(
                         color: ColorPalette.neutral100,
                         fontSize: FontSizePalette.size12,
@@ -115,7 +118,7 @@ class OrganizerCampaignCard extends StatelessWidget {
                       child: _CardDuolingoButton(
                         onPressed: onEdit,
                         child: Text(
-                          'Edit',
+                          AppLocalizations.of(context)!.edit,
                           style: TextStylePalette.buttonTextBlack,
                         ),
                       ),
