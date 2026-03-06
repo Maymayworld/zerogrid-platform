@@ -1254,4 +1254,13 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get buildProjectStepByStep => '完全にコントロールしながらステップごとにプロジェクトを構築';
+
+  @override
+  String get tokenExpired => 'トークン期限切れ — 再接続が必要';
+
+  @override
+  String get tokenExpiringSoon => 'トークンがまもなく期限切れ';
+
+  @override
+  String get reconnect => '再接続';
 }

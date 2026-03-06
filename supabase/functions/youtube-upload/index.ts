@@ -203,6 +203,13 @@ serve(async (req) => {
           .from('social_connections')
           .update({ access_token: newToken })
           .eq('id', connectionId)
+      } else {
+        // Refresh failed — mark connection as expired
+        await supabase
+          .from('social_connections')
+          .update({ status: 'expired', updated_at: new Date().toISOString() })
+          .eq('id', connectionId)
+        throw new Error('YouTube token expired. Please reconnect your account.')
       }
     }
 

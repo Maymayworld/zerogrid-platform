@@ -43,6 +43,8 @@ serve(async (req) => {
     let refreshToken: string = ''
     let platformUserId: string = ''
     let platformUsername: string | undefined
+    let accessTokenExpiresAt: string | null = null
+    let refreshTokenExpiresAt: string | null = null
 
     if (platform === 'instagram') {
       // ========================================
@@ -110,6 +112,10 @@ serve(async (req) => {
       platformUsername = igProfile.username || igProfile.name
       accessToken = pageAccessToken // Use page token for Instagram API calls
       refreshToken = '' // Page tokens are long-lived, no refresh needed
+      // Page tokens last ~60 days; set expiry at 55 days for safety margin
+      const igExpiry = new Date()
+      igExpiry.setDate(igExpiry.getDate() + 55)
+      accessTokenExpiresAt = igExpiry.toISOString()
 
     } else if (platform === 'tiktok') {
       // ========================================
@@ -141,6 +147,18 @@ serve(async (req) => {
       accessToken = tokenData.access_token
       refreshToken = tokenData.refresh_token || ''
       platformUserId = tokenData.open_id
+
+      // Set token expiry timestamps
+      if (tokenData.expires_in) {
+        const atExpiry = new Date()
+        atExpiry.setSeconds(atExpiry.getSeconds() + tokenData.expires_in)
+        accessTokenExpiresAt = atExpiry.toISOString()
+      }
+      if (tokenData.refresh_expires_in) {
+        const rtExpiry = new Date()
+        rtExpiry.setSeconds(rtExpiry.getSeconds() + tokenData.refresh_expires_in)
+        refreshTokenExpiresAt = rtExpiry.toISOString()
+      }
 
       // Get user info
       const userResponse = await fetch(
@@ -196,7 +214,7 @@ serve(async (req) => {
 
     // Save to database — upsert by (user_id, provider, provider_account_id)
     // Same account reconnect → update tokens; different account → new row
-    const connectionData = {
+    const connectionData: Record<string, any> = {
       user_id,
       provider: platform,
       provider_account_id: platformUserId,
@@ -205,6 +223,12 @@ serve(async (req) => {
       refresh_token: refreshToken,
       status: 'connected',
       updated_at: new Date().toISOString(),
+    }
+    if (accessTokenExpiresAt) {
+      connectionData.access_token_expires_at = accessTokenExpiresAt
+    }
+    if (refreshTokenExpiresAt) {
+      connectionData.refresh_token_expires_at = refreshTokenExpiresAt
     }
 
     // Use Supabase upsert with the new UNIQUE constraint columns

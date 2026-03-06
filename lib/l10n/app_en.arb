@@ -621,5 +621,9 @@
 
   "howDoYouWantToCreate": "How Do You Want to Create This Project?",
   "startFromShortIdea": "Start from a short idea and let AI draft the details for you",
-  "buildProjectStepByStep": "Build your project step by step with full control"
+  "buildProjectStepByStep": "Build your project step by step with full control",
+
+  "tokenExpired": "Token expired — reconnect required",
+  "tokenExpiringSoon": "Token expires soon",
+  "reconnect": "Reconnect"
 }

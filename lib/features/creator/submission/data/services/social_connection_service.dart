@@ -15,7 +15,7 @@ class SocialConnectionService {
         .from('social_connections')
         .select()
         .eq('user_id', _userId!)
-        .eq('status', 'connected')
+        .inFilter('status', ['connected', 'expired'])
         .order('created_at', ascending: false);
 
     return (response as List)
@@ -32,7 +32,7 @@ class SocialConnectionService {
         .select()
         .eq('user_id', _userId!)
         .eq('provider', provider.toLowerCase())
-        .eq('status', 'connected')
+        .inFilter('status', ['connected', 'expired'])
         .limit(1)
         .maybeSingle();
 
@@ -49,7 +49,7 @@ class SocialConnectionService {
         .select()
         .eq('user_id', _userId!)
         .eq('provider', provider.toLowerCase())
-        .eq('status', 'connected')
+        .inFilter('status', ['connected', 'expired'])
         .order('created_at', ascending: false);
 
     return (response as List)

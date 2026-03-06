@@ -112,10 +112,10 @@ class ProjectUploadScreen extends HookConsumerWidget {
       }
     }
 
-    // Get connected accounts grouped by platform
+    // Get connected accounts grouped by platform (include expired to show warning)
     List<SocialConnection> connectionsForPlatform(String platformKey) {
       return connections.value
-          .where((c) => c.isConnected && c.provider.toLowerCase() == platformKey.toLowerCase())
+          .where((c) => (c.isConnected || c.isExpired) && c.provider.toLowerCase() == platformKey.toLowerCase())
           .toList();
     }
 
@@ -141,12 +141,13 @@ class ProjectUploadScreen extends HookConsumerWidget {
       if (isPlatformSelected(key)) {
         current.removeWhere((t) => t.platform.toLowerCase() == key);
       } else {
-        // Auto-select account if only one exists
+        // Auto-select first healthy (non-expired) account
         final accts = connectionsForPlatform(key);
-        if (accts.isNotEmpty) {
+        final healthy = accts.where((c) => c.isConnected && !c.needsReconnect).toList();
+        if (healthy.isNotEmpty) {
           current.add(PlatformAccountTarget(
             platform: key,
-            connectionId: accts.first.id,
+            connectionId: healthy.first.id,
           ));
         }
       }
@@ -246,8 +247,8 @@ class ProjectUploadScreen extends HookConsumerWidget {
     final hasVideo = selectedVideoPath.value != null;
     final canSubmit = hasVideo && selectedTargets.value.isNotEmpty && !isSubmitting.value;
 
-    // Check if any platform has connected accounts
-    final hasAnyConnection = connections.value.any((c) => c.isConnected);
+    // Check if any platform has connected accounts (include expired for display)
+    final hasAnyConnection = connections.value.any((c) => c.isConnected || c.isExpired);
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -470,20 +471,23 @@ class ProjectUploadScreen extends HookConsumerWidget {
         final selected = isPlatformSelected(key);
         final target = getTargetForPlatform(key);
         final hasAccounts = accts.isNotEmpty;
+        final hasHealthyAccounts = accts.any((c) => c.isConnected && !c.needsReconnect);
+        final allExpired = hasAccounts && !hasHealthyAccounts;
 
         // Find the selected account name
         String? selectedAccountName;
+        SocialConnection? selectedConn;
         if (target != null) {
           try {
-            final conn = accts.firstWhere((a) => a.id == target.connectionId);
-            selectedAccountName = conn.providerAccountName;
+            selectedConn = accts.firstWhere((a) => a.id == target.connectionId);
+            selectedAccountName = selectedConn.providerAccountName;
           } catch (_) {}
         }
 
         return Padding(
           padding: EdgeInsets.only(bottom: SpacePalette.sm),
           child: GestureDetector(
-            onTap: hasAccounts ? () => togglePlatform(key) : null,
+            onTap: hasHealthyAccounts ? () => togglePlatform(key) : null,
             child: Container(
               padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: SpacePalette.sm),
               decoration: BoxDecoration(
@@ -492,9 +496,11 @@ class ProjectUploadScreen extends HookConsumerWidget {
                 border: Border.all(
                   color: selected
                       ? ColorPalette.neutral800
-                      : hasAccounts
-                          ? ColorPalette.neutral200
-                          : ColorPalette.neutral200,
+                      : allExpired
+                          ? Colors.orange.shade300
+                          : hasAccounts
+                              ? ColorPalette.neutral200
+                              : ColorPalette.neutral200,
                 ),
               ),
               child: Row(
@@ -517,6 +523,11 @@ class ProjectUploadScreen extends HookConsumerWidget {
                             style: TextStylePalette.smSubText.copyWith(
                               color: ColorPalette.neutral400,
                             ),
+                          ),
+                        if (allExpired)
+                          Text(
+                            AppLocalizations.of(context)!.tokenExpired,
+                            style: TextStylePalette.smSubText.copyWith(color: Colors.orange.shade700),
                           ),
                         if (!hasAccounts)
                           Text(
@@ -550,6 +561,8 @@ class ProjectUploadScreen extends HookConsumerWidget {
                         ),
                       ),
                     ),
+                  if (allExpired)
+                    Icon(Icons.warning_amber_rounded, size: 20, color: Colors.orange.shade700),
                   if (selected)
                     Padding(
                       padding: EdgeInsets.only(left: SpacePalette.sm),

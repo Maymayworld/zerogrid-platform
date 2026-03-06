@@ -97,6 +97,18 @@ serve(async (req) => {
     const containerData = await containerResponse.json()
 
     if (containerData.error) {
+      // Check for auth-related errors (token expired)
+      const errCode = containerData.error.code
+      const errType = containerData.error.type
+      if (errCode === 190 || errType === 'OAuthException') {
+        // Mark connection as expired
+        await supabase
+          .from('social_connections')
+          .update({ status: 'expired', updated_at: new Date().toISOString() })
+          .eq('user_id', submission.creator_id)
+          .eq('provider', 'instagram')
+        throw new Error('Instagram token expired. Please reconnect your account.')
+      }
       throw new Error(`Instagram container error: ${containerData.error.message}`)
     }
 

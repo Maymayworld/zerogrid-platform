@@ -2443,6 +2443,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Build your project step by step with full control'**
   String get buildProjectStepByStep;
+
+  /// No description provided for @tokenExpired.
+  ///
+  /// In en, this message translates to:
+  /// **'Token expired — reconnect required'**
+  String get tokenExpired;
+
+  /// No description provided for @tokenExpiringSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Token expires soon'**
+  String get tokenExpiringSoon;
+
+  /// No description provided for @reconnect.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect'**
+  String get reconnect;
 }
 
 class _AppLocalizationsDelegate

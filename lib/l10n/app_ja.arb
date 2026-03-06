@@ -450,5 +450,9 @@
 
   "howDoYouWantToCreate": "どの方法でプロジェクトを作成しますか？",
   "startFromShortIdea": "短いアイデアから始めて、AIに詳細を作成してもらいましょう",
-  "buildProjectStepByStep": "完全にコントロールしながらステップごとにプロジェクトを構築"
+  "buildProjectStepByStep": "完全にコントロールしながらステップごとにプロジェクトを構築",
+
+  "tokenExpired": "トークン期限切れ — 再接続が必要",
+  "tokenExpiringSoon": "トークンがまもなく期限切れ",
+  "reconnect": "再接続"
 }

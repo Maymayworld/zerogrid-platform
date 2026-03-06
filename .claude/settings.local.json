@@ -35,7 +35,8 @@
       "Bash(cd /c/Users/4817m/zero_grid && flutter run -d chrome 2>&1)",
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-checkout-session --no-verify-jwt 2>&1)",
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-confirm-deposit --no-verify-jwt 2>&1)",
-      "Bash(npx supabase:*)"
+      "Bash(npx supabase:*)",
+      "Bash(flutter build:*)"
     ]
   },
   "enabledMcpjsonServers": [

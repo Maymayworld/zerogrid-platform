@@ -93,6 +93,14 @@ serve(async (req) => {
           })
           .eq('user_id', submission.creator_id)
           .eq('provider', 'tiktok')
+      } else {
+        // Refresh failed — mark connection as expired
+        await supabase
+          .from('social_connections')
+          .update({ status: 'expired', updated_at: new Date().toISOString() })
+          .eq('user_id', submission.creator_id)
+          .eq('provider', 'tiktok')
+        throw new Error('TikTok token expired. Please reconnect your account.')
       }
     }
 

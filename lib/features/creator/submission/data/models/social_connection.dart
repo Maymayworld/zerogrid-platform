@@ -55,8 +55,20 @@ class SocialConnection {
 
   bool get isConnected => status == 'connected';
 
+  bool get isExpired => status == 'expired';
+
   bool get isTokenExpired {
     if (accessTokenExpiresAt == null) return false;
     return DateTime.now().isAfter(accessTokenExpiresAt!);
   }
+
+  /// Token expires within 7 days
+  bool get isExpiringSoon {
+    if (accessTokenExpiresAt == null) return false;
+    final daysLeft = accessTokenExpiresAt!.difference(DateTime.now()).inDays;
+    return daysLeft > 0 && daysLeft <= 7;
+  }
+
+  /// Needs reconnection (server marked expired or token actually expired)
+  bool get needsReconnect => isExpired || isTokenExpired;
 }

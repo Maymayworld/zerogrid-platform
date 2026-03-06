@@ -75,7 +75,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
 
     List<SocialConnection> getConnectionsFor(String provider) {
       return connections.value
-          .where((c) => c.provider == provider && c.isConnected)
+          .where((c) => c.provider == provider && (c.isConnected || c.isExpired))
           .toList();
     }
 
@@ -159,7 +159,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
       }
     }
 
-    final totalConnected = connections.value.where((c) => c.isConnected).length;
+    final totalConnected = connections.value.where((c) => c.isConnected && !c.needsReconnect).length;
 
     return Scaffold(
       backgroundColor: ColorPalette.neutral100,
@@ -212,6 +212,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                               connections: conns,
                               onConnect: () => handleConnect(platform.provider),
                               onDisconnect: handleDisconnect,
+                              onReconnect: () => handleConnect(platform.provider),
                             );
                           }),
 
@@ -255,6 +256,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
     required List<SocialConnection> connections,
     required VoidCallback onConnect,
     required Future<void> Function(String) onDisconnect,
+    required VoidCallback onReconnect,
   }) {
     return Padding(
       padding: EdgeInsets.only(bottom: SpacePalette.base),
@@ -323,6 +325,8 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
             if (connections.isNotEmpty) ...[
               Divider(height: 1, indent: SpacePalette.base, endIndent: SpacePalette.base, color: ColorPalette.neutral200),
               ...connections.map((conn) {
+                final expired = conn.needsReconnect;
+                final expiringSoon = conn.isExpiringSoon && !expired;
                 return Padding(
                   padding: EdgeInsets.symmetric(
                     horizontal: SpacePalette.base,
@@ -333,13 +337,47 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                       SizedBox(width: 32), // align with icon above
                       SizedBox(width: SpacePalette.sm),
                       Expanded(
-                        child: Text(
-                          '@${conn.providerAccountName ?? conn.providerAccountId}',
-                          style: TextStylePalette.normalText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '@${conn.providerAccountName ?? conn.providerAccountId}',
+                              style: TextStylePalette.normalText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (expired)
+                              Text(
+                                AppLocalizations.of(context)!.tokenExpired,
+                                style: TextStylePalette.smSubText.copyWith(color: Colors.orange.shade700),
+                              ),
+                            if (expiringSoon)
+                              Text(
+                                AppLocalizations.of(context)!.tokenExpiringSoon,
+                                style: TextStylePalette.smSubText.copyWith(color: Colors.orange.shade600),
+                              ),
+                          ],
                         ),
                       ),
+                      if (expired)
+                        Padding(
+                          padding: EdgeInsets.only(right: SpacePalette.xs),
+                          child: GestureDetector(
+                            onTap: () => onConnect(),
+                            child: Container(
+                              padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade50,
+                                borderRadius: BorderRadius.circular(RadiusPalette.full),
+                                border: Border.all(color: Colors.orange.shade300),
+                              ),
+                              child: Text(
+                                AppLocalizations.of(context)!.reconnect,
+                                style: TextStylePalette.smSubText.copyWith(color: Colors.orange.shade700),
+                              ),
+                            ),
+                          ),
+                        ),
                       GestureDetector(
                         onTap: () => onDisconnect(conn.id),
                         child: Container(
