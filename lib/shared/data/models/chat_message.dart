@@ -42,10 +42,11 @@ class ChatMessage {
     };
   }
 
-  /// 時刻をフォーマット（例: 08:49 PM）
+  /// 時刻をフォーマット（ローカル時刻で表示、例: 08:49 PM）
   String get formattedTime {
-    final hour = createdAt.hour;
-    final minute = createdAt.minute.toString().padLeft(2, '0');
+    final local = createdAt.toLocal();
+    final hour = local.hour;
+    final minute = local.minute.toString().padLeft(2, '0');
     final period = hour >= 12 ? 'PM' : 'AM';
     final displayHour = hour > 12 ? hour - 12 : (hour == 0 ? 12 : hour);
     return '$displayHour:$minute $period';

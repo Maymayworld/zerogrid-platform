@@ -127,13 +127,42 @@ class ChatService {
   Future<List<ChatMessage>> getMessages(String roomId, {int limit = 50}) async {
     final response = await _supabase
         .from('chat_messages')
-        .select('*, profiles:sender_id(display_name, avatar_url)')
+        .select()
         .eq('room_id', roomId)
         .order('created_at', ascending: false)
         .limit(limit);
 
-    return (response as List)
-        .map((row) => ChatMessage.fromMap(row))
+    final messageList = response as List;
+
+    // sender_idからプロフィールをバッチ取得
+    final senderIds = messageList
+        .map((m) => m['sender_id'] as String?)
+        .whereType<String>()
+        .toSet()
+        .toList();
+
+    Map<String, Map<String, dynamic>> profileMap = {};
+    if (senderIds.isNotEmpty) {
+      try {
+        final profiles = await _supabase
+            .from('profiles')
+            .select('id, display_name, avatar_url')
+            .inFilter('id', senderIds);
+        for (final p in profiles) {
+          profileMap[p['id'] as String] = p;
+        }
+      } catch (_) {}
+    }
+
+    return messageList
+        .map((row) {
+          final mutableRow = Map<String, dynamic>.from(row);
+          final senderId = mutableRow['sender_id'] as String?;
+          if (senderId != null && profileMap.containsKey(senderId)) {
+            mutableRow['profiles'] = profileMap[senderId];
+          }
+          return ChatMessage.fromMap(mutableRow);
+        })
         .toList()
         .reversed
         .toList(); // 古い順に並べ替え
@@ -156,7 +185,7 @@ class ChatService {
             value: roomId,
           ),
           callback: (payload) async {
-            final record = payload.newRecord;
+            final record = Map<String, dynamic>.from(payload.newRecord);
             // Realtimeにはjoinデータがないので、プロフィールを別途取得
             final senderId = record['sender_id'] as String?;
             if (senderId != null) {

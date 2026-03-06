@@ -33,9 +33,11 @@ class ProfileScreen extends HookConsumerWidget {
     final connectStatus = useState<ConnectStatus?>(null);
     final connectLoading = useState(true);
 
-    // Load Stripe Connect status on mount
+    // Load Stripe Connect status + refresh profile on mount
     useEffect(() {
       Future.microtask(() async {
+        // プロフィールをバックグラウンドで最新化
+        ref.read(userProfileProvider.notifier).refreshProfile();
         try {
           final service = PayoutService();
           final status = await service.getConnectStatus();

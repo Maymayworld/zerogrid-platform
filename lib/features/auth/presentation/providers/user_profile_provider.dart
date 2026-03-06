@@ -54,6 +54,16 @@ class UserProfileNotifier extends StateNotifier<UserProfileState> {
     }
   }
 
+  // バックグラウンドでプロフィールを再取得（ローディング表示なし）
+  Future<void> refreshProfile() async {
+    try {
+      final profile = await _authService.getCurrentProfile();
+      if (profile != null) {
+        state = state.copyWith(profile: profile, hasLoaded: true);
+      }
+    } catch (_) {}
+  }
+
   // プロフィール更新
   Future<void> updateProfile({String? displayName, String? avatarUrl}) async {
     try {

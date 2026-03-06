@@ -37,9 +37,11 @@ class ProfileScreen extends HookConsumerWidget {
       )}';
     }
 
-    // Load balance on mount
+    // Load balance + refresh profile on mount
     useEffect(() {
       Future.microtask(() async {
+        // プロフィールをバックグラウンドで最新化
+        ref.read(userProfileProvider.notifier).refreshProfile();
         try {
           final paymentService = ref.read(paymentServiceProvider);
           final bal = await paymentService.getBalance();

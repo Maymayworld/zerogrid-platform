@@ -121,23 +121,15 @@ class _LoggedInWrapper extends HookConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(userProfileProvider);
 
-    // 初回ロード（まだロードしていない場合）
+    // プロフィールロード（未ロードの場合）
     if (!profileState.hasLoaded && !profileState.isLoading) {
       Future.microtask(() {
         ref.read(userProfileProvider.notifier).loadProfile();
       });
-
-      // ローディング表示
-      return Scaffold(
-        backgroundColor: ColorPalette.white,
-        body: Center(
-          child: CircularProgressIndicator(color: ColorPalette.neutral800),
-        ),
-      );
     }
 
-    // ローディング中
-    if (profileState.isLoading) {
+    // 初回ローディング中（プロフィール未取得）
+    if (!profileState.hasLoaded || (profileState.isLoading && profileState.profile == null)) {
       return Scaffold(
         backgroundColor: ColorPalette.white,
         body: Center(
