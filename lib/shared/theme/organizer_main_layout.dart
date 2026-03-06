@@ -7,7 +7,7 @@ import '../../shared/theme/app_theme.dart';
 import '../../features/organizer/home/presentation/home_screen.dart';
 import '../../features/organizer/home/presentation/providers/organizer_tab_index_provider.dart';
 import '../../features/organizer/campaign/presentation/pages/campaign_screen.dart';
-import '../../features/organizer/campaign/presentation/pages/create/create_screen.dart';
+import '../../features/organizer/campaign/presentation/pages/create/manual_create_page1.dart';
 import '../../features/organizer/chat/presentation/chat_list_screen.dart';
 import '../../features/organizer/profile/presentation/profile_screen.dart';
 import '../../features/organizer/approval/presentation/pages/approval_request_screen.dart';
@@ -19,11 +19,11 @@ class OrganizerMainLayout extends HookConsumerWidget {
     final currentIndex = ref.watch(organizerTabIndexProvider);
     final hasPendingRequests = ref.watch(hasPendingRequestsProvider);
 
-    // 中央ボタン（index 2）の画面を動的に切り替え
+    // 中央ボタン（index 2）はリクエストありの場合のみIndexedStackで表示
     final screens = [
       HomeScreen(),
       CampaignScreen(),
-      hasPendingRequests ? ApprovalRequestScreen() : CreateScreen(),
+      ApprovalRequestScreen(),
       ChatListScreen(),
       ProfileScreen(),
     ];
@@ -59,9 +59,17 @@ class OrganizerMainLayout extends HookConsumerWidget {
                 child: Center(
                   child: _LiquidGlassNavBar(
                     currentIndex: currentIndex,
-                    onTap: (index) =>
-                        ref.read(organizerTabIndexProvider.notifier).state =
-                            index,
+                    onTap: (index) {
+                      if (index == 2 && !hasPendingRequests) {
+                        // リクエストなし → Navigator.pushで案件作成（ボトムバー非表示）
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ManualCreatePage1()),
+                        );
+                      } else {
+                        ref.read(organizerTabIndexProvider.notifier).state = index;
+                      }
+                    },
                     hasPendingRequests: hasPendingRequests,
                   ),
                 ),

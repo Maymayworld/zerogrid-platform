@@ -72,12 +72,6 @@ class CampaignScreen extends HookConsumerWidget {
             icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
             onPressed: loadCampaigns,
           ),
-          IconButton(
-            icon: Icon(Icons.filter_list, color: ColorPalette.neutral800),
-            onPressed: () {
-              // フィルター機能
-            },
-          ),
         ],
       ),
       body: Column(
