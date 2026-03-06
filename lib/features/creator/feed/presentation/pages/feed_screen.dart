@@ -189,7 +189,11 @@ class FeedScreen extends HookConsumerWidget {
     }, []);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle.light,
+      value: const SystemUiOverlayStyle(
+        statusBarColor: ColorPalette.black,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+      ),
       child: Scaffold(
         backgroundColor: Colors.black,
         body: isLoading.value

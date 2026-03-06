@@ -1,6 +1,7 @@
 // lib/main.dart
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'l10n/app_localizations.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -13,6 +14,15 @@ import 'app_wrapper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // ステータスバーの色を黒に設定
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: ColorPalette.black,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+    ),
+  );
 
   await Supabase.initialize(
     url: 'https://gfzpegwatwyzbbbkcuvu.supabase.co',

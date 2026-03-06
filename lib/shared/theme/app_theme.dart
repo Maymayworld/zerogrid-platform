@@ -1,5 +1,6 @@
 // lib/shared/theme/app_theme.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // 太字はFontWeight.w600を使用
@@ -368,6 +369,11 @@ class AppTheme {
         elevation: 0,
         centerTitle: true,
         titleTextStyle: TextStylePalette.title,
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: ColorPalette.black,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.dark,
+        ),
       ),
       
       // InputDecoration
