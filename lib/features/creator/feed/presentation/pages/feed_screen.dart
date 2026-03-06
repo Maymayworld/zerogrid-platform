@@ -26,8 +26,9 @@ class FeedScreen extends HookConsumerWidget {
     final currentIndex = useState(initialIndex);
     final likedIds = ref.watch(feedLikedIdsProvider);
     final pageController = usePageController(initialPage: initialIndex);
+    final isStandalone = initialSubmissions != null;
     final tabIndex = ref.watch(creatorTabIndexProvider);
-    final isFeedVisible = tabIndex == 1;
+    final isFeedVisible = isStandalone || tabIndex == 1;
 
     // Video controllers managed centrally — child widgets receive them directly
     final vpControllers = useState<Map<int, VideoPlayerController>>({});
@@ -122,7 +123,7 @@ class FeedScreen extends HookConsumerWidget {
 
     /// Play the current video (only if Feed is visible)
     void playCurrentIfVisible() {
-      final visible = ref.read(creatorTabIndexProvider) == 1;
+      final visible = isStandalone || ref.read(creatorTabIndexProvider) == 1;
       if (!visible) return;
       final controller = vpControllers.value[currentIndex.value];
       if (controller != null && controller.value.isInitialized) {
@@ -196,39 +197,68 @@ class FeedScreen extends HookConsumerWidget {
       ),
       child: Scaffold(
         backgroundColor: Colors.black,
-        body: isLoading.value
-            ? Center(
-                child: CircularProgressIndicator(color: ColorPalette.white),
-              )
-            : submissions.value.isEmpty
-            ? _buildEmptyState(context)
-            : PageView.builder(
-                controller: pageController,
-                scrollDirection: Axis.vertical,
-                onPageChanged: onPageChanged,
-                itemCount: submissions.value.length,
-                itemBuilder: (context, index) {
-                  final submission = submissions.value[index];
-                  final controller = vpControllers.value[index];
-                  final isLiked = likedIds.contains(submission.id);
+        body: Stack(
+          children: [
+            isLoading.value
+                ? Center(
+                    child: CircularProgressIndicator(color: ColorPalette.white),
+                  )
+                : submissions.value.isEmpty
+                ? _buildEmptyState(context)
+                : PageView.builder(
+                    controller: pageController,
+                    scrollDirection: Axis.vertical,
+                    onPageChanged: onPageChanged,
+                    itemCount: submissions.value.length,
+                    itemBuilder: (context, index) {
+                      final submission = submissions.value[index];
+                      final controller = vpControllers.value[index];
+                      final isLiked = likedIds.contains(submission.id);
 
-                  return _LocalVideoPage(
-                    submission: submission,
-                    controller: controller,
-                    isLiked: isLiked,
-                    onLike: () => toggleLike(submission.id),
-                    onJoin: () {
-                      pauseAll();
-                      _navigateToCampaign(
-                        context,
-                        ref,
-                        submission.campaignId,
-                        onReturn: playCurrentIfVisible,
+                      return _LocalVideoPage(
+                        submission: submission,
+                        controller: controller,
+                        isLiked: isLiked,
+                        onLike: () => toggleLike(submission.id),
+                        onJoin: () {
+                          pauseAll();
+                          _navigateToCampaign(
+                            context,
+                            ref,
+                            submission.campaignId,
+                            onReturn: playCurrentIfVisible,
+                          );
+                        },
                       );
                     },
-                  );
-                },
+                  ),
+            // 戻るボタン（スタンドアロン時のみ）
+            if (isStandalone)
+              Positioned(
+                top: MediaQuery.of(context).padding.top + SpacePalette.sm,
+                left: SpacePalette.sm,
+                child: GestureDetector(
+                  onTap: () {
+                    pauseAll();
+                    Navigator.pop(context);
+                  },
+                  child: Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: ColorPalette.white.withOpacity(0.15),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.arrow_back,
+                      color: ColorPalette.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
               ),
+          ],
+        ),
       ),
     );
   }
