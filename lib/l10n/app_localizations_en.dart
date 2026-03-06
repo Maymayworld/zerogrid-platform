@@ -54,6 +54,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get submit => 'Submit';
 
   @override
+  String get joinCampaign => 'Join';
+
+  @override
+  String get jumpToList => 'Jump to List';
+
+  @override
+  String nMembers(Object count) {
+    return '$count members';
+  }
+
+  @override
   String get done => 'Done';
 
   @override
@@ -100,6 +111,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get creator => 'Creator';
+
+  @override
+  String get creators => 'creators';
 
   @override
   String get pickYourUsername => 'Pick Your Username';
@@ -723,6 +737,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get submissionSuccessMessage =>
       'Your video has been submitted for review.';
+
+  @override
+  String get joinSuccess => 'Joined Successfully!';
+
+  @override
+  String get joinSuccessMessage => 'You have successfully joined the campaign.';
 
   @override
   String get or => 'or';

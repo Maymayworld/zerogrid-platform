@@ -17,6 +17,9 @@
   "disconnect": "接続解除",
   "remove": "削除",
   "submit": "提出",
+  "joinCampaign": "参加",
+  "jumpToList": "リストに戻る",
+  "nMembers": "{count}人のメンバー",
   "done": "完了",
   "next": "次へ",
   "back": "戻る",
@@ -34,6 +37,7 @@
   "countMeIn": "参加する！",
   "organizer": "オーガナイザー",
   "creator": "クリエイター",
+  "creators": "クリエイター",
 
   "pickYourUsername": "ユーザー名を選択",
   "checking": "確認中...",
@@ -265,6 +269,8 @@
 
   "submissionSuccess": "提出完了！",
   "submissionSuccessMessage": "動画がレビュー用に提出されました。",
+  "joinSuccess": "参加完了！",
+  "joinSuccessMessage": "キャンペーンへの参加が完了しました。",
 
   "or": "または",
   "createAnAccount": "アカウントを作成",

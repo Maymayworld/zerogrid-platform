@@ -54,6 +54,17 @@ class AppLocalizationsJa extends AppLocalizations {
   String get submit => '提出';
 
   @override
+  String get joinCampaign => '参加';
+
+  @override
+  String get jumpToList => 'リストに戻る';
+
+  @override
+  String nMembers(Object count) {
+    return '$count人のメンバー';
+  }
+
+  @override
   String get done => '完了';
 
   @override
@@ -100,6 +111,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get creator => 'クリエイター';
+
+  @override
+  String get creators => 'クリエイター';
 
   @override
   String get pickYourUsername => 'ユーザー名を選択';
@@ -709,6 +723,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get submissionSuccessMessage => '動画がレビュー用に提出されました。';
+
+  @override
+  String get joinSuccess => '参加完了！';
+
+  @override
+  String get joinSuccessMessage => 'キャンペーンへの参加が完了しました。';
 
   @override
   String get or => 'または';

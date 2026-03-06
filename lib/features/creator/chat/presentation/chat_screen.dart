@@ -14,16 +14,11 @@ class ProjectChatScreen extends HookConsumerWidget {
   final String? roomId;        // 直接roomIdを渡す場合
   final String? campaignId;    // campaignIdからグループルームを取得する場合
   final String projectName;
-  final int memberCount;
-  final int onlineCount;
-
   const ProjectChatScreen({
     Key? key,
     this.roomId,
     this.campaignId,
     this.projectName = 'Project Name',
-    this.memberCount = 16,
-    this.onlineCount = 5,
   }) : super(key: key);
 
   @override
@@ -38,17 +33,20 @@ class ProjectChatScreen extends HookConsumerWidget {
     final isSending = useState(false);
     final scrollController = useScrollController();
     final channel = useState<RealtimeChannel?>(null);
+    final memberCount = useState<int>(0);
 
     // ルーム取得
     Future<void> loadRoom() async {
       try {
         if (roomId != null) {
-          // roomIdが直接渡された場合
           final rooms = await chatService.getMyRooms();
           room.value = rooms.where((r) => r.id == roomId).firstOrNull;
         } else if (campaignId != null) {
-          // campaignIdからグループルームを取得
           room.value = await chatService.getGroupRoom(campaignId!);
+        }
+        // メンバー数を取得
+        if (room.value != null) {
+          memberCount.value = await chatService.getRoomMemberCount(room.value!.id);
         }
       } catch (e) {
         debugPrint('Failed to load room: $e');
@@ -134,39 +132,13 @@ class ProjectChatScreen extends HookConsumerWidget {
           icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // クリエイターアバターグループ
-            SizedBox(
-              width: 60,
-              height: 32,
-              child: Stack(
-                children: List.generate(3, (index) {
-                  return Positioned(
-                    left: index * 16.0,
-                    child: CircleAvatar(
-                      radius: 16,
-                      backgroundColor: ColorPalette.neutral400,
-                      backgroundImage: NetworkImage(
-                        'https://i.pravatar.cc/150?img=${index + 1}',
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-            SizedBox(width: SpacePalette.sm),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(projectName, style: TextStylePalette.listTitle),
-                  Text(
-                    '$memberCount members • $onlineCount online',
-                    style: TextStylePalette.listLeading,
-                  ),
-                ],
-              ),
+            Text(projectName, style: TextStylePalette.listTitle),
+            Text(
+              AppLocalizations.of(context)!.nMembers(memberCount.value),
+              style: TextStylePalette.listLeading,
             ),
           ],
         ),
@@ -206,10 +178,8 @@ class ProjectChatScreen extends HookConsumerWidget {
                             message: message.content,
                             time: message.formattedTime,
                             isMe: isMe,
-                            senderName: isMe ? null : 'Member',
-                            avatarUrl: isMe
-                                ? null
-                                : 'https://i.pravatar.cc/150?u=${message.senderId}',
+                            senderName: isMe ? null : message.senderName,
+                            avatarUrl: isMe ? null : message.senderAvatarUrl,
                             showAvatar: showAvatar && !isMe,
                           ),
                         );
@@ -314,41 +284,44 @@ class _MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isMe) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.end,
         children: [
-          Container(
-            constraints: BoxConstraints(
-              maxWidth: MediaQuery.of(context).size.width * 0.7,
-            ),
-            padding: EdgeInsets.symmetric(
-              horizontal: SpacePalette.base,
-              vertical: SpacePalette.inner,
-            ),
-            decoration: BoxDecoration(
-              color: ColorPalette.smashedPumpkin600,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(RadiusPalette.xl),
-                topRight: Radius.circular(RadiusPalette.xl),
-                bottomLeft: Radius.circular(RadiusPalette.xl),
-                bottomRight: Radius.circular(RadiusPalette.mini),
+          Flexible(
+            child: Container(
+              padding: EdgeInsets.all(SpacePalette.inner),
+              decoration: BoxDecoration(
+                color: ColorPalette.neutral800,
+                borderRadius: BorderRadius.circular(RadiusPalette.base),
               ),
-            ),
-            child: Text(
-              message,
-              style: TextStylePalette.normalText.copyWith(
-                color: ColorPalette.white,
-              ),
-            ),
-          ),
-          SizedBox(height: SpacePalette.xs),
-          Padding(
-            padding: EdgeInsets.only(right: SpacePalette.xs),
-            child: Text(
-              AppLocalizations.of(context)!.delivered,
-              style: TextStylePalette.subGuide.copyWith(
-                color: ColorPalette.neutral400,
-                fontSize: 11,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    message,
+                    style: TextStylePalette.normalText.copyWith(
+                      color: ColorPalette.white,
+                    ),
+                  ),
+                  SizedBox(height: SpacePalette.xs),
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        time,
+                        style: TextStylePalette.subGuide.copyWith(
+                          color: ColorPalette.neutral400,
+                        ),
+                      ),
+                      SizedBox(width: SpacePalette.xs),
+                      Icon(
+                        Icons.done_all,
+                        size: 12,
+                        color: ColorPalette.neutral400,
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
           ),
@@ -356,31 +329,39 @@ class _MessageBubble extends StatelessWidget {
       );
     } else {
       return Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          if (showAvatar)
+            CircleAvatar(
+              radius: 16,
+              backgroundColor: ColorPalette.neutral400,
+              backgroundImage:
+                  avatarUrl != null ? NetworkImage(avatarUrl!) : null,
+              child: avatarUrl == null
+                  ? Icon(Icons.person, size: 16, color: ColorPalette.white)
+                  : null,
+            )
+          else
+            SizedBox(width: 32),
+          SizedBox(width: SpacePalette.sm),
           Flexible(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (showAvatar && senderName != null)
+                  Text(senderName!, style: TextStylePalette.miniTitle),
+                if (showAvatar && senderName != null)
+                  SizedBox(height: SpacePalette.xs),
                 Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.7,
-                  ),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: SpacePalette.base,
-                    vertical: SpacePalette.inner,
-                  ),
+                  padding: EdgeInsets.all(SpacePalette.inner),
                   decoration: BoxDecoration(
                     color: ColorPalette.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(RadiusPalette.xl),
-                      topRight: Radius.circular(RadiusPalette.xl),
-                      bottomLeft: Radius.circular(RadiusPalette.mini),
-                      bottomRight: Radius.circular(RadiusPalette.xl),
-                    ),
+                    borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
                   child: Text(message, style: TextStylePalette.normalText),
                 ),
+                SizedBox(height: SpacePalette.xs),
+                Text(time, style: TextStylePalette.subGuide),
               ],
             ),
           ),

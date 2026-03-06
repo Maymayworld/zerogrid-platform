@@ -206,7 +206,7 @@ class ReviewScreen extends HookConsumerWidget {
                       : Text(
                           canAddReview
                               ? AppLocalizations.of(context)!.leaveAReview
-                              : (isAlreadyJoined.value ? AppLocalizations.of(context)!.connected : AppLocalizations.of(context)!.submit),
+                              : (isAlreadyJoined.value ? AppLocalizations.of(context)!.connected : AppLocalizations.of(context)!.joinCampaign),
                           style: TextStylePalette.buttonTextWhite,
                         ),
                 ),

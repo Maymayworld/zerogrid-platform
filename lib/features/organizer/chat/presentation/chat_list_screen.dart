@@ -70,10 +70,11 @@ class ChatListScreen extends HookConsumerWidget {
         centerTitle: false,
         automaticallyImplyLeading: false,
       ),
-      body: Column(
-        children: [
-          // 検索バー
-          Padding(
+      body: SafeArea(
+        child: Column(
+          children: [
+            // 検索バー
+            Padding(
             padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
             child: Row(
               children: [
@@ -108,7 +109,7 @@ class ChatListScreen extends HookConsumerWidget {
                     ),
                   )
                 : ListView.builder(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(bottom: 80),
                     itemCount: filteredCampaigns.length,
                     itemBuilder: (context, index) {
                       final campaign = filteredCampaigns[index];
@@ -125,8 +126,6 @@ class ChatListScreen extends HookConsumerWidget {
                               builder: (context) => GroupChatScreen(
                                 campaignId: campaign.id,
                                 projectName: campaign.name,
-                                memberCount: 0, // 後でロード
-                                onlineCount: 0,
                                 projectColor: color,
                               ),
                             ),
@@ -147,7 +146,8 @@ class ChatListScreen extends HookConsumerWidget {
                     },
                   ),
           ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -225,7 +225,7 @@ class _ProjectChatItem extends HookWidget {
                 Text(campaign.name, style: TextStylePalette.listTitle),
                 SizedBox(height: SpacePalette.xs),
                 Text(
-                  '${creatorCount.value} creators',
+                  AppLocalizations.of(context)!.nMembers(creatorCount.value),
                   style: TextStylePalette.listLeading,
                 ),
               ],

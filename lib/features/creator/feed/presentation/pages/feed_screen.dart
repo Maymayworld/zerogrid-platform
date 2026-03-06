@@ -365,7 +365,7 @@ class _LocalVideoPage extends StatelessWidget {
             Positioned(
               left: SpacePalette.base,
               right: 80,
-              bottom: bottomPadding + 148,
+              bottom: bottomPadding + 60,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -428,7 +428,7 @@ class _LocalVideoPage extends StatelessWidget {
             ),
             Positioned(
               right: SpacePalette.base,
-              bottom: bottomPadding + 148,
+              bottom: bottomPadding + 240,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -439,10 +439,9 @@ class _LocalVideoPage extends StatelessWidget {
                         : ColorPalette.white,
                     onTap: onLike,
                   ),
-                  SizedBox(height: SpacePalette.lg),
+                  SizedBox(height: SpacePalette.base),
                   _ActionButton(
                     icon: Icons.arrow_forward_ios,
-                    label: AppLocalizations.of(context)!.submit,
                     color: ColorPalette.white,
                     onTap: onJoin,
                   ),

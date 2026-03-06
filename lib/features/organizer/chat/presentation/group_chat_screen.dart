@@ -14,8 +14,6 @@ class GroupChatScreen extends HookConsumerWidget {
   final String? roomId;
   final String? campaignId;
   final String projectName;
-  final int memberCount;
-  final int onlineCount;
   final Color? projectColor;
 
   const GroupChatScreen({
@@ -23,8 +21,6 @@ class GroupChatScreen extends HookConsumerWidget {
     this.roomId,
     this.campaignId,
     required this.projectName,
-    required this.memberCount,
-    required this.onlineCount,
     this.projectColor,
   }) : super(key: key);
 
@@ -40,7 +36,7 @@ class GroupChatScreen extends HookConsumerWidget {
     final isSending = useState(false);
     final scrollController = useScrollController();
     final channel = useState<RealtimeChannel?>(null);
-    final actualMemberCount = useState(memberCount);
+    final actualMemberCount = useState(0);
 
     // ルーム取得
     Future<void> loadRoom() async {
@@ -168,7 +164,7 @@ class GroupChatScreen extends HookConsumerWidget {
                 children: [
                   Text(projectName, style: TextStylePalette.listTitle),
                   Text(
-                    '${actualMemberCount.value} members • $onlineCount online',
+                    AppLocalizations.of(context)!.nMembers(actualMemberCount.value),
                     style: TextStylePalette.listLeading,
                   ),
                 ],
@@ -207,10 +203,8 @@ class GroupChatScreen extends HookConsumerWidget {
                               message: message.content,
                               time: message.formattedTime,
                               isMe: isMe,
-                              senderName: isMe ? null : 'Creator',
-                              avatarUrl: isMe
-                                  ? null
-                                  : 'https://i.pravatar.cc/150?u=${message.senderId}',
+                              senderName: isMe ? null : message.senderName,
+                              avatarUrl: isMe ? null : message.senderAvatarUrl,
                               showAvatar: showAvatar && !isMe,
                             ),
                           );

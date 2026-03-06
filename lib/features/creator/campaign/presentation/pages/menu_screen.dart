@@ -12,12 +12,11 @@ import 'download_screen.dart';
 import 'upload_screen.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 
-class ProjectMenuScreen extends HookWidget {
+class ProjectMenuScreen extends HookConsumerWidget {
   final Campaign? campaign;
   // 後方互換のための個別パラメータ
   final String? imageUrl;
   final String projectName;
-  final int creatorCount;
   final int currentViews;
   final int targetViews;
   final double pricePerView;
@@ -27,7 +26,6 @@ class ProjectMenuScreen extends HookWidget {
     this.campaign,
     this.imageUrl,
     this.projectName = 'Project Name',
-    this.creatorCount = 16,
     this.currentViews = 0,
     this.targetViews = 0,
     this.pricePerView = 1,
@@ -48,9 +46,26 @@ class ProjectMenuScreen extends HookWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final progress = _targetViews > 0 ? _currentViews / _targetViews : 0.0;
     final percentage = (progress * 100).toInt();
+    final creatorCount = useState<int>(0);
+
+    // 参加者数を取得
+    useEffect(() {
+      if (campaign != null) {
+        Future.microtask(() async {
+          try {
+            final result = await Supabase.instance.client
+                .rpc('get_participant_count', params: {'p_campaign_id': campaign!.id});
+            creatorCount.value = (result as int?) ?? 0;
+          } catch (e) {
+            debugPrint('Failed to load creator count: $e');
+          }
+        });
+      }
+      return null;
+    }, [campaign?.id]);
 
     String formatNumber(int n) {
       return n.toString().replaceAllMapped(
@@ -91,35 +106,14 @@ class ProjectMenuScreen extends HookWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Project Name & Creators
-                      Row(
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SizedBox(
-                            width: 80,
-                            height: 40,
-                            child: Stack(
-                              children: List.generate(3, (index) {
-                                return Positioned(
-                                  left: index * 20.0,
-                                  child: CircleAvatar(
-                                    radius: 20,
-                                    backgroundColor: ColorPalette.neutral400,
-                                    backgroundImage: NetworkImage(
-                                      'https://i.pravatar.cc/150?img=${index + 1}',
-                                    ),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ),
-                          SizedBox(width: SpacePalette.sm),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(_projectName, style: TextStylePalette.lgListTitle),
-                                Text('$creatorCount creators', style: TextStylePalette.lgListLeading),
-                              ],
-                            ),
+                          Text(_projectName, style: TextStylePalette.lgListTitle),
+                          SizedBox(height: SpacePalette.xs),
+                          Text(
+                            '${creatorCount.value} ${AppLocalizations.of(context)!.creators}',
+                            style: TextStylePalette.lgListLeading,
                           ),
                         ],
                       ),
@@ -214,8 +208,6 @@ class ProjectMenuScreen extends HookWidget {
                                       builder: (context) => ProjectChatScreen(
                                         campaignId: campaign!.id,
                                         projectName: _projectName,
-                                        memberCount: creatorCount,
-                                        onlineCount: 5,
                                       ),
                                     ),
                                   );

@@ -41,13 +41,13 @@ class ProjectSuccessScreen extends StatelessWidget {
               
               // タイトル
               Text(
-                AppLocalizations.of(context)!.submissionSuccess,
+                AppLocalizations.of(context)!.joinSuccess,
                 style: TextStylePalette.header
               ),
               SizedBox(height: SpacePalette.base),
               
               Text(
-                AppLocalizations.of(context)!.submissionSuccessMessage,
+                AppLocalizations.of(context)!.joinSuccessMessage,
                 textAlign: TextAlign.center,
                 style: TextStylePalette.subText
               ),
@@ -77,7 +77,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'Jump to List',
+                    AppLocalizations.of(context)!.jumpToList,
                     style: TextStylePalette.buttonTextWhite
                   ),
                 ),

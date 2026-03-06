@@ -188,6 +188,24 @@ abstract class AppLocalizations {
   /// **'Submit'**
   String get submit;
 
+  /// No description provided for @joinCampaign.
+  ///
+  /// In en, this message translates to:
+  /// **'Join'**
+  String get joinCampaign;
+
+  /// No description provided for @jumpToList.
+  ///
+  /// In en, this message translates to:
+  /// **'Jump to List'**
+  String get jumpToList;
+
+  /// No description provided for @nMembers.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} members'**
+  String nMembers(Object count);
+
   /// No description provided for @done.
   ///
   /// In en, this message translates to:
@@ -283,6 +301,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Creator'**
   String get creator;
+
+  /// No description provided for @creators.
+  ///
+  /// In en, this message translates to:
+  /// **'creators'**
+  String get creators;
 
   /// No description provided for @pickYourUsername.
   ///
@@ -1465,6 +1489,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your video has been submitted for review.'**
   String get submissionSuccessMessage;
+
+  /// No description provided for @joinSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Joined Successfully!'**
+  String get joinSuccess;
+
+  /// No description provided for @joinSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'You have successfully joined the campaign.'**
+  String get joinSuccessMessage;
 
   /// No description provided for @or.
   ///

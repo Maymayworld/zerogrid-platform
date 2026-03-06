@@ -17,6 +17,9 @@
   "disconnect": "Disconnect",
   "remove": "Remove",
   "submit": "Submit",
+  "joinCampaign": "Join",
+  "jumpToList": "Jump to List",
+  "nMembers": "{count} members",
   "done": "Done",
   "next": "Next",
   "back": "Back",
@@ -34,6 +37,7 @@
   "countMeIn": "Count Me In!",
   "organizer": "Organizer",
   "creator": "Creator",
+  "creators": "creators",
 
   "pickYourUsername": "Pick Your Username",
   "checking": "Checking...",
@@ -310,6 +314,8 @@
 
   "submissionSuccess": "Submission Successful!",
   "submissionSuccessMessage": "Your video has been submitted for review.",
+  "joinSuccess": "Joined Successfully!",
+  "joinSuccessMessage": "You have successfully joined the campaign.",
 
   "or": "or",
   "createAnAccount": "Create an account",

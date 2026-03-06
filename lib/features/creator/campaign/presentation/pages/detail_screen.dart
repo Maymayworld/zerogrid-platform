@@ -10,7 +10,6 @@ import '../../data/models/campaign_review.dart';
 import '../providers/participation_service_provider.dart';
 import '../providers/review_provider.dart';
 import '../../../likes/presentation/providers/like_service_provider.dart';
-import '../widgets/share_sheet.dart';
 import 'success_screen.dart';
 import 'review_screen.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
@@ -221,13 +220,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                   icon: Icons.arrow_back,
                   onPressed: () => Navigator.pop(context),
                 ),
-                actions: [
-                  _CircleIconButton(
-                    icon: Icons.share_outlined,
-                    onPressed: () => _showShareSheet(context),
-                  ),
-                  SizedBox(width: SpacePalette.sm),
-                ],
+                actions: [],
                 flexibleSpace: FlexibleSpaceBar(
                   background: Image.network(
                     _getImageUrl(),
@@ -520,7 +513,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                     : Text(
                         (isAlreadyJoined.value || showAddReview)
                             ? AppLocalizations.of(context)!.leaveAReview
-                            : AppLocalizations.of(context)!.submit,
+                            : AppLocalizations.of(context)!.joinCampaign,
                         style: TextStylePalette.buttonTextWhite,
                       ),
               ),
@@ -532,19 +525,6 @@ class ProjectDetailScreen extends HookConsumerWidget {
   }
 
 
-  void _showShareSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => ProjectShareSheet(
-        projectName: _projectName,
-        imageUrl: _getImageUrl(),
-        pricePerView: _pricePerView,
-        viewCount: _targetViews,
-      ),
-    );
-  }
 
   void _showSuccessScreen(BuildContext context) {
     Navigator.push(

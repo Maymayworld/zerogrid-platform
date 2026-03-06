@@ -127,7 +127,7 @@ class ChatService {
   Future<List<ChatMessage>> getMessages(String roomId, {int limit = 50}) async {
     final response = await _supabase
         .from('chat_messages')
-        .select()
+        .select('*, profiles:sender_id(display_name, avatar_url)')
         .eq('room_id', roomId)
         .order('created_at', ascending: false)
         .limit(limit);
@@ -155,8 +155,21 @@ class ChatService {
             column: 'room_id',
             value: roomId,
           ),
-          callback: (payload) {
-            final message = ChatMessage.fromMap(payload.newRecord);
+          callback: (payload) async {
+            final record = payload.newRecord;
+            // Realtimeにはjoinデータがないので、プロフィールを別途取得
+            final senderId = record['sender_id'] as String?;
+            if (senderId != null) {
+              try {
+                final profile = await _supabase
+                    .from('profiles')
+                    .select('display_name, avatar_url')
+                    .eq('id', senderId)
+                    .maybeSingle();
+                record['profiles'] = profile;
+              } catch (_) {}
+            }
+            final message = ChatMessage.fromMap(record);
             onMessage(message);
           },
         )

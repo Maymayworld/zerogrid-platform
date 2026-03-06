@@ -6,6 +6,8 @@ class ChatMessage {
   final String? senderId;
   final String content;
   final DateTime createdAt;
+  final String? senderName;
+  final String? senderAvatarUrl;
 
   const ChatMessage({
     required this.id,
@@ -13,15 +15,20 @@ class ChatMessage {
     this.senderId,
     required this.content,
     required this.createdAt,
+    this.senderName,
+    this.senderAvatarUrl,
   });
 
   factory ChatMessage.fromMap(Map<String, dynamic> map) {
+    final profile = map['profiles'] as Map<String, dynamic>?;
     return ChatMessage(
       id: map['id'] as String,
       roomId: map['room_id'] as String,
       senderId: map['sender_id'] as String?,
       content: map['content'] as String,
       createdAt: DateTime.parse(map['created_at'] as String),
+      senderName: profile?['display_name'] as String?,
+      senderAvatarUrl: profile?['avatar_url'] as String?,
     );
   }
 
