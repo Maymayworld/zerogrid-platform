@@ -89,7 +89,7 @@ class EditProfileScreen extends HookWidget {
         ),
         title: Text(
           AppLocalizations.of(context)!.editProfile,
-          style: GoogleFonts.inter(
+          style: TextStyle(fontFamily: 'NotoSansJP', 
             fontSize: FontSizePalette.size16,
             fontWeight: FontWeight.w600,
             color: ColorPalette.neutral800,
@@ -208,7 +208,7 @@ class EditProfileScreen extends HookWidget {
                               dateOfBirthController.text.isEmpty
                                   ? AppLocalizations.of(context)!.selectDate
                                   : dateOfBirthController.text,
-                              style: GoogleFonts.inter(
+                              style: TextStyle(fontFamily: 'NotoSansJP', 
                                 fontSize: FontSizePalette.size14,
                                 color: dateOfBirthController.text.isEmpty
                                     ? ColorPalette.neutral400
@@ -303,7 +303,7 @@ class _ImagePickerOption extends StatelessWidget {
             SizedBox(width: SpacePalette.base),
             Text(
               label,
-              style: GoogleFonts.inter(
+              style: TextStyle(fontFamily: 'NotoSansJP', 
                 fontSize: FontSizePalette.size14,
                 fontWeight: FontWeight.w600,
                 color: ColorPalette.neutral800,

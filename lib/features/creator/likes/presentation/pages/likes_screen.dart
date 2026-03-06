@@ -281,7 +281,7 @@ class _CategoryChip extends StatelessWidget {
           SizedBox(height: SpacePalette.xs),
           Text(
             label,
-            style: GoogleFonts.inter(
+            style: TextStyle(fontFamily: 'NotoSansJP', 
               fontSize: FontSizePalette.size12,
               color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
               fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,

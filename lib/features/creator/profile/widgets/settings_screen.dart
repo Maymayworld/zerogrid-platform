@@ -25,7 +25,7 @@ class SettingsScreen extends HookConsumerWidget {
         ),
         title: Text(
           AppLocalizations.of(context)!.settings,
-          style: GoogleFonts.inter(
+          style: TextStyle(fontFamily: 'NotoSansJP', 
             fontSize: FontSizePalette.size16,
             fontWeight: FontWeight.w600,
             color: ColorPalette.neutral800,
@@ -42,7 +42,7 @@ class SettingsScreen extends HookConsumerWidget {
               // Section: Connected Services
               Text(
                 AppLocalizations.of(context)!.connectedServices,
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'NotoSansJP', 
                   fontSize: FontSizePalette.size14,
                   fontWeight: FontWeight.w600,
                   color: ColorPalette.neutral600,
@@ -143,7 +143,7 @@ class SettingsScreen extends HookConsumerWidget {
                           padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
                           child: Text(
                             AppLocalizations.of(context)!.utilities,
-                            style: GoogleFonts.inter(
+                            style: TextStyle(fontFamily: 'NotoSansJP', 
                               fontSize: FontSizePalette.size12,
                               color: ColorPalette.neutral400,
                             ),
@@ -203,7 +203,7 @@ class SettingsScreen extends HookConsumerWidget {
                     Expanded(
                       child: Text(
                         AppLocalizations.of(context)!.connectSocialAccounts,
-                        style: GoogleFonts.inter(
+                        style: TextStyle(fontFamily: 'NotoSansJP', 
                           fontSize: FontSizePalette.size12,
                           color: ColorPalette.neutral600,
                           height: 1.4,
@@ -315,7 +315,7 @@ class _ServiceConnectionTile extends StatelessWidget {
                   children: [
                     Text(
                       serviceName,
-                      style: GoogleFonts.inter(
+                      style: TextStyle(fontFamily: 'NotoSansJP', 
                         fontSize: FontSizePalette.size14,
                         fontWeight: FontWeight.w600,
                         color: ColorPalette.neutral800,
@@ -334,7 +334,7 @@ class _ServiceConnectionTile extends StatelessWidget {
                         ),
                         child: Text(
                           'Connected',
-                          style: GoogleFonts.inter(
+                          style: TextStyle(fontFamily: 'NotoSansJP', 
                             fontSize: 10,
                             fontWeight: FontWeight.w500,
                             color: Colors.green,
@@ -348,7 +348,7 @@ class _ServiceConnectionTile extends StatelessWidget {
                   SizedBox(height: 2),
                   Text(
                     connectedAccount!,
-                    style: GoogleFonts.inter(
+                    style: TextStyle(fontFamily: 'NotoSansJP', 
                       fontSize: FontSizePalette.size12,
                       color: ColorPalette.neutral500,
                     ),
@@ -357,7 +357,7 @@ class _ServiceConnectionTile extends StatelessWidget {
                   SizedBox(height: 2),
                   Text(
                     description!,
-                    style: GoogleFonts.inter(
+                    style: TextStyle(fontFamily: 'NotoSansJP', 
                       fontSize: FontSizePalette.size12,
                       color: ColorPalette.neutral500,
                     ),
@@ -378,7 +378,7 @@ class _ServiceConnectionTile extends StatelessWidget {
               ),
               child: Text(
                 'Disconnect',
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'NotoSansJP', 
                   fontSize: FontSizePalette.size12,
                   fontWeight: FontWeight.w500,
                   color: Colors.red,
@@ -399,7 +399,7 @@ class _ServiceConnectionTile extends StatelessWidget {
               ),
               child: Text(
                 'Connect',
-                style: GoogleFonts.inter(
+                style: TextStyle(fontFamily: 'NotoSansJP', 
                   fontSize: FontSizePalette.size12,
                   fontWeight: FontWeight.w500,
                   color: ColorPalette.white,
