@@ -17,11 +17,14 @@ class CampaignService {
     if (userId == null) throw Exception('User not logged in');
 
     final deadlineParts = project.endDate.split('/');
-    final deadline = DateTime(
+    // 選択日の翌日 0:00 JST = 選択日の終わりまで有効
+    // JST(UTC+9) → UTCに変換して保存
+    final localEndOfDay = DateTime(
       int.parse(deadlineParts[0]),
       int.parse(deadlineParts[1]),
       int.parse(deadlineParts[2]),
-    );
+    ).add(const Duration(days: 1));
+    final deadlineUtc = localEndOfDay.toUtc();
 
     // キャンペーン作成
     final response = await _supabase.from('campaigns').insert({
@@ -33,7 +36,7 @@ class CampaignService {
       'target_views': project.targetViews,
       'category': project.category,
       'platform': jsonEncode(project.platforms),
-      'deadline': deadline.toIso8601String(),
+      'deadline': deadlineUtc.toIso8601String(),
       'resources': project.links,
       'status': 'active',
     }).select().single();
@@ -122,7 +125,7 @@ class CampaignService {
     if (targetViews != null) updates['target_views'] = targetViews;
     if (category != null) updates['category'] = category;
     if (platforms != null) updates['platform'] = jsonEncode(platforms);
-    if (deadline != null) updates['deadline'] = deadline.toIso8601String();
+    if (deadline != null) updates['deadline'] = deadline.toUtc().toIso8601String();
     if (resources != null) updates['resources'] = resources;
     if (status != null) updates['status'] = status;
 
