@@ -276,36 +276,10 @@ class _ViewsCard extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // ヘッダー行
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.cumulativeTotalViews,
-                style: TextStylePalette.title,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(
-                  horizontal: SpacePalette.inner,
-                  vertical: SpacePalette.xs,
-                ),
-                decoration: BoxDecoration(
-                  border: Border.all(color: ColorPalette.neutral200),
-                  borderRadius: BorderRadius.circular(RadiusPalette.base),
-                ),
-                child: Row(
-                  children: [
-                    Text(AppLocalizations.of(context)!.allTime, style: TextStylePalette.smText),
-                    SizedBox(width: SpacePalette.xs),
-                    Icon(
-                      Icons.insights,
-                      size: 16,
-                      color: ColorPalette.neutral600,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+          // ヘッダー
+          Text(
+            AppLocalizations.of(context)!.cumulativeTotalViews,
+            style: TextStylePalette.title,
           ),
 
           SizedBox(height: SpacePalette.lg),

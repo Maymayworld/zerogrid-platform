@@ -76,22 +76,10 @@ class ChatListScreen extends HookConsumerWidget {
             // 検索バー
             Padding(
             padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
-            child: Row(
-              children: [
-                Expanded(
-                    child: CommonSearchBar(
-                    controller: searchController,
-                    hintText: AppLocalizations.of(context)!.search,
-                    onChanged: (value) => searchQuery.value = value,
-                  ),
-                ),
-                SizedBox(width: SpacePalette.base),
-                Icon(
-                  Icons.filter_list,
-                  color: ColorPalette.neutral800,
-                  size: 24,
-                ),
-              ],
+            child: CommonSearchBar(
+              controller: searchController,
+              hintText: AppLocalizations.of(context)!.search,
+              onChanged: (value) => searchQuery.value = value,
             ),
           ),
           SizedBox(height: SpacePalette.base),

@@ -142,8 +142,6 @@ class _LiquidGlassNavBar extends StatelessWidget {
                   label: AppLocalizations.of(context)!.navChat,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
-                  showBadge: true,
-                  badgeCount: 1,
                 ),
                 _GlassNavItem(
                   icon: Icons.person_outline_rounded,
