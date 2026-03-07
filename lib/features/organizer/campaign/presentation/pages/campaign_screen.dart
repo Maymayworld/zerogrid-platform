@@ -200,6 +200,7 @@ class CampaignScreen extends HookConsumerWidget {
               campaignName: campaign.name,
               budget: campaign.budget,
               imageUrl: campaign.thumbnailUrl,
+              status: campaign.status,
               onEdit: () async {
                 // 編集画面へ遷移
                 final result = await Navigator.push<bool>(

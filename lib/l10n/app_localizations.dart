@@ -2461,6 +2461,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reconnect'**
   String get reconnect;
+
+  /// No description provided for @completed.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get completed;
 }
 
 class _AppLocalizationsDelegate

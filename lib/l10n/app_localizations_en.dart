@@ -1303,4 +1303,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get reconnect => 'Reconnect';
+
+  @override
+  String get completed => 'Completed';
 }

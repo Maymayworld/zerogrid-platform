@@ -9,6 +9,7 @@ class OrganizerCampaignCard extends StatelessWidget {
   final String campaignName;
   final int budget;
   final String? imageUrl;
+  final String status;
   final VoidCallback onEdit;
 
   const OrganizerCampaignCard({
@@ -18,6 +19,7 @@ class OrganizerCampaignCard extends StatelessWidget {
     required this.campaignName,
     required this.budget,
     this.imageUrl,
+    required this.status,
     required this.onEdit,
   }) : super(key: key);
 
@@ -112,17 +114,35 @@ class OrganizerCampaignCard extends StatelessWidget {
                       ),
                     ),
                     SizedBox(height: SpacePalette.sm),
-                    // Editボタン（Duolingoスタイル・押下アニメーション付き）
-                    SizedBox(
-                      height: 44,
-                      child: _CardDuolingoButton(
-                        onPressed: onEdit,
-                        child: Text(
-                          AppLocalizations.of(context)!.edit,
-                          style: TextStylePalette.buttonTextBlack,
+                    if (status == 'completed')
+                      // Completedラベル
+                      Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                          color: ColorPalette.neutral400.withOpacity(0.5),
+                          borderRadius: BorderRadius.circular(RadiusPalette.full),
+                        ),
+                        child: Center(
+                          child: Text(
+                            AppLocalizations.of(context)!.completed,
+                            style: TextStylePalette.buttonTextBlack.copyWith(
+                              color: ColorPalette.white,
+                            ),
+                          ),
+                        ),
+                      )
+                    else
+                      // Editボタン（Duolingoスタイル・押下アニメーション付き）
+                      SizedBox(
+                        height: 44,
+                        child: _CardDuolingoButton(
+                          onPressed: onEdit,
+                          child: Text(
+                            AppLocalizations.of(context)!.edit,
+                            style: TextStylePalette.buttonTextBlack,
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),

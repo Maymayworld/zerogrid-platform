@@ -1263,4 +1263,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get reconnect => '再接続';
+
+  @override
+  String get completed => '完了';
 }

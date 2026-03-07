@@ -220,8 +220,8 @@ serve(async (req) => {
         })
     }
 
-    // 3. 残額を企業に返金（refundAmount > 0 の場合）
-    if (refundAmount > 0) {
+    // 3. 企業のbalanceから予算を差し引き、未使用分を返金
+    {
       const { data: organizerProfile } = await supabase
         .from('profiles')
         .select('balance')
@@ -229,23 +229,38 @@ serve(async (req) => {
         .single()
 
       const organizerBalance = (organizerProfile?.balance as number) || 0
-      
+
+      // 予算全額を控除し、未使用分を返金（ネット: distributableAmount の控除）
       await supabase
         .from('profiles')
-        .update({ balance: organizerBalance + refundAmount })
+        .update({ balance: organizerBalance - budget + refundAmount })
         .eq('id', campaign.organizer_id)
 
-      // トランザクション記録
+      // 予算消費のトランザクション記録
       await supabase
         .from('transactions')
         .insert({
           user_id: campaign.organizer_id,
-          type: 'refund',
-          amount: refundAmount,
-          description: `Unused budget refund for campaign: ${campaign.name}`,
+          type: 'campaign_expense',
+          amount: budget,
+          description: `Budget deducted for campaign: ${campaign.name}`,
           reference_id: campaign_id,
           created_at: now,
         })
+
+      // 返金がある場合のトランザクション記録
+      if (refundAmount > 0) {
+        await supabase
+          .from('transactions')
+          .insert({
+            user_id: campaign.organizer_id,
+            type: 'refund',
+            amount: refundAmount,
+            description: `Unused budget refund for campaign: ${campaign.name}`,
+            reference_id: campaign_id,
+            created_at: now,
+          })
+      }
     }
 
     // 4. キャンペーンを完了状態に更新

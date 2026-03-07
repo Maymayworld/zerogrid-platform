@@ -454,5 +454,6 @@
 
   "tokenExpired": "トークン期限切れ — 再接続が必要",
   "tokenExpiringSoon": "トークンがまもなく期限切れ",
-  "reconnect": "再接続"
+  "reconnect": "再接続",
+  "completed": "完了"
 }

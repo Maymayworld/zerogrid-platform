@@ -35,6 +35,10 @@ class EditCampaignScreen extends HookConsumerWidget {
     final selectedCategory = useState<String?>(null);
     final selectedPlatforms = useState<Set<String>>({});
     
+    // 期日
+    final selectedDeadline = useState<DateTime?>(null);
+    final deadlineController = useTextEditingController();
+
     // サムネイル
     final selectedImageBytes = useState<Uint8List?>(null);
     final selectedImageName = useState<String?>(null);
@@ -61,6 +65,12 @@ class EditCampaignScreen extends HookConsumerWidget {
             selectedCategory.value = loadedCampaign.category;
             selectedPlatforms.value = loadedCampaign.platforms.toSet();
             currentThumbnailUrl.value = loadedCampaign.thumbnailUrl;
+            // deadlineはUTC保存 → JSTに変換して表示用の日付を取得
+            final jstDeadline = loadedCampaign.deadline.toLocal();
+            // createCampaignで翌日00:00 JSTとして保存しているため、1日戻して元の選択日を復元
+            final displayDate = jstDeadline.subtract(const Duration(days: 1));
+            selectedDeadline.value = displayDate;
+            deadlineController.text = '${displayDate.year}/${displayDate.month.toString().padLeft(2, '0')}/${displayDate.day.toString().padLeft(2, '0')}';
           }
         } catch (e) {
           error.value = e.toString();
@@ -97,6 +107,34 @@ class EditCampaignScreen extends HookConsumerWidget {
       }
     }
 
+    // 期日選択
+    Future<void> selectDeadline() async {
+      final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: selectedDeadline.value ?? DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(DateTime.now().year + 5),
+        builder: (context, child) {
+          return Theme(
+            data: Theme.of(context).copyWith(
+              colorScheme: ColorScheme.light(
+                primary: ColorPalette.neutral800,
+                onPrimary: ColorPalette.white,
+                surface: ColorPalette.white,
+                onSurface: ColorPalette.neutral800,
+              ),
+            ),
+            child: child!,
+          );
+        },
+      );
+
+      if (picked != null) {
+        selectedDeadline.value = picked;
+        deadlineController.text = '${picked.year}/${picked.month.toString().padLeft(2, '0')}/${picked.day.toString().padLeft(2, '0')}';
+      }
+    }
+
     // 保存処理
     Future<void> handleSave() async {
       isSaving.value = true;
@@ -113,6 +151,14 @@ class EditCampaignScreen extends HookConsumerWidget {
           );
         }
 
+        // 期日: 選択日の翌日 00:00 JST → UTCに変換
+        DateTime? deadlineUtc;
+        if (selectedDeadline.value != null) {
+          final d = selectedDeadline.value!;
+          final localEndOfDay = DateTime(d.year, d.month, d.day).add(const Duration(days: 1));
+          deadlineUtc = localEndOfDay.toUtc();
+        }
+
         // 更新
         await campaignService.updateCampaign(
           campaignId: campaignId,
@@ -123,6 +169,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           targetViews: int.tryParse(targetViewsController.text) ?? 0,
           category: selectedCategory.value,
           platforms: selectedPlatforms.value.toList(),
+          deadline: deadlineUtc,
         );
 
         if (context.mounted) {
@@ -332,6 +379,26 @@ class EditCampaignScreen extends HookConsumerWidget {
                       ),
                       fillColor: ColorPalette.neutral100,
                     ),
+                  ),
+                  SizedBox(height: SpacePalette.base),
+
+                  // Deadline
+                  Text(AppLocalizations.of(context)!.setProjectTimeline, style: TextStylePalette.smTitle),
+                  SizedBox(height: SpacePalette.sm),
+                  TextField(
+                    controller: deadlineController,
+                    readOnly: true,
+                    decoration: _inputDecoration(AppLocalizations.of(context)!.dateFormatPlaceholder).copyWith(
+                      suffixIcon: IconButton(
+                        onPressed: selectDeadline,
+                        icon: Icon(
+                          Icons.calendar_month,
+                          color: ColorPalette.neutral400,
+                          size: 24,
+                        ),
+                      ),
+                    ),
+                    onTap: selectDeadline,
                   ),
                   SizedBox(height: SpacePalette.base),
 

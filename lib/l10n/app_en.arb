@@ -625,5 +625,6 @@
 
   "tokenExpired": "Token expired — reconnect required",
   "tokenExpiringSoon": "Token expires soon",
-  "reconnect": "Reconnect"
+  "reconnect": "Reconnect",
+  "completed": "Completed"
 }
