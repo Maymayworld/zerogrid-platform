@@ -113,14 +113,25 @@ class AuthService {
     return imageUrl;
   }
 
+  // OAuth後のリダイレクト先: Webは現在のオリジン（dev/prod自動切替）、ネイティブはnull
+  // Google OAuth資格情報をSupabase Dashboard（Auth > Providers > Google）で
+  // Client ID / Client Secret を差し替えるだけで切り替え完了。コード変更不要。
+  String? get _oauthRedirectTo => kIsWeb ? Uri.base.origin : null;
+
   // Google OAuthログイン（Web: ブラウザリダイレクト）
   Future<bool> signInWithGoogle() async {
-    return await _supabase.auth.signInWithOAuth(OAuthProvider.google);
+    return await _supabase.auth.signInWithOAuth(
+      OAuthProvider.google,
+      redirectTo: _oauthRedirectTo,
+    );
   }
 
   // Apple OAuthログイン（Web: ブラウザリダイレクト）
   Future<bool> signInWithApple() async {
-    return await _supabase.auth.signInWithOAuth(OAuthProvider.apple);
+    return await _supabase.auth.signInWithOAuth(
+      OAuthProvider.apple,
+      redirectTo: _oauthRedirectTo,
+    );
   }
 
   // ログアウト

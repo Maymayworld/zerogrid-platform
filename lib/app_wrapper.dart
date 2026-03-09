@@ -71,8 +71,12 @@ class _AppWrapperState extends ConsumerState<AppWrapper> {
     _authStateSub = Supabase.instance.client.auth.onAuthStateChange.listen((
       data,
     ) {
-      if (data.event == AuthChangeEvent.passwordRecovery && mounted) {
+      if (!mounted) return;
+      if (data.event == AuthChangeEvent.passwordRecovery) {
         setState(() => _showResetPassword = true);
+      } else if (data.event == AuthChangeEvent.signedIn ||
+                 data.event == AuthChangeEvent.signedOut) {
+        setState(() {});
       }
     });
 
