@@ -24,20 +24,39 @@ serve(async (req) => {
   }
 
   try {
-    // Parse state - TikTok uses csrfState|actualState format
-    let stateData: { user_id: string; platform: string }
-    if (state.includes('|')) {
-      const [, actualState] = state.split('|')
-      stateData = JSON.parse(atob(actualState))
-    } else {
-      stateData = JSON.parse(atob(state))
-    }
-
-    const { user_id, platform } = stateData
-
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const supabase = createClient(supabaseUrl, supabaseKey)
+
+    // ========================================
+    // Verify state from pending_oauth_states
+    // ========================================
+    const { data: stateRecord, error: stateError } = await supabase
+      .from('pending_oauth_states')
+      .select('*')
+      .eq('id', state)
+      .single()
+
+    if (stateError || !stateRecord) {
+      return new Response(errorText('Invalid state parameter'), {})
+    }
+
+    if (stateRecord.used) {
+      return new Response(errorText('State already used'), {})
+    }
+
+    if (new Date(stateRecord.expires_at) < new Date()) {
+      return new Response(errorText('State expired'), {})
+    }
+
+    // Mark state as used
+    await supabase
+      .from('pending_oauth_states')
+      .update({ used: true })
+      .eq('id', state)
+
+    const user_id = stateRecord.user_id
+    const platform = stateRecord.platform
 
     let accessToken: string
     let refreshToken: string = ''

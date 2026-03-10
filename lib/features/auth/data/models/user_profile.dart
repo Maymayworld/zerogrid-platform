@@ -8,7 +8,8 @@ class UserProfile {
   final String role;
   final DateTime createdAt;
   final String? stripeCustomerId;
-  final int balance;
+  final int organizerBalance;
+  final int creatorBalance;
 
   const UserProfile({
     required this.id,
@@ -18,7 +19,8 @@ class UserProfile {
     required this.role,
     required this.createdAt,
     this.stripeCustomerId,
-    this.balance = 0,
+    this.organizerBalance = 0,
+    this.creatorBalance = 0,
   });
 
   // Supabaseのレスポンスから変換（nullセーフ）
@@ -33,7 +35,8 @@ class UserProfile {
           ? DateTime.parse(map['created_at'].toString())
           : DateTime.now(),
       stripeCustomerId: map['stripe_customer_id']?.toString(),
-      balance: (map['balance'] as num?)?.toInt() ?? 0,
+      organizerBalance: (map['organizer_balance'] as num?)?.toInt() ?? 0,
+      creatorBalance: (map['creator_balance'] as num?)?.toInt() ?? 0,
     );
   }
 }

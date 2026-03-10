@@ -1,5 +1,6 @@
 // supabase/functions/tiktok-oauth-url/index.ts
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,18 +14,32 @@ serve(async (req) => {
   }
 
   try {
-    const { user_id } = await req.json()
-
-    if (!user_id) {
+    // Authenticate user via JWT
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'user_id is required' }),
-        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Missing Authorization header' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    const supabase = createClient(supabaseUrl, supabaseKey)
+
+    const token = authHeader.replace('Bearer ', '')
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+
+    if (authError || !user) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid or expired token' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
     const clientKey = Deno.env.get('TIKTOK_CLIENT_KEY')
-    const redirectUri = Deno.env.get('TIKTOK_REDIRECT_URI') || 
-      `${Deno.env.get('SUPABASE_URL')}/functions/v1/oauth-callback`
+    const redirectUri = Deno.env.get('TIKTOK_REDIRECT_URI') ||
+      `${supabaseUrl}/functions/v1/oauth-callback`
 
     if (!clientKey) {
       return new Response(
@@ -33,19 +48,33 @@ serve(async (req) => {
       )
     }
 
+    // Insert state record into DB (expires in 10 minutes)
+    const expiresAt = new Date()
+    expiresAt.setMinutes(expiresAt.getMinutes() + 10)
+
+    const { data: stateRecord, error: dbError } = await supabase
+      .from('pending_oauth_states')
+      .insert({
+        user_id: user.id,
+        platform: 'tiktok',
+        expires_at: expiresAt.toISOString(),
+      })
+      .select('id')
+      .single()
+
+    if (dbError || !stateRecord) {
+      throw new Error('Failed to create OAuth state')
+    }
+
     // TikTok Login Kit OAuth URL
     const scope = 'user.info.basic,video.list,video.upload'
-    const state = btoa(JSON.stringify({ user_id, platform: 'tiktok' }))
-    
-    // Generate CSRF token
-    const csrfState = crypto.randomUUID()
-    
+
     const url = new URL('https://www.tiktok.com/v2/auth/authorize/')
     url.searchParams.set('client_key', clientKey)
     url.searchParams.set('redirect_uri', redirectUri)
     url.searchParams.set('scope', scope)
     url.searchParams.set('response_type', 'code')
-    url.searchParams.set('state', `${csrfState}|${state}`)
+    url.searchParams.set('state', stateRecord.id)
 
     return new Response(
       JSON.stringify({ url: url.toString() }),

@@ -68,20 +68,20 @@ serve(async (req) => {
     if (txRows && txRows.length > 0) {
       const { data: balRows } = await supabase
         .from('profiles')
-        .select('balance')
+        .select('organizer_balance')
         .eq('id', user.id)
         .limit(1)
 
       return new Response(
-        JSON.stringify({ new_balance: balRows?.[0]?.balance ?? 0, already_processed: true }),
+        JSON.stringify({ new_balance: balRows?.[0]?.organizer_balance ?? 0, already_processed: true }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
-    // Get current balance
+    // Get current organizer balance
     const { data: profRows, error: profErr } = await supabase
       .from('profiles')
-      .select('balance')
+      .select('organizer_balance')
       .eq('id', user.id)
       .limit(1)
 
@@ -89,12 +89,12 @@ serve(async (req) => {
     if (!profRows || profRows.length === 0) throw new Error('Profile not found')
 
     const depositAmount = paymentIntent.amount
-    const newBalance = (profRows[0].balance ?? 0) + depositAmount
+    const newBalance = (profRows[0].organizer_balance ?? 0) + depositAmount
 
-    // Update balance
+    // Update organizer balance
     const { error: balErr } = await admin
       .from('profiles')
-      .update({ balance: newBalance })
+      .update({ organizer_balance: newBalance })
       .eq('id', user.id)
 
     if (balErr) throw new Error(`Balance update: ${balErr.message}`)

@@ -270,7 +270,7 @@ class _ViewsCard extends ConsumerWidget {
 
   /// 最大値に応じた「きれいな」Y軸間隔を計算
   double _calcInterval(double maxVal) {
-    if (maxVal <= 0) return 1;
+    if (maxVal <= 0) return 25;
     // 4〜5本のグリッド線になるように間隔を決定
     final raw = maxVal / 4;
     final magnitude = _pow10((raw.toInt().toString().length - 1).clamp(0, 20));

@@ -110,6 +110,8 @@ class ViewCountService {
           .select('''
             id,
             video_url,
+            local_video_url,
+            platform_post_url,
             platform,
             view_count,
             status,
@@ -120,18 +122,36 @@ class ViewCountService {
           .eq('status', 'approved')
           .order('view_count', ascending: false);
 
-      return (response as List).map((data) {
+      // キャンペーン別にview_countを集計してtotalViewsを算出
+      final submissions = response as List;
+      final Map<String, int> campaignTotalViews = {};
+      for (final data in submissions) {
+        final cid = data['campaign_id'] as String;
+        final vc = (data['view_count'] as num?)?.toInt() ?? 0;
+        campaignTotalViews[cid] = (campaignTotalViews[cid] ?? 0) + vc;
+      }
+
+      return submissions.map((data) {
         final campaign = data['campaigns'] as Map<String, dynamic>?;
+        final cid = data['campaign_id'] as String;
+        // campaigns.total_viewsが0の場合、承認済み提出物の合計を使用
+        final dbTotalViews = (campaign?['total_views'] as num?)?.toInt() ?? 0;
+        final computedTotalViews = campaignTotalViews[cid] ?? 0;
+        final effectiveTotalViews = dbTotalViews > 0 ? dbTotalViews : computedTotalViews;
+
         return SubmissionViewStats(
           submissionId: data['id'] as String,
-          videoUrl: data['video_url'] as String,
-          platform: data['platform'] as String,
+          videoUrl: data['platform_post_url'] as String?
+              ?? data['video_url'] as String?
+              ?? data['local_video_url'] as String?
+              ?? '',
+          platform: data['platform'] as String? ?? '',
           viewCount: (data['view_count'] as num?)?.toInt() ?? 0,
-          campaignId: data['campaign_id'] as String,
+          campaignId: cid,
           campaignName: campaign?['name'] as String? ?? '',
           campaignBudget: (campaign?['budget'] as num?)?.toInt() ?? 0,
           campaignTargetViews: (campaign?['target_views'] as num?)?.toInt() ?? 1,
-          campaignTotalViews: (campaign?['total_views'] as num?)?.toInt() ?? 0,
+          campaignTotalViews: effectiveTotalViews,
         );
       }).toList();
     } catch (e) {

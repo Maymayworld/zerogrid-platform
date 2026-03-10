@@ -155,18 +155,18 @@ serve(async (req) => {
     for (const share of creatorShares) {
       if (share.rewardAmount <= 0) continue
 
-      // profiles の balance を更新
+      // profiles の creator_balance を更新
       const { data: profile } = await supabase
         .from('profiles')
-        .select('balance')
+        .select('creator_balance')
         .eq('id', share.creatorId)
         .single()
 
-      const currentBalance = (profile?.balance as number) || 0
-      
+      const currentBalance = (profile?.creator_balance as number) || 0
+
       await supabase
         .from('profiles')
-        .update({ balance: currentBalance + share.rewardAmount })
+        .update({ creator_balance: currentBalance + share.rewardAmount })
         .eq('id', share.creatorId)
 
       // トランザクション記録
@@ -220,20 +220,20 @@ serve(async (req) => {
         })
     }
 
-    // 3. 企業のbalanceから予算を差し引き、未使用分を返金
+    // 3. 企業のorganizer_balanceから予算を差し引き、未使用分を返金
     {
       const { data: organizerProfile } = await supabase
         .from('profiles')
-        .select('balance')
+        .select('organizer_balance')
         .eq('id', campaign.organizer_id)
         .single()
 
-      const organizerBalance = (organizerProfile?.balance as number) || 0
+      const organizerBalance = (organizerProfile?.organizer_balance as number) || 0
 
       // 予算全額を控除し、未使用分を返金（ネット: distributableAmount の控除）
       await supabase
         .from('profiles')
-        .update({ balance: organizerBalance - budget + refundAmount })
+        .update({ organizer_balance: organizerBalance - budget + refundAmount })
         .eq('id', campaign.organizer_id)
 
       // 予算消費のトランザクション記録

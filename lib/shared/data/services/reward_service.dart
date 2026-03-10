@@ -13,11 +13,11 @@ class RewardService {
     try {
       final response = await _supabase
           .from('profiles')
-          .select('balance')
+          .select('creator_balance')
           .eq('id', _userId!)
           .single();
 
-      return (response['balance'] as num?)?.toInt() ?? 0;
+      return (response['creator_balance'] as num?)?.toInt() ?? 0;
     } catch (e) {
       print('Error getting balance: $e');
       return 0;
@@ -113,25 +113,34 @@ class RewardService {
           .select('''
             view_count,
             campaign_id,
+            creator_id,
             campaigns:campaign_id (budget, target_views, status, total_views)
           ''')
-          .eq('creator_id', _userId!)
           .eq('status', 'approved');
 
-      // キャンペーン別に自分の視聴数を集計
+      final allSubmissions = response as List;
+
+      // キャンペーン別に全クリエイターの視聴数を集計
       final Map<String, Map<String, dynamic>> campaignData = {};
       final Map<String, int> myViewsByCampaign = {};
+      final Map<String, int> allViewsByCampaign = {};
 
-      for (final sub in (response as List)) {
+      for (final sub in allSubmissions) {
         final campaign = sub['campaigns'] as Map<String, dynamic>?;
         if (campaign == null || campaign['status'] != 'active') continue;
 
         final campaignId = sub['campaign_id'] as String;
         final viewCount = (sub['view_count'] as num?)?.toInt() ?? 0;
+        final creatorId = sub['creator_id'] as String;
 
         campaignData[campaignId] = campaign;
-        myViewsByCampaign[campaignId] =
-            (myViewsByCampaign[campaignId] ?? 0) + viewCount;
+        allViewsByCampaign[campaignId] =
+            (allViewsByCampaign[campaignId] ?? 0) + viewCount;
+
+        if (creatorId == _userId) {
+          myViewsByCampaign[campaignId] =
+              (myViewsByCampaign[campaignId] ?? 0) + viewCount;
+        }
       }
 
       const platformFeeRate = 0.10;
@@ -142,7 +151,10 @@ class RewardService {
         final myViews = entry.value;
         final budget = (campaign['budget'] as num?)?.toInt() ?? 0;
         final targetViews = (campaign['target_views'] as num?)?.toInt() ?? 1;
-        final totalViews = (campaign['total_views'] as num?)?.toInt() ?? 0;
+        // campaigns.total_viewsが未更新なら提出物合計を使用
+        final dbTotalViews = (campaign['total_views'] as num?)?.toInt() ?? 0;
+        final computedTotalViews = allViewsByCampaign[entry.key] ?? 0;
+        final totalViews = dbTotalViews > 0 ? dbTotalViews : computedTotalViews;
 
         if (totalViews == 0 || myViews == 0) continue;
 

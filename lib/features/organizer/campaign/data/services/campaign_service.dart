@@ -49,13 +49,13 @@ class CampaignService {
     final userId = _supabase.auth.currentUser?.id;
     if (userId == null) throw Exception('User not logged in');
 
-    // 現在のbalanceを取得
+    // 現在のorganizer_balanceを取得
     final profileRes = await _supabase
         .from('profiles')
-        .select('balance')
+        .select('organizer_balance')
         .eq('id', userId)
         .single();
-    final balance = (profileRes['balance'] as num?)?.toInt() ?? 0;
+    final balance = (profileRes['organizer_balance'] as num?)?.toInt() ?? 0;
 
     // 自分のアクティブ案件のbudget合計を取得
     final campaignsRes = await _supabase

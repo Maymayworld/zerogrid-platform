@@ -36,7 +36,7 @@ serve(async (req) => {
     // プロフィール取得
     const { data: profiles, error: profErr } = await supabase
       .from('profiles')
-      .select('stripe_connect_id, balance')
+      .select('stripe_connect_id, creator_balance')
       .eq('id', user.id)
       .limit(1)
 
@@ -48,7 +48,7 @@ serve(async (req) => {
       throw new Error('Payout setup not completed. Please set up your payout account first.')
     }
 
-    const currentBalance = profile.balance ?? 0
+    const currentBalance = profile.creator_balance ?? 0
     if (amount > currentBalance) {
       throw new Error(`Insufficient balance. Available: ¥${currentBalance.toLocaleString()}`)
     }
@@ -63,7 +63,7 @@ serve(async (req) => {
     const newBalance = currentBalance - amount
     const { error: balErr } = await admin
       .from('profiles')
-      .update({ balance: newBalance })
+      .update({ creator_balance: newBalance })
       .eq('id', user.id)
 
     if (balErr) throw new Error(`Balance update: ${balErr.message}`)
@@ -84,7 +84,7 @@ serve(async (req) => {
       // Transfer失敗 → 残高を復元
       await admin
         .from('profiles')
-        .update({ balance: currentBalance })
+        .update({ creator_balance: currentBalance })
         .eq('id', user.id)
       throw new Error(`Stripe transfer failed: ${stripeError.message}`)
     }

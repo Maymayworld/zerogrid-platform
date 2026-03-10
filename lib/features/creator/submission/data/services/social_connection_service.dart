@@ -115,15 +115,12 @@ class SocialConnectionService {
     return SocialConnection.fromMap(response);
   }
 
-  /// Disconnect a provider (soft delete)
+  /// Disconnect a provider — revokes tokens via platform API, then marks disconnected
   Future<void> disconnectProvider(String connectionId) async {
-    await _supabase
-        .from('social_connections')
-        .update({
-          'status': 'disconnected',
-          'updated_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', connectionId);
+    await _supabase.functions.invoke(
+      'revoke-oauth-token',
+      body: {'connection_id': connectionId},
+    );
   }
 
 }

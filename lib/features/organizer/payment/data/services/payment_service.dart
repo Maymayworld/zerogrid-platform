@@ -131,17 +131,17 @@ class PaymentService {
     return (response.data['new_balance'] as num).toInt();
   }
 
-  /// Get current balance from profiles
+  /// Get current organizer balance from profiles
   Future<int> getBalance() async {
     if (_userId == null) throw Exception('User not logged in');
 
     final response = await _supabase
         .from('profiles')
-        .select('balance')
+        .select('organizer_balance')
         .eq('id', _userId!)
         .single();
 
-    return (response['balance'] as num?)?.toInt() ?? 0;
+    return (response['organizer_balance'] as num?)?.toInt() ?? 0;
   }
 
   /// Get transaction history

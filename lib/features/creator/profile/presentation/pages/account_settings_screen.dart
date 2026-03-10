@@ -65,15 +65,11 @@ class AccountSettingsScreen extends HookConsumerWidget {
       return null;
     }, [appLifecycleState]);
 
-    // Get connection for a provider
-    SocialConnection? getConnectionFor(String provider) {
-      try {
-        return connections.value.firstWhere(
-          (c) => c.provider == provider && c.isConnected,
-        );
-      } catch (_) {
-        return null;
-      }
+    // Get all connections for a provider
+    List<SocialConnection> getConnectionsFor(String provider) {
+      return connections.value
+          .where((c) => c.provider == provider && (c.isConnected || c.isExpired))
+          .toList();
     }
 
     // Handle OAuth connect
@@ -241,42 +237,33 @@ class AccountSettingsScreen extends HookConsumerWidget {
                     SizedBox(height: SpacePalette.sm),
 
                     // YouTube
-                    Builder(builder: (context) {
-                      final conn = getConnectionFor('youtube');
-                      return _PlatformRow(
-                        icon: PlatformIcon.youtube(size: 24),
-                        name: 'YouTube',
-                        connection: conn,
-                        onAdd: () => handleConnect('youtube'),
-                        onDisconnect: conn != null ? () => handleDisconnect(conn.id, 'YouTube') : null,
-                      );
-                    }),
+                    _PlatformSection(
+                      icon: PlatformIcon.youtube(size: 24),
+                      name: 'YouTube',
+                      connections: getConnectionsFor('youtube'),
+                      onAdd: () => handleConnect('youtube'),
+                      onDisconnect: (id) => handleDisconnect(id, 'YouTube'),
+                    ),
                     SizedBox(height: SpacePalette.sm),
 
                     // Instagram
-                    Builder(builder: (context) {
-                      final conn = getConnectionFor('instagram');
-                      return _PlatformRow(
-                        icon: PlatformIcon.instagram(size: 24),
-                        name: 'Instagram',
-                        connection: conn,
-                        onAdd: () => handleConnect('instagram'),
-                        onDisconnect: conn != null ? () => handleDisconnect(conn.id, 'Instagram') : null,
-                      );
-                    }),
+                    _PlatformSection(
+                      icon: PlatformIcon.instagram(size: 24),
+                      name: 'Instagram',
+                      connections: getConnectionsFor('instagram'),
+                      onAdd: () => handleConnect('instagram'),
+                      onDisconnect: (id) => handleDisconnect(id, 'Instagram'),
+                    ),
                     SizedBox(height: SpacePalette.sm),
 
                     // TikTok
-                    Builder(builder: (context) {
-                      final conn = getConnectionFor('tiktok');
-                      return _PlatformRow(
-                        icon: PlatformIcon.tiktok(size: 24),
-                        name: 'TikTok',
-                        connection: conn,
-                        onAdd: () => handleConnect('tiktok'),
-                        onDisconnect: conn != null ? () => handleDisconnect(conn.id, 'TikTok') : null,
-                      );
-                    }),
+                    _PlatformSection(
+                      icon: PlatformIcon.tiktok(size: 24),
+                      name: 'TikTok',
+                      connections: getConnectionsFor('tiktok'),
+                      onAdd: () => handleConnect('tiktok'),
+                      onDisconnect: (id) => handleDisconnect(id, 'TikTok'),
+                    ),
 
                     SizedBox(height: 56),
 
@@ -470,164 +457,131 @@ class _DuolingoButton extends StatelessWidget {
   }
 }
 
-/// Platform row with icon and Add/Connected button
-class _PlatformRow extends StatelessWidget {
+/// Platform section with header + multiple connected accounts
+class _PlatformSection extends StatelessWidget {
   final Widget icon;
   final String name;
-  final SocialConnection? connection;
+  final List<SocialConnection> connections;
   final VoidCallback onAdd;
-  final VoidCallback? onDisconnect;
+  final void Function(String connectionId) onDisconnect;
 
-  const _PlatformRow({
+  const _PlatformSection({
     required this.icon,
     required this.name,
+    required this.connections,
     required this.onAdd,
-    this.connection,
-    this.onDisconnect,
+    required this.onDisconnect,
   });
-
-  bool get isConnected => connection != null && connection!.isConnected;
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 72,
-      padding: EdgeInsets.symmetric(horizontal: SpacePalette.base),
       decoration: BoxDecoration(
         color: ColorPalette.white,
         border: Border.all(color: ColorPalette.neutral200, width: 1),
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Row(
+      child: Column(
         children: [
-          // Icon background box
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: ColorPalette.neutral100,
-              borderRadius: BorderRadius.circular(10),
+          // Header row: icon + name + add button
+          Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: SpacePalette.base,
+              vertical: SpacePalette.sm + 2,
             ),
-            child: Center(child: icon),
-          ),
-          SizedBox(width: SpacePalette.base),
-          // Platform name + connected account
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(name, style: TextStylePalette.listTitle),
-                if (isConnected && connection!.providerAccountName != null)
-                  Text(
-                    '@${connection!.providerAccountName}',
-                    style: TextStylePalette.smSubText,
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: ColorPalette.neutral100,
+                    borderRadius: BorderRadius.circular(10),
                   ),
+                  child: Center(child: icon),
+                ),
+                SizedBox(width: SpacePalette.base),
+                Expanded(
+                  child: Text(name, style: TextStylePalette.listTitle),
+                ),
+                // Add button
+                GestureDetector(
+                  onTap: onAdd,
+                  child: Container(
+                    height: 32,
+                    padding: EdgeInsets.symmetric(horizontal: SpacePalette.sm),
+                    decoration: BoxDecoration(
+                      color: ColorPalette.neutral100,
+                      borderRadius: BorderRadius.circular(RadiusPalette.full),
+                      border: Border.all(color: ColorPalette.neutral300),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add, size: 14, color: ColorPalette.neutral700),
+                        SizedBox(width: 2),
+                        Text(
+                          AppLocalizations.of(context)!.add,
+                          style: TextStylePalette.smText.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: ColorPalette.neutral700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          // Add/Connected button (Duolingo solid shadow style)
-          if (isConnected)
-            GestureDetector(
-              onTap: onDisconnect,
-              child: Container(
-                width: 100,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: ColorPalette.positive500,
-                  borderRadius: BorderRadius.circular(100),
-                ),
-                child: Stack(
-                  children: [
-                    // Shadow layer
-                    Positioned(
-                      left: 0, right: 0, top: 3, height: 32,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorPalette.positive600,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                    ),
-                    // Surface layer
-                    Positioned(
-                      left: 0, right: 0, top: 0, height: 32,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorPalette.positive500,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.check, size: 14, color: ColorPalette.white),
-                            SizedBox(width: SpacePalette.xs),
-                            Text(
-                              'Connected',
-                              style: TextStylePalette.smText.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: ColorPalette.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            )
-          else
-            GestureDetector(
-              onTap: onAdd,
-              child: Container(
-                width: 72,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: ColorPalette.neutral200,
-                  borderRadius: BorderRadius.circular(100),
-                  border: Border.all(color: ColorPalette.neutral200, width: 1),
-                ),
-                child: Stack(
-                  children: [
-                    // Shadow layer (3px below)
-                    Positioned(
-                      left: 0, right: 0, top: 3, height: 32,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorPalette.neutral200,
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                      ),
-                    ),
-                    // Surface layer
-                    Positioned(
-                      left: 0, right: 0, top: 0, height: 32,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: ColorPalette.white,
-                          borderRadius: BorderRadius.circular(100),
-                          border: Border.all(color: ColorPalette.neutral200, width: 1),
-                        ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(Icons.add, size: 14, color: ColorPalette.neutral800),
-                            SizedBox(width: SpacePalette.xs),
-                            Text(
-                              'Add',
-                              style: TextStylePalette.smText.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+
+          // Connected accounts list
+          if (connections.isNotEmpty) ...[
+            Divider(
+              height: 1,
+              indent: SpacePalette.base,
+              endIndent: SpacePalette.base,
+              color: ColorPalette.neutral200,
             ),
+            ...connections.map((conn) => Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: SpacePalette.base,
+                vertical: SpacePalette.sm,
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 40 + SpacePalette.base), // align with name above
+                  Expanded(
+                    child: Text(
+                      '@${conn.providerAccountName ?? conn.providerAccountId}',
+                      style: TextStylePalette.normalText,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () => onDisconnect(conn.id),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: SpacePalette.sm,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(RadiusPalette.full),
+                        border: Border.all(color: ColorPalette.neutral300),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.disconnect,
+                        style: TextStylePalette.smSubText.copyWith(
+                          color: ColorPalette.neutral500,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            )),
+          ],
         ],
       ),
     );

@@ -15,6 +15,7 @@ import '../../payment/presentation/pages/payment_methods_screen.dart';
 import '../../payment/presentation/providers/payment_provider.dart';
 import '../../approval/presentation/providers/approval_provider.dart';
 import '../../home/presentation/providers/organizer_stats_provider.dart';
+import '../../../creator/submission/presentation/providers/submission_providers.dart';
 import 'pages/account_settings_screen.dart';
 import 'widgets/notification_settings_sheet.dart';
 import '../../../../shared/widgets/language_settings_sheet.dart';
@@ -61,6 +62,8 @@ class ProfileScreen extends HookConsumerWidget {
         ref.invalidate(pendingRequestsProvider);
         ref.invalidate(pendingRequestCountProvider);
         ref.read(walletBalanceProvider.notifier).state = 0;
+        ref.read(connectedProvidersProvider.notifier).state = {};
+        ref.read(socialConnectionsProvider.notifier).state = [];
         if (context.mounted) {
           Navigator.of(context).pushAndRemoveUntil(
             MaterialPageRoute(builder: (context) => SelectRoleScreen()),

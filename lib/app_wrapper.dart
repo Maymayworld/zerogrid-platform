@@ -15,6 +15,7 @@ import 'features/auth/data/models/user_role.dart';
 import 'features/organizer/payment/data/services/payment_service.dart';
 import 'features/organizer/approval/presentation/providers/approval_provider.dart';
 import 'features/organizer/payment/presentation/providers/payment_provider.dart';
+import 'features/creator/submission/presentation/providers/submission_providers.dart';
 import 'shared/theme/main_layout.dart';
 import 'shared/theme/app_theme.dart';
 import 'l10n/app_localizations.dart';
@@ -346,6 +347,8 @@ class _NoProfileScreenState extends ConsumerState<_NoProfileScreen> {
                     ref.read(userProfileProvider.notifier).clear();
                     ref.invalidate(pendingRequestsProvider);
                     ref.invalidate(pendingRequestCountProvider);
+                    ref.read(connectedProvidersProvider.notifier).state = {};
+                    ref.read(socialConnectionsProvider.notifier).state = [];
                     if (context.mounted) {
                       Navigator.pushAndRemoveUntil(
                         context,
