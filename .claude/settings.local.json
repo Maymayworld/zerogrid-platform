@@ -37,7 +37,11 @@
       "Bash(cd /c/Users/4817m/zero_grid && npx supabase functions deploy stripe-confirm-deposit --no-verify-jwt 2>&1)",
       "Bash(npx supabase:*)",
       "Bash(flutter build:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "mcp__supabase__get_logs",
+      "mcp__supabase__get_edge_function",
+      "mcp__claude_ai_Supabase__get_edge_function",
+      "mcp__claude_ai_Supabase__deploy_edge_function"
     ]
   },
   "enabledMcpjsonServers": [

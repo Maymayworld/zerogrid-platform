@@ -10,7 +10,6 @@ import '../../auth/presentation/providers/user_profile_provider.dart';
 import '../../auth/presentation/pages/select_role_screen.dart';
 import 'presentation/pages/account_settings_screen.dart';
 import 'presentation/pages/profile_detail_screen.dart';
-import 'presentation/pages/contact_support_screens.dart';
 import 'presentation/widgets/notification_settings_sheet.dart';
 import '../../../shared/widgets/language_settings_sheet.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
@@ -251,13 +250,11 @@ class ProfileScreen extends HookConsumerWidget {
                     iconBackgroundColor: const Color(0xFFF3E5F5),
                     iconColor: const Color(0xFF9C27B0),
                     label: AppLocalizations.of(context)!.contactSupport,
-                    onTap: () {
-                      showModalBottomSheet<dynamic>(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        builder: (context) => const ContactSupportHomeScreen(),
-                      );
+                    onTap: () async {
+                      final url = Uri.parse('https://discord.gg/TUWMqNJfUX');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
                     },
                   ),
                   ProfileMenuItem(
