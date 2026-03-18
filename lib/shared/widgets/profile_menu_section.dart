@@ -66,7 +66,8 @@ class ProfileMenuSection extends StatelessWidget {
 }
 
 class ProfileMenuItem extends StatelessWidget {
-  final IconData icon;
+  final IconData? icon;
+  final String? iconAsset;
   final Color? iconBackgroundColor;
   final Color? iconColor;
   final String label;
@@ -77,7 +78,8 @@ class ProfileMenuItem extends StatelessWidget {
 
   const ProfileMenuItem({
     Key? key,
-    required this.icon,
+    this.icon,
+    this.iconAsset,
     this.iconBackgroundColor,
     this.iconColor,
     required this.label,
@@ -107,21 +109,32 @@ class ProfileMenuItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Container(
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                color: isDestructive
-                    ? ColorPalette.critical500.withOpacity(0.1)
-                    : effectiveIconBg,
-                shape: BoxShape.circle,
+            if (iconAsset != null)
+              SizedBox(
+                width: 36,
+                height: 36,
+                child: Image.asset(
+                  iconAsset!,
+                  width: 36,
+                  height: 36,
+                ),
+              )
+            else
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: isDestructive
+                      ? ColorPalette.critical500.withOpacity(0.1)
+                      : effectiveIconBg,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  icon,
+                  size: 18,
+                  color: effectiveIconColor,
+                ),
               ),
-              child: Icon(
-                icon,
-                size: 18,
-                color: effectiveIconColor,
-              ),
-            ),
             SizedBox(width: SpacePalette.inner),
             Expanded(
               child: Text(label, style: effectiveLabelStyle),

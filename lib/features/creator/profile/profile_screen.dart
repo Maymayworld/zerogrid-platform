@@ -174,9 +174,8 @@ class ProfileScreen extends HookConsumerWidget {
               ProfileMenuSection(
                 children: [
                   ProfileMenuItem(
-                    icon: Icons.person_outlined,
+                    iconAsset: 'assets/images/setting_icon.png',
                     iconBackgroundColor: ColorPalette.smashedPumpkin100,
-                    iconColor: ColorPalette.smashedPumpkin600,
                     label: AppLocalizations.of(context)!.accountSettings,
                     onTap: () {
                       Navigator.push(
@@ -188,9 +187,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.payments_outlined,
-                    iconBackgroundColor: const Color(0xFFE8F5E9),
-                    iconColor: const Color(0xFF4CAF50),
+                    iconAsset: 'assets/images/payment_icon.png',
                     label: AppLocalizations.of(context)!.earnings,
                     onTap: () {
                       Navigator.push(
@@ -210,9 +207,7 @@ class ProfileScreen extends HookConsumerWidget {
                 header: AppLocalizations.of(context)!.preferences,
                 children: [
                   ProfileMenuItem(
-                    icon: Icons.notifications_outlined,
-                    iconBackgroundColor: const Color(0xFFFFF3E0),
-                    iconColor: const Color(0xFFFF9800),
+                    iconAsset: 'assets/images/notification_icon.png',
                     label: AppLocalizations.of(context)!.notifications,
                     onTap: () {
                       showModalBottomSheet(
@@ -246,9 +241,7 @@ class ProfileScreen extends HookConsumerWidget {
                 header: AppLocalizations.of(context)!.resources,
                 children: [
                   ProfileMenuItem(
-                    icon: Icons.headset_mic_outlined,
-                    iconBackgroundColor: const Color(0xFFF3E5F5),
-                    iconColor: const Color(0xFF9C27B0),
+                    iconAsset: 'assets/images/support_icon.png',
                     label: AppLocalizations.of(context)!.contactSupport,
                     onTap: () async {
                       final url = Uri.parse('https://discord.gg/TUWMqNJfUX');
@@ -282,7 +275,7 @@ class ProfileScreen extends HookConsumerWidget {
               ProfileMenuSection(
                 children: [
                   ProfileMenuItem(
-                    icon: Icons.power_settings_new,
+                    iconAsset: 'assets/images/signout_icon.png',
                     label: AppLocalizations.of(context)!.signOut,
                     isDestructive: true,
                     showChevron: false,
