@@ -1,8 +1,10 @@
 // lib/features/auth/presentation/pages/signup_screen1.dart
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
@@ -26,6 +28,7 @@ class SignUpScreen1 extends HookConsumerWidget {
     final confirmPasswordController = useTextEditingController();
     final isPasswordVisible = useState(false);
     final isConfirmPasswordVisible = useState(false);
+    final agreedToTerms = useState(false);
 
     void handleContinue() {
       // バリデーション
@@ -51,6 +54,16 @@ class SignUpScreen1 extends HookConsumerWidget {
         return;
       }
 
+      if (!agreedToTerms.value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.pleaseAgreeToTerms),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       // 次の画面へ
       Navigator.push(
         context,
@@ -65,6 +78,15 @@ class SignUpScreen1 extends HookConsumerWidget {
     }
 
     Future<void> handleAppleSignUp() async {
+      if (!agreedToTerms.value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.pleaseAgreeToTerms),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('pending_oauth_role', role.name);
@@ -80,6 +102,15 @@ class SignUpScreen1 extends HookConsumerWidget {
     }
 
     Future<void> handleGoogleSignUp() async {
+      if (!agreedToTerms.value) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.pleaseAgreeToTerms),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('pending_oauth_role', role.name);
@@ -212,6 +243,82 @@ class SignUpScreen1 extends HookConsumerWidget {
                           ),
                         ),
                       ),
+                    ),
+                    SizedBox(height: SpacePalette.base),
+
+                    // Terms & Privacy checkbox
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: Checkbox(
+                            value: agreedToTerms.value,
+                            onChanged: (v) => agreedToTerms.value = v ?? false,
+                            activeColor: ColorPalette.neutral800,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: SpacePalette.sm),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStylePalette.smSubText,
+                              children: [
+                                TextSpan(
+                                  text: AppLocalizations.of(context)!.agreeToTerms(
+                                    '\u0000privacy\u0000',
+                                    '\u0000terms\u0000',
+                                  ).split('\u0000terms\u0000')[0],
+                                ),
+                                TextSpan(
+                                  text: AppLocalizations.of(context)!.termsOfService,
+                                  style: TextStylePalette.smSubText.copyWith(
+                                    color: ColorPalette.smashedPumpkin600,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      launchUrl(
+                                        Uri.parse('https://kota1020.github.io/zerogrid-legal/terms-of-service.html'),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    },
+                                ),
+                                TextSpan(
+                                  text: AppLocalizations.of(context)!.agreeToTerms(
+                                    '\u0000privacy\u0000',
+                                    '\u0000terms\u0000',
+                                  ).split('\u0000terms\u0000')[1].split('\u0000privacy\u0000')[0],
+                                ),
+                                TextSpan(
+                                  text: AppLocalizations.of(context)!.privacyPolicy,
+                                  style: TextStylePalette.smSubText.copyWith(
+                                    color: ColorPalette.smashedPumpkin600,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                  recognizer: TapGestureRecognizer()
+                                    ..onTap = () {
+                                      launchUrl(
+                                        Uri.parse('https://kota1020.github.io/zerogrid-legal/privacy-policy.html'),
+                                        mode: LaunchMode.externalApplication,
+                                      );
+                                    },
+                                ),
+                                TextSpan(
+                                  text: AppLocalizations.of(context)!.agreeToTerms(
+                                    '\u0000privacy\u0000',
+                                    '\u0000terms\u0000',
+                                  ).split('\u0000privacy\u0000').last,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: SpacePalette.lg),
 

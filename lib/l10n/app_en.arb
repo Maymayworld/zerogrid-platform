@@ -93,6 +93,10 @@
   "notifications": "Notifications",
   "contactSupport": "Contact Support",
   "followZeroGrid": "Follow @ZeroGrid",
+  "termsOfService": "Terms of Service",
+  "privacyPolicy": "Privacy Policy",
+  "agreeToTerms": "I agree to the {terms} and {privacy}",
+  "pleaseAgreeToTerms": "Please agree to the Terms of Service and Privacy Policy",
 
   "payoutAccount": "Payout Account",
   "readyForWithdrawals": "Ready for withdrawals",

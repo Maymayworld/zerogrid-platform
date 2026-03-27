@@ -78,6 +78,10 @@
   "notifications": "通知",
   "contactSupport": "サポートに連絡",
   "followZeroGrid": "@ZeroGridをフォロー",
+  "termsOfService": "利用規約",
+  "privacyPolicy": "プライバシーポリシー",
+  "agreeToTerms": "{terms}と{privacy}に同意します",
+  "pleaseAgreeToTerms": "利用規約とプライバシーポリシーに同意してください",
 
   "payoutAccount": "振込先口座",
   "readyForWithdrawals": "出金可能",

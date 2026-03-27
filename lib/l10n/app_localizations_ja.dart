@@ -227,6 +227,20 @@ class AppLocalizationsJa extends AppLocalizations {
   String get followZeroGrid => '@ZeroGridをフォロー';
 
   @override
+  String get termsOfService => '利用規約';
+
+  @override
+  String get privacyPolicy => 'プライバシーポリシー';
+
+  @override
+  String agreeToTerms(Object privacy, Object terms) {
+    return '$termsと$privacyに同意します';
+  }
+
+  @override
+  String get pleaseAgreeToTerms => '利用規約とプライバシーポリシーに同意してください';
+
+  @override
   String get payoutAccount => '振込先口座';
 
   @override

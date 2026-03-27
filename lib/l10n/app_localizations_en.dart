@@ -228,6 +228,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get followZeroGrid => 'Follow @ZeroGrid';
 
   @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String agreeToTerms(Object privacy, Object terms) {
+    return 'I agree to the $terms and $privacy';
+  }
+
+  @override
+  String get pleaseAgreeToTerms =>
+      'Please agree to the Terms of Service and Privacy Policy';
+
+  @override
   String get payoutAccount => 'Payout Account';
 
   @override

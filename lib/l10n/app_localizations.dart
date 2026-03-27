@@ -518,6 +518,30 @@ abstract class AppLocalizations {
   /// **'Follow @ZeroGrid'**
   String get followZeroGrid;
 
+  /// No description provided for @termsOfService.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// No description provided for @agreeToTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'I agree to the {terms} and {privacy}'**
+  String agreeToTerms(Object privacy, Object terms);
+
+  /// No description provided for @pleaseAgreeToTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Please agree to the Terms of Service and Privacy Policy'**
+  String get pleaseAgreeToTerms;
+
   /// No description provided for @payoutAccount.
   ///
   /// In en, this message translates to:

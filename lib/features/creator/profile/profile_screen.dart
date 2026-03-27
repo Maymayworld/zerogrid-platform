@@ -219,9 +219,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.language,
-                    iconBackgroundColor: const Color(0xFFE3F2FD),
-                    iconColor: const Color(0xFF2196F3),
+                    iconAsset: 'assets/images/language_icon.png',
                     label: AppLocalizations.of(context)!.language,
                     onTap: () {
                       showModalBottomSheet(
@@ -264,6 +262,30 @@ class ProfileScreen extends HookConsumerWidget {
                           url,
                           mode: LaunchMode.externalApplication,
                         );
+                      }
+                    },
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.description_outlined,
+                    iconBackgroundColor: const Color(0xFFE3F2FD),
+                    iconColor: const Color(0xFF2196F3),
+                    label: AppLocalizations.of(context)!.termsOfService,
+                    onTap: () async {
+                      final url = Uri.parse('https://kota1020.github.io/zerogrid-legal/terms-of-service.html');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
+                  ProfileMenuItem(
+                    icon: Icons.shield_outlined,
+                    iconBackgroundColor: const Color(0xFFE8F5E9),
+                    iconColor: const Color(0xFF4CAF50),
+                    label: AppLocalizations.of(context)!.privacyPolicy,
+                    onTap: () async {
+                      final url = Uri.parse('https://kota1020.github.io/zerogrid-legal/privacy-policy.html');
+                      if (await canLaunchUrl(url)) {
+                        await launchUrl(url, mode: LaunchMode.externalApplication);
                       }
                     },
                   ),
