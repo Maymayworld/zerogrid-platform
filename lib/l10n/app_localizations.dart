@@ -2156,6 +2156,12 @@ abstract class AppLocalizations {
   /// **'Insufficient balance. Available: ¥{available}'**
   String insufficientBalanceAvailable(String available);
 
+  /// No description provided for @minimumCpmRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Revenue per 1000 views is below ¥300. Minimum budget: ¥{minBudget}'**
+  String minimumCpmRequired(String minBudget);
+
   /// No description provided for @setProjectTimeline.
   ///
   /// In en, this message translates to:

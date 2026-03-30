@@ -113,6 +113,23 @@ class ManualCreatePage4 extends HookConsumerWidget{
                         return;
                       }
 
+                      // 1000再生あたりの最低収益チェック（¥300）
+                      final targetViews = ref.read(projectProvider).targetViews;
+                      if (targetViews > 0) {
+                        final cpm = (budget / targetViews) * 1000;
+                        if (cpm < 300) {
+                          final minBudget = (targetViews * 300 / 1000).ceil();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(context)!.minimumCpmRequired(minBudget.toString()),
+                              ),
+                            ),
+                          );
+                          return;
+                        }
+                      }
+
                       ref.read(projectProvider.notifier).setBudget(budget);
                       Navigator.push(
                         context,

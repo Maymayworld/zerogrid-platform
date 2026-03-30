@@ -1116,6 +1116,11 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String minimumCpmRequired(String minBudget) {
+    return 'Revenue per 1000 views is below ¥300. Minimum budget: ¥$minBudget';
+  }
+
+  @override
   String get setProjectTimeline => 'Set Your Project Timeline';
 
   @override

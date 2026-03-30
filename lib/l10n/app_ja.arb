@@ -395,6 +395,7 @@
   "adjustAnytime": "いつでも調整できます",
   "suggestRangesBasedOnCategory": "カテゴリと目標再生回数に基づいて範囲を提案します",
   "insufficientBalanceAvailable": "残高不足です。利用可能: ¥{available}",
+  "minimumCpmRequired": "1000再生あたりの収益が¥300未満です。最低予算: ¥{minBudget}",
   "setProjectTimeline": "プロジェクトのスケジュールを設定",
   "chooseProjectDates": "プロジェクトの開始日と終了日を選択",
   "dateFormatPlaceholder": "YYYY/MM/DD",

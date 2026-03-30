@@ -1085,6 +1085,11 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String minimumCpmRequired(String minBudget) {
+    return '1000再生あたりの収益が¥300未満です。最低予算: ¥$minBudget';
+  }
+
+  @override
   String get setProjectTimeline => 'プロジェクトのスケジュールを設定';
 
   @override

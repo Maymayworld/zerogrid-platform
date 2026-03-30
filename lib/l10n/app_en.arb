@@ -496,6 +496,12 @@
       "available": { "type": "String" }
     }
   },
+  "minimumCpmRequired": "Revenue per 1000 views is below ¥300. Minimum budget: ¥{minBudget}",
+  "@minimumCpmRequired": {
+    "placeholders": {
+      "minBudget": { "type": "String" }
+    }
+  },
   "setProjectTimeline": "Set Your Project Timeline",
   "chooseProjectDates": "Choose when the project starts and when it wraps up",
   "dateFormatPlaceholder": "YYYY/MM/DD",
