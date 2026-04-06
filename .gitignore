@@ -66,6 +66,9 @@ migrate_working_dir/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
+# Claude Code
+.claude/
+
 # Secrets
 .secrets/
 supabase/.temp/
