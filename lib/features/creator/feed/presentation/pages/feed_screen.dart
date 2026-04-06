@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:video_player/video_player.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../creator/submission/data/models/submission.dart';
@@ -250,7 +251,7 @@ class FeedScreen extends HookConsumerWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      Icons.arrow_back,
+                      PhosphorIconsRegular.arrowLeft,
                       color: ColorPalette.white,
                       size: 20,
                     ),
@@ -269,7 +270,7 @@ class FeedScreen extends HookConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.play_circle_outline,
+            PhosphorIconsRegular.playCircle,
             size: 64,
             color: ColorPalette.neutral400,
           ),
@@ -410,7 +411,7 @@ class _LocalVideoPage extends StatelessWidget {
                             : null,
                         child: submission.creatorAvatarUrl == null
                             ? Icon(
-                                Icons.person,
+                                PhosphorIconsFill.user,
                                 size: 16,
                                 color: ColorPalette.white,
                               )
@@ -463,7 +464,7 @@ class _LocalVideoPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionButton(
-                    icon: isLiked ? Icons.favorite : Icons.favorite_border,
+                    icon: isLiked ? PhosphorIconsFill.heart : PhosphorIconsRegular.heart,
                     color: isLiked
                         ? ColorPalette.critical500
                         : ColorPalette.white,
@@ -471,7 +472,7 @@ class _LocalVideoPage extends StatelessWidget {
                   ),
                   SizedBox(height: SpacePalette.base),
                   _ActionButton(
-                    icon: Icons.arrow_forward_ios,
+                    icon: PhosphorIconsRegular.caretRight,
                     color: ColorPalette.white,
                     onTap: onJoin,
                   ),

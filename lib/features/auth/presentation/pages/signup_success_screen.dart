@@ -1,6 +1,7 @@
 // lib/features/auth/presentation/pages/signup_success_screen.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/theme/main_layout.dart';
@@ -38,7 +39,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                     top: -10,
                     left: -10,
                     child: Icon(
-                      Icons.auto_awesome,
+                      PhosphorIconsRegular.sparkle,
                       size: 24,
                       color: ColorPalette.smashedPumpkin400,
                     ),
@@ -48,7 +49,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                     top: -5,
                     right: -15,
                     child: Icon(
-                      Icons.auto_awesome,
+                      PhosphorIconsRegular.sparkle,
                       size: 32,
                       color: ColorPalette.positive400,
                     ),
@@ -72,7 +73,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                             ),
                           )
                         : Icon(
-                            Icons.person,
+                            PhosphorIconsFill.user,
                             size: 50,
                             color: ColorPalette.neutral400,
                           ),

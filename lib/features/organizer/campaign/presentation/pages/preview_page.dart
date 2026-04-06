@@ -1,6 +1,7 @@
 // lib/features/organizer/create/presentation/pages/preview_page.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -112,7 +113,7 @@ class PreviewPage extends HookConsumerWidget {
         title: Text('Preview', style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -148,7 +149,7 @@ class PreviewPage extends HookConsumerWidget {
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.upload, size: 40, color: ColorPalette.neutral500),
+                                    Icon(PhosphorIconsRegular.uploadSimple, size: 40, color: ColorPalette.neutral500),
                                     SizedBox(height: SpacePalette.sm),
                                     Text(
                                       'Upload Image',
@@ -226,7 +227,7 @@ class PreviewPage extends HookConsumerWidget {
                                 SizedBox(height: SpacePalette.xs),
                                 Row(
                                   children: [
-                                    Icon(Icons.star, size: 14, color: Color(0xFFFBBF24)),
+                                    Icon(PhosphorIconsFill.star, size: 14, color: Color(0xFFFBBF24)),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       '4.9 (131 reviews)',
@@ -272,7 +273,7 @@ class PreviewPage extends HookConsumerWidget {
                               padding: EdgeInsets.only(bottom: SpacePalette.xs),
                               child: Row(
                                 children: [
-                                  Icon(Icons.link, size: 16, color: ColorPalette.neutral500),
+                                  Icon(PhosphorIconsRegular.link, size: 16, color: ColorPalette.neutral500),
                                   SizedBox(width: SpacePalette.xs),
                                   Expanded(
                                     child: Text(

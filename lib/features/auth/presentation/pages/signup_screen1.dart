@@ -2,6 +2,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -195,8 +196,8 @@ class SignUpScreen1 extends HookConsumerWidget {
                           suffixIcon: IconButton(
                             icon: Icon(
                               isPasswordVisible.value
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
+                                  ? PhosphorIconsRegular.eye
+                                  : PhosphorIconsRegular.eyeSlash,
                               color: ColorPalette.neutral500,
                               size: 20,
                             ),
@@ -227,8 +228,8 @@ class SignUpScreen1 extends HookConsumerWidget {
                           suffixIcon: IconButton(
                             icon: Icon(
                               isConfirmPasswordVisible.value
-                                  ? Icons.visibility_outlined
-                                  : Icons.visibility_off_outlined,
+                                  ? PhosphorIconsRegular.eye
+                                  : PhosphorIconsRegular.eyeSlash,
                               color: ColorPalette.neutral500,
                               size: 20,
                             ),

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/approval_request.dart';
@@ -18,7 +19,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -54,7 +55,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.history,
+            PhosphorIconsRegular.clockCounterClockwise,
             size: 80,
             color: ColorPalette.neutral300,
           ),
@@ -125,12 +126,12 @@ class _HistoryItem extends StatelessWidget {
                         request.videoThumbnailUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Icon(
-                          Icons.play_circle_outline,
+                          PhosphorIconsRegular.playCircle,
                           color: ColorPalette.neutral400,
                         ),
                       )
                     : Icon(
-                        Icons.play_circle_outline,
+                        PhosphorIconsRegular.playCircle,
                         color: ColorPalette.neutral400,
                       ),
               ),
@@ -205,25 +206,25 @@ class _HistoryItem extends StatelessWidget {
         bgColor = ColorPalette.positive50;
         textColor = ColorPalette.positive500;
         label = AppLocalizations.of(context)!.approved;
-        icon = Icons.check;
+        icon = PhosphorIconsRegular.check;
         break;
       case ApprovalStatus.rejected:
         bgColor = ColorPalette.critical50;
         textColor = ColorPalette.critical500;
         label = AppLocalizations.of(context)!.rejected;
-        icon = Icons.close;
+        icon = PhosphorIconsRegular.x;
         break;
       case ApprovalStatus.skipped:
         bgColor = ColorPalette.neutral200;
         textColor = ColorPalette.neutral600;
         label = 'Skipped';
-        icon = Icons.skip_next;
+        icon = PhosphorIconsRegular.skipForward;
         break;
       default:
         bgColor = ColorPalette.neutral200;
         textColor = ColorPalette.neutral600;
         label = AppLocalizations.of(context)!.pending;
-        icon = Icons.hourglass_empty;
+        icon = PhosphorIconsRegular.hourglass;
     }
 
     return Container(

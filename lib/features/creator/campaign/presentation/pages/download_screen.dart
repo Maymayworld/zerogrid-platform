@@ -1,5 +1,6 @@
 // lib/features/creator/campaign/presentation/pages/download_screen.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
@@ -16,24 +17,24 @@ class ProjectDownloadScreen extends StatelessWidget {
 
   IconData _getIconForUrl(String url) {
     final lower = url.toLowerCase();
-    if (lower.endsWith('.pdf')) return Icons.picture_as_pdf_outlined;
+    if (lower.endsWith('.pdf')) return PhosphorIconsRegular.filePdf;
     if (lower.endsWith('.jpg') ||
         lower.endsWith('.jpeg') ||
         lower.endsWith('.png') ||
         lower.endsWith('.svg') ||
-        lower.endsWith('.webp')) return Icons.image_outlined;
+        lower.endsWith('.webp')) return PhosphorIconsRegular.image;
     if (lower.endsWith('.mp4') ||
         lower.endsWith('.mov') ||
-        lower.endsWith('.webm')) return Icons.videocam_outlined;
+        lower.endsWith('.webm')) return PhosphorIconsRegular.videoCamera;
     if (lower.endsWith('.zip') ||
-        lower.endsWith('.rar')) return Icons.folder_zip_outlined;
-    if (lower.contains('drive.google.com')) return Icons.cloud_outlined;
-    if (lower.contains('dropbox.com')) return Icons.cloud_outlined;
-    if (lower.contains('docs.google.com')) return Icons.description_outlined;
-    if (lower.contains('figma.com')) return Icons.design_services_outlined;
+        lower.endsWith('.rar')) return PhosphorIconsRegular.fileZip;
+    if (lower.contains('drive.google.com')) return PhosphorIconsRegular.cloud;
+    if (lower.contains('dropbox.com')) return PhosphorIconsRegular.cloud;
+    if (lower.contains('docs.google.com')) return PhosphorIconsRegular.fileText;
+    if (lower.contains('figma.com')) return PhosphorIconsRegular.paintBrush;
     if (lower.contains('notion.so') ||
-        lower.contains('notion.site')) return Icons.article_outlined;
-    return Icons.link_outlined;
+        lower.contains('notion.site')) return PhosphorIconsRegular.article;
+    return PhosphorIconsRegular.link;
   }
 
   String _getDisplayName(String url) {
@@ -101,7 +102,7 @@ class ProjectDownloadScreen extends StatelessWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.projectFiles, style: TextStylePalette.title),
@@ -114,7 +115,7 @@ class ProjectDownloadScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      Icons.folder_open_outlined,
+                      PhosphorIconsRegular.folderOpen,
                       size: 48,
                       color: ColorPalette.neutral400,
                     ),
@@ -209,7 +210,7 @@ class _FileItem extends StatelessWidget {
             ),
             SizedBox(width: SpacePalette.sm),
             Icon(
-              Icons.open_in_new,
+              PhosphorIconsRegular.arrowSquareOut,
               size: 20,
               color: ColorPalette.neutral400,
             ),

@@ -1,5 +1,6 @@
 // lib/features/creator/campaign/presentation/widgets/project_card.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
@@ -77,7 +78,7 @@ class ProjectCard extends StatelessWidget {
                   color: ColorPalette.neutral400,
                   child: Center(
                     child: Icon(
-                      Icons.image,
+                      PhosphorIconsFill.image,
                       size: 50,
                       color: ColorPalette.neutral400,
                     ),
@@ -161,8 +162,8 @@ class ProjectCard extends StatelessWidget {
                           _CardDuolingoCircleButton(
                             onPressed: onLike,
                             icon: isLiked
-                                ? Icons.favorite
-                                : Icons.favorite_border,
+                                ? PhosphorIconsFill.heart
+                                : PhosphorIconsRegular.heart,
                             iconColor: isLiked
                                 ? ColorPalette.critical500
                                 : ColorPalette.neutral800,
@@ -185,7 +186,7 @@ class ProjectCard extends StatelessWidget {
   Widget _buildPlatformIcons() {
     if (platforms.isEmpty) {
       return _buildSinglePlatformIcon(
-        Icon(Icons.video_library, size: 14, color: ColorPalette.neutral800),
+        Icon(PhosphorIconsFill.filmStrip, size: 14, color: ColorPalette.neutral800),
       );
     }
 

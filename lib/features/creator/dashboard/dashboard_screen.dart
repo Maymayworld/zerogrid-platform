@@ -1,5 +1,6 @@
 // lib/features/creator/dashboard/dashboard_screen.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/platform_icon.dart';
@@ -67,7 +68,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: Icons.visibility_outlined,
+                      icon: PhosphorIconsRegular.eye,
                       iconColor: Colors.blue,
                     ),
                   ),
@@ -80,7 +81,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: Icons.account_balance_wallet_outlined,
+                      icon: PhosphorIconsRegular.wallet,
                       iconColor: Colors.green,
                     ),
                   ),
@@ -101,7 +102,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: Icons.campaign_outlined,
+                      icon: PhosphorIconsRegular.megaphone,
                       iconColor: Colors.orange,
                     ),
                   ),
@@ -114,7 +115,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: Icons.hourglass_empty,
+                      icon: PhosphorIconsRegular.hourglass,
                       iconColor: Colors.purple,
                     ),
                   ),
@@ -136,7 +137,7 @@ class DashboardScreen extends HookConsumerWidget {
                       flex: 2,
                       child: Row(
                         children: [
-                          Icon(Icons.play_circle_outline,
+                          Icon(PhosphorIconsRegular.playCircle,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(AppLocalizations.of(context)!.video,
@@ -147,7 +148,7 @@ class DashboardScreen extends HookConsumerWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.visibility_outlined,
+                          Icon(PhosphorIconsRegular.eye,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(AppLocalizations.of(context)!.views,
@@ -158,7 +159,7 @@ class DashboardScreen extends HookConsumerWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(Icons.attach_money,
+                          Icon(PhosphorIconsRegular.currencyDollar,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(AppLocalizations.of(context)!.earning,
@@ -182,7 +183,7 @@ class DashboardScreen extends HookConsumerWidget {
                         child: Column(
                           children: [
                             Icon(
-                              Icons.video_library_outlined,
+                              PhosphorIconsRegular.filmStrip,
                               size: 48,
                               color: ColorPalette.neutral400,
                             ),
@@ -426,7 +427,7 @@ class _PastEarningItem extends StatelessWidget {
                       width: 44,
                       height: 44,
                       color: ColorPalette.neutral200,
-                      child: Icon(Icons.campaign,
+                      child: Icon(PhosphorIconsFill.megaphone,
                           size: 20, color: ColorPalette.neutral400),
                     ),
                   )
@@ -434,7 +435,7 @@ class _PastEarningItem extends StatelessWidget {
                     width: 44,
                     height: 44,
                     color: ColorPalette.neutral200,
-                    child: Icon(Icons.campaign,
+                    child: Icon(PhosphorIconsFill.megaphone,
                         size: 20, color: ColorPalette.neutral400),
                   ),
           ),

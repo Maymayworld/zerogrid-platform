@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../theme/app_theme.dart';
 
 class ProfileMenuSection extends StatelessWidget {
@@ -145,7 +146,7 @@ class ProfileMenuItem extends StatelessWidget {
             ],
             if (showChevron)
               Icon(
-                Icons.chevron_right,
+                PhosphorIconsRegular.caretRight,
                 size: 20,
                 color: ColorPalette.neutral400,
               ),

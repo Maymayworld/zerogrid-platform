@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/common_search_bar.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
@@ -27,11 +28,11 @@ class LikesScreen extends HookConsumerWidget {
     final likedIds = ref.watch(likedCampaignIdsProvider);
 
     final categories = [
-      {'icon': Icons.grid_view, 'label': 'All'},
-      {'icon': Icons.business_center_outlined, 'label': 'Business'},
-      {'icon': Icons.music_note_outlined, 'label': 'Entertainment'},
-      {'icon': Icons.music_note, 'label': 'Music'},
-      {'icon': Icons.podcasts_outlined, 'label': 'Podcast'},
+      {'icon': PhosphorIconsFill.squaresFour, 'label': 'All'},
+      {'icon': PhosphorIconsRegular.briefcase, 'label': 'Business'},
+      {'icon': PhosphorIconsRegular.musicNote, 'label': 'Entertainment'},
+      {'icon': PhosphorIconsFill.musicNote, 'label': 'Music'},
+      {'icon': PhosphorIconsRegular.microphone, 'label': 'Podcast'},
     ];
 
     Future<void> loadLikedCampaigns() async {
@@ -140,7 +141,7 @@ class LikesScreen extends HookConsumerWidget {
                 children: [
                   Text(AppLocalizations.of(context)!.likedProjects, style: TextStylePalette.header),
                   IconButton(
-                    icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
+                    icon: Icon(PhosphorIconsRegular.arrowClockwise, color: ColorPalette.neutral800),
                     onPressed: loadLikedCampaigns,
                   ),
                 ],
@@ -184,7 +185,7 @@ class LikesScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -199,7 +200,7 @@ class LikesScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.favorite_border, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.heart, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noLikedProjectsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),

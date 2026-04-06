@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../shared/theme/app_theme.dart';
 import '../../features/organizer/home/presentation/home_screen.dart';
 import '../../features/organizer/home/presentation/providers/organizer_tab_index_provider.dart';
@@ -122,15 +123,15 @@ class _LiquidGlassNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _GlassNavItem(
-                  icon: Icons.home_outlined,
-                  selectedIcon: Icons.home_rounded,
+                  icon: PhosphorIconsRegular.house,
+                  selectedIcon: PhosphorIconsFill.house,
                   label: AppLocalizations.of(context)!.navHome,
                   isSelected: currentIndex == 0,
                   onTap: () => onTap(0),
                 ),
                 _GlassNavItem(
-                  icon: Icons.grid_view_outlined,
-                  selectedIcon: Icons.grid_view_rounded,
+                  icon: PhosphorIconsRegular.squaresFour,
+                  selectedIcon: PhosphorIconsFill.squaresFour,
                   label: AppLocalizations.of(context)!.navCampaigns,
                   isSelected: currentIndex == 1,
                   onTap: () => onTap(1),
@@ -145,15 +146,15 @@ class _LiquidGlassNavBar extends StatelessWidget {
                   ),
                 ),
                 _GlassNavItem(
-                  icon: Icons.chat_bubble_outline_rounded,
-                  selectedIcon: Icons.chat_bubble_rounded,
+                  icon: PhosphorIconsRegular.chatCircle,
+                  selectedIcon: PhosphorIconsFill.chatCircle,
                   label: AppLocalizations.of(context)!.navChat,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
                 ),
                 _GlassNavItem(
-                  icon: Icons.person_outline_rounded,
-                  selectedIcon: Icons.person_rounded,
+                  icon: PhosphorIconsRegular.user,
+                  selectedIcon: PhosphorIconsFill.user,
                   label: AppLocalizations.of(context)!.navProfile,
                   isSelected: currentIndex == 4,
                   onTap: () => onTap(4),
@@ -307,11 +308,11 @@ class _CenterBlackButton extends StatelessWidget {
     // リクエストなし → プラスアイコン（案件作成画面）
     final IconData icon;
     if (isSelected) {
-      icon = Icons.check_rounded;
+      icon = PhosphorIconsRegular.check;
     } else if (hasPendingRequests) {
-      icon = Icons.smartphone_rounded;
+      icon = PhosphorIconsRegular.deviceMobile;
     } else {
-      icon = Icons.add_rounded;
+      icon = PhosphorIconsRegular.plus;
     }
 
     return GestureDetector(

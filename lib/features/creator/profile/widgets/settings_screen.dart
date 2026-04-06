@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../../../auth/presentation/providers/oauth_provider.dart';
@@ -20,7 +21,7 @@ class SettingsScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -157,7 +158,7 @@ class SettingsScreen extends HookConsumerWidget {
                     
                     // Google Calendar
                     _ServiceConnectionTile(
-                      iconWidget: Icon(Icons.calendar_today_outlined, size: 20, color: Color(0xFF4285F4)),
+                      iconWidget: Icon(PhosphorIconsRegular.calendar, size: 20, color: Color(0xFF4285F4)),
                       iconColor: Color(0xFF4285F4), // Google blue
                       serviceName: 'Google Calendar',
                       description: 'Sync campaign deadlines to your calendar',
@@ -195,7 +196,7 @@ class SettingsScreen extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      Icons.info_outline,
+                      PhosphorIconsRegular.info,
                       size: 16,
                       color: ColorPalette.neutral600,
                     ),

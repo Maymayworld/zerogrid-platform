@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/platform_icon.dart';
 import '../data/services/organizer_stats_service.dart';
@@ -193,7 +194,7 @@ class _AnalyticsHeader extends StatelessWidget {
                     color: ColorPalette.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
-                  child: Icon(Icons.arrow_back, color: ColorPalette.white, size: 20),
+                  child: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.white, size: 20),
                 ),
               ),
               SizedBox(height: SpacePalette.base),
@@ -649,7 +650,7 @@ class _PlatformDropdown extends StatelessWidget {
         value: value,
         underline: SizedBox(),
         isDense: true,
-        icon: Icon(Icons.keyboard_arrow_down, size: 16, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsRegular.caretDown, size: 16, color: ColorPalette.neutral800),
         style: TextStylePalette.smText,
         onChanged: (v) {
           if (v != null) onChanged(v);

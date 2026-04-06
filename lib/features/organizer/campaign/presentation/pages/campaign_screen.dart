@@ -1,6 +1,7 @@
 // lib/features/organizer/campaign/presentation/campaign_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
@@ -57,7 +58,7 @@ class CampaignScreen extends HookConsumerWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.history, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsRegular.clockCounterClockwise, color: ColorPalette.neutral800),
             onPressed: () {
               Navigator.push(
                 context,
@@ -69,7 +70,7 @@ class CampaignScreen extends HookConsumerWidget {
             tooltip: AppLocalizations.of(context)!.approvalHistory,
           ),
           IconButton(
-            icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsRegular.arrowClockwise, color: ColorPalette.neutral800),
             onPressed: loadCampaigns,
           ),
         ],
@@ -91,7 +92,7 @@ class CampaignScreen extends HookConsumerWidget {
                   hintText: AppLocalizations.of(context)!.search,
                   hintStyle: TextStylePalette.hintText,
                   prefixIcon: Icon(
-                    Icons.search,
+                    PhosphorIconsRegular.magnifyingGlass,
                     color: ColorPalette.neutral400,
                     size: 20,
                   ),
@@ -142,7 +143,7 @@ class CampaignScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoadCampaigns, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -159,7 +160,7 @@ class CampaignScreen extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              Icons.campaign_outlined,
+              PhosphorIconsRegular.megaphone,
               size: 48,
               color: ColorPalette.neutral400,
             ),

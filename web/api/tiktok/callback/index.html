@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connecting TikTok...</title>
+  <style>
+    body { font-family: -apple-system, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #fff; color: #333; }
+    .container { text-align: center; }
+    .spinner { width: 32px; height: 32px; border: 3px solid #e5e5e5; border-top-color: #333; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 16px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .error { color: #dc2626; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="spinner" id="spinner"></div>
+    <p id="message">Connecting your TikTok account...</p>
+  </div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var code = params.get('code');
+      var state = params.get('state');
+      var error = params.get('error');
+
+      if (error) {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('message').className = 'error';
+        document.getElementById('message').textContent = 'Connection failed: ' + error;
+        return;
+      }
+
+      if (!code || !state) {
+        document.getElementById('spinner').style.display = 'none';
+        document.getElementById('message').className = 'error';
+        document.getElementById('message').textContent = 'Missing authorization parameters.';
+        return;
+      }
+
+      var callbackUrl = 'https://gfzpegwatwyzbbbkcuvu.supabase.co/functions/v1/oauth-callback'
+        + '?code=' + encodeURIComponent(code)
+        + '&state=' + encodeURIComponent(state);
+
+      window.location.replace(callbackUrl);
+    })();
+  </script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -86,13 +87,13 @@ class SignUpScreen3 extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.lg),
               ListTile(
-                leading: Icon(Icons.image_outlined, color: ColorPalette.neutral800),
+                leading: Icon(PhosphorIconsRegular.image, color: ColorPalette.neutral800),
                 title: Text(AppLocalizations.of(context)!.chooseFromLibrary, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.gallery),
               ),
               Divider(color: ColorPalette.neutral200),
               ListTile(
-                leading: Icon(Icons.camera_alt_outlined, color: ColorPalette.neutral800),
+                leading: Icon(PhosphorIconsRegular.camera, color: ColorPalette.neutral800),
                 title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.camera),
               ),
@@ -201,7 +202,7 @@ class SignUpScreen3 extends HookConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -251,7 +252,7 @@ class SignUpScreen3 extends HookConsumerWidget {
                                   ),
                                 )
                               : Icon(
-                                  Icons.person_outline,
+                                  PhosphorIconsRegular.user,
                                   size: 50,
                                   color: ColorPalette.neutral400,
                                 ),
@@ -263,7 +264,7 @@ class SignUpScreen3 extends HookConsumerWidget {
                       DuolingoOutlineButton(
                         onPressed: showImagePicker,
                         text: AppLocalizations.of(context)!.uploadProfilePicture,
-                        icon: Icons.upload_outlined,
+                        icon: PhosphorIconsRegular.uploadSimple,
                       ),
                       SizedBox(height: SpacePalette.xs),
                       Text(AppLocalizations.of(context)!.optional, style: TextStylePalette.smSubText),

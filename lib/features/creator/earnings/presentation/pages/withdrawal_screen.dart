@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/presentation/providers/reward_provider.dart';
@@ -176,7 +177,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                   // Connectアカウント未設定の場合
                   if (connectStatus.value == null || !connectStatus.value!.hasConnect) ...[
                     _buildSetupSection(
-                      icon: Icons.account_balance_outlined,
+                      icon: PhosphorIconsRegular.bank,
                       title: AppLocalizations.of(context)!.payoutAccount,
                       description: AppLocalizations.of(context)!.withdrawSetupDescription,
                       buttonText: AppLocalizations.of(context)!.setUpNow,
@@ -187,7 +188,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                   // 設定済みだが確認未完了
                   else if (!connectStatus.value!.payoutsEnabled) ...[
                     _buildSetupSection(
-                      icon: Icons.pending_outlined,
+                      icon: PhosphorIconsRegular.clock,
                       title: AppLocalizations.of(context)!.verificationInProgress,
                       description: connectStatus.value!.detailsSubmitted
                           ? AppLocalizations.of(context)!.accountVerifyingStripe
@@ -212,7 +213,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(Icons.check_circle, size: 20, color: ColorPalette.positive500),
+                          Icon(PhosphorIconsFill.checkCircle, size: 20, color: ColorPalette.positive500),
                           SizedBox(width: SpacePalette.sm),
                           Text(
                             AppLocalizations.of(context)!.readyForWithdrawals,

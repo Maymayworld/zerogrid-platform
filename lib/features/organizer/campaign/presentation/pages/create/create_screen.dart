@@ -1,5 +1,6 @@
 // lib/features/organizer/campaign/presentation/pages/create/create_screen.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../../shared/theme/app_theme.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -29,7 +30,7 @@ class CreateScreen extends HookConsumerWidget {
         title: Text(AppLocalizations.of(context)!.createCampaign, style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () {
             ref.read(organizerTabIndexProvider.notifier).state = 0;
           },
@@ -61,7 +62,7 @@ class CreateScreen extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.star, size: 32),
+                      Icon(PhosphorIconsFill.star, size: 32),
                       SizedBox(height: SpacePalette.base),
                       Text(AppLocalizations.of(context)!.createWithAI, style: TextStylePalette.title),
                       SizedBox(height: SpacePalette.sm),
@@ -97,7 +98,7 @@ class CreateScreen extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(Icons.star, size: 32),
+                      Icon(PhosphorIconsFill.star, size: 32),
                       SizedBox(height: SpacePalette.base),
                       Text(AppLocalizations.of(context)!.createManually, style: TextStylePalette.title),
                       SizedBox(height: SpacePalette.sm),

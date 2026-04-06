@@ -1,6 +1,7 @@
 // lib/screens/organizer/deposit/presentation/pages/deposit_success_screen.dart
 import 'package:flutter/material.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../../shared/theme/app_theme.dart';
 import '../../../../../../shared/theme/main_layout.dart';
 import '../../../../../../features/auth/data/models/user_role.dart';
@@ -32,7 +33,7 @@ class DepositSuccessScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.check,
+                  PhosphorIconsRegular.check,
                   size: 60,
                   color: ColorPalette.white,
                 ),

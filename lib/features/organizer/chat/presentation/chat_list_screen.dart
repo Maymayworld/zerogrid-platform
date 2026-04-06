@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/widgets/common_search_bar.dart';
@@ -237,7 +238,7 @@ class _ProjectChatItem extends HookWidget {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.group_outlined,
+                        PhosphorIconsRegular.users,
                         size: 16,
                         color: ColorPalette.neutral800,
                       ),
@@ -260,7 +261,7 @@ class _ProjectChatItem extends HookWidget {
                   child: Row(
                     children: [
                       Icon(
-                        Icons.person_outline,
+                        PhosphorIconsRegular.user,
                         size: 16,
                         color: ColorPalette.neutral800,
                       ),

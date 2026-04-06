@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../organizer/campaign/data/models/campaign.dart';
 import '../../../../organizer/campaign/presentation/providers/campaign_service_provider.dart';
@@ -142,14 +143,14 @@ class FindScreen extends HookConsumerWidget {
                                 height: 40,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) => Icon(
-                                  Icons.person,
+                                  PhosphorIconsFill.user,
                                   size: 22,
                                   color: ColorPalette.neutral400,
                                 ),
                               ),
                             )
                           : Icon(
-                              Icons.person,
+                              PhosphorIconsFill.user,
                               size: 22,
                               color: ColorPalette.neutral400,
                             ),
@@ -157,13 +158,13 @@ class FindScreen extends HookConsumerWidget {
                   ),
                   Spacer(),
                   // 検索ガラスボタン
-                  _buildGlassButton(icon: Icons.search, onTap: () {}),
+                  _buildGlassButton(icon: PhosphorIconsRegular.magnifyingGlass, onTap: () {}),
                   SizedBox(width: SpacePalette.sm),
                   // いいねフィルターガラスボタン
                   _buildGlassButton(
                     icon: showLikedOnly.value
-                        ? Icons.favorite
-                        : Icons.favorite_border,
+                        ? PhosphorIconsFill.heart
+                        : PhosphorIconsRegular.heart,
                     iconColor: showLikedOnly.value
                         ? ColorPalette.critical500
                         : ColorPalette.neutral800,
@@ -177,7 +178,7 @@ class FindScreen extends HookConsumerWidget {
                     clipBehavior: Clip.none,
                     children: [
                       _buildGlassButton(
-                        icon: Icons.notifications_outlined,
+                        icon: PhosphorIconsRegular.bell,
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
@@ -284,11 +285,11 @@ class FindScreen extends HookConsumerWidget {
                   child: Row(
                     children: List.generate(filterCategories.length, (index) {
                       final icons = [
-                        Icons.all_inclusive,
-                        Icons.business,
-                        Icons.gamepad,
-                        Icons.music_note,
-                        Icons.podcasts,
+                        PhosphorIconsRegular.infinity,
+                        PhosphorIconsRegular.buildings,
+                        PhosphorIconsRegular.gameController,
+                        PhosphorIconsFill.musicNote,
+                        PhosphorIconsFill.microphone,
                       ];
                       return Padding(
                         padding: EdgeInsets.only(right: SpacePalette.sm),
@@ -386,7 +387,7 @@ class FindScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoadCampaigns, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -401,7 +402,7 @@ class FindScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.search_off, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.magnifyingGlassMinus, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noMatchingCampaigns, style: TextStylePalette.subText),
           ],

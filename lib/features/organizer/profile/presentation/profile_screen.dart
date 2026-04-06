@@ -19,6 +19,7 @@ import 'pages/account_settings_screen.dart';
 import 'widgets/notification_settings_sheet.dart';
 import '../../../../shared/widgets/language_settings_sheet.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 class ProfileScreen extends HookConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -122,7 +123,7 @@ class ProfileScreen extends HookConsumerWidget {
                           ),
                         ),
                         child: Icon(
-                          Icons.edit,
+                          PhosphorIconsRegular.pencilSimple,
                           size: 16,
                           color: ColorPalette.neutral800,
                         ),
@@ -168,7 +169,7 @@ class ProfileScreen extends HookConsumerWidget {
                     Row(
                       children: [
                         Icon(
-                          Icons.account_balance_wallet_outlined,
+                          PhosphorIconsRegular.wallet,
                           size: 16,
                           color: ColorPalette.white,
                         ),
@@ -200,8 +201,8 @@ class ProfileScreen extends HookConsumerWidget {
                               },
                               child: Icon(
                                 isBalanceVisible.value
-                                    ? Icons.visibility_outlined
-                                    : Icons.visibility_off_outlined,
+                                    ? PhosphorIconsRegular.eye
+                                    : PhosphorIconsRegular.eyeSlash,
                                 size: 20,
                                 color: ColorPalette.white,
                               ),
@@ -227,7 +228,7 @@ class ProfileScreen extends HookConsumerWidget {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.add, size: 16, color: ColorPalette.white),
+                                    Icon(PhosphorIconsRegular.plus, size: 16, color: ColorPalette.white),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       AppLocalizations.of(context)!.deposit,
@@ -327,7 +328,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.alternate_email,
+                    icon: PhosphorIconsRegular.at,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,
                     label: AppLocalizations.of(context)!.followZeroGrid,
@@ -339,7 +340,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.description_outlined,
+                    icon: PhosphorIconsRegular.fileText,
                     iconBackgroundColor: const Color(0xFFE3F2FD),
                     iconColor: const Color(0xFF2196F3),
                     label: AppLocalizations.of(context)!.termsOfService,
@@ -351,7 +352,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.shield_outlined,
+                    icon: PhosphorIconsRegular.shield,
                     iconBackgroundColor: const Color(0xFFE8F5E9),
                     iconColor: const Color(0xFF4CAF50),
                     label: AppLocalizations.of(context)!.privacyPolicy,
@@ -401,12 +402,12 @@ class ProfileScreen extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(Icons.photo_library),
+                leading: Icon(PhosphorIconsFill.images),
                 title: Text(AppLocalizations.of(context)!.chooseFromLibrary, style: TextStylePalette.normalText),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
               ListTile(
-                leading: Icon(Icons.camera_alt),
+                leading: Icon(PhosphorIconsFill.camera),
                 title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),

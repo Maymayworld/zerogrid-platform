@@ -1,6 +1,7 @@
 // lib/widgets/filter_bottom_sheet.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import 'platform_icon.dart';
@@ -46,7 +47,7 @@ class FilterBottomSheet extends HookWidget {
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Icon(
-                    Icons.close,
+                    PhosphorIconsRegular.x,
                     size: 24,
                     color: ColorPalette.neutral800,
                   ),

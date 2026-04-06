@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 import '../presentation/providers/locale_provider.dart';
@@ -117,7 +118,7 @@ class _LanguageOption extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                Icons.language,
+                PhosphorIconsRegular.globe,
                 size: 18,
                 color: isSelected
                     ? ColorPalette.neutral800
@@ -145,7 +146,7 @@ class _LanguageOption extends StatelessWidget {
             ),
             if (isSelected)
               Icon(
-                Icons.check_circle,
+                PhosphorIconsFill.checkCircle,
                 size: 22,
                 color: ColorPalette.neutral800,
               ),

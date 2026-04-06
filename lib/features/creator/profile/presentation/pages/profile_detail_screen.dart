@@ -1,6 +1,7 @@
 // lib/features/creator/profile/presentation/pages/profile_detail_screen.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -69,7 +70,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
           backgroundColor: ColorPalette.neutral100,
           actions: [
             IconButton(
-              icon: Icon(Icons.edit_outlined, size: 22),
+              icon: Icon(PhosphorIconsRegular.pencilSimple, size: 22),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -136,8 +137,8 @@ class ProfileDetailScreen extends HookConsumerWidget {
                 labelStyle: TextStylePalette.smTitle,
                 unselectedLabelStyle: TextStylePalette.smText,
                 tabs: [
-                  Tab(icon: Icon(Icons.grid_on, size: 20)),
-                  Tab(icon: Icon(Icons.favorite_border, size: 20)),
+                  Tab(icon: Icon(PhosphorIconsRegular.gridFour, size: 20)),
+                  Tab(icon: Icon(PhosphorIconsRegular.heart, size: 20)),
                 ],
               ),
             ),
@@ -150,7 +151,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
                     context,
                     submissions: myPosts.value,
                     isLoading: isLoadingPosts.value,
-                    emptyIcon: Icons.videocam_off_outlined,
+                    emptyIcon: PhosphorIconsRegular.videoCameraSlash,
                     emptyText: AppLocalizations.of(context)!.noSubmissionsYet,
                   ),
                   // タブ2: いいねした動画
@@ -158,7 +159,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
                     context,
                     submissions: likedPosts.value,
                     isLoading: isLoadingLiked.value,
-                    emptyIcon: Icons.favorite_border,
+                    emptyIcon: PhosphorIconsRegular.heart,
                     emptyText: AppLocalizations.of(context)!.noLikedProjectsYet,
                   ),
                 ],
@@ -249,7 +250,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
   Widget _thumbnailPlaceholder() {
     return Center(
       child: Icon(
-        Icons.play_circle_outline,
+        PhosphorIconsRegular.playCircle,
         color: ColorPalette.neutral400,
         size: 32,
       ),
@@ -325,7 +326,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
               SizedBox(height: SpacePalette.lg),
               ListTile(
                 leading: Icon(
-                  Icons.image_outlined,
+                  PhosphorIconsRegular.image,
                   color: ColorPalette.neutral800,
                 ),
                 title: Text(
@@ -337,7 +338,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
               Divider(color: ColorPalette.neutral200),
               ListTile(
                 leading: Icon(
-                  Icons.camera_alt_outlined,
+                  PhosphorIconsRegular.camera,
                   color: ColorPalette.neutral800,
                 ),
                 title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
@@ -463,7 +464,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
                           ),
                         ),
                         child: Icon(
-                          Icons.camera_alt_outlined,
+                          PhosphorIconsRegular.camera,
                           size: 16,
                           color: ColorPalette.neutral800,
                         ),

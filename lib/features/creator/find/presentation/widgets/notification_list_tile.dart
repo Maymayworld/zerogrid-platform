@@ -1,5 +1,6 @@
 // lib/features/creator/find/presentation/widgets/notification_list_tile.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/data/models/app_notification.dart';
 
@@ -92,27 +93,27 @@ class NotificationListTile extends StatelessWidget {
   IconData _getIcon(String type) {
     switch (type) {
       case 'campaign_joined':
-        return Icons.person_add_outlined;
+        return PhosphorIconsRegular.userPlus;
       case 'submission_created':
-        return Icons.upload_outlined;
+        return PhosphorIconsRegular.uploadSimple;
       case 'submission_approved':
-        return Icons.check_circle_outline;
+        return PhosphorIconsRegular.checkCircle;
       case 'submission_rejected':
-        return Icons.cancel_outlined;
+        return PhosphorIconsRegular.xCircle;
       case 'new_message':
-        return Icons.chat_bubble_outline;
+        return PhosphorIconsRegular.chatCircle;
       case 'news':
-        return Icons.campaign_outlined;
+        return PhosphorIconsRegular.megaphone;
       case 'reward_received':
-        return Icons.payments_outlined;
+        return PhosphorIconsRegular.money;
       case 'new_participation':
-        return Icons.person_add_outlined;
+        return PhosphorIconsRegular.userPlus;
       case 'new_submission':
-        return Icons.video_library_outlined;
+        return PhosphorIconsRegular.filmStrip;
       case 'campaign_completed':
-        return Icons.flag_outlined;
+        return PhosphorIconsRegular.flag;
       default:
-        return Icons.notifications_outlined;
+        return PhosphorIconsRegular.bell;
     }
   }
 

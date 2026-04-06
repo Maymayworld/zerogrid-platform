@@ -1,6 +1,7 @@
 // lib/features/organizer/campaign/presentation/pages/submission_review_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
@@ -67,14 +68,14 @@ class SubmissionReviewScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.submissions, style: TextStylePalette.title),
         centerTitle: true,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsRegular.arrowClockwise, color: ColorPalette.neutral800),
             onPressed: loadSubmissions,
           ),
         ],
@@ -169,7 +170,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -187,7 +188,7 @@ class SubmissionReviewScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.video_library_outlined, size: 48,
+            Icon(PhosphorIconsRegular.filmStrip, size: 48,
                 color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noSubmissionsYet, style: TextStylePalette.subText),
@@ -313,7 +314,7 @@ class _SubmissionCard extends StatelessWidget {
                     ? NetworkImage(submission.creatorAvatarUrl!)
                     : null,
                 child: submission.creatorAvatarUrl == null
-                    ? Icon(Icons.person, size: 20, color: ColorPalette.neutral500)
+                    ? Icon(PhosphorIconsFill.user, size: 20, color: ColorPalette.neutral500)
                     : null,
               ),
               SizedBox(width: SpacePalette.sm),
@@ -370,7 +371,7 @@ class _SubmissionCard extends StatelessWidget {
                     ),
                   ),
                   Icon(
-                    Icons.open_in_new,
+                    PhosphorIconsRegular.arrowSquareOut,
                     size: 16,
                     color: ColorPalette.neutral400,
                   ),
@@ -402,10 +403,10 @@ class _SubmissionCard extends StatelessWidget {
                 children: [
                   Icon(
                     submission.uploadStatus == 'posted'
-                        ? Icons.check_circle
+                        ? PhosphorIconsFill.checkCircle
                         : submission.uploadStatus == 'failed'
-                            ? Icons.error
-                            : Icons.upload,
+                            ? PhosphorIconsFill.warningCircle
+                            : PhosphorIconsRegular.uploadSimple,
                     size: 14,
                     color: submission.uploadStatus == 'posted'
                         ? ColorPalette.positive500
@@ -454,7 +455,7 @@ class _SubmissionCard extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.link, size: 14, color: ColorPalette.positive500),
+                    Icon(PhosphorIconsRegular.link, size: 14, color: ColorPalette.positive500),
                     SizedBox(width: 4),
                     Expanded(
                       child: Text(
@@ -499,7 +500,7 @@ class _SubmissionCard extends StatelessWidget {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Icon(Icons.comment, size: 14, color: ColorPalette.neutral500),
+                  Icon(PhosphorIconsRegular.chatText, size: 14, color: ColorPalette.neutral500),
                   SizedBox(width: SpacePalette.xs),
                   Expanded(
                     child: Text(
@@ -530,7 +531,7 @@ class _SubmissionCard extends StatelessWidget {
                         submission.id,
                         'rejected',
                       ),
-                      icon: Icon(Icons.close, size: 16),
+                      icon: Icon(PhosphorIconsRegular.x, size: 16),
                       label: Text(AppLocalizations.of(context)!.reject),
                       style: OutlinedButton.styleFrom(
                         foregroundColor: Colors.red,
@@ -553,7 +554,7 @@ class _SubmissionCard extends StatelessWidget {
                         submission.id,
                         'approved',
                       ),
-                      icon: Icon(Icons.check, size: 16),
+                      icon: Icon(PhosphorIconsRegular.check, size: 16),
                       label: Text(AppLocalizations.of(context)!.approve),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorPalette.positive500,

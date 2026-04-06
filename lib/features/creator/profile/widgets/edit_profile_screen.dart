@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 
@@ -29,7 +30,7 @@ class EditProfileScreen extends HookWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _ImagePickerOption(
-                  icon: Icons.photo_library_outlined,
+                  icon: PhosphorIconsRegular.images,
                   label: AppLocalizations.of(context)!.chooseFromLibrary,
                   onTap: () {
                     Navigator.pop(context);
@@ -40,7 +41,7 @@ class EditProfileScreen extends HookWidget {
                 ),
                 SizedBox(height: SpacePalette.sm),
                 _ImagePickerOption(
-                  icon: Icons.camera_alt_outlined,
+                  icon: PhosphorIconsRegular.camera,
                   label: AppLocalizations.of(context)!.takePhoto,
                   onTap: () {
                     Navigator.pop(context);
@@ -84,7 +85,7 @@ class EditProfileScreen extends HookWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -128,7 +129,7 @@ class EditProfileScreen extends HookWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
-                                  Icons.camera_alt,
+                                  PhosphorIconsFill.camera,
                                   size: 16,
                                   color: ColorPalette.neutral100,
                                 ),
@@ -216,7 +217,7 @@ class EditProfileScreen extends HookWidget {
                               ),
                             ),
                             Icon(
-                              Icons.calendar_today,
+                              PhosphorIconsRegular.calendar,
                               size: 16,
                               color: ColorPalette.neutral400,
                             ),

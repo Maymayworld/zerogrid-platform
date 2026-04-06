@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../shared/theme/app_theme.dart';
@@ -134,7 +135,7 @@ class PersonalChatScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -248,7 +249,7 @@ class PersonalChatScreen extends HookConsumerWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.arrow_upward,
+                        PhosphorIconsRegular.arrowUp,
                         color: ColorPalette.white,
                         size: 20,
                       ),
@@ -312,7 +313,7 @@ class _MessageBubble extends StatelessWidget {
                       ),
                       SizedBox(width: SpacePalette.xs),
                       Icon(
-                        Icons.done_all,
+                        PhosphorIconsRegular.checks,
                         size: 12,
                         color: ColorPalette.neutral400,
                       ),

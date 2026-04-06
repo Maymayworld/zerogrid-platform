@@ -1,5 +1,6 @@
 // lib/features/creator/chat/presentation/chat_screen.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -129,7 +130,7 @@ class ProjectChatScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -246,7 +247,7 @@ class ProjectChatScreen extends HookConsumerWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.arrow_upward,
+                          PhosphorIconsRegular.arrowUp,
                           color: ColorPalette.white,
                           size: 20,
                         ),
@@ -315,7 +316,7 @@ class _MessageBubble extends StatelessWidget {
                       ),
                       SizedBox(width: SpacePalette.xs),
                       Icon(
-                        Icons.done_all,
+                        PhosphorIconsRegular.checks,
                         size: 12,
                         color: ColorPalette.neutral400,
                       ),
@@ -338,7 +339,7 @@ class _MessageBubble extends StatelessWidget {
               backgroundImage:
                   avatarUrl != null ? NetworkImage(avatarUrl!) : null,
               child: avatarUrl == null
-                  ? Icon(Icons.person, size: 16, color: ColorPalette.white)
+                  ? Icon(PhosphorIconsFill.user, size: 16, color: ColorPalette.white)
                   : null,
             )
           else

@@ -1,5 +1,6 @@
 // lib/features/organizer/campaign/presentation/widgets/campaign_card.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
@@ -61,7 +62,7 @@ class OrganizerCampaignCard extends StatelessWidget {
                 return Container(
                   color: ColorPalette.neutral400,
                   child: Center(
-                    child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
+                    child: Icon(PhosphorIconsFill.image, size: 50, color: ColorPalette.neutral400),
                   ),
                 );
               },

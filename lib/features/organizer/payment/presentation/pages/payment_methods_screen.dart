@@ -5,6 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../data/models/payment_method.dart';
 import '../providers/payment_provider.dart';
@@ -132,7 +133,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -177,7 +178,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
                                 color: ColorPalette.white,
                               ),
                             )
-                          : Icon(Icons.add),
+                          : Icon(PhosphorIconsRegular.plus),
                       label: Text(
                         isAdding.value ? AppLocalizations.of(context)!.loading : AppLocalizations.of(context)!.paymentMethods,
                         style: TextStylePalette.buttonTextWhite,
@@ -207,7 +208,7 @@ class _EmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.credit_card_outlined,
+            PhosphorIconsRegular.creditCard,
             size: 64,
             color: ColorPalette.neutral300,
           ),
@@ -249,7 +250,7 @@ class _PaymentMethodCard extends StatelessWidget {
       case 'jcb':
         return FontAwesomeIcons.ccJcb;
       default:
-        return Icons.credit_card;
+        return PhosphorIconsFill.creditCard;
     }
   }
 
@@ -334,7 +335,7 @@ class _PaymentMethodCard extends StatelessWidget {
           IconButton(
             onPressed: onRemove,
             icon: Icon(
-              Icons.delete_outline,
+              PhosphorIconsRegular.trash,
               color: ColorPalette.neutral400,
               size: 20,
             ),

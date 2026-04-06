@@ -1,5 +1,6 @@
 // lib/features/creator/project/presentation/pages/success_screen.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/theme/creator_main_layout.dart';
@@ -32,7 +33,7 @@ class ProjectSuccessScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  Icons.check,
+                  PhosphorIconsRegular.check,
                   size: 60,
                   color: ColorPalette.neutral100,
                 ),

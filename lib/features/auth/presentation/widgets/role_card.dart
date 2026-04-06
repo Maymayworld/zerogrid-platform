@@ -1,6 +1,7 @@
 // lib/features/auth/presentation/widgets/role_card.dart
 // 確認済み
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 
 class RoleCard extends StatelessWidget {
@@ -38,7 +39,7 @@ class RoleCard extends StatelessWidget {
                         Text(title, style: TextStylePalette.listTitle),
                         Spacer(),
                         Icon(
-                          Icons.arrow_forward,
+                          PhosphorIconsRegular.arrowRight,
                           size: FontSizePalette.size14,
                           color: ColorPalette.neutral800,
                         ),

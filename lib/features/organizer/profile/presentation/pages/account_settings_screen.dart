@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 
 class OrganizerAccountSettingsScreen extends HookConsumerWidget {
@@ -44,7 +45,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          Icons.close,
+                          PhosphorIconsRegular.x,
                           size: 18,
                           color: ColorPalette.neutral800,
                         ),
@@ -116,7 +117,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                             Row(
                               children: [
                                 Icon(
-                                  Icons.warning_outlined,
+                                  PhosphorIconsRegular.warning,
                                   size: 18,
                                   color: ColorPalette.critical500,
                                 ),

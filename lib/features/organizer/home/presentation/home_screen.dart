@@ -4,6 +4,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../shared/theme/app_theme.dart';
 import '../../../../shared/presentation/providers/notification_provider.dart';
 import '../../../creator/find/presentation/widgets/notification_sheet.dart';
@@ -134,7 +135,7 @@ class _DashboardHeader extends StatelessWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            Icons.notifications_outlined,
+                            PhosphorIconsRegular.bell,
                             color: ColorPalette.white,
                             size: 22,
                           ),
@@ -216,7 +217,7 @@ class _DashboardHeader extends StatelessWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            Icons.touch_app_outlined,
+                            PhosphorIconsRegular.handTap,
                             color: ColorPalette.white,
                             size: 24,
                           ),
@@ -586,7 +587,7 @@ class _ProjectsCard extends ConsumerWidget {
                     child: Column(
                       children: [
                         Icon(
-                          Icons.campaign_outlined,
+                          PhosphorIconsRegular.megaphone,
                           size: 48,
                           color: ColorPalette.neutral400,
                         ),
@@ -702,10 +703,10 @@ class _ProjectListItem extends StatelessWidget {
                         imageUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(Icons.campaign, color: ColorPalette.neutral400);
+                          return Icon(PhosphorIconsFill.megaphone, color: ColorPalette.neutral400);
                         },
                       )
-                    : Icon(Icons.campaign, color: ColorPalette.neutral400),
+                    : Icon(PhosphorIconsFill.megaphone, color: ColorPalette.neutral400),
               ),
             ),
 
@@ -732,7 +733,7 @@ class _ProjectListItem extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: SpacePalette.sm),
-                      Icon(Icons.visibility, size: 12, color: ColorPalette.neutral400),
+                      Icon(PhosphorIconsFill.eye, size: 12, color: ColorPalette.neutral400),
                       SizedBox(width: 2),
                       Text(
                         totalViews,

@@ -1,6 +1,7 @@
 // lib/features/auth/presentation/pages/signup_screen2.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/shared/widgets/duolingo_form_components.dart';
@@ -87,7 +88,7 @@ class SignUpScreen2 extends HookConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -166,7 +167,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.close,
+                            PhosphorIconsRegular.x,
                             size: 14,
                             color: ColorPalette.critical500,
                           ),
@@ -184,7 +185,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.check,
+                            PhosphorIconsRegular.check,
                             size: 14,
                             color: ColorPalette.positive500,
                           ),
@@ -235,10 +236,10 @@ class SignUpScreen2 extends HookConsumerWidget {
       case UsernameStatus.taken:
         return IconButton(
           onPressed: () => controller.clear(),
-          icon: Icon(Icons.close, color: ColorPalette.critical500, size: 20),
+          icon: Icon(PhosphorIconsRegular.x, color: ColorPalette.critical500, size: 20),
         );
       case UsernameStatus.available:
-        return Icon(Icons.check, color: ColorPalette.positive500, size: 20);
+        return Icon(PhosphorIconsRegular.check, color: ColorPalette.positive500, size: 20);
       default:
         return null;
     }

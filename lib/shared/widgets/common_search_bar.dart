@@ -1,6 +1,7 @@
 // lib/shared/widgets/common_search_bar.dart
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../theme/app_theme.dart';
 
@@ -37,7 +38,7 @@ class CommonSearchBar extends StatelessWidget {
           ),
           // 虫眼鏡アイコン
           prefixIcon: Icon(
-            Icons.search,
+            PhosphorIconsRegular.magnifyingGlass,
             color: ColorPalette.neutral400,
             size: 24,
           ),

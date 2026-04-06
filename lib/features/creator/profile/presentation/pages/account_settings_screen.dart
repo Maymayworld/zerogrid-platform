@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
@@ -163,7 +164,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        Icons.close,
+                        PhosphorIconsRegular.x,
                         size: 18,
                         color: ColorPalette.neutral800,
                       ),
@@ -282,7 +283,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                           Row(
                             children: [
                               Icon(
-                                Icons.warning_outlined,
+                                PhosphorIconsRegular.warning,
                                 size: 18,
                                 color: ColorPalette.critical500,
                               ),
@@ -518,7 +519,7 @@ class _PlatformSection extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, size: 14, color: ColorPalette.neutral700),
+                        Icon(PhosphorIconsRegular.plus, size: 14, color: ColorPalette.neutral700),
                         SizedBox(width: 2),
                         Text(
                           AppLocalizations.of(context)!.add,

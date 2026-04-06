@@ -1,5 +1,6 @@
 // lib/features/creator/campaign/presentation/pages/menu_screen.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -87,7 +88,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Icon(
-                      Icons.arrow_back,
+                      PhosphorIconsRegular.arrowLeft,
                       color: ColorPalette.neutral800,
                       size: 24,
                     ),
@@ -148,7 +149,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                                 return Container(
                                   color: ColorPalette.white,
                                   child: Center(
-                                    child: Icon(Icons.image, size: 50, color: ColorPalette.neutral400),
+                                    child: Icon(PhosphorIconsFill.image, size: 50, color: ColorPalette.neutral400),
                                   ),
                                 );
                               },
@@ -198,7 +199,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                         children: [
                           Expanded(
                             child:                           _ChatBox(
-                              icon: Icons.group,
+                              icon: PhosphorIconsFill.users,
                               label: AppLocalizations.of(context)!.chat,
                               onTap: () {
                                 if (campaign != null) {
@@ -218,7 +219,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                           SizedBox(width: SpacePalette.base),
                           Expanded(
                             child:                           _ChatBox(
-                              icon: Icons.person,
+                              icon: PhosphorIconsFill.user,
                               label: AppLocalizations.of(context)!.personalChat,
                               onTap: () {
                                 if (campaign != null) {
@@ -241,7 +242,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
 
                       // Download Project Files
                       _ActionSection(
-                        icon: Icons.download,
+                        icon: PhosphorIconsRegular.downloadSimple,
                         title: AppLocalizations.of(context)!.projectFiles,
                         subtitle: '${campaign?.resources.length ?? 0} items',
                         onTap: () {
@@ -260,7 +261,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
 
                       // Submit Your Video
                       _ActionSection(
-                        icon: Icons.upload,
+                        icon: PhosphorIconsRegular.uploadSimple,
                         title: AppLocalizations.of(context)!.submit,
                         subtitle: AppLocalizations.of(context)!.video,
                         onTap: () {
@@ -362,7 +363,7 @@ class _ActionSection extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(Icons.chevron_right, size: 20, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsRegular.caretRight, size: 20, color: ColorPalette.neutral400),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 // lib/features/creator/campaign/presentation/pages/upload_screen.dart
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -257,7 +258,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
         elevation: 0,
         shape: Border(bottom: BorderSide(color: ColorPalette.neutral200, width: 1)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.submit, style: TextStylePalette.title),
@@ -284,7 +285,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.campaign_outlined, size: 20, color: ColorPalette.neutral500),
+                                Icon(PhosphorIconsRegular.megaphone, size: 20, color: ColorPalette.neutral500),
                                 SizedBox(width: SpacePalette.sm),
                                 Expanded(
                                   child: Text(campaignName, style: TextStylePalette.smTitle, maxLines: 1, overflow: TextOverflow.ellipsis),
@@ -308,7 +309,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Icon(Icons.settings_outlined, size: 16, color: ColorPalette.neutral500),
+                                      Icon(PhosphorIconsRegular.gear, size: 16, color: ColorPalette.neutral500),
                                       SizedBox(width: 4),
                                       Text(AppLocalizations.of(context)!.manage, style: TextStylePalette.smSubText),
                                     ],
@@ -443,7 +444,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_circle_outline, size: 20, color: ColorPalette.neutral500),
+            Icon(PhosphorIconsRegular.plusCircle, size: 20, color: ColorPalette.neutral500),
             SizedBox(width: SpacePalette.sm),
             Text(AppLocalizations.of(context)!.connectAnAccount, style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500)),
           ],
@@ -554,7 +555,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(Icons.swap_horiz, size: 14, color: ColorPalette.white),
+                            Icon(PhosphorIconsRegular.arrowsLeftRight, size: 14, color: ColorPalette.white),
                             SizedBox(width: 2),
                             Text(AppLocalizations.of(context)!.switchAccount, style: TextStylePalette.smSubText.copyWith(color: ColorPalette.white)),
                           ],
@@ -562,11 +563,11 @@ class ProjectUploadScreen extends HookConsumerWidget {
                       ),
                     ),
                   if (allExpired)
-                    Icon(Icons.warning_amber_rounded, size: 20, color: Colors.orange.shade700),
+                    Icon(PhosphorIconsRegular.warning, size: 20, color: Colors.orange.shade700),
                   if (selected)
                     Padding(
                       padding: EdgeInsets.only(left: SpacePalette.sm),
-                      child: Icon(Icons.check_circle, size: 20, color: ColorPalette.positive400),
+                      child: Icon(PhosphorIconsFill.checkCircle, size: 20, color: ColorPalette.positive400),
                     ),
                 ],
               ),
@@ -604,7 +605,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                   return ListTile(
                     contentPadding: EdgeInsets.zero,
                     leading: Icon(
-                      isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
+                      isSelected ? PhosphorIconsFill.radioButton : PhosphorIconsRegular.circle,
                       color: isSelected ? ColorPalette.neutral800 : ColorPalette.neutral400,
                     ),
                     title: Text(
@@ -657,7 +658,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                         width: 64, height: 64,
                         child: videoThumbnailBytes.value != null
                             ? Image.memory(videoThumbnailBytes.value!, fit: BoxFit.cover)
-                            : Container(color: ColorPalette.neutral200, child: Icon(Icons.videocam, color: ColorPalette.neutral400)),
+                            : Container(color: ColorPalette.neutral200, child: Icon(PhosphorIconsFill.videoCamera, color: ColorPalette.neutral400)),
                       ),
                     ),
                     SizedBox(width: SpacePalette.sm),
@@ -687,7 +688,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                       },
                       child: Padding(
                         padding: EdgeInsets.all(SpacePalette.xs),
-                        child: Icon(Icons.close, size: 20, color: ColorPalette.neutral400),
+                        child: Icon(PhosphorIconsRegular.x, size: 20, color: ColorPalette.neutral400),
                       ),
                     ),
                   ],
@@ -697,7 +698,7 @@ class ProjectUploadScreen extends HookConsumerWidget {
                 padding: EdgeInsets.symmetric(vertical: SpacePalette.lg + SpacePalette.sm),
                 child: Column(
                   children: [
-                    Icon(Icons.video_library_outlined, size: 36, color: ColorPalette.neutral400),
+                    Icon(PhosphorIconsRegular.filmStrip, size: 36, color: ColorPalette.neutral400),
                     SizedBox(height: SpacePalette.sm),
                     Text(AppLocalizations.of(context)!.tapToSelectVideo, style: TextStylePalette.normalText.copyWith(color: ColorPalette.neutral500)),
                     SizedBox(height: SpacePalette.xs),

@@ -4,6 +4,7 @@ import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'app_theme.dart';
 import '../widgets/common_search_bar.dart';
 import '../widgets/platform_icon.dart';
@@ -81,7 +82,7 @@ class CreatorMainLayout extends HookConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Icon(Icons.add, color: ColorPalette.white, size: 28),
+                  child: Icon(PhosphorIconsRegular.plus, color: ColorPalette.white, size: 28),
                 ),
               ),
             ),
@@ -229,7 +230,7 @@ class _CampaignSelectorSheet extends HookWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            Icons.campaign_outlined,
+                            PhosphorIconsRegular.megaphone,
                             size: 48,
                             color: ColorPalette.neutral400,
                           ),
@@ -334,7 +335,7 @@ class _CampaignTile extends StatelessWidget {
                         errorBuilder: (_, __, ___) => Container(
                           color: ColorPalette.neutral200,
                           child: Icon(
-                            Icons.campaign,
+                            PhosphorIconsFill.megaphone,
                             size: 36,
                             color: ColorPalette.neutral400,
                           ),
@@ -469,7 +470,7 @@ class _CampaignTile extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(color: ColorPalette.white, width: 1.5),
       ),
-      child: Icon(Icons.person, size: 14, color: ColorPalette.neutral800),
+      child: Icon(PhosphorIconsFill.user, size: 14, color: ColorPalette.neutral800),
     );
   }
 }
@@ -509,15 +510,15 @@ class _LiquidGlassNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _GlassNavItem(
-                  icon: Icons.search,
-                  selectedIcon: Icons.search,
+                  icon: PhosphorIconsRegular.magnifyingGlass,
+                  selectedIcon: PhosphorIconsRegular.magnifyingGlass,
                   label: AppLocalizations.of(context)!.navFind,
                   isSelected: currentIndex == 0,
                   onTap: () => onTap(0),
                 ),
                 _GlassNavItem(
-                  icon: Icons.article_outlined,
-                  selectedIcon: Icons.article_rounded,
+                  icon: PhosphorIconsRegular.article,
+                  selectedIcon: PhosphorIconsFill.article,
                   label: AppLocalizations.of(context)!.navFeed,
                   isSelected: currentIndex == 1,
                   onTap: () => onTap(1),
@@ -531,15 +532,15 @@ class _LiquidGlassNavBar extends StatelessWidget {
                   ),
                 ),
                 _GlassNavItem(
-                  icon: Icons.work_outline,
-                  selectedIcon: Icons.work_rounded,
+                  icon: PhosphorIconsRegular.briefcase,
+                  selectedIcon: PhosphorIconsFill.briefcase,
                   label: AppLocalizations.of(context)!.navCampaign,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
                 ),
                 _GlassNavItem(
-                  icon: Icons.person_outline_rounded,
-                  selectedIcon: Icons.person_rounded,
+                  icon: PhosphorIconsRegular.user,
+                  selectedIcon: PhosphorIconsFill.user,
                   label: AppLocalizations.of(context)!.navProfile,
                   isSelected: currentIndex == 4,
                   onTap: () => onTap(4),
@@ -706,7 +707,7 @@ class _CenterBlackButton extends StatelessWidget {
           ],
         ),
         child: Icon(
-          isSelected ? Icons.dashboard_rounded : Icons.dashboard_outlined,
+          isSelected ? PhosphorIconsFill.squaresFour : PhosphorIconsRegular.squaresFour,
           color: ColorPalette.white,
           size: 24,
         ),

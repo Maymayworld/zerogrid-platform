@@ -2,6 +2,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zero_grid/features/auth/presentation/providers/user_profile_provider.dart';
@@ -122,7 +123,7 @@ class PreviewPage extends HookConsumerWidget {
         title: Text(AppLocalizations.of(context)!.preview, style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -158,7 +159,7 @@ class PreviewPage extends HookConsumerWidget {
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(Icons.upload, size: 40, color: ColorPalette.neutral500),
+                                    Icon(PhosphorIconsRegular.uploadSimple, size: 40, color: ColorPalette.neutral500),
                                     SizedBox(height: SpacePalette.sm),
                                     Text(
                                       AppLocalizations.of(context)!.uploadImage,
@@ -219,7 +220,7 @@ class PreviewPage extends HookConsumerWidget {
                                   ? NetworkImage(profile!.avatarUrl!)
                                   : null,
                               child: profile?.avatarUrl == null
-                                  ? Icon(Icons.business, size: 20, color: ColorPalette.neutral600)
+                                  ? Icon(PhosphorIconsRegular.buildings, size: 20, color: ColorPalette.neutral600)
                                   : null,
                             ),
                             SizedBox(width: SpacePalette.sm),
@@ -273,7 +274,7 @@ class PreviewPage extends HookConsumerWidget {
                               padding: EdgeInsets.only(bottom: SpacePalette.xs),
                               child: Row(
                                 children: [
-                                  Icon(Icons.link, size: 16, color: ColorPalette.neutral500),
+                                  Icon(PhosphorIconsRegular.link, size: 16, color: ColorPalette.neutral500),
                                   SizedBox(width: SpacePalette.xs),
                                   Expanded(
                                     child: Text(

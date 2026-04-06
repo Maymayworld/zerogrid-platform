@@ -1,5 +1,6 @@
 // lib/features/creator/find/presentation/widgets/notification_sheet.dart
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
@@ -34,7 +35,7 @@ class NotificationSheet extends HookConsumerWidget {
                     child: Container(
                       padding: EdgeInsets.all(8),
                       child: Icon(
-                        Icons.arrow_back,
+                        PhosphorIconsRegular.arrowLeft,
                         size: 24,
                         color: ColorPalette.neutral800,
                       ),
@@ -59,7 +60,7 @@ class NotificationSheet extends HookConsumerWidget {
                     child: Container(
                       padding: EdgeInsets.all(8),
                       child: Icon(
-                        Icons.done_all,
+                        PhosphorIconsRegular.checks,
                         size: 24,
                         color: ColorPalette.neutral800,
                       ),
@@ -84,7 +85,7 @@ class NotificationSheet extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            Icons.notifications_none,
+                            PhosphorIconsRegular.bell,
                             size: 64,
                             color: ColorPalette.neutral300,
                           ),

@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../shared/theme/app_theme.dart';
 import '../../../shared/widgets/profile_menu_section.dart';
@@ -152,7 +153,7 @@ class ProfileScreen extends HookConsumerWidget {
                         ),
                       ),
                       Icon(
-                        Icons.chevron_right,
+                        PhosphorIconsRegular.caretRight,
                         size: 20,
                         color: ColorPalette.neutral400,
                       ),
@@ -249,7 +250,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.alternate_email,
+                    icon: PhosphorIconsRegular.at,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,
                     label: AppLocalizations.of(context)!.followZeroGrid,
@@ -266,7 +267,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.description_outlined,
+                    icon: PhosphorIconsRegular.fileText,
                     iconBackgroundColor: const Color(0xFFE3F2FD),
                     iconColor: const Color(0xFF2196F3),
                     label: AppLocalizations.of(context)!.termsOfService,
@@ -278,7 +279,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: Icons.shield_outlined,
+                    icon: PhosphorIconsRegular.shield,
                     iconBackgroundColor: const Color(0xFFE8F5E9),
                     iconColor: const Color(0xFF4CAF50),
                     label: AppLocalizations.of(context)!.privacyPolicy,
@@ -330,7 +331,7 @@ class ProfileScreen extends HookConsumerWidget {
         child: Row(
           children: [
             Icon(
-              Icons.account_balance_outlined,
+              PhosphorIconsRegular.bank,
               size: 24,
               color: ColorPalette.white,
             ),
@@ -370,7 +371,7 @@ class ProfileScreen extends HookConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(Icons.account_balance, size: 24, color: ColorPalette.white),
+            Icon(PhosphorIconsFill.bank, size: 24, color: ColorPalette.white),
             SizedBox(width: SpacePalette.inner),
             Expanded(
               child: Column(
@@ -405,7 +406,7 @@ class ProfileScreen extends HookConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    Icons.check_circle,
+                    PhosphorIconsFill.checkCircle,
                     size: 14,
                     color: ColorPalette.positive500,
                   ),
@@ -445,7 +446,7 @@ class ProfileScreen extends HookConsumerWidget {
           child: Row(
             children: [
               Icon(
-                Icons.account_balance_outlined,
+                PhosphorIconsRegular.bank,
                 size: 24,
                 color: ColorPalette.white,
               ),
@@ -513,7 +514,7 @@ class ProfileScreen extends HookConsumerWidget {
         child: Row(
           children: [
             Icon(
-              Icons.account_balance_outlined,
+              PhosphorIconsRegular.bank,
               size: 24,
               color: ColorPalette.white,
             ),
@@ -538,7 +539,7 @@ class ProfileScreen extends HookConsumerWidget {
                 ],
               ),
             ),
-            Icon(Icons.arrow_forward_ios, size: 16, color: ColorPalette.white),
+            Icon(PhosphorIconsRegular.caretRight, size: 16, color: ColorPalette.white),
           ],
         ),
       ),

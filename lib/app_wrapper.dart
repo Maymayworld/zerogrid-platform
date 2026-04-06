@@ -4,6 +4,7 @@ import 'package:app_links/app_links.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'features/auth/presentation/pages/reset_password_screen.dart';
@@ -260,7 +261,7 @@ class _CheckoutReturnHandlerState extends ConsumerState<_CheckoutReturnHandler>
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            Icon(Icons.check_circle, color: ColorPalette.positive500),
+            Icon(PhosphorIconsFill.checkCircle, color: ColorPalette.positive500),
             SizedBox(width: SpacePalette.sm),
             Text(title),
           ],
@@ -325,7 +326,7 @@ class _NoProfileScreenState extends ConsumerState<_NoProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.account_circle_outlined, size: 64, color: ColorPalette.neutral400),
+              Icon(PhosphorIconsRegular.userCircle, size: 64, color: ColorPalette.neutral400),
               SizedBox(height: 16),
               Text(
                 AppLocalizations.of(context)!.profileNotFound,

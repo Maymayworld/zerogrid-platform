@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:video_player/video_player.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import '../../../../../shared/theme/app_theme.dart';
@@ -204,7 +205,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle_outline, size: 64, color: ColorPalette.positive500),
+            Icon(PhosphorIconsRegular.checkCircle, size: 64, color: ColorPalette.positive500),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noApprovalRequests, style: TextStylePalette.title.copyWith(color: ColorPalette.white)),
           ],
@@ -278,7 +279,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                             CircleAvatar(
                               radius: 18,
                               backgroundImage: current.creatorAvatarUrl.isNotEmpty ? NetworkImage(current.creatorAvatarUrl) : null,
-                              child: current.creatorAvatarUrl.isEmpty ? Icon(Icons.person, size: 18, color: ColorPalette.neutral400) : null,
+                              child: current.creatorAvatarUrl.isEmpty ? Icon(PhosphorIconsFill.user, size: 18, color: ColorPalette.neutral400) : null,
                             ),
                             SizedBox(width: SpacePalette.sm),
                             Expanded(
@@ -315,7 +316,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                     child: Container(
                       width: 64, height: 64,
                       decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), shape: BoxShape.circle),
-                      child: Icon(Icons.play_arrow, color: ColorPalette.white, size: 36),
+                      child: Icon(PhosphorIconsFill.play, color: ColorPalette.white, size: 36),
                     ),
                   ),
               ],
@@ -341,7 +342,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.close, color: ColorPalette.critical500, size: 20),
+                        Icon(PhosphorIconsRegular.x, color: ColorPalette.critical500, size: 20),
                         SizedBox(width: SpacePalette.xs),
                         Text(AppLocalizations.of(context)!.reject, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.critical500)),
                       ],
@@ -363,7 +364,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.check, color: ColorPalette.white, size: 20),
+                        Icon(PhosphorIconsRegular.check, color: ColorPalette.white, size: 20),
                         SizedBox(width: SpacePalette.xs),
                         Text(AppLocalizations.of(context)!.approve, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
                       ],

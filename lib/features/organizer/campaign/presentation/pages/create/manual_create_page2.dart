@@ -1,6 +1,7 @@
 // lib/features/organizer/campaign/presentation/pages/create/manual_create_page2.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page3.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -47,7 +48,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
         onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -76,7 +77,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 children: [
                   Expanded(
                     child: CategoryBox(
-                    icon: Icon(Icons.business),
+                    icon: Icon(PhosphorIconsRegular.buildings),
                     name: categoryDisplay[0],
                     isSelected: selectedCategory.value == 0,
                     onTap: () {selectedCategory.value = 0;}
@@ -85,7 +86,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   SizedBox(width: SpacePalette.base),
                   Expanded(
                     child: CategoryBox(
-                      icon: Icon(Icons.gamepad),
+                      icon: Icon(PhosphorIconsRegular.gameController),
                       name: categoryDisplay[1],
                       isSelected: selectedCategory.value == 1,
                       onTap: () {selectedCategory.value = 1;}
@@ -98,7 +99,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 children: [
                   Expanded(
                     child: CategoryBox(
-                    icon: Icon(Icons.music_note),
+                    icon: Icon(PhosphorIconsFill.musicNote),
                     name: categoryDisplay[2],
                     isSelected: selectedCategory.value == 2,
                     onTap: () {selectedCategory.value = 2;}
@@ -107,7 +108,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   SizedBox(width: SpacePalette.base),
                   Expanded(
                     child: CategoryBox(
-                      icon: Icon(Icons.voice_chat),
+                      icon: Icon(PhosphorIconsRegular.waveform),
                       name: categoryDisplay[3],
                       isSelected: selectedCategory.value == 3,
                       onTap: () {selectedCategory.value = 3;}

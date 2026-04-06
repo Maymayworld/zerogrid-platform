@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import '../../../../../shared/theme/app_theme.dart';
@@ -101,7 +102,7 @@ class BankAccountScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -318,7 +319,7 @@ class _BankAccountCard extends StatelessWidget {
           Row(
             children: [
               Icon(
-                Icons.account_balance,
+                PhosphorIconsFill.bank,
                 size: 16,
                 color: ColorPalette.neutral100,
               ),

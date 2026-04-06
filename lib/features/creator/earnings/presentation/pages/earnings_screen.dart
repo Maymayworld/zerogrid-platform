@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import '../../../../../shared/widgets/platform_icon.dart';
 import '../../../../../shared/presentation/providers/reward_provider.dart';
@@ -37,7 +38,7 @@ class EarningsScreen extends HookConsumerWidget {
             expandedHeight: 200,
             pinned: true,
             leading: IconButton(
-              icon: Icon(Icons.arrow_back, color: Colors.white),
+              icon: Icon(PhosphorIconsRegular.arrowLeft, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
             backgroundColor: ColorPalette.neutral800,
@@ -152,7 +153,7 @@ class EarningsScreen extends HookConsumerWidget {
                       title: AppLocalizations.of(context)!.earnings,
                       valueAsync: totalEarningsAsync,
                       formatValue: _formatCurrency,
-                      icon: Icons.account_balance_wallet,
+                      icon: PhosphorIconsFill.wallet,
                       color: Colors.green,
                     ),
                   ),
@@ -162,7 +163,7 @@ class EarningsScreen extends HookConsumerWidget {
                       title: AppLocalizations.of(context)!.pending,
                       valueAsync: estimatedAsync,
                       formatValue: (v) => '~${_formatCurrency(v)}',
-                      icon: Icons.hourglass_empty,
+                      icon: PhosphorIconsRegular.hourglass,
                       color: Colors.orange,
                     ),
                   ),
@@ -208,7 +209,7 @@ class EarningsScreen extends HookConsumerWidget {
                         child: Column(
                           children: [
                             Icon(
-                              Icons.video_library_outlined,
+                              PhosphorIconsRegular.filmStrip,
                               size: 48,
                               color: ColorPalette.neutral400,
                             ),
@@ -444,7 +445,7 @@ class _PerformanceCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      Icons.visibility,
+                      PhosphorIconsFill.eye,
                       size: 14,
                       color: ColorPalette.neutral500,
                     ),
@@ -508,14 +509,14 @@ class _EarningHistoryCard extends StatelessWidget {
                       width: 48,
                       height: 48,
                       color: ColorPalette.neutral200,
-                      child: Icon(Icons.image, color: ColorPalette.neutral400),
+                      child: Icon(PhosphorIconsFill.image, color: ColorPalette.neutral400),
                     ),
                   )
                 : Container(
                     width: 48,
                     height: 48,
                     color: ColorPalette.neutral200,
-                    child: Icon(Icons.campaign, color: ColorPalette.neutral400),
+                    child: Icon(PhosphorIconsFill.megaphone, color: ColorPalette.neutral400),
                   ),
           ),
           SizedBox(width: SpacePalette.base),

@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import '../../../../../shared/theme/app_theme.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
@@ -75,7 +76,7 @@ class SelectAmountScreen extends HookConsumerWidget {
           builder: (ctx) => AlertDialog(
             title: Row(
               children: [
-                Icon(Icons.check_circle, color: ColorPalette.positive500),
+                Icon(PhosphorIconsFill.checkCircle, color: ColorPalette.positive500),
                 SizedBox(width: SpacePalette.sm),
                 Text(AppLocalizations.of(context)!.depositSuccessful),
               ],
@@ -172,7 +173,7 @@ class SelectAmountScreen extends HookConsumerWidget {
           backgroundColor: ColorPalette.white,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
             onPressed: () {
               cancelPending();
             },
@@ -189,7 +190,7 @@ class SelectAmountScreen extends HookConsumerWidget {
               children: [
                 Spacer(),
                 Icon(
-                  Icons.open_in_browser,
+                  PhosphorIconsRegular.globe,
                   size: 64,
                   color: ColorPalette.smashedPumpkin600,
                 ),
@@ -272,7 +273,7 @@ class SelectAmountScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.deposit, style: TextStylePalette.title.copyWith(
@@ -364,7 +365,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            Icons.remove,
+                            PhosphorIconsRegular.minus,
                             color: ColorPalette.neutral600,
                             size: 24,
                           ),
@@ -392,7 +393,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            Icons.add,
+                            PhosphorIconsRegular.plus,
                             color: ColorPalette.neutral600,
                             size: 24,
                           ),

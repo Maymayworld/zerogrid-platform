@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 
 /// プラットフォームロゴ画像を提供するヘルパー
 class PlatformIcon {
@@ -27,7 +28,7 @@ class PlatformIcon {
       case 'tiktok':
         return tiktok(size: size);
       default:
-        return Icon(Icons.video_library, size: size);
+        return Icon(PhosphorIconsRegular.filmStrip, size: size);
     }
   }
 
@@ -36,6 +37,6 @@ class PlatformIcon {
     if (platforms.contains('YouTube')) return youtube(size: size);
     if (platforms.contains('Instagram')) return instagram(size: size);
     if (platforms.contains('TikTok')) return tiktok(size: size);
-    return Icon(Icons.video_library, size: size);
+    return Icon(PhosphorIconsRegular.filmStrip, size: size);
   }
 }

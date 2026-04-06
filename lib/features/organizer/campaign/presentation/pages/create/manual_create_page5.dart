@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:phosphor_flutter/phosphor_flutter.dart';
 import 'package:zero_grid/l10n/app_localizations.dart';
 import 'package:zero_grid/features/organizer/campaign/presentation/pages/create/manual_create_page6.dart';
 import 'package:zero_grid/shared/theme/app_theme.dart';
@@ -50,7 +51,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-        icon: Icon(Icons.arrow_back, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
         onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -92,7 +93,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
                       constraints: BoxConstraints(),
                       onPressed: selectDate,
                       icon: Icon(
-                        Icons.calendar_month,
+                        PhosphorIconsRegular.calendar,
                         color: ColorPalette.neutral400,
                         size: 24,
                       )
