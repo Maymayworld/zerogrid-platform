@@ -102,7 +102,7 @@ class BankAccountScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -319,7 +319,7 @@ class _BankAccountCard extends StatelessWidget {
           Row(
             children: [
               Icon(
-                PhosphorIconsFill.bank,
+                PhosphorIconsBold.bank,
                 size: 16,
                 color: ColorPalette.neutral100,
               ),

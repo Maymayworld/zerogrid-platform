@@ -123,14 +123,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.house,
+                  icon: PhosphorIconsBold.house,
                   selectedIcon: PhosphorIconsFill.house,
                   label: AppLocalizations.of(context)!.navHome,
                   isSelected: currentIndex == 0,
                   onTap: () => onTap(0),
                 ),
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.squaresFour,
+                  icon: PhosphorIconsBold.squaresFour,
                   selectedIcon: PhosphorIconsFill.squaresFour,
                   label: AppLocalizations.of(context)!.navCampaigns,
                   isSelected: currentIndex == 1,
@@ -146,14 +146,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
                   ),
                 ),
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.chatCircle,
+                  icon: PhosphorIconsBold.chatCircle,
                   selectedIcon: PhosphorIconsFill.chatCircle,
                   label: AppLocalizations.of(context)!.navChat,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
                 ),
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.user,
+                  icon: PhosphorIconsBold.user,
                   selectedIcon: PhosphorIconsFill.user,
                   label: AppLocalizations.of(context)!.navProfile,
                   isSelected: currentIndex == 4,
@@ -308,11 +308,11 @@ class _CenterBlackButton extends StatelessWidget {
     // リクエストなし → プラスアイコン（案件作成画面）
     final IconData icon;
     if (isSelected) {
-      icon = PhosphorIconsRegular.check;
+      icon = PhosphorIconsBold.check;
     } else if (hasPendingRequests) {
-      icon = PhosphorIconsRegular.deviceMobile;
+      icon = PhosphorIconsBold.deviceMobile;
     } else {
-      icon = PhosphorIconsRegular.plus;
+      icon = PhosphorIconsBold.plus;
     }
 
     return GestureDetector(

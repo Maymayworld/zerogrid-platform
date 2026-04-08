@@ -88,7 +88,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Icon(
-                      PhosphorIconsRegular.arrowLeft,
+                      PhosphorIconsBold.arrowLeft,
                       color: ColorPalette.neutral800,
                       size: 24,
                     ),
@@ -149,7 +149,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                                 return Container(
                                   color: ColorPalette.white,
                                   child: Center(
-                                    child: Icon(PhosphorIconsFill.image, size: 50, color: ColorPalette.neutral400),
+                                    child: Icon(PhosphorIconsBold.image, size: 50, color: ColorPalette.neutral400),
                                   ),
                                 );
                               },
@@ -199,7 +199,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                         children: [
                           Expanded(
                             child:                           _ChatBox(
-                              icon: PhosphorIconsFill.users,
+                              icon: PhosphorIconsBold.users,
                               label: AppLocalizations.of(context)!.chat,
                               onTap: () {
                                 if (campaign != null) {
@@ -219,7 +219,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
                           SizedBox(width: SpacePalette.base),
                           Expanded(
                             child:                           _ChatBox(
-                              icon: PhosphorIconsFill.user,
+                              icon: PhosphorIconsBold.user,
                               label: AppLocalizations.of(context)!.personalChat,
                               onTap: () {
                                 if (campaign != null) {
@@ -242,7 +242,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
 
                       // Download Project Files
                       _ActionSection(
-                        icon: PhosphorIconsRegular.downloadSimple,
+                        icon: PhosphorIconsBold.downloadSimple,
                         title: AppLocalizations.of(context)!.projectFiles,
                         subtitle: '${campaign?.resources.length ?? 0} items',
                         onTap: () {
@@ -261,7 +261,7 @@ class ProjectMenuScreen extends HookConsumerWidget {
 
                       // Submit Your Video
                       _ActionSection(
-                        icon: PhosphorIconsRegular.uploadSimple,
+                        icon: PhosphorIconsBold.uploadSimple,
                         title: AppLocalizations.of(context)!.submit,
                         subtitle: AppLocalizations.of(context)!.video,
                         onTap: () {
@@ -363,7 +363,7 @@ class _ActionSection extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(PhosphorIconsRegular.caretRight, size: 20, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.caretRight, size: 20, color: ColorPalette.neutral400),
           ],
         ),
       ),

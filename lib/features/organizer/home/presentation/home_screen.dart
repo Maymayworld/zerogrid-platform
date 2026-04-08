@@ -135,7 +135,7 @@ class _DashboardHeader extends StatelessWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            PhosphorIconsRegular.bell,
+                            PhosphorIconsBold.bell,
                             color: ColorPalette.white,
                             size: 22,
                           ),
@@ -217,7 +217,7 @@ class _DashboardHeader extends StatelessWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            PhosphorIconsRegular.handTap,
+                            PhosphorIconsBold.handTap,
                             color: ColorPalette.white,
                             size: 24,
                           ),
@@ -587,7 +587,7 @@ class _ProjectsCard extends ConsumerWidget {
                     child: Column(
                       children: [
                         Icon(
-                          PhosphorIconsRegular.megaphone,
+                          PhosphorIconsBold.megaphone,
                           size: 48,
                           color: ColorPalette.neutral400,
                         ),
@@ -703,10 +703,10 @@ class _ProjectListItem extends StatelessWidget {
                         imageUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (context, error, stackTrace) {
-                          return Icon(PhosphorIconsFill.megaphone, color: ColorPalette.neutral400);
+                          return Icon(PhosphorIconsBold.megaphone, color: ColorPalette.neutral400);
                         },
                       )
-                    : Icon(PhosphorIconsFill.megaphone, color: ColorPalette.neutral400),
+                    : Icon(PhosphorIconsBold.megaphone, color: ColorPalette.neutral400),
               ),
             ),
 
@@ -733,7 +733,7 @@ class _ProjectListItem extends StatelessWidget {
                         ),
                       ),
                       SizedBox(width: SpacePalette.sm),
-                      Icon(PhosphorIconsFill.eye, size: 12, color: ColorPalette.neutral400),
+                      Icon(PhosphorIconsBold.eye, size: 12, color: ColorPalette.neutral400),
                       SizedBox(width: 2),
                       Text(
                         totalViews,

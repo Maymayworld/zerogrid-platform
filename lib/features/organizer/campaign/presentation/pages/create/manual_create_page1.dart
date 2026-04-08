@@ -24,7 +24,7 @@ class ManualCreatePage1 extends HookConsumerWidget{
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-        icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
         onPressed: () => Navigator.pop(context),
         ),
       ),

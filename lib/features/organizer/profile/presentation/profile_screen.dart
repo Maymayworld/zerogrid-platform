@@ -123,7 +123,7 @@ class ProfileScreen extends HookConsumerWidget {
                           ),
                         ),
                         child: Icon(
-                          PhosphorIconsRegular.pencilSimple,
+                          PhosphorIconsBold.pencilSimple,
                           size: 16,
                           color: ColorPalette.neutral800,
                         ),
@@ -169,7 +169,7 @@ class ProfileScreen extends HookConsumerWidget {
                     Row(
                       children: [
                         Icon(
-                          PhosphorIconsRegular.wallet,
+                          PhosphorIconsBold.wallet,
                           size: 16,
                           color: ColorPalette.white,
                         ),
@@ -201,8 +201,8 @@ class ProfileScreen extends HookConsumerWidget {
                               },
                               child: Icon(
                                 isBalanceVisible.value
-                                    ? PhosphorIconsRegular.eye
-                                    : PhosphorIconsRegular.eyeSlash,
+                                    ? PhosphorIconsBold.eye
+                                    : PhosphorIconsBold.eyeSlash,
                                 size: 20,
                                 color: ColorPalette.white,
                               ),
@@ -228,7 +228,7 @@ class ProfileScreen extends HookConsumerWidget {
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(PhosphorIconsRegular.plus, size: 16, color: ColorPalette.white),
+                                    Icon(PhosphorIconsBold.plus, size: 16, color: ColorPalette.white),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       AppLocalizations.of(context)!.deposit,
@@ -328,7 +328,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: PhosphorIconsRegular.at,
+                    icon: PhosphorIconsBold.at,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,
                     label: AppLocalizations.of(context)!.followZeroGrid,
@@ -340,7 +340,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: PhosphorIconsRegular.fileText,
+                    icon: PhosphorIconsBold.fileText,
                     iconBackgroundColor: const Color(0xFFE3F2FD),
                     iconColor: const Color(0xFF2196F3),
                     label: AppLocalizations.of(context)!.termsOfService,
@@ -352,7 +352,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: PhosphorIconsRegular.shield,
+                    icon: PhosphorIconsBold.shield,
                     iconBackgroundColor: const Color(0xFFE8F5E9),
                     iconColor: const Color(0xFF4CAF50),
                     label: AppLocalizations.of(context)!.privacyPolicy,
@@ -402,12 +402,12 @@ class ProfileScreen extends HookConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               ListTile(
-                leading: Icon(PhosphorIconsFill.images),
+                leading: Icon(PhosphorIconsBold.images),
                 title: Text(AppLocalizations.of(context)!.chooseFromLibrary, style: TextStylePalette.normalText),
                 onTap: () => Navigator.pop(ctx, ImageSource.gallery),
               ),
               ListTile(
-                leading: Icon(PhosphorIconsFill.camera),
+                leading: Icon(PhosphorIconsBold.camera),
                 title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => Navigator.pop(ctx, ImageSource.camera),
               ),

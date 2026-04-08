@@ -133,7 +133,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -178,7 +178,7 @@ class PaymentMethodsScreen extends HookConsumerWidget {
                                 color: ColorPalette.white,
                               ),
                             )
-                          : Icon(PhosphorIconsRegular.plus),
+                          : Icon(PhosphorIconsBold.plus),
                       label: Text(
                         isAdding.value ? AppLocalizations.of(context)!.loading : AppLocalizations.of(context)!.paymentMethods,
                         style: TextStylePalette.buttonTextWhite,
@@ -208,7 +208,7 @@ class _EmptyState extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            PhosphorIconsRegular.creditCard,
+            PhosphorIconsBold.creditCard,
             size: 64,
             color: ColorPalette.neutral300,
           ),
@@ -250,7 +250,7 @@ class _PaymentMethodCard extends StatelessWidget {
       case 'jcb':
         return FontAwesomeIcons.ccJcb;
       default:
-        return PhosphorIconsFill.creditCard;
+        return PhosphorIconsBold.creditCard;
     }
   }
 
@@ -335,7 +335,7 @@ class _PaymentMethodCard extends StatelessWidget {
           IconButton(
             onPressed: onRemove,
             icon: Icon(
-              PhosphorIconsRegular.trash,
+              PhosphorIconsBold.trash,
               color: ColorPalette.neutral400,
               size: 20,
             ),

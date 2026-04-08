@@ -81,7 +81,7 @@ class CampaignScreen extends HookConsumerWidget {
                       );
                     },
                     child: Icon(
-                      PhosphorIconsRegular.bell,
+                      PhosphorIconsBold.bell,
                       size: 24,
                       color: ColorPalette.neutral800,
                     ),
@@ -98,7 +98,7 @@ class CampaignScreen extends HookConsumerWidget {
                 children: [
                   Text(AppLocalizations.of(context)!.myCampaigns, style: TextStylePalette.header),
                   IconButton(
-                    icon: Icon(PhosphorIconsRegular.arrowClockwise, color: ColorPalette.neutral800),
+                    icon: Icon(PhosphorIconsBold.arrowClockwise, color: ColorPalette.neutral800),
                     onPressed: loadParticipatingCampaigns,
                   ),
                 ],
@@ -141,7 +141,7 @@ class CampaignScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -156,7 +156,7 @@ class CampaignScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.megaphone, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.megaphone, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noCampaignsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),

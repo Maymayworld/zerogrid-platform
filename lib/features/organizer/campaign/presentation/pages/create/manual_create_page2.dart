@@ -48,7 +48,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-        icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
         onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -77,7 +77,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 children: [
                   Expanded(
                     child: CategoryBox(
-                    icon: Icon(PhosphorIconsRegular.buildings),
+                    icon: Icon(PhosphorIconsBold.buildings),
                     name: categoryDisplay[0],
                     isSelected: selectedCategory.value == 0,
                     onTap: () {selectedCategory.value = 0;}
@@ -86,7 +86,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   SizedBox(width: SpacePalette.base),
                   Expanded(
                     child: CategoryBox(
-                      icon: Icon(PhosphorIconsRegular.gameController),
+                      icon: Icon(PhosphorIconsBold.gameController),
                       name: categoryDisplay[1],
                       isSelected: selectedCategory.value == 1,
                       onTap: () {selectedCategory.value = 1;}
@@ -99,7 +99,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                 children: [
                   Expanded(
                     child: CategoryBox(
-                    icon: Icon(PhosphorIconsFill.musicNote),
+                    icon: Icon(PhosphorIconsBold.musicNote),
                     name: categoryDisplay[2],
                     isSelected: selectedCategory.value == 2,
                     onTap: () {selectedCategory.value = 2;}
@@ -108,7 +108,7 @@ class ManualCreatePage2 extends HookConsumerWidget{
                   SizedBox(width: SpacePalette.base),
                   Expanded(
                     child: CategoryBox(
-                      icon: Icon(PhosphorIconsRegular.waveform),
+                      icon: Icon(PhosphorIconsBold.waveform),
                       name: categoryDisplay[3],
                       isSelected: selectedCategory.value == 3,
                       onTap: () {selectedCategory.value = 3;}

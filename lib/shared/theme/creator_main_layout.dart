@@ -82,7 +82,7 @@ class CreatorMainLayout extends HookConsumerWidget {
                       ),
                     ],
                   ),
-                  child: Icon(PhosphorIconsRegular.plus, color: ColorPalette.white, size: 28),
+                  child: Icon(PhosphorIconsBold.plus, color: ColorPalette.white, size: 28),
                 ),
               ),
             ),
@@ -230,7 +230,7 @@ class _CampaignSelectorSheet extends HookWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Icon(
-                            PhosphorIconsRegular.megaphone,
+                            PhosphorIconsBold.megaphone,
                             size: 48,
                             color: ColorPalette.neutral400,
                           ),
@@ -335,7 +335,7 @@ class _CampaignTile extends StatelessWidget {
                         errorBuilder: (_, __, ___) => Container(
                           color: ColorPalette.neutral200,
                           child: Icon(
-                            PhosphorIconsFill.megaphone,
+                            PhosphorIconsBold.megaphone,
                             size: 36,
                             color: ColorPalette.neutral400,
                           ),
@@ -470,7 +470,7 @@ class _CampaignTile extends StatelessWidget {
         shape: BoxShape.circle,
         border: Border.all(color: ColorPalette.white, width: 1.5),
       ),
-      child: Icon(PhosphorIconsFill.user, size: 14, color: ColorPalette.neutral800),
+      child: Icon(PhosphorIconsBold.user, size: 14, color: ColorPalette.neutral800),
     );
   }
 }
@@ -510,14 +510,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.magnifyingGlass,
-                  selectedIcon: PhosphorIconsRegular.magnifyingGlass,
+                  icon: PhosphorIconsBold.magnifyingGlass,
+                  selectedIcon: PhosphorIconsFill.magnifyingGlass,
                   label: AppLocalizations.of(context)!.navFind,
                   isSelected: currentIndex == 0,
                   onTap: () => onTap(0),
                 ),
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.article,
+                  icon: PhosphorIconsBold.article,
                   selectedIcon: PhosphorIconsFill.article,
                   label: AppLocalizations.of(context)!.navFeed,
                   isSelected: currentIndex == 1,
@@ -532,14 +532,14 @@ class _LiquidGlassNavBar extends StatelessWidget {
                   ),
                 ),
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.briefcase,
+                  icon: PhosphorIconsBold.briefcase,
                   selectedIcon: PhosphorIconsFill.briefcase,
                   label: AppLocalizations.of(context)!.navCampaign,
                   isSelected: currentIndex == 3,
                   onTap: () => onTap(3),
                 ),
                 _GlassNavItem(
-                  icon: PhosphorIconsRegular.user,
+                  icon: PhosphorIconsBold.user,
                   selectedIcon: PhosphorIconsFill.user,
                   label: AppLocalizations.of(context)!.navProfile,
                   isSelected: currentIndex == 4,
@@ -707,7 +707,7 @@ class _CenterBlackButton extends StatelessWidget {
           ],
         ),
         child: Icon(
-          isSelected ? PhosphorIconsFill.squaresFour : PhosphorIconsRegular.squaresFour,
+          isSelected ? PhosphorIconsFill.squaresFour : PhosphorIconsBold.squaresFour,
           color: ColorPalette.white,
           size: 24,
         ),

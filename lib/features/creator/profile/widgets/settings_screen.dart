@@ -21,7 +21,7 @@ class SettingsScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -158,7 +158,7 @@ class SettingsScreen extends HookConsumerWidget {
                     
                     // Google Calendar
                     _ServiceConnectionTile(
-                      iconWidget: Icon(PhosphorIconsRegular.calendar, size: 20, color: Color(0xFF4285F4)),
+                      iconWidget: Icon(PhosphorIconsBold.calendar, size: 20, color: Color(0xFF4285F4)),
                       iconColor: Color(0xFF4285F4), // Google blue
                       serviceName: 'Google Calendar',
                       description: 'Sync campaign deadlines to your calendar',
@@ -196,7 +196,7 @@ class SettingsScreen extends HookConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Icon(
-                      PhosphorIconsRegular.info,
+                      PhosphorIconsBold.info,
                       size: 16,
                       color: ColorPalette.neutral600,
                     ),

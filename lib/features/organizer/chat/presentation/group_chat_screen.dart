@@ -141,7 +141,7 @@ class GroupChatScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Row(
@@ -267,7 +267,7 @@ class GroupChatScreen extends HookConsumerWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        PhosphorIconsRegular.arrowUp,
+                        PhosphorIconsBold.arrowUp,
                         color: ColorPalette.white,
                         size: 20,
                       ),
@@ -335,7 +335,7 @@ class _MessageBubble extends StatelessWidget {
                       ),
                       SizedBox(width: SpacePalette.xs),
                       Icon(
-                        PhosphorIconsRegular.checks,
+                        PhosphorIconsBold.checks,
                         size: 12,
                         color: ColorPalette.neutral400,
                       ),

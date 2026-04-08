@@ -196,8 +196,8 @@ class SignUpScreen1 extends HookConsumerWidget {
                           suffixIcon: IconButton(
                             icon: Icon(
                               isPasswordVisible.value
-                                  ? PhosphorIconsRegular.eye
-                                  : PhosphorIconsRegular.eyeSlash,
+                                  ? PhosphorIconsBold.eye
+                                  : PhosphorIconsBold.eyeSlash,
                               color: ColorPalette.neutral500,
                               size: 20,
                             ),
@@ -228,8 +228,8 @@ class SignUpScreen1 extends HookConsumerWidget {
                           suffixIcon: IconButton(
                             icon: Icon(
                               isConfirmPasswordVisible.value
-                                  ? PhosphorIconsRegular.eye
-                                  : PhosphorIconsRegular.eyeSlash,
+                                  ? PhosphorIconsBold.eye
+                                  : PhosphorIconsBold.eyeSlash,
                               color: ColorPalette.neutral500,
                               size: 20,
                             ),

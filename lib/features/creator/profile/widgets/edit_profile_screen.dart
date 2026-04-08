@@ -30,7 +30,7 @@ class EditProfileScreen extends HookWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _ImagePickerOption(
-                  icon: PhosphorIconsRegular.images,
+                  icon: PhosphorIconsBold.images,
                   label: AppLocalizations.of(context)!.chooseFromLibrary,
                   onTap: () {
                     Navigator.pop(context);
@@ -41,7 +41,7 @@ class EditProfileScreen extends HookWidget {
                 ),
                 SizedBox(height: SpacePalette.sm),
                 _ImagePickerOption(
-                  icon: PhosphorIconsRegular.camera,
+                  icon: PhosphorIconsBold.camera,
                   label: AppLocalizations.of(context)!.takePhoto,
                   onTap: () {
                     Navigator.pop(context);
@@ -85,7 +85,7 @@ class EditProfileScreen extends HookWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -129,7 +129,7 @@ class EditProfileScreen extends HookWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
-                                  PhosphorIconsFill.camera,
+                                  PhosphorIconsBold.camera,
                                   size: 16,
                                   color: ColorPalette.neutral100,
                                 ),
@@ -217,7 +217,7 @@ class EditProfileScreen extends HookWidget {
                               ),
                             ),
                             Icon(
-                              PhosphorIconsRegular.calendar,
+                              PhosphorIconsBold.calendar,
                               size: 16,
                               color: ColorPalette.neutral400,
                             ),

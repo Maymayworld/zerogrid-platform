@@ -38,7 +38,7 @@ class EarningsScreen extends HookConsumerWidget {
             expandedHeight: 200,
             pinned: true,
             leading: IconButton(
-              icon: Icon(PhosphorIconsRegular.arrowLeft, color: Colors.white),
+              icon: Icon(PhosphorIconsBold.arrowLeft, color: Colors.white),
               onPressed: () => Navigator.pop(context),
             ),
             backgroundColor: ColorPalette.neutral800,
@@ -153,7 +153,7 @@ class EarningsScreen extends HookConsumerWidget {
                       title: AppLocalizations.of(context)!.earnings,
                       valueAsync: totalEarningsAsync,
                       formatValue: _formatCurrency,
-                      icon: PhosphorIconsFill.wallet,
+                      icon: PhosphorIconsBold.wallet,
                       color: Colors.green,
                     ),
                   ),
@@ -163,7 +163,7 @@ class EarningsScreen extends HookConsumerWidget {
                       title: AppLocalizations.of(context)!.pending,
                       valueAsync: estimatedAsync,
                       formatValue: (v) => '~${_formatCurrency(v)}',
-                      icon: PhosphorIconsRegular.hourglass,
+                      icon: PhosphorIconsBold.hourglass,
                       color: Colors.orange,
                     ),
                   ),
@@ -209,7 +209,7 @@ class EarningsScreen extends HookConsumerWidget {
                         child: Column(
                           children: [
                             Icon(
-                              PhosphorIconsRegular.filmStrip,
+                              PhosphorIconsBold.filmStrip,
                               size: 48,
                               color: ColorPalette.neutral400,
                             ),
@@ -445,7 +445,7 @@ class _PerformanceCard extends StatelessWidget {
                 Row(
                   children: [
                     Icon(
-                      PhosphorIconsFill.eye,
+                      PhosphorIconsBold.eye,
                       size: 14,
                       color: ColorPalette.neutral500,
                     ),
@@ -509,14 +509,14 @@ class _EarningHistoryCard extends StatelessWidget {
                       width: 48,
                       height: 48,
                       color: ColorPalette.neutral200,
-                      child: Icon(PhosphorIconsFill.image, color: ColorPalette.neutral400),
+                      child: Icon(PhosphorIconsBold.image, color: ColorPalette.neutral400),
                     ),
                   )
                 : Container(
                     width: 48,
                     height: 48,
                     color: ColorPalette.neutral200,
-                    child: Icon(PhosphorIconsFill.megaphone, color: ColorPalette.neutral400),
+                    child: Icon(PhosphorIconsBold.megaphone, color: ColorPalette.neutral400),
                   ),
           ),
           SizedBox(width: SpacePalette.base),

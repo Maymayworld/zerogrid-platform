@@ -238,7 +238,7 @@ class _ProjectChatItem extends HookWidget {
                   child: Row(
                     children: [
                       Icon(
-                        PhosphorIconsRegular.users,
+                        PhosphorIconsBold.users,
                         size: 16,
                         color: ColorPalette.neutral800,
                       ),
@@ -261,7 +261,7 @@ class _ProjectChatItem extends HookWidget {
                   child: Row(
                     children: [
                       Icon(
-                        PhosphorIconsRegular.user,
+                        PhosphorIconsBold.user,
                         size: 16,
                         color: ColorPalette.neutral800,
                       ),

@@ -28,7 +28,7 @@ class PlatformIcon {
       case 'tiktok':
         return tiktok(size: size);
       default:
-        return Icon(PhosphorIconsRegular.filmStrip, size: size);
+        return Icon(PhosphorIconsBold.filmStrip, size: size);
     }
   }
 
@@ -37,6 +37,6 @@ class PlatformIcon {
     if (platforms.contains('YouTube')) return youtube(size: size);
     if (platforms.contains('Instagram')) return instagram(size: size);
     if (platforms.contains('TikTok')) return tiktok(size: size);
-    return Icon(PhosphorIconsRegular.filmStrip, size: size);
+    return Icon(PhosphorIconsBold.filmStrip, size: size);
   }
 }

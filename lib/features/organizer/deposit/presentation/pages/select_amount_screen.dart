@@ -76,7 +76,7 @@ class SelectAmountScreen extends HookConsumerWidget {
           builder: (ctx) => AlertDialog(
             title: Row(
               children: [
-                Icon(PhosphorIconsFill.checkCircle, color: ColorPalette.positive500),
+                Icon(PhosphorIconsBold.checkCircle, color: ColorPalette.positive500),
                 SizedBox(width: SpacePalette.sm),
                 Text(AppLocalizations.of(context)!.depositSuccessful),
               ],
@@ -173,7 +173,7 @@ class SelectAmountScreen extends HookConsumerWidget {
           backgroundColor: ColorPalette.white,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
             onPressed: () {
               cancelPending();
             },
@@ -190,7 +190,7 @@ class SelectAmountScreen extends HookConsumerWidget {
               children: [
                 Spacer(),
                 Icon(
-                  PhosphorIconsRegular.globe,
+                  PhosphorIconsBold.globe,
                   size: 64,
                   color: ColorPalette.smashedPumpkin600,
                 ),
@@ -273,7 +273,7 @@ class SelectAmountScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.deposit, style: TextStylePalette.title.copyWith(
@@ -365,7 +365,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            PhosphorIconsRegular.minus,
+                            PhosphorIconsBold.minus,
                             color: ColorPalette.neutral600,
                             size: 24,
                           ),
@@ -393,7 +393,7 @@ class SelectAmountScreen extends HookConsumerWidget {
                             borderRadius: BorderRadius.circular(RadiusPalette.base),
                           ),
                           child: Icon(
-                            PhosphorIconsRegular.plus,
+                            PhosphorIconsBold.plus,
                             color: ColorPalette.neutral600,
                             size: 24,
                           ),

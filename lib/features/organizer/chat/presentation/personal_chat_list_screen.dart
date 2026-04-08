@@ -117,7 +117,7 @@ class PersonalChatListScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -155,7 +155,7 @@ class PersonalChatListScreen extends HookConsumerWidget {
                 ),
                 SizedBox(width: SpacePalette.base),
                 Icon(
-                  PhosphorIconsRegular.funnelSimple,
+                  PhosphorIconsBold.funnelSimple,
                   color: ColorPalette.neutral800,
                   size: 24,
                 ),

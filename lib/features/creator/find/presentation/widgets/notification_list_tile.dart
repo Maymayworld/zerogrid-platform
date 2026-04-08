@@ -93,27 +93,27 @@ class NotificationListTile extends StatelessWidget {
   IconData _getIcon(String type) {
     switch (type) {
       case 'campaign_joined':
-        return PhosphorIconsRegular.userPlus;
+        return PhosphorIconsBold.userPlus;
       case 'submission_created':
-        return PhosphorIconsRegular.uploadSimple;
+        return PhosphorIconsBold.uploadSimple;
       case 'submission_approved':
-        return PhosphorIconsRegular.checkCircle;
+        return PhosphorIconsBold.checkCircle;
       case 'submission_rejected':
-        return PhosphorIconsRegular.xCircle;
+        return PhosphorIconsBold.xCircle;
       case 'new_message':
-        return PhosphorIconsRegular.chatCircle;
+        return PhosphorIconsBold.chatCircle;
       case 'news':
-        return PhosphorIconsRegular.megaphone;
+        return PhosphorIconsBold.megaphone;
       case 'reward_received':
-        return PhosphorIconsRegular.money;
+        return PhosphorIconsBold.money;
       case 'new_participation':
-        return PhosphorIconsRegular.userPlus;
+        return PhosphorIconsBold.userPlus;
       case 'new_submission':
-        return PhosphorIconsRegular.filmStrip;
+        return PhosphorIconsBold.filmStrip;
       case 'campaign_completed':
-        return PhosphorIconsRegular.flag;
+        return PhosphorIconsBold.flag;
       default:
-        return PhosphorIconsRegular.bell;
+        return PhosphorIconsBold.bell;
     }
   }
 

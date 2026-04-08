@@ -58,7 +58,7 @@ class CampaignScreen extends HookConsumerWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(PhosphorIconsRegular.clockCounterClockwise, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsBold.clockCounterClockwise, color: ColorPalette.neutral800),
             onPressed: () {
               Navigator.push(
                 context,
@@ -70,7 +70,7 @@ class CampaignScreen extends HookConsumerWidget {
             tooltip: AppLocalizations.of(context)!.approvalHistory,
           ),
           IconButton(
-            icon: Icon(PhosphorIconsRegular.arrowClockwise, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsBold.arrowClockwise, color: ColorPalette.neutral800),
             onPressed: loadCampaigns,
           ),
         ],
@@ -92,7 +92,7 @@ class CampaignScreen extends HookConsumerWidget {
                   hintText: AppLocalizations.of(context)!.search,
                   hintStyle: TextStylePalette.hintText,
                   prefixIcon: Icon(
-                    PhosphorIconsRegular.magnifyingGlass,
+                    PhosphorIconsBold.magnifyingGlass,
                     color: ColorPalette.neutral400,
                     size: 20,
                   ),
@@ -143,7 +143,7 @@ class CampaignScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoadCampaigns, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -160,7 +160,7 @@ class CampaignScreen extends HookConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(
-              PhosphorIconsRegular.megaphone,
+              PhosphorIconsBold.megaphone,
               size: 48,
               color: ColorPalette.neutral400,
             ),

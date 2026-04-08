@@ -62,7 +62,7 @@ class OrganizerCampaignCard extends StatelessWidget {
                 return Container(
                   color: ColorPalette.neutral400,
                   child: Center(
-                    child: Icon(PhosphorIconsFill.image, size: 50, color: ColorPalette.neutral400),
+                    child: Icon(PhosphorIconsBold.image, size: 50, color: ColorPalette.neutral400),
                   ),
                 );
               },

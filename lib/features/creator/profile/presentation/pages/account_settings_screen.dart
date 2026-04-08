@@ -164,7 +164,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
-                        PhosphorIconsRegular.x,
+                        PhosphorIconsBold.x,
                         size: 18,
                         color: ColorPalette.neutral800,
                       ),
@@ -283,7 +283,7 @@ class AccountSettingsScreen extends HookConsumerWidget {
                           Row(
                             children: [
                               Icon(
-                                PhosphorIconsRegular.warning,
+                                PhosphorIconsBold.warning,
                                 size: 18,
                                 color: ColorPalette.critical500,
                               ),
@@ -519,7 +519,7 @@ class _PlatformSection extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(PhosphorIconsRegular.plus, size: 14, color: ColorPalette.neutral700),
+                        Icon(PhosphorIconsBold.plus, size: 14, color: ColorPalette.neutral700),
                         SizedBox(width: 2),
                         Text(
                           AppLocalizations.of(context)!.add,

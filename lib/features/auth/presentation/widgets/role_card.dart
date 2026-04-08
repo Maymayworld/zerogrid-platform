@@ -39,7 +39,7 @@ class RoleCard extends StatelessWidget {
                         Text(title, style: TextStylePalette.listTitle),
                         Spacer(),
                         Icon(
-                          PhosphorIconsRegular.arrowRight,
+                          PhosphorIconsBold.arrowRight,
                           size: FontSizePalette.size14,
                           color: ColorPalette.neutral800,
                         ),

@@ -143,14 +143,14 @@ class FindScreen extends HookConsumerWidget {
                                 height: 40,
                                 fit: BoxFit.cover,
                                 errorBuilder: (_, __, ___) => Icon(
-                                  PhosphorIconsFill.user,
+                                  PhosphorIconsBold.user,
                                   size: 22,
                                   color: ColorPalette.neutral400,
                                 ),
                               ),
                             )
                           : Icon(
-                              PhosphorIconsFill.user,
+                              PhosphorIconsBold.user,
                               size: 22,
                               color: ColorPalette.neutral400,
                             ),
@@ -158,13 +158,13 @@ class FindScreen extends HookConsumerWidget {
                   ),
                   Spacer(),
                   // 検索ガラスボタン
-                  _buildGlassButton(icon: PhosphorIconsRegular.magnifyingGlass, onTap: () {}),
+                  _buildGlassButton(icon: PhosphorIconsBold.magnifyingGlass, onTap: () {}),
                   SizedBox(width: SpacePalette.sm),
                   // いいねフィルターガラスボタン
                   _buildGlassButton(
                     icon: showLikedOnly.value
-                        ? PhosphorIconsFill.heart
-                        : PhosphorIconsRegular.heart,
+                        ? PhosphorIconsBold.heart
+                        : PhosphorIconsBold.heart,
                     iconColor: showLikedOnly.value
                         ? ColorPalette.critical500
                         : ColorPalette.neutral800,
@@ -178,7 +178,7 @@ class FindScreen extends HookConsumerWidget {
                     clipBehavior: Clip.none,
                     children: [
                       _buildGlassButton(
-                        icon: PhosphorIconsRegular.bell,
+                        icon: PhosphorIconsBold.bell,
                         onTap: () {
                           showModalBottomSheet(
                             context: context,
@@ -285,11 +285,11 @@ class FindScreen extends HookConsumerWidget {
                   child: Row(
                     children: List.generate(filterCategories.length, (index) {
                       final icons = [
-                        PhosphorIconsRegular.infinity,
-                        PhosphorIconsRegular.buildings,
-                        PhosphorIconsRegular.gameController,
-                        PhosphorIconsFill.musicNote,
-                        PhosphorIconsFill.microphone,
+                        PhosphorIconsBold.infinity,
+                        PhosphorIconsBold.buildings,
+                        PhosphorIconsBold.gameController,
+                        PhosphorIconsBold.musicNote,
+                        PhosphorIconsBold.microphone,
                       ];
                       return Padding(
                         padding: EdgeInsets.only(right: SpacePalette.sm),
@@ -387,7 +387,7 @@ class FindScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoadCampaigns, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -402,7 +402,7 @@ class FindScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.magnifyingGlassMinus, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.magnifyingGlassMinus, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noMatchingCampaigns, style: TextStylePalette.subText),
           ],

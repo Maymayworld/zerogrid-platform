@@ -153,7 +153,7 @@ class ProfileScreen extends HookConsumerWidget {
                         ),
                       ),
                       Icon(
-                        PhosphorIconsRegular.caretRight,
+                        PhosphorIconsBold.caretRight,
                         size: 20,
                         color: ColorPalette.neutral400,
                       ),
@@ -250,7 +250,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: PhosphorIconsRegular.at,
+                    icon: PhosphorIconsBold.at,
                     iconBackgroundColor: ColorPalette.neutral100,
                     iconColor: ColorPalette.neutral800,
                     label: AppLocalizations.of(context)!.followZeroGrid,
@@ -267,7 +267,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: PhosphorIconsRegular.fileText,
+                    icon: PhosphorIconsBold.fileText,
                     iconBackgroundColor: const Color(0xFFE3F2FD),
                     iconColor: const Color(0xFF2196F3),
                     label: AppLocalizations.of(context)!.termsOfService,
@@ -279,7 +279,7 @@ class ProfileScreen extends HookConsumerWidget {
                     },
                   ),
                   ProfileMenuItem(
-                    icon: PhosphorIconsRegular.shield,
+                    icon: PhosphorIconsBold.shield,
                     iconBackgroundColor: const Color(0xFFE8F5E9),
                     iconColor: const Color(0xFF4CAF50),
                     label: AppLocalizations.of(context)!.privacyPolicy,
@@ -331,7 +331,7 @@ class ProfileScreen extends HookConsumerWidget {
         child: Row(
           children: [
             Icon(
-              PhosphorIconsRegular.bank,
+              PhosphorIconsBold.bank,
               size: 24,
               color: ColorPalette.white,
             ),
@@ -371,7 +371,7 @@ class ProfileScreen extends HookConsumerWidget {
         ),
         child: Row(
           children: [
-            Icon(PhosphorIconsFill.bank, size: 24, color: ColorPalette.white),
+            Icon(PhosphorIconsBold.bank, size: 24, color: ColorPalette.white),
             SizedBox(width: SpacePalette.inner),
             Expanded(
               child: Column(
@@ -406,7 +406,7 @@ class ProfileScreen extends HookConsumerWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    PhosphorIconsFill.checkCircle,
+                    PhosphorIconsBold.checkCircle,
                     size: 14,
                     color: ColorPalette.positive500,
                   ),
@@ -446,7 +446,7 @@ class ProfileScreen extends HookConsumerWidget {
           child: Row(
             children: [
               Icon(
-                PhosphorIconsRegular.bank,
+                PhosphorIconsBold.bank,
                 size: 24,
                 color: ColorPalette.white,
               ),
@@ -514,7 +514,7 @@ class ProfileScreen extends HookConsumerWidget {
         child: Row(
           children: [
             Icon(
-              PhosphorIconsRegular.bank,
+              PhosphorIconsBold.bank,
               size: 24,
               color: ColorPalette.white,
             ),
@@ -539,7 +539,7 @@ class ProfileScreen extends HookConsumerWidget {
                 ],
               ),
             ),
-            Icon(PhosphorIconsRegular.caretRight, size: 16, color: ColorPalette.white),
+            Icon(PhosphorIconsBold.caretRight, size: 16, color: ColorPalette.white),
           ],
         ),
       ),

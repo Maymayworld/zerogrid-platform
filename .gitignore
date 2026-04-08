@@ -69,6 +69,9 @@ migrate_working_dir/
 # Claude Code
 .claude/
 
+# Figma design assets
+figma-design/
+
 # Secrets
 .secrets/
 supabase/.temp/

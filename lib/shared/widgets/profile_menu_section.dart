@@ -146,7 +146,7 @@ class ProfileMenuItem extends StatelessWidget {
             ],
             if (showChevron)
               Icon(
-                PhosphorIconsRegular.caretRight,
+                PhosphorIconsBold.caretRight,
                 size: 20,
                 color: ColorPalette.neutral400,
               ),

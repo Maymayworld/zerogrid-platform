@@ -168,7 +168,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.connectedAccounts, style: TextStylePalette.title),
@@ -306,7 +306,7 @@ class ConnectedAccountsScreen extends HookConsumerWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(PhosphorIconsRegular.plus, size: 14, color: ColorPalette.neutral700),
+                          Icon(PhosphorIconsBold.plus, size: 14, color: ColorPalette.neutral700),
                           SizedBox(width: 2),
                           Text(
                             AppLocalizations.of(context)!.add,

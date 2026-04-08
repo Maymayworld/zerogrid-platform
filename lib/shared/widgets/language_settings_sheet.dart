@@ -118,7 +118,7 @@ class _LanguageOption extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
               child: Icon(
-                PhosphorIconsRegular.globe,
+                PhosphorIconsBold.globe,
                 size: 18,
                 color: isSelected
                     ? ColorPalette.neutral800
@@ -146,7 +146,7 @@ class _LanguageOption extends StatelessWidget {
             ),
             if (isSelected)
               Icon(
-                PhosphorIconsFill.checkCircle,
+                PhosphorIconsBold.checkCircle,
                 size: 22,
                 color: ColorPalette.neutral800,
               ),

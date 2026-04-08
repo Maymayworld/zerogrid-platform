@@ -87,13 +87,13 @@ class SignUpScreen3 extends HookConsumerWidget {
               ),
               SizedBox(height: SpacePalette.lg),
               ListTile(
-                leading: Icon(PhosphorIconsRegular.image, color: ColorPalette.neutral800),
+                leading: Icon(PhosphorIconsBold.image, color: ColorPalette.neutral800),
                 title: Text(AppLocalizations.of(context)!.chooseFromLibrary, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.gallery),
               ),
               Divider(color: ColorPalette.neutral200),
               ListTile(
-                leading: Icon(PhosphorIconsRegular.camera, color: ColorPalette.neutral800),
+                leading: Icon(PhosphorIconsBold.camera, color: ColorPalette.neutral800),
                 title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
                 onTap: () => pickImage(ImageSource.camera),
               ),
@@ -202,7 +202,7 @@ class SignUpScreen3 extends HookConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -252,7 +252,7 @@ class SignUpScreen3 extends HookConsumerWidget {
                                   ),
                                 )
                               : Icon(
-                                  PhosphorIconsRegular.user,
+                                  PhosphorIconsBold.user,
                                   size: 50,
                                   color: ColorPalette.neutral400,
                                 ),
@@ -264,7 +264,7 @@ class SignUpScreen3 extends HookConsumerWidget {
                       DuolingoOutlineButton(
                         onPressed: showImagePicker,
                         text: AppLocalizations.of(context)!.uploadProfilePicture,
-                        icon: PhosphorIconsRegular.uploadSimple,
+                        icon: PhosphorIconsBold.uploadSimple,
                       ),
                       SizedBox(height: SpacePalette.xs),
                       Text(AppLocalizations.of(context)!.optional, style: TextStylePalette.smSubText),

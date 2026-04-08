@@ -70,7 +70,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
           backgroundColor: ColorPalette.neutral100,
           actions: [
             IconButton(
-              icon: Icon(PhosphorIconsRegular.pencilSimple, size: 22),
+              icon: Icon(PhosphorIconsBold.pencilSimple, size: 22),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -137,8 +137,8 @@ class ProfileDetailScreen extends HookConsumerWidget {
                 labelStyle: TextStylePalette.smTitle,
                 unselectedLabelStyle: TextStylePalette.smText,
                 tabs: [
-                  Tab(icon: Icon(PhosphorIconsRegular.gridFour, size: 20)),
-                  Tab(icon: Icon(PhosphorIconsRegular.heart, size: 20)),
+                  Tab(icon: Icon(PhosphorIconsBold.gridFour, size: 20)),
+                  Tab(icon: Icon(PhosphorIconsBold.heart, size: 20)),
                 ],
               ),
             ),
@@ -151,7 +151,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
                     context,
                     submissions: myPosts.value,
                     isLoading: isLoadingPosts.value,
-                    emptyIcon: PhosphorIconsRegular.videoCameraSlash,
+                    emptyIcon: PhosphorIconsBold.videoCameraSlash,
                     emptyText: AppLocalizations.of(context)!.noSubmissionsYet,
                   ),
                   // タブ2: いいねした動画
@@ -159,7 +159,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
                     context,
                     submissions: likedPosts.value,
                     isLoading: isLoadingLiked.value,
-                    emptyIcon: PhosphorIconsRegular.heart,
+                    emptyIcon: PhosphorIconsBold.heart,
                     emptyText: AppLocalizations.of(context)!.noLikedProjectsYet,
                   ),
                 ],
@@ -250,7 +250,7 @@ class ProfileDetailScreen extends HookConsumerWidget {
   Widget _thumbnailPlaceholder() {
     return Center(
       child: Icon(
-        PhosphorIconsRegular.playCircle,
+        PhosphorIconsBold.playCircle,
         color: ColorPalette.neutral400,
         size: 32,
       ),
@@ -326,7 +326,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
               SizedBox(height: SpacePalette.lg),
               ListTile(
                 leading: Icon(
-                  PhosphorIconsRegular.image,
+                  PhosphorIconsBold.image,
                   color: ColorPalette.neutral800,
                 ),
                 title: Text(
@@ -338,7 +338,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
               Divider(color: ColorPalette.neutral200),
               ListTile(
                 leading: Icon(
-                  PhosphorIconsRegular.camera,
+                  PhosphorIconsBold.camera,
                   color: ColorPalette.neutral800,
                 ),
                 title: Text(AppLocalizations.of(context)!.takePhoto, style: TextStylePalette.normalText),
@@ -464,7 +464,7 @@ class _ProfileEditScreen extends HookConsumerWidget {
                           ),
                         ),
                         child: Icon(
-                          PhosphorIconsRegular.camera,
+                          PhosphorIconsBold.camera,
                           size: 16,
                           color: ColorPalette.neutral800,
                         ),

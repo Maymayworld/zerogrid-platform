@@ -62,7 +62,7 @@ class _ContactSupportHomeScreenState extends State<ContactSupportHomeScreen> {
                         shape: BoxShape.circle,
                       ),
                       child: IconButton(
-                        icon: const Icon(PhosphorIconsRegular.x, size: 22),
+                        icon: const Icon(PhosphorIconsBold.x, size: 22),
                         onPressed: () => Navigator.of(context).pop(),
                         splashRadius: 22,
                       ),
@@ -134,21 +134,21 @@ class _HomeView extends StatelessWidget {
           ),
           SizedBox(height: SpacePalette.lg),
           _SupportOptionTile(
-            icon: PhosphorIconsRegular.question,
+            icon: PhosphorIconsBold.question,
             title: AppLocalizations.of(context)!.frequentlyAskedQuestions,
             subtitle: AppLocalizations.of(context)!.browseFaqSubtitle,
             onTap: onTapFaq,
           ),
           SizedBox(height: SpacePalette.base),
           _SupportOptionTile(
-            icon: PhosphorIconsRegular.chatCircle,
+            icon: PhosphorIconsBold.chatCircle,
             title: AppLocalizations.of(context)!.askForHelp,
             subtitle: AppLocalizations.of(context)!.askHelpSubtitle,
             onTap: onTapAskHelp,
           ),
           SizedBox(height: SpacePalette.base),
           _SupportOptionTile(
-            icon: PhosphorIconsRegular.chatText,
+            icon: PhosphorIconsBold.chatText,
             title: AppLocalizations.of(context)!.giveFeedback,
             subtitle: AppLocalizations.of(context)!.resources,
             onTap: onTapFeedback,
@@ -210,7 +210,7 @@ class _FaqViewState extends State<_FaqView> {
                   turns: isExpanded ? 0.5 : 0.0,
                   duration: const Duration(milliseconds: 150),
                   child: Icon(
-                    PhosphorIconsRegular.caretDown,
+                    PhosphorIconsBold.caretDown,
                     color: ColorPalette.neutral600,
                   ),
                 ),
@@ -288,7 +288,7 @@ class _FaqViewState extends State<_FaqView> {
             TextField(
               decoration: InputDecoration(
                 hintText: AppLocalizations.of(context)!.search,
-                prefixIcon: const Icon(PhosphorIconsRegular.magnifyingGlass, color: Color(0xFFA3A3A3)),
+                prefixIcon: const Icon(PhosphorIconsBold.magnifyingGlass, color: Color(0xFFA3A3A3)),
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 12,
                   horizontal: 8,
@@ -510,7 +510,7 @@ class _SupportOptionTile extends StatelessWidget {
                 ],
               ),
             ),
-            Icon(PhosphorIconsRegular.caretRight, size: 20, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.caretRight, size: 20, color: ColorPalette.neutral400),
           ],
         ),
       ),

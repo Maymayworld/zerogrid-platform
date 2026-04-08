@@ -177,7 +177,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                   // Connectアカウント未設定の場合
                   if (connectStatus.value == null || !connectStatus.value!.hasConnect) ...[
                     _buildSetupSection(
-                      icon: PhosphorIconsRegular.bank,
+                      icon: PhosphorIconsBold.bank,
                       title: AppLocalizations.of(context)!.payoutAccount,
                       description: AppLocalizations.of(context)!.withdrawSetupDescription,
                       buttonText: AppLocalizations.of(context)!.setUpNow,
@@ -188,7 +188,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                   // 設定済みだが確認未完了
                   else if (!connectStatus.value!.payoutsEnabled) ...[
                     _buildSetupSection(
-                      icon: PhosphorIconsRegular.clock,
+                      icon: PhosphorIconsBold.clock,
                       title: AppLocalizations.of(context)!.verificationInProgress,
                       description: connectStatus.value!.detailsSubmitted
                           ? AppLocalizations.of(context)!.accountVerifyingStripe
@@ -213,7 +213,7 @@ class WithdrawalScreen extends HookConsumerWidget {
                       ),
                       child: Row(
                         children: [
-                          Icon(PhosphorIconsFill.checkCircle, size: 20, color: ColorPalette.positive500),
+                          Icon(PhosphorIconsBold.checkCircle, size: 20, color: ColorPalette.positive500),
                           SizedBox(width: SpacePalette.sm),
                           Text(
                             AppLocalizations.of(context)!.readyForWithdrawals,

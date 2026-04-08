@@ -201,7 +201,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           backgroundColor: ColorPalette.white,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
             onPressed: () => Navigator.pop(context),
           ),
           title: Text(AppLocalizations.of(context)!.editProject, style: TextStylePalette.title),
@@ -221,7 +221,7 @@ class EditCampaignScreen extends HookConsumerWidget {
           backgroundColor: ColorPalette.white,
           elevation: 0,
           leading: IconButton(
-            icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+            icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
             onPressed: () => Navigator.pop(context),
           ),
         ),
@@ -237,7 +237,7 @@ class EditCampaignScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.editProject, style: TextStylePalette.title),
@@ -317,7 +317,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
-                                  PhosphorIconsRegular.pencilSimple,
+                                  PhosphorIconsBold.pencilSimple,
                                   size: 20,
                                   color: ColorPalette.white,
                                 ),
@@ -393,7 +393,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                       suffixIcon: IconButton(
                         onPressed: selectDeadline,
                         icon: Icon(
-                          PhosphorIconsRegular.calendar,
+                          PhosphorIconsBold.calendar,
                           color: ColorPalette.neutral400,
                           size: 24,
                         ),
@@ -478,7 +478,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                       child: Row(
                         children: [
                           Icon(
-                            PhosphorIconsFill.filmStrip,
+                            PhosphorIconsBold.filmStrip,
                             size: 24,
                             color: ColorPalette.neutral800,
                           ),
@@ -494,7 +494,7 @@ class EditCampaignScreen extends HookConsumerWidget {
                               ],
                             ),
                           ),
-                          Icon(PhosphorIconsRegular.caretRight,
+                          Icon(PhosphorIconsBold.caretRight,
                               size: 20, color: ColorPalette.neutral400),
                         ],
                       ),
@@ -547,7 +547,7 @@ class _PlaceholderImage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(PhosphorIconsFill.image, size: 40, color: ColorPalette.neutral400),
+          Icon(PhosphorIconsBold.image, size: 40, color: ColorPalette.neutral400),
           SizedBox(height: SpacePalette.sm),
           Text(AppLocalizations.of(context)!.tapToUpload, style: TextStylePalette.subText),
         ],

@@ -250,7 +250,7 @@ class CreatorChatListScreen extends HookConsumerWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(
-                                PhosphorIconsRegular.chatCircle,
+                                PhosphorIconsBold.chatCircle,
                                 size: 48,
                                 color: ColorPalette.neutral400,
                               ),
@@ -378,7 +378,7 @@ class _ChatListItem extends StatelessWidget {
                   backgroundColor: ColorPalette.neutral200,
                   backgroundImage: NetworkImage(avatarUrl),
                   child: isGroupChat
-                      ? Icon(PhosphorIconsRegular.usersThree, color: ColorPalette.neutral400)
+                      ? Icon(PhosphorIconsBold.usersThree, color: ColorPalette.neutral400)
                       : null,
                 ),
                 if (isOnline)

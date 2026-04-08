@@ -38,7 +38,7 @@ class CommonSearchBar extends StatelessWidget {
           ),
           // 虫眼鏡アイコン
           prefixIcon: Icon(
-            PhosphorIconsRegular.magnifyingGlass,
+            PhosphorIconsBold.magnifyingGlass,
             color: ColorPalette.neutral400,
             size: 24,
           ),

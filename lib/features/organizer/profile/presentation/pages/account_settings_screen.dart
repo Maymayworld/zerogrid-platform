@@ -45,7 +45,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          PhosphorIconsRegular.x,
+                          PhosphorIconsBold.x,
                           size: 18,
                           color: ColorPalette.neutral800,
                         ),
@@ -117,7 +117,7 @@ class OrganizerAccountSettingsScreen extends HookConsumerWidget {
                             Row(
                               children: [
                                 Icon(
-                                  PhosphorIconsRegular.warning,
+                                  PhosphorIconsBold.warning,
                                   size: 18,
                                   color: ColorPalette.critical500,
                                 ),

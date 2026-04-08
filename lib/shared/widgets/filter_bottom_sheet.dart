@@ -47,7 +47,7 @@ class FilterBottomSheet extends HookWidget {
                 GestureDetector(
                   onTap: () => Navigator.pop(context),
                   child: Icon(
-                    PhosphorIconsRegular.x,
+                    PhosphorIconsBold.x,
                     size: 24,
                     color: ColorPalette.neutral800,
                   ),

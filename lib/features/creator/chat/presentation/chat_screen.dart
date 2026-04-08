@@ -130,7 +130,7 @@ class ProjectChatScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Column(
@@ -247,7 +247,7 @@ class ProjectChatScreen extends HookConsumerWidget {
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
-                          PhosphorIconsRegular.arrowUp,
+                          PhosphorIconsBold.arrowUp,
                           color: ColorPalette.white,
                           size: 20,
                         ),
@@ -316,7 +316,7 @@ class _MessageBubble extends StatelessWidget {
                       ),
                       SizedBox(width: SpacePalette.xs),
                       Icon(
-                        PhosphorIconsRegular.checks,
+                        PhosphorIconsBold.checks,
                         size: 12,
                         color: ColorPalette.neutral400,
                       ),
@@ -339,7 +339,7 @@ class _MessageBubble extends StatelessWidget {
               backgroundImage:
                   avatarUrl != null ? NetworkImage(avatarUrl!) : null,
               child: avatarUrl == null
-                  ? Icon(PhosphorIconsFill.user, size: 16, color: ColorPalette.white)
+                  ? Icon(PhosphorIconsBold.user, size: 16, color: ColorPalette.white)
                   : null,
             )
           else

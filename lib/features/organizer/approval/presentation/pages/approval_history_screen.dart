@@ -19,7 +19,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
@@ -55,7 +55,7 @@ class ApprovalHistoryScreen extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            PhosphorIconsRegular.clockCounterClockwise,
+            PhosphorIconsBold.clockCounterClockwise,
             size: 80,
             color: ColorPalette.neutral300,
           ),
@@ -126,12 +126,12 @@ class _HistoryItem extends StatelessWidget {
                         request.videoThumbnailUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Icon(
-                          PhosphorIconsRegular.playCircle,
+                          PhosphorIconsBold.playCircle,
                           color: ColorPalette.neutral400,
                         ),
                       )
                     : Icon(
-                        PhosphorIconsRegular.playCircle,
+                        PhosphorIconsBold.playCircle,
                         color: ColorPalette.neutral400,
                       ),
               ),
@@ -206,25 +206,25 @@ class _HistoryItem extends StatelessWidget {
         bgColor = ColorPalette.positive50;
         textColor = ColorPalette.positive500;
         label = AppLocalizations.of(context)!.approved;
-        icon = PhosphorIconsRegular.check;
+        icon = PhosphorIconsBold.check;
         break;
       case ApprovalStatus.rejected:
         bgColor = ColorPalette.critical50;
         textColor = ColorPalette.critical500;
         label = AppLocalizations.of(context)!.rejected;
-        icon = PhosphorIconsRegular.x;
+        icon = PhosphorIconsBold.x;
         break;
       case ApprovalStatus.skipped:
         bgColor = ColorPalette.neutral200;
         textColor = ColorPalette.neutral600;
         label = 'Skipped';
-        icon = PhosphorIconsRegular.skipForward;
+        icon = PhosphorIconsBold.skipForward;
         break;
       default:
         bgColor = ColorPalette.neutral200;
         textColor = ColorPalette.neutral600;
         label = AppLocalizations.of(context)!.pending;
-        icon = PhosphorIconsRegular.hourglass;
+        icon = PhosphorIconsBold.hourglass;
     }
 
     return Container(

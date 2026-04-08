@@ -35,7 +35,7 @@ class NotificationSheet extends HookConsumerWidget {
                     child: Container(
                       padding: EdgeInsets.all(8),
                       child: Icon(
-                        PhosphorIconsRegular.arrowLeft,
+                        PhosphorIconsBold.arrowLeft,
                         size: 24,
                         color: ColorPalette.neutral800,
                       ),
@@ -60,7 +60,7 @@ class NotificationSheet extends HookConsumerWidget {
                     child: Container(
                       padding: EdgeInsets.all(8),
                       child: Icon(
-                        PhosphorIconsRegular.checks,
+                        PhosphorIconsBold.checks,
                         size: 24,
                         color: ColorPalette.neutral800,
                       ),
@@ -85,7 +85,7 @@ class NotificationSheet extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            PhosphorIconsRegular.bell,
+                            PhosphorIconsBold.bell,
                             size: 64,
                             color: ColorPalette.neutral300,
                           ),

@@ -123,7 +123,7 @@ class PreviewPage extends HookConsumerWidget {
         title: Text(AppLocalizations.of(context)!.preview, style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -159,7 +159,7 @@ class PreviewPage extends HookConsumerWidget {
                               : Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Icon(PhosphorIconsRegular.uploadSimple, size: 40, color: ColorPalette.neutral500),
+                                    Icon(PhosphorIconsBold.uploadSimple, size: 40, color: ColorPalette.neutral500),
                                     SizedBox(height: SpacePalette.sm),
                                     Text(
                                       AppLocalizations.of(context)!.uploadImage,
@@ -220,7 +220,7 @@ class PreviewPage extends HookConsumerWidget {
                                   ? NetworkImage(profile!.avatarUrl!)
                                   : null,
                               child: profile?.avatarUrl == null
-                                  ? Icon(PhosphorIconsRegular.buildings, size: 20, color: ColorPalette.neutral600)
+                                  ? Icon(PhosphorIconsBold.buildings, size: 20, color: ColorPalette.neutral600)
                                   : null,
                             ),
                             SizedBox(width: SpacePalette.sm),
@@ -274,7 +274,7 @@ class PreviewPage extends HookConsumerWidget {
                               padding: EdgeInsets.only(bottom: SpacePalette.xs),
                               child: Row(
                                 children: [
-                                  Icon(PhosphorIconsRegular.link, size: 16, color: ColorPalette.neutral500),
+                                  Icon(PhosphorIconsBold.link, size: 16, color: ColorPalette.neutral500),
                                   SizedBox(width: SpacePalette.xs),
                                   Expanded(
                                     child: Text(

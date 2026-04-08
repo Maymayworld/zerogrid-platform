@@ -261,7 +261,7 @@ class _CheckoutReturnHandlerState extends ConsumerState<_CheckoutReturnHandler>
       builder: (ctx) => AlertDialog(
         title: Row(
           children: [
-            Icon(PhosphorIconsFill.checkCircle, color: ColorPalette.positive500),
+            Icon(PhosphorIconsBold.checkCircle, color: ColorPalette.positive500),
             SizedBox(width: SpacePalette.sm),
             Text(title),
           ],
@@ -326,7 +326,7 @@ class _NoProfileScreenState extends ConsumerState<_NoProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(PhosphorIconsRegular.userCircle, size: 64, color: ColorPalette.neutral400),
+              Icon(PhosphorIconsBold.userCircle, size: 64, color: ColorPalette.neutral400),
               SizedBox(height: 16),
               Text(
                 AppLocalizations.of(context)!.profileNotFound,

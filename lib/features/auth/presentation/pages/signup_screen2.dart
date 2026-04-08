@@ -88,7 +88,7 @@ class SignUpScreen2 extends HookConsumerWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -167,7 +167,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            PhosphorIconsRegular.x,
+                            PhosphorIconsBold.x,
                             size: 14,
                             color: ColorPalette.critical500,
                           ),
@@ -185,7 +185,7 @@ class SignUpScreen2 extends HookConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
-                            PhosphorIconsRegular.check,
+                            PhosphorIconsBold.check,
                             size: 14,
                             color: ColorPalette.positive500,
                           ),
@@ -236,10 +236,10 @@ class SignUpScreen2 extends HookConsumerWidget {
       case UsernameStatus.taken:
         return IconButton(
           onPressed: () => controller.clear(),
-          icon: Icon(PhosphorIconsRegular.x, color: ColorPalette.critical500, size: 20),
+          icon: Icon(PhosphorIconsBold.x, color: ColorPalette.critical500, size: 20),
         );
       case UsernameStatus.available:
-        return Icon(PhosphorIconsRegular.check, color: ColorPalette.positive500, size: 20);
+        return Icon(PhosphorIconsBold.check, color: ColorPalette.positive500, size: 20);
       default:
         return null;
     }

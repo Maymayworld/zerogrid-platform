@@ -28,11 +28,11 @@ class LikesScreen extends HookConsumerWidget {
     final likedIds = ref.watch(likedCampaignIdsProvider);
 
     final categories = [
-      {'icon': PhosphorIconsFill.squaresFour, 'label': 'All'},
-      {'icon': PhosphorIconsRegular.briefcase, 'label': 'Business'},
-      {'icon': PhosphorIconsRegular.musicNote, 'label': 'Entertainment'},
-      {'icon': PhosphorIconsFill.musicNote, 'label': 'Music'},
-      {'icon': PhosphorIconsRegular.microphone, 'label': 'Podcast'},
+      {'icon': PhosphorIconsBold.squaresFour, 'label': 'All'},
+      {'icon': PhosphorIconsBold.briefcase, 'label': 'Business'},
+      {'icon': PhosphorIconsBold.musicNote, 'label': 'Entertainment'},
+      {'icon': PhosphorIconsBold.musicNote, 'label': 'Music'},
+      {'icon': PhosphorIconsBold.microphone, 'label': 'Podcast'},
     ];
 
     Future<void> loadLikedCampaigns() async {
@@ -141,7 +141,7 @@ class LikesScreen extends HookConsumerWidget {
                 children: [
                   Text(AppLocalizations.of(context)!.likedProjects, style: TextStylePalette.header),
                   IconButton(
-                    icon: Icon(PhosphorIconsRegular.arrowClockwise, color: ColorPalette.neutral800),
+                    icon: Icon(PhosphorIconsBold.arrowClockwise, color: ColorPalette.neutral800),
                     onPressed: loadLikedCampaigns,
                   ),
                 ],
@@ -185,7 +185,7 @@ class LikesScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.warningCircle, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.warningCircle, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.failedToLoad, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.base),
@@ -200,7 +200,7 @@ class LikesScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.heart, size: 48, color: ColorPalette.neutral400),
+            Icon(PhosphorIconsBold.heart, size: 48, color: ColorPalette.neutral400),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noLikedProjectsYet, style: TextStylePalette.subText),
             SizedBox(height: SpacePalette.xs),

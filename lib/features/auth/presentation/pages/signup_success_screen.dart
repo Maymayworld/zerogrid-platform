@@ -39,7 +39,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                     top: -10,
                     left: -10,
                     child: Icon(
-                      PhosphorIconsRegular.sparkle,
+                      PhosphorIconsBold.sparkle,
                       size: 24,
                       color: ColorPalette.smashedPumpkin400,
                     ),
@@ -49,7 +49,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                     top: -5,
                     right: -15,
                     child: Icon(
-                      PhosphorIconsRegular.sparkle,
+                      PhosphorIconsBold.sparkle,
                       size: 32,
                       color: ColorPalette.positive400,
                     ),
@@ -73,7 +73,7 @@ class SignUpSuccessScreen extends StatelessWidget {
                             ),
                           )
                         : Icon(
-                            PhosphorIconsFill.user,
+                            PhosphorIconsBold.user,
                             size: 50,
                             color: ColorPalette.neutral400,
                           ),

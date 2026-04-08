@@ -194,7 +194,7 @@ class _AnalyticsHeader extends StatelessWidget {
                     color: ColorPalette.white.withOpacity(0.2),
                     borderRadius: BorderRadius.circular(RadiusPalette.base),
                   ),
-                  child: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.white, size: 20),
+                  child: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.white, size: 20),
                 ),
               ),
               SizedBox(height: SpacePalette.base),
@@ -650,7 +650,7 @@ class _PlatformDropdown extends StatelessWidget {
         value: value,
         underline: SizedBox(),
         isDense: true,
-        icon: Icon(PhosphorIconsRegular.caretDown, size: 16, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsBold.caretDown, size: 16, color: ColorPalette.neutral800),
         style: TextStylePalette.smText,
         onChanged: (v) {
           if (v != null) onChanged(v);

@@ -129,7 +129,7 @@ class ReviewScreen extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.reviews, style: TextStylePalette.title),
@@ -146,7 +146,7 @@ class ReviewScreen extends HookConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(PhosphorIconsRegular.chatText, size: 48, color: ColorPalette.neutral300),
+                  Icon(PhosphorIconsBold.chatText, size: 48, color: ColorPalette.neutral300),
                   SizedBox(height: SpacePalette.base),
                   Text(AppLocalizations.of(context)!.noReviewsYet, style: TextStylePalette.subText),
                   if (canAddReview) ...[
@@ -247,7 +247,7 @@ class _ReviewListItemState extends State<_ReviewListItem> {
               ? NetworkImage(review.reviewerAvatarUrl!)
               : null,
           child: review.reviewerAvatarUrl == null
-              ? Icon(PhosphorIconsFill.user, size: 18, color: ColorPalette.neutral500)
+              ? Icon(PhosphorIconsBold.user, size: 18, color: ColorPalette.neutral500)
               : null,
         ),
         SizedBox(width: SpacePalette.sm),
@@ -263,9 +263,9 @@ class _ReviewListItemState extends State<_ReviewListItem> {
                   ),
                   SizedBox(width: SpacePalette.sm),
                   ...List.generate(review.rating, (_) =>
-                    Icon(PhosphorIconsFill.star, size: 12, color: Colors.amber)),
+                    Icon(PhosphorIconsBold.star, size: 12, color: Colors.amber)),
                   ...List.generate(5 - review.rating, (_) =>
-                    Icon(PhosphorIconsRegular.star, size: 12, color: ColorPalette.neutral300)),
+                    Icon(PhosphorIconsBold.star, size: 12, color: ColorPalette.neutral300)),
                 ],
               ),
               SizedBox(height: SpacePalette.xs),
@@ -403,7 +403,7 @@ class _AddReviewSheetState extends State<_AddReviewSheet> {
                   child: Padding(
                     padding: EdgeInsets.only(right: SpacePalette.sm),
                     child: Icon(
-                      starIndex <= _selectedRating ? PhosphorIconsFill.star : PhosphorIconsRegular.star,
+                      starIndex <= _selectedRating ? PhosphorIconsBold.star : PhosphorIconsBold.star,
                       size: 36,
                       color: starIndex <= _selectedRating
                           ? Colors.amber

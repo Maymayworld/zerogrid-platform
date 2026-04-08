@@ -33,7 +33,7 @@ class DepositSuccessScreen extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  PhosphorIconsRegular.check,
+                  PhosphorIconsBold.check,
                   size: 60,
                   color: ColorPalette.white,
                 ),

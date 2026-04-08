@@ -51,7 +51,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-        icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+        icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
         onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -93,7 +93,7 @@ class ManualCreatePage5 extends HookConsumerWidget{
                       constraints: BoxConstraints(),
                       onPressed: selectDate,
                       icon: Icon(
-                        PhosphorIconsRegular.calendar,
+                        PhosphorIconsBold.calendar,
                         color: ColorPalette.neutral400,
                         size: 24,
                       )

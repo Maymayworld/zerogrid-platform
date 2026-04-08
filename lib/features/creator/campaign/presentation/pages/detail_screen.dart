@@ -218,7 +218,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                 backgroundColor: ColorPalette.white,
                 elevation: 0,
                 leading: _CircleIconButton(
-                  icon: PhosphorIconsRegular.arrowLeft,
+                  icon: PhosphorIconsBold.arrowLeft,
                   onPressed: () => Navigator.pop(context),
                 ),
                 actions: [],
@@ -230,7 +230,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                       return Container(
                         color: ColorPalette.neutral200,
                         child: Center(
-                          child: Icon(PhosphorIconsFill.image, size: 50, color: ColorPalette.neutral400),
+                          child: Icon(PhosphorIconsBold.image, size: 50, color: ColorPalette.neutral400),
                         ),
                       );
                     },
@@ -341,7 +341,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                                 ? NetworkImage(organizerAvatarUrl.value!)
                                 : null,
                             child: organizerAvatarUrl.value == null
-                                ? Icon(PhosphorIconsRegular.buildings, size: 20, color: ColorPalette.neutral600)
+                                ? Icon(PhosphorIconsBold.buildings, size: 20, color: ColorPalette.neutral600)
                                 : null,
                           ),
                           SizedBox(width: SpacePalette.sm),
@@ -356,7 +356,7 @@ class ProjectDetailScreen extends HookConsumerWidget {
                                 SizedBox(height: SpacePalette.xs),
                                 Row(
                                   children: [
-                                    Icon(PhosphorIconsFill.star, size: 14, color: Colors.amber),
+                                    Icon(PhosphorIconsBold.star, size: 14, color: Colors.amber),
                                     SizedBox(width: SpacePalette.xs),
                                     Text(
                                       reviewCountState.value > 0
@@ -424,14 +424,14 @@ class ProjectDetailScreen extends HookConsumerWidget {
                                 Row(
                                   children: [
                                     if (reviewCountState.value > 0) ...[
-                                      Icon(PhosphorIconsFill.star, size: 16, color: Colors.amber),
+                                      Icon(PhosphorIconsBold.star, size: 16, color: Colors.amber),
                                       SizedBox(width: SpacePalette.xs),
                                       Text(avgRating.value.toStringAsFixed(1), style: TextStylePalette.listTitle),
                                       SizedBox(width: SpacePalette.xs),
                                       Text('(${reviewCountState.value})', style: TextStylePalette.listLeading),
                                       SizedBox(width: SpacePalette.xs),
                                     ],
-                                    Icon(PhosphorIconsRegular.caretRight, size: 18, color: ColorPalette.neutral400),
+                                    Icon(PhosphorIconsBold.caretRight, size: 18, color: ColorPalette.neutral400),
                                   ],
                                 ),
                               ],
@@ -610,7 +610,7 @@ class _ReviewItem extends StatelessWidget {
             backgroundColor: ColorPalette.neutral300,
             backgroundImage: avatarUrl != null ? NetworkImage(avatarUrl!) : null,
             child: avatarUrl == null
-                ? Icon(PhosphorIconsFill.user, size: 18, color: ColorPalette.neutral500)
+                ? Icon(PhosphorIconsBold.user, size: 18, color: ColorPalette.neutral500)
                 : null,
           ),
           SizedBox(width: SpacePalette.sm),
@@ -623,7 +623,7 @@ class _ReviewItem extends StatelessWidget {
                     Text(creatorName, style: TextStylePalette.miniTitle),
                     SizedBox(width: SpacePalette.sm),
                     ...List.generate(rating, (_) =>
-                      Icon(PhosphorIconsFill.star, size: 12, color: Colors.amber)),
+                      Icon(PhosphorIconsBold.star, size: 12, color: Colors.amber)),
                   ],
                 ),
                 SizedBox(height: SpacePalette.xs),

@@ -17,24 +17,24 @@ class ProjectDownloadScreen extends StatelessWidget {
 
   IconData _getIconForUrl(String url) {
     final lower = url.toLowerCase();
-    if (lower.endsWith('.pdf')) return PhosphorIconsRegular.filePdf;
+    if (lower.endsWith('.pdf')) return PhosphorIconsBold.filePdf;
     if (lower.endsWith('.jpg') ||
         lower.endsWith('.jpeg') ||
         lower.endsWith('.png') ||
         lower.endsWith('.svg') ||
-        lower.endsWith('.webp')) return PhosphorIconsRegular.image;
+        lower.endsWith('.webp')) return PhosphorIconsBold.image;
     if (lower.endsWith('.mp4') ||
         lower.endsWith('.mov') ||
-        lower.endsWith('.webm')) return PhosphorIconsRegular.videoCamera;
+        lower.endsWith('.webm')) return PhosphorIconsBold.videoCamera;
     if (lower.endsWith('.zip') ||
-        lower.endsWith('.rar')) return PhosphorIconsRegular.fileZip;
-    if (lower.contains('drive.google.com')) return PhosphorIconsRegular.cloud;
-    if (lower.contains('dropbox.com')) return PhosphorIconsRegular.cloud;
-    if (lower.contains('docs.google.com')) return PhosphorIconsRegular.fileText;
-    if (lower.contains('figma.com')) return PhosphorIconsRegular.paintBrush;
+        lower.endsWith('.rar')) return PhosphorIconsBold.fileZip;
+    if (lower.contains('drive.google.com')) return PhosphorIconsBold.cloud;
+    if (lower.contains('dropbox.com')) return PhosphorIconsBold.cloud;
+    if (lower.contains('docs.google.com')) return PhosphorIconsBold.fileText;
+    if (lower.contains('figma.com')) return PhosphorIconsBold.paintBrush;
     if (lower.contains('notion.so') ||
-        lower.contains('notion.site')) return PhosphorIconsRegular.article;
-    return PhosphorIconsRegular.link;
+        lower.contains('notion.site')) return PhosphorIconsBold.article;
+    return PhosphorIconsBold.link;
   }
 
   String _getDisplayName(String url) {
@@ -102,7 +102,7 @@ class ProjectDownloadScreen extends StatelessWidget {
         backgroundColor: ColorPalette.neutral100,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(AppLocalizations.of(context)!.projectFiles, style: TextStylePalette.title),
@@ -115,7 +115,7 @@ class ProjectDownloadScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(
-                      PhosphorIconsRegular.folderOpen,
+                      PhosphorIconsBold.folderOpen,
                       size: 48,
                       color: ColorPalette.neutral400,
                     ),
@@ -210,7 +210,7 @@ class _FileItem extends StatelessWidget {
             ),
             SizedBox(width: SpacePalette.sm),
             Icon(
-              PhosphorIconsRegular.arrowSquareOut,
+              PhosphorIconsBold.arrowSquareOut,
               size: 20,
               color: ColorPalette.neutral400,
             ),

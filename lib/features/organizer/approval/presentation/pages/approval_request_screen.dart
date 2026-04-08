@@ -205,7 +205,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(PhosphorIconsRegular.checkCircle, size: 64, color: ColorPalette.positive500),
+            Icon(PhosphorIconsBold.checkCircle, size: 64, color: ColorPalette.positive500),
             SizedBox(height: SpacePalette.base),
             Text(AppLocalizations.of(context)!.noApprovalRequests, style: TextStylePalette.title.copyWith(color: ColorPalette.white)),
           ],
@@ -279,7 +279,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                             CircleAvatar(
                               radius: 18,
                               backgroundImage: current.creatorAvatarUrl.isNotEmpty ? NetworkImage(current.creatorAvatarUrl) : null,
-                              child: current.creatorAvatarUrl.isEmpty ? Icon(PhosphorIconsFill.user, size: 18, color: ColorPalette.neutral400) : null,
+                              child: current.creatorAvatarUrl.isEmpty ? Icon(PhosphorIconsBold.user, size: 18, color: ColorPalette.neutral400) : null,
                             ),
                             SizedBox(width: SpacePalette.sm),
                             Expanded(
@@ -316,7 +316,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                     child: Container(
                       width: 64, height: 64,
                       decoration: BoxDecoration(color: Colors.black.withOpacity(0.5), shape: BoxShape.circle),
-                      child: Icon(PhosphorIconsFill.play, color: ColorPalette.white, size: 36),
+                      child: Icon(PhosphorIconsBold.play, color: ColorPalette.white, size: 36),
                     ),
                   ),
               ],
@@ -342,7 +342,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(PhosphorIconsRegular.x, color: ColorPalette.critical500, size: 20),
+                        Icon(PhosphorIconsBold.x, color: ColorPalette.critical500, size: 20),
                         SizedBox(width: SpacePalette.xs),
                         Text(AppLocalizations.of(context)!.reject, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.critical500)),
                       ],
@@ -364,7 +364,7 @@ class _ApprovalRequestScreenState extends ConsumerState<ApprovalRequestScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(PhosphorIconsRegular.check, color: ColorPalette.white, size: 20),
+                        Icon(PhosphorIconsBold.check, color: ColorPalette.white, size: 20),
                         SizedBox(width: SpacePalette.xs),
                         Text(AppLocalizations.of(context)!.approve, style: TextStylePalette.smTitle.copyWith(color: ColorPalette.white)),
                       ],

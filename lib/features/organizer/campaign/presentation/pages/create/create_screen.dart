@@ -30,7 +30,7 @@ class CreateScreen extends HookConsumerWidget {
         title: Text(AppLocalizations.of(context)!.createCampaign, style: TextStylePalette.title),
         centerTitle: true,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () {
             ref.read(organizerTabIndexProvider.notifier).state = 0;
           },
@@ -62,7 +62,7 @@ class CreateScreen extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(PhosphorIconsFill.star, size: 32),
+                      Icon(PhosphorIconsBold.star, size: 32),
                       SizedBox(height: SpacePalette.base),
                       Text(AppLocalizations.of(context)!.createWithAI, style: TextStylePalette.title),
                       SizedBox(height: SpacePalette.sm),
@@ -98,7 +98,7 @@ class CreateScreen extends HookConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Icon(PhosphorIconsFill.star, size: 32),
+                      Icon(PhosphorIconsBold.star, size: 32),
                       SizedBox(height: SpacePalette.base),
                       Text(AppLocalizations.of(context)!.createManually, style: TextStylePalette.title),
                       SizedBox(height: SpacePalette.sm),

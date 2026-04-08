@@ -251,7 +251,7 @@ class FeedScreen extends HookConsumerWidget {
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
-                      PhosphorIconsRegular.arrowLeft,
+                      PhosphorIconsBold.arrowLeft,
                       color: ColorPalette.white,
                       size: 20,
                     ),
@@ -270,7 +270,7 @@ class FeedScreen extends HookConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            PhosphorIconsRegular.playCircle,
+            PhosphorIconsBold.playCircle,
             size: 64,
             color: ColorPalette.neutral400,
           ),
@@ -411,7 +411,7 @@ class _LocalVideoPage extends StatelessWidget {
                             : null,
                         child: submission.creatorAvatarUrl == null
                             ? Icon(
-                                PhosphorIconsFill.user,
+                                PhosphorIconsBold.user,
                                 size: 16,
                                 color: ColorPalette.white,
                               )
@@ -464,7 +464,7 @@ class _LocalVideoPage extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _ActionButton(
-                    icon: isLiked ? PhosphorIconsFill.heart : PhosphorIconsRegular.heart,
+                    icon: isLiked ? PhosphorIconsBold.heart : PhosphorIconsBold.heart,
                     color: isLiked
                         ? ColorPalette.critical500
                         : ColorPalette.white,
@@ -472,7 +472,7 @@ class _LocalVideoPage extends StatelessWidget {
                   ),
                   SizedBox(height: SpacePalette.base),
                   _ActionButton(
-                    icon: PhosphorIconsRegular.caretRight,
+                    icon: PhosphorIconsBold.caretRight,
                     color: ColorPalette.white,
                     onTap: onJoin,
                   ),

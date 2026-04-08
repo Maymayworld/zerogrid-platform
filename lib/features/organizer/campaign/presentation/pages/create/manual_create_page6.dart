@@ -108,7 +108,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
         backgroundColor: ColorPalette.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(PhosphorIconsRegular.arrowLeft, color: ColorPalette.neutral800),
+          icon: Icon(PhosphorIconsBold.arrowLeft, color: ColorPalette.neutral800),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -165,7 +165,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                                   ),
                                 )
                               else
-                                Icon(PhosphorIconsRegular.uploadSimple, size: 20),
+                                Icon(PhosphorIconsBold.uploadSimple, size: 20),
                               SizedBox(width: SpacePalette.sm),
                               Text(
                                 isUploading.value
@@ -211,7 +211,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                             child: Row(
                               children: [
                                 Icon(
-                                  PhosphorIconsFill.checkCircle,
+                                  PhosphorIconsBold.checkCircle,
                                   size: 16,
                                   color: ColorPalette.positive500,
                                 ),
@@ -238,7 +238,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                                   onTap: () =>
                                       removeUploadedFile(entry.key),
                                   child: Icon(
-                                    PhosphorIconsRegular.x,
+                                    PhosphorIconsBold.x,
                                     size: 18,
                                     color: ColorPalette.neutral400,
                                   ),
@@ -276,7 +276,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                               keyboardType: TextInputType.url,
                               cursorColor: ColorPalette.neutral800,
                               decoration: InputDecoration(
-                                prefixIcon: Icon(PhosphorIconsRegular.link),
+                                prefixIcon: Icon(PhosphorIconsBold.link),
                                 suffixIcon: links.value.length > 1
                                     ? IconButton(
                                         constraints: BoxConstraints(),
@@ -285,7 +285,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                                         onPressed: () =>
                                             removeLink(index),
                                         icon: Icon(
-                                          PhosphorIconsRegular.x,
+                                          PhosphorIconsBold.x,
                                           color:
                                               ColorPalette.neutral400,
                                           size: 20,
@@ -319,7 +319,7 @@ class ManualCreatePage6 extends HookConsumerWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(PhosphorIconsRegular.plus),
+                            Icon(PhosphorIconsBold.plus),
                             SizedBox(width: SpacePalette.sm),
                             Text(AppLocalizations.of(context)!.addAnother,
                                 style: TextStylePalette.guide),

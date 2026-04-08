@@ -78,7 +78,7 @@ class ProjectCard extends StatelessWidget {
                   color: ColorPalette.neutral400,
                   child: Center(
                     child: Icon(
-                      PhosphorIconsFill.image,
+                      PhosphorIconsBold.image,
                       size: 50,
                       color: ColorPalette.neutral400,
                     ),
@@ -162,8 +162,8 @@ class ProjectCard extends StatelessWidget {
                           _CardDuolingoCircleButton(
                             onPressed: onLike,
                             icon: isLiked
-                                ? PhosphorIconsFill.heart
-                                : PhosphorIconsRegular.heart,
+                                ? PhosphorIconsBold.heart
+                                : PhosphorIconsBold.heart,
                             iconColor: isLiked
                                 ? ColorPalette.critical500
                                 : ColorPalette.neutral800,
@@ -186,7 +186,7 @@ class ProjectCard extends StatelessWidget {
   Widget _buildPlatformIcons() {
     if (platforms.isEmpty) {
       return _buildSinglePlatformIcon(
-        Icon(PhosphorIconsFill.filmStrip, size: 14, color: ColorPalette.neutral800),
+        Icon(PhosphorIconsBold.filmStrip, size: 14, color: ColorPalette.neutral800),
       );
     }
 

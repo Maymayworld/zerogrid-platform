@@ -68,7 +68,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: PhosphorIconsRegular.eye,
+                      icon: PhosphorIconsBold.eye,
                       iconColor: Colors.blue,
                     ),
                   ),
@@ -81,7 +81,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: PhosphorIconsRegular.wallet,
+                      icon: PhosphorIconsBold.wallet,
                       iconColor: Colors.green,
                     ),
                   ),
@@ -102,7 +102,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: PhosphorIconsRegular.megaphone,
+                      icon: PhosphorIconsBold.megaphone,
                       iconColor: Colors.orange,
                     ),
                   ),
@@ -115,7 +115,7 @@ class DashboardScreen extends HookConsumerWidget {
                         loading: () => '---',
                         error: (_, __) => '-',
                       ),
-                      icon: PhosphorIconsRegular.hourglass,
+                      icon: PhosphorIconsBold.hourglass,
                       iconColor: Colors.purple,
                     ),
                   ),
@@ -137,7 +137,7 @@ class DashboardScreen extends HookConsumerWidget {
                       flex: 2,
                       child: Row(
                         children: [
-                          Icon(PhosphorIconsRegular.playCircle,
+                          Icon(PhosphorIconsBold.playCircle,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(AppLocalizations.of(context)!.video,
@@ -148,7 +148,7 @@ class DashboardScreen extends HookConsumerWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(PhosphorIconsRegular.eye,
+                          Icon(PhosphorIconsBold.eye,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(AppLocalizations.of(context)!.views,
@@ -159,7 +159,7 @@ class DashboardScreen extends HookConsumerWidget {
                     Expanded(
                       child: Row(
                         children: [
-                          Icon(PhosphorIconsRegular.currencyDollar,
+                          Icon(PhosphorIconsBold.currencyDollar,
                               size: 16, color: ColorPalette.neutral500),
                           SizedBox(width: SpacePalette.xs),
                           Text(AppLocalizations.of(context)!.earning,
@@ -183,7 +183,7 @@ class DashboardScreen extends HookConsumerWidget {
                         child: Column(
                           children: [
                             Icon(
-                              PhosphorIconsRegular.filmStrip,
+                              PhosphorIconsBold.filmStrip,
                               size: 48,
                               color: ColorPalette.neutral400,
                             ),
@@ -427,7 +427,7 @@ class _PastEarningItem extends StatelessWidget {
                       width: 44,
                       height: 44,
                       color: ColorPalette.neutral200,
-                      child: Icon(PhosphorIconsFill.megaphone,
+                      child: Icon(PhosphorIconsBold.megaphone,
                           size: 20, color: ColorPalette.neutral400),
                     ),
                   )
@@ -435,7 +435,7 @@ class _PastEarningItem extends StatelessWidget {
                     width: 44,
                     height: 44,
                     color: ColorPalette.neutral200,
-                    child: Icon(PhosphorIconsFill.megaphone,
+                    child: Icon(PhosphorIconsBold.megaphone,
                         size: 20, color: ColorPalette.neutral400),
                   ),
           ),
